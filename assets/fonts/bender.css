@@ -1,0 +1,48 @@
+@font-face {
+    font-family: 'Bender';
+    src: local('Bender Light'), local('Bender-Light'), url('benderlight.woff2') format('woff2'), url('benderlight.woff') format('woff'), url('benderlight.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Bender';
+    src: local('Bender Light Italic'), local('Bender-LightItalic'), url('benderlightitalic.woff2') format('woff2'), url('benderlightitalic.woff') format('woff'), url('benderlightitalic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Bender';
+    src: local('Bender'), url('bender.woff2') format('woff2'), url('bender.woff') format('woff'), url('bender.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Bender';
+    src: local('Bender Italic'), local('Bender-Italic'), url('benderitalic.woff2') format('woff2'), url('benderitalic.woff') format('woff'), url('benderitalic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Bender';
+    src: local('Bender Bold'), local('Bender-Bold'), url('benderbold.woff2') format('woff2'), url('benderbold.woff') format('woff'), url('benderbold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Bender';
+    src: local('Bender Bold Italic'), local('Bender-BoldItalic'), url('benderbolditalic.woff2') format('woff2'), url('benderbolditalic.woff') format('woff'), url('benderbolditalic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Bender';
+    src: local('Bender Black'), local('Bender-Black'), url('benderblack.woff2') format('woff2'), url('benderblack.woff') format('woff'), url('benderblack.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Bender';
+    src: local('Bender Black Italic'), local('Bender-BlackItalic'), url('benderblackitalic.woff2') format('woff2'), url('benderblackitalic.woff') format('woff'), url('benderblackitalic.ttf') format('truetype');
+    font-weight: 900;
+    font-style: italic;
+}

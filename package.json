@@ -10,6 +10,12 @@
   },
   "devDependencies": {
     "@types/node": "^18",
-    "nuxt": "^3.5.2"
+    "node-sass": "^9.0.0",
+    "nuxt": "^3.5.2",
+    "sass": "^1.62.1",
+    "sass-loader": "^13.3.1"
+  },
+  "dependencies": {
+    "uikit": "^3.16.19"
   }
 }
