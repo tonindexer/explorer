@@ -3,6 +3,9 @@ export default defineNuxtConfig({
     css: [
         "@/node_modules/uikit/src/scss/uikit.scss"
     ],
+    modules : [
+      '@nuxtjs/i18n',
+    ],
     vite: {
         css: {
           preprocessorOptions: {

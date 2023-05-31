@@ -1,5 +1,6 @@
 {
   "name": "nuxt-app",
+  "type": "module",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -9,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@nuxtjs/i18n": "^8.0.0-beta.12",
     "@types/node": "^18",
     "node-sass": "^9.0.0",
     "nuxt": "^3.5.2",
@@ -16,6 +18,7 @@
     "sass-loader": "^13.3.1"
   },
   "dependencies": {
+    "@nuxt/types": "^2.16.3",
     "uikit": "^3.16.19"
   }
 }
