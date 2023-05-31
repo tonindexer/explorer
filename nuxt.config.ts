@@ -1,8 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     css: [
-        "@/node_modules/uikit/src/scss/uikit.scss",
-        "@/assets/fonts/bender.css"
+        "@/node_modules/uikit/src/scss/uikit.scss"
     ],
     vite: {
         css: {
