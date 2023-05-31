@@ -5,6 +5,7 @@ export default defineNuxtConfig({
     ],
     modules : [
       '@nuxtjs/i18n',
+      '@pinia/nuxt'
     ],
     vite: {
         css: {
@@ -14,5 +15,12 @@ export default defineNuxtConfig({
             },
           },
         }
-    }
+    },
+    pinia: {
+      autoImports: [
+        // automatically imports `defineStore`
+        'defineStore', // import { defineStore } from 'pinia'
+        ['defineStore', 'definePiniaStore'], // import { defineStore as definePiniaStore } from 'pinia'
+      ],
+    },
 })
