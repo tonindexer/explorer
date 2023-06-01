@@ -3,6 +3,7 @@ export const useMainStore = defineStore('tonexp', {
     state: () => ({
       counter: 0,
       name: 'Eduardo',
+      latestBlocks: []
     }),
     // optional getters
     getters: {
@@ -21,6 +22,22 @@ export const useMainStore = defineStore('tonexp', {
       },
       increment() {
          this.counter += 2
+      },
+      async initLoad() {
+        const latestReq = {
+          workchain: -1,
+          with_transactions: true,
+          order: 'DESC',
+          limit: 10
+        }
+        const query = getQueryString(latestReq, false);
+        try {
+          const req = await apiRequest(`/blocks?${query}`, 'GET')
+
+          console.log(req)
+        } catch (error) {
+          console.log(error)
+        }
       }
     },
   })

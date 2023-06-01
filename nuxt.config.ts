@@ -1,5 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+    runtimeConfig : {
+      public : {
+        tonUrl : 'https://anton.tools/api/v0/'
+      }
+    },
     css: [
         "@/node_modules/uikit/src/scss/uikit.scss"
     ],
