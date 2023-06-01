@@ -2,10 +2,13 @@
     "message" : "Default message",
     "ton" : {
         "workchain" : "Workchain",
-        "block" : "Block",
+        "block" : "Block seq",
         "transactions-count": "Transactions"
     },
     "general" : {
-        "none" : "None"
+        "last_blocks": "Last blocks",
+        "end_stats": "Endpoint stats",
+        "none" : "None",
+        "language": "Language"
     }
 }

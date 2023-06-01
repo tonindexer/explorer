@@ -1,8 +1,23 @@
+<script setup lang="ts">
+const { setLocale } = useI18n()
+</script>
+
 <template>
-    <div uk-sticky class="uk-background-primary header">
-        <div class="nav-tabs uk-flex uk-flex-center" uk-sticky="end: !.uk-height-large; offset: 80">
+    <div class="uk-background-primary header">
+        <div class="nav-tabs uk-flex uk-flex-center">
             <div class="uk-flex-inline uk-background-muted navtab">Starting page</div>
             <div class="uk-flex-inline uk-background-muted navtab">TON Map</div>
+            <button class="uk-button uk-button-default uk-background-muted navtab" type="button">{{ $t('general.language' )}}</button>
+            <div uk-dropdown>
+                <ul class="uk-nav uk-dropdown-nav">
+                    <li>
+                        <NuxtLink @click.prevent.stop="setLocale('ru')">Русский</NuxtLink>
+                    </li>
+                    <li>
+                        <NuxtLink @click.prevent.stop="setLocale('en')">English</NuxtLink>
+                    </li>
+                </ul>
+            </div>
             <div class="uk-flex-inline uk-background-muted navtab">About project</div>
         </div>
     </div>
@@ -19,10 +34,26 @@
 
 <style lang="scss">
 .header {
+    position: sticky;
+    top: 0;
+    z-index: 90;
     div {
         padding: 0.5rem;
         .navtab {
             margin: 0 1rem;
+        }
+    }
+    button {
+        font-family: "Fira Mono", sans-serif;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 1.5;
+        -webkit-text-size-adjust: 100%;
+        background: #fff;
+        color: #666;
+        text-transform: none;
+        &:hover {
+            background-color: #f8f8f8;
         }
     }
 }

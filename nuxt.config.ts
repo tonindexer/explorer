@@ -28,4 +28,11 @@ export default defineNuxtConfig({
         ['defineStore', 'definePiniaStore'], // import { defineStore as definePiniaStore } from 'pinia'
       ],
     },
+    app: {
+      head: {
+        script: [
+          { src: "js/uikit.min.js" },
+          { src: "js/uikit-icons.min.js" }],
+      },
+    },
 })

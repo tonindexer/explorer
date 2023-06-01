@@ -6,6 +6,9 @@
         "transactions-count": "Транзакции"
     },
     "general" : {
-        "none" : "Нет"
+        "last_blocks": "Последние блоки",
+        "end_stats": "Эндпоинты",
+        "none" : "Нет",
+        "language": "Язык"
     }
 }
