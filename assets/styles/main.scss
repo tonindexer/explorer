@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css?family=Fira Mono');
+
+$global-link-color: #DA7D02;
+$global-font-family: 'Fira Mono' , sans-serif;
+
+@import "uikit/src/scss/variables-theme.scss";
+@import "uikit/src/scss/mixins-theme.scss";
+
+@mixin hook-card() { color: #000; }
+
+@import "uikit/src/scss/uikit-theme.scss";

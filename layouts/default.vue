@@ -44,7 +44,6 @@ const { setLocale } = useI18n()
         }
     }
     button {
-        font-family: "Fira Mono", sans-serif;
         font-size: 16px;
         font-weight: normal;
         line-height: 1.5;
