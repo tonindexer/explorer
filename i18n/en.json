@@ -9,6 +9,22 @@
         "last_blocks": "Last blocks",
         "end_stats": "Endpoint stats",
         "none" : "None",
-        "language": "Language"
+        "language": "Language",
+        "type" : "Type",
+        "amount" : "Amount"
+    },
+    "stats" : {
+        "account_count": "Accounts",
+        "address_count": "Addresses",
+        "contract_interface_count": "Contract interfaces",
+        "contract_operation_count": "Contract operations",
+        "first_masterchain_block": "First MasterChain Block",
+        "last_masterchain_block": "Last MasterChain Block",
+        "masterchain_block_count": "MasterChain blocks total",
+        "message_count": "Messsage count",
+        "parsed_account_count": "Parsed accounts",
+        "parsed_address_count": "Parsed addresses",
+        "parsed_message_count": "Parsed messages",
+        "transaction_count": "Transactions"
     }
 }

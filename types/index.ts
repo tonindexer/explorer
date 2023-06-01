@@ -1,6 +1,7 @@
 export { };
 
 declare global {
+    type AccountStatus = "ACTIVE" | "UNINIT" | "FROZEN"
     type PayloadData = {
         [key : string] : string | number | null
     }
@@ -34,7 +35,7 @@ declare global {
     }
     interface Account extends StateData {
         is_active: boolean,
-        status: string, // Add type
+        status: AccountStatus,
         state_data?: StateData,
         code: string,
         code_hash: string,
@@ -97,8 +98,8 @@ declare global {
         result_code: number,
         compute_phase_exit_code?: number,
         action_phase_result_code?: number,
-        orig_status: string, // Add type
-        end_status: string, // Add type
+        orig_status: AccountStatus,
+        end_status: AccountStatus,
         created_at: string,
         created_lt: number,
         workchain?: number,
@@ -134,5 +135,24 @@ declare global {
     }
     interface SmallBlock extends SmallShard {
         shards? : Array<SmallShard>
+    }
+    
+    type Statistics = {
+        account_count : number,
+        address_count : number,
+        contract_interface_count : number,
+        contract_operation_count : number,
+        first_masterchain_block : number,
+        last_masterchain_block : number,
+        masterchain_block_count : number,
+        message_count : number,
+        parsed_account_count : number,
+        parsed_address_count : number,
+        parsed_message_count : number,
+        transaction_count : number,
+        account_count_by_status? : Array<Object>,
+        account_count_by_interfaces? : Array<Object>,
+        message_count_by_operation? : Array<Object>,
+        [key: string] : any,
     }
 }

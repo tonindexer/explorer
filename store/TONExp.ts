@@ -4,7 +4,8 @@ export const useMainStore = defineStore('tonexp', {
       counter: 0,
       name: 'Eduardo',
       totalBlocks: 0 as number,
-      latestBlocks: [] as Array<Block>
+      latestBlocks: [] as Array<Block>,
+      stats : {} as Statistics
     }),
     // optional getters
     getters: {
@@ -64,6 +65,16 @@ export const useMainStore = defineStore('tonexp', {
           const { data } = await apiRequest(`/blocks?${query}`, 'GET')
           this.latestBlocks = data.results;
           this.totalBlocks = data.total;
+        } catch (error) {
+          console.log(error)
+        }
+        try {
+          // 
+          const { data } = await apiRequest(`/statistics`, 'GET')
+          this.stats = data;
+          Object.keys(this.stats).forEach(key => {
+            if (this.stats[key] instanceof Array) delete this.stats[key];
+          });
         } catch (error) {
           console.log(error)
         }

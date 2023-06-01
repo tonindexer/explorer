@@ -7,8 +7,24 @@
     },
     "general" : {
         "last_blocks": "Последние блоки",
-        "end_stats": "Эндпоинты",
+        "end_stats": "Статистика эндпоинтов",
         "none" : "Нет",
-        "language": "Язык"
+        "language": "Язык",
+        "type" : "Тип",
+        "amount" : "Кол-во"
+    },
+    "stats" : {
+        "account_count": "Аккаунты",
+        "address_count": "Адреса",
+        "contract_interface_count": "Контракты интерфейсов",
+        "contract_operation_count": "Контракты операций",
+        "first_masterchain_block": "Первый MasterChain",
+        "last_masterchain_block": "Последний MasterChain",
+        "masterchain_block_count": "Всего MasterChain",
+        "message_count": "Сообщения",
+        "parsed_account_count": "Обработанные аккаунты",
+        "parsed_address_count": "Обработанные адреса",
+        "parsed_message_count": "Обработанные сообщения",
+        "transaction_count": "Транзакции"
     }
 }

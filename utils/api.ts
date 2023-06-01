@@ -1,4 +1,4 @@
-import axios, { AxiosPromise } from "axios"
+import axios from "axios"
 
 type Method =
   | 'get' | 'GET'
