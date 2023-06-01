@@ -1,3 +1,11 @@
 {
-    "message" : "Default message"
+    "message" : "Default message",
+    "ton" : {
+        "workchain" : "Workchain",
+        "block" : "Block",
+        "transactions-count": "Transactions"
+    },
+    "general" : {
+        "none" : "None"
+    }
 }

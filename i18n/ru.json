@@ -1,3 +1,11 @@
 {
-    "message" : "Просто сообщение"
+    "message" : "Просто сообщение",
+    "ton" : {
+        "workchain" : "Имя цепи",
+        "block" : "Блок",
+        "transactions-count": "Транзакции"
+    },
+    "general" : {
+        "none" : "Нет"
+    }
 }

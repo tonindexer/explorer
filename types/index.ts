@@ -95,10 +95,15 @@ declare global {
         total_fees: number,
         description_boc: string,
         result_code: number,
+        compute_phase_exit_code?: number,
+        action_phase_result_code?: number,
         orig_status: string, // Add type
         end_status: string, // Add type
         created_at: string,
-        created_lt: number
+        created_lt: number,
+        workchain?: number,
+        shard?: number,  
+        seq_no?: number,
     }
     type Shard = {
         workchain: number,
@@ -107,7 +112,8 @@ declare global {
         file_hash: string,
         root_hash: string,
         master: Master,
-        transactions: Array<Transaction> | null
+        transactions: Array<Transaction> | null,
+        scanned_at?: string,
     }
     type Block = {
         workchain: number,
@@ -117,7 +123,16 @@ declare global {
         root_hash: string,
         shards?: Array<Shard>,
         transactions: Array<Transaction> | null
-
+        scanned_at?: string,
     }
-
+    type SmallShard = {
+        workchain: number,
+        shard: number,
+        seq_no: number,
+        tr_count: number,
+        tr_final: number
+    }
+    interface SmallBlock extends SmallShard {
+        shards? : Array<SmallShard>
+    }
 }

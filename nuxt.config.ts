@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
     runtimeConfig : {
       public : {
-        tonUrl : 'https://anton.tools/api/v0/'
+        tonUrl : 'https://testnet.anton.tools/api/v0/'
       }
     },
     css: [
