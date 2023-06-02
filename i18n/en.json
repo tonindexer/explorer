@@ -13,6 +13,19 @@
         "type" : "Type",
         "amount" : "Amount"
     },
+    "route" : {
+        "explorer" : "Main Page",
+        "endpoints" : "Endpoints",
+        "blocks" : "Blocks",
+        "transactions" : "Transactions",
+        "messages" : "Messages",
+        "accounts" : "Accounts",
+        "endpoint" : "Endpoint",
+        "block" : "Block",
+        "transaction" : "Transaction",
+        "message" : "Message",
+        "account" : "Account"
+    },
     "stats" : {
         "account_count": "Accounts",
         "address_count": "Addresses",
@@ -21,7 +34,7 @@
         "first_masterchain_block": "First MasterChain Block",
         "last_masterchain_block": "Last MasterChain Block",
         "masterchain_block_count": "MasterChain blocks total",
-        "message_count": "Messsage count",
+        "message_count": "Message count",
         "parsed_account_count": "Parsed accounts",
         "parsed_address_count": "Parsed addresses",
         "parsed_message_count": "Parsed messages",

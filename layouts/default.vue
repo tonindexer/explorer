@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const { setLocale } = useI18n()
+const route = useRoute()
+
 </script>
 
 <template>
@@ -8,25 +9,14 @@ const { setLocale } = useI18n()
             <div class="uk-flex-inline uk-background-muted navtab">Starting page</div>
             <div class="uk-flex-inline uk-background-muted navtab">TON Map</div>
             <button class="uk-button uk-button-default uk-background-muted navtab" type="button">{{ $t('general.language' )}}</button>
-            <div uk-dropdown>
-                <ul class="uk-nav uk-dropdown-nav">
-                    <li>
-                        <NuxtLink @click.prevent.stop="setLocale('ru')">Русский</NuxtLink>
-                    </li>
-                    <li>
-                        <NuxtLink @click.prevent.stop="setLocale('en')">English</NuxtLink>
-                    </li>
-                </ul>
-            </div>
+            <AtomsLangSwitcher/>
             <div class="uk-flex-inline uk-background-muted navtab">About project</div>
         </div>
     </div>
-    <div class="uk-section" style="margin-top: 1rem; padding-top: 0%;">
-        <div class="uk-flex uk-flex-center">
-            <form class="uk-search uk-search-default uk-width-3-4">
-                <a href="" uk-search-icon></a>
-                <input class="uk-search-input" type="search" placeholder="Search TON adresses, tokens..." aria-label="Search">
-            </form>
+    <div class="uk-section uk-width-3-4" style="margin: 1rem auto 0; padding-top: 0;">
+        <AtomsSearchBar/>
+        <div v-if="route.fullPath !== '/'">
+            <AtomsRouteChain/>
         </div>
         <slot />
     </div>

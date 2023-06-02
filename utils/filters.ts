@@ -5,3 +5,7 @@ export const shortTON = (rawTON: number) : string => {
 export const fullTON = (rawTON: number) : string => {
     return (rawTON / 1000000000).toString()
 }
+
+export const isNumeric = (value: any) : boolean => {
+    return /^-?\d+$/.test(value)
+}

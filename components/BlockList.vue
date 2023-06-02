@@ -31,9 +31,9 @@ const chainTitle = (id: number) => {
             {{ chainTitle(block.workchain) }}
           </div>
           <div class="uk-width-1-3 uk-text-center" style="align-self: center; font-size: 1.1rem;">
-            <!-- <NuxtLink :to="{ path: '/block', query: { workchainId: block.workchain, seqNo: block.seq_no }}"> -->
+            <NuxtLink :to="{ path: '/blocks', query: { id: block.workchain, shard: block.shard, seq_no: block.seq_no }}">
               {{ block.seq_no }}
-            <!-- </NuxtLink> -->
+            </NuxtLink>
           </div>
           <div class="uk-width-1-3 uk-text-center" style="align-self: center; font-size: 1rem" :uk-tooltip="fullTON(block.tr_final)">
             {{ block.tr_final !== 0 ? `${block.tr_count} (${shortTON(block.tr_final)}💎)` : $t('general.none') }}
@@ -46,9 +46,10 @@ const chainTitle = (id: number) => {
               {{ prefix(true, index == ((block.shards?.length ?? 0) - 1)) + chainTitle(shard.workchain) }}
             </div>
             <div class="uk-width-1-3 uk-text-center uk-margin-left" style="align-self: center;">
-              <!-- <NuxtLink :to="{ path: '/block', query: { workchainId: shard.workchain, seqNo: shard.seq_no }}"> -->
-                  {{ prefix(true, index == ((block.shards?.length ?? 0) - 1)) + shard.seq_no }}
-              <!-- </NuxtLink> -->
+              <p class="uk-margin-remove uk-inline"> {{ prefix(true, index == ((block.shards?.length ?? 0) - 1)) }} </p>
+              <NuxtLink :to="{ path: '/blocks', query: { id: shard.workchain, shard: shard.shard, seq_no: shard.seq_no }}">
+                  {{ shard.seq_no }}
+              </NuxtLink>
             </div>
             <div class="uk-width-1-3 uk-text-center" style="align-self: center;" :uk-tooltip="fullTON(shard.tr_final)">
               {{ shard.tr_final !== 0 ? `${shard.tr_count} (${ shortTON(shard.tr_final) } TON)` : $t('general.none') }}

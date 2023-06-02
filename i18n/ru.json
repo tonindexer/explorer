@@ -13,6 +13,19 @@
         "type" : "Тип",
         "amount" : "Кол-во"
     },
+    "route" : {
+        "explorer" : "Главная страница",
+        "endpoints" : "Эндпоинты",
+        "blocks" : "Блоки",
+        "transactions" : "Транзакции",
+        "messages" : "Сообщения",
+        "accounts" : "Аккаунты",
+        "endpoint" : "Эндпоинт",
+        "block" : "Блок",
+        "transaction" : "Транзакция",
+        "message" : "Сообщение",
+        "account" : "Аккаунт"
+    },
     "stats" : {
         "account_count": "Аккаунты",
         "address_count": "Адреса",
