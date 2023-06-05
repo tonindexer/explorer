@@ -39,7 +39,7 @@ export function apiRequest (url: string, method: Method, headers = {}, baseURL? 
     })
 }
 interface Query {
-  [key: string] : string | number | boolean
+  [key: string] : string | number | boolean | null
 }
 
 export function getQueryString (query: Query, caseSensitive: boolean) {

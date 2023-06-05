@@ -3,12 +3,6 @@ import { useMainStore } from '~/store/TONExp';
 const store = useMainStore()
 
 const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '╰┄' : '';
-
-const chainTitle = (id: number) => {
-    if (id===0) return 'BaseChain'
-    if (id===-1) return 'MasterChain'
-    return id
-}
 </script>
 
 <template>
@@ -24,7 +18,7 @@ const chainTitle = (id: number) => {
           {{ $t('ton.transactions-count') }}
         </div>
       </div>
-      <div v-for="block in store.parsedLatest" :key="block.seq_no">
+      <div v-for="block in store.parsedLatest()" :key="block.seq_no">
         <hr style="margin: 0.7rem 0">
         <div class="uk-flex">
           <div class="uk-width-1-3 uk-text-center uk-text-primary" style="font-size: 1.1rem;">
@@ -51,8 +45,8 @@ const chainTitle = (id: number) => {
                   {{ shard.seq_no }}
               </NuxtLink>
             </div>
-            <div class="uk-width-1-3 uk-text-center" style="align-self: center;" :uk-tooltip="fullTON(shard.tr_final)">
-              {{ shard.tr_final !== 0 ? `${shard.tr_count} (${ shortTON(shard.tr_final) } TON)` : $t('general.none') }}
+            <div class="uk-width-1-3 uk-text-center" style="align-self: center;" :uk-tooltip="shard.tr_final ? fullTON(shard.tr_final): 'cls: uk-hidden'">
+              {{ shard.tr_final !== 0 ? `${shard.tr_count}` : $t('general.none') }}
             </div>
           </div>
       </div>

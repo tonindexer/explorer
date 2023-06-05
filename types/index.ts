@@ -3,7 +3,7 @@ export { };
 declare global {
     type AccountStatus = "ACTIVE" | "UNINIT" | "FROZEN"
     type PayloadData = {
-        [key : string] : string | number | null
+        [key : string] : string | number | boolean | null
     }
     type Master = {
         workchain: number,
@@ -131,7 +131,8 @@ declare global {
         shard: number,
         seq_no: number,
         tr_count: number,
-        tr_final: number
+        tr_final: number,
+        scanned_at: string | null
     }
     interface SmallBlock extends SmallShard {
         shards? : Array<SmallShard>

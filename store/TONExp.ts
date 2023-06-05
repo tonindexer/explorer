@@ -1,30 +1,25 @@
 export const useMainStore = defineStore('tonexp', {
     // a function that returns a fresh state
     state: () => ({
-      counter: 0,
-      name: 'Eduardo',
       totalBlocks: 0 as number,
       latestBlocks: [] as Array<Block>,
+      lastLoadedBlock: 0 as number,
+      pageBlocks: [] as Array<Block>,
       stats : {} as Statistics
     }),
     // optional getters
     getters: {
-      // getters receive the state as first parameter
-      doubleCounter: (state) => state.counter * 2,
-      // use getters in other getters
-      doubleCounterPlusOne(): number {
-        return this.doubleCounter + 1
-      },
-      parsedLatest(state): Array<SmallBlock> {
+      parsedLatest: (state)  =>  (latest: boolean = true) => {
         const output = []
-        for (const block of state.latestBlocks) {
+        for (const block of latest ? state.latestBlocks : state.pageBlocks) {
             const oneBlock: SmallBlock = {
                 workchain: block.workchain,
-                seq_no: block.seq_no,
+                seq_no: block.seq_no, 
                 shard: block.shard,
                 tr_count: block.transactions?.length ?? 0,
                 tr_final: 0,
-                shards: []
+                shards: [],
+                scanned_at: block.scanned_at ?? null
             }
             block.transactions?.forEach(tr => oneBlock.tr_final += (tr.in_amount - tr.out_amount))
             if (block.shards?.length)
@@ -35,6 +30,7 @@ export const useMainStore = defineStore('tonexp', {
                         shard: shard.shard,
                         tr_count: shard.transactions?.length ?? 0,
                         tr_final: 0,
+                        scanned_at: shard.scanned_at ?? null
                     }
                     shard.transactions?.forEach(tr => oneShard.tr_final += (tr.in_amount - tr.out_amount))
                     oneBlock.shards?.push(oneShard)
@@ -42,17 +38,17 @@ export const useMainStore = defineStore('tonexp', {
             output.push(oneBlock);
         }
         return output
+      },
+      combinedBlock() : Array<SmallBlock> {
+        let output: Array<SmallBlock | SmallShard> = []
+        for (const block of this.parsedLatest(false)) {
+          output.push(block, ...block.shards?.length ? block.shards : [])
+        }
+        return output
       }
     },
     // optional actions
     actions: {
-      reset() {
-        // `this` is the store instance
-        this.counter = 0
-      },
-      increment() {
-         this.counter += 2
-      },
       async initLoad() {
         const latestReq = {
           workchain: -1,
@@ -78,6 +74,22 @@ export const useMainStore = defineStore('tonexp', {
         } catch (error) {
           console.log(error)
         }
+      },
+      async updateBlockValues(limit: number = 20, seqOffset: number | null, order: "ASC" | "DESC" = "DESC") {
+        const fullReq: PayloadData = {
+          workchain: -1,
+          with_transactions: true,
+          order,
+          limit
+        }
+        if (seqOffset) fullReq.after = seqOffset
+        const query = getQueryString(fullReq, false);
+        try {
+          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          this.pageBlocks = data.results;
+        } catch (error) {
+          console.log(error)
+        }
       }
-    },
+    }
   })

@@ -3,7 +3,9 @@
     "ton" : {
         "workchain" : "Имя цепи",
         "block" : "Блок",
-        "transactions-count": "Транзакции"
+        "transactions-count": "Транзакции",
+        "shard" : "Шард",
+        "shards" : "Шарды"
     },
     "general" : {
         "last_blocks": "Последние блоки",
@@ -11,7 +13,8 @@
         "none" : "Нет",
         "language": "Язык",
         "type" : "Тип",
-        "amount" : "Кол-во"
+        "amount" : "Кол-во",
+        "scanned" : "Отслежено"
     },
     "route" : {
         "explorer" : "Главная страница",

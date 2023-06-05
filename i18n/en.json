@@ -3,7 +3,9 @@
     "ton" : {
         "workchain" : "Workchain",
         "block" : "Block seq",
-        "transactions-count": "Transactions"
+        "transactions-count": "Transactions",
+        "shard" : "Shard",
+        "shards" : "Shards"
     },
     "general" : {
         "last_blocks": "Last blocks",
@@ -11,7 +13,8 @@
         "none" : "None",
         "language": "Language",
         "type" : "Type",
-        "amount" : "Amount"
+        "amount" : "Amount",
+        "scanned" : "Scanned"
     },
     "route" : {
         "explorer" : "Main Page",

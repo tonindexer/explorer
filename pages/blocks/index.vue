@@ -35,12 +35,12 @@ onMounted(() => routeChecker(route.query))
 <template>
     <template v-if="error">
         <NuxtLink to="/blocks">
-            {{ 'it truly do be like that sometimes' }}
+            {{ 'An error occured while parcing query parameters! Go back..' }}
         </NuxtLink>
     </template>
     <template v-else>
         <div v-if="isGeneral">
-            {{ 'this is general page of blocks' }}
+            <LazyBlocksTable/>
         </div>
         <div v-else>
             {{ `this is block ${id}${shard ? '/' + shard : ''}${seq_no ? '/' + seq_no : ''}` }}
