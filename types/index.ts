@@ -155,4 +155,8 @@ declare global {
         message_count_by_operation? : Array<Object>,
         [key: string] : any,
     }
+
+    type NullableStrNumRef = Ref<string | number | null>
+    type NullableNumRef = Ref<number | null>
+    type NullableStrRef = Ref<string | null>
 }

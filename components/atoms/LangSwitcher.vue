@@ -3,6 +3,7 @@ const { setLocale } = useI18n()
 </script>
 
 <template>
+    <button class="uk-button uk-button-default uk-background-muted navtab" type="button">{{ $t('general.language' )}}</button>
     <div uk-dropdown>
         <ul class="uk-nav uk-dropdown-nav">
             <li>

@@ -4,9 +4,9 @@ import { LocationQuery } from 'vue-router';
 const route = useRoute()
 const isGeneral = ref(true)
 const error = ref(false)
-const id : Ref<string | number | null> = ref(null)
-const shard : Ref<number | null> = ref(null)
-const seq_no : Ref<number | null> = ref(null)
+const id : NullableStrNumRef = ref(null)
+const shard : NullableNumRef = ref(null)
+const seq_no : NullableNumRef = ref(null)
 
 function routeChecker(newQuery: LocationQuery) {
     id.value = (typeof newQuery.id === "string") ? newQuery.id : null;
