@@ -24,7 +24,7 @@ const chainTitle = (id: number) => {
           {{ $t('ton.transactions-count') }}
         </div>
       </div>
-      <div v-for="block in store.parsedLatest" :key="block.seq_no">
+      <div v-for="block of store.parsedLatest" :key="block.seq_no">
         <hr style="margin: 0.7rem 0">
         <div class="uk-flex">
           <div class="uk-width-1-3 uk-text-center uk-text-primary" style="font-size: 1.1rem;">
@@ -39,7 +39,7 @@ const chainTitle = (id: number) => {
             {{ block.tr_final !== 0 ? `${block.tr_count} (${shortTON(block.tr_final)}💎)` : $t('general.none') }}
           </div>
         </div>
-        <div v-for="shard, index in block.shards"
+        <div v-for="shard, index of block.shards"
             :key="shard.seq_no"
             class="uk-flex">
             <div class="uk-width-1-3 uk-text-center" style="align-self: center;">
