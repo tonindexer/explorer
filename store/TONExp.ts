@@ -5,11 +5,13 @@ export const useMainStore = defineStore('tonexp', {
       latestBlocks: [] as Array<Block>,
       lastLoadedBlock: 0 as number,
       pageBlocks: [] as Array<Block>,
+      shardList: [] as Array<Shard>,
+      transactionsList: [] as Array<Transaction>,
       stats : {} as Statistics
     }),
     // optional getters
     getters: {
-      parsedLatest: (state)  =>  (latest: boolean = true) => {
+      parsedBlocks: (state)  =>  (latest: boolean = true) => {
         const output = []
         for (const block of latest ? state.latestBlocks : state.pageBlocks) {
             const oneBlock: SmallBlock = {
@@ -39,12 +41,52 @@ export const useMainStore = defineStore('tonexp', {
         }
         return output
       },
-      combinedBlock() : Array<SmallBlock> {
+      combinedParcedBlock() : Array<SmallBlock> {
         let output: Array<SmallBlock | SmallShard> = []
-        for (const block of this.parsedLatest(false)) {
+        for (const block of this.parsedBlocks(false)) {
           output.push(block, ...block.shards?.length ? block.shards : [])
         }
         return output
+      },
+      pageBlocksIndexer(state) {
+        let output: PayloadData = {}
+        for (const [blindex, block] of state.pageBlocks.entries()) {
+          output[`${block.workchain}:${block.shard}:${block.seq_no}`] = `${blindex}`
+          if (block.shards?.length)
+            for (const [shindex, shard] of block.shards.entries()) {
+              output[`${shard.workchain}:${shard.shard}:${shard.seq_no}`] = `${blindex}:${shindex}`
+            }
+        }
+        return output
+      },
+
+      pageSmallBlockFetcher()  { 
+        return (id: string) : SmallShard | SmallBlock | null => {
+          if (isNumeric(id)) return this.parsedBlocks(false)[Number(id)] ?? null
+          else {
+            const addr = id.split(':')
+            if (isNumeric(addr[0]) && isNumeric(addr[1])) {
+              const block: SmallBlock = this.parsedBlocks(false)[Number(addr[0])]
+              if (block.shards?.length)
+              return block.shards[Number(addr[1])]
+            }
+          }
+          return null
+        }
+      },
+      pageFullBlockFetcher()  { 
+        return (id: string) : Block | Shard | null => {
+          if (isNumeric(id)) return this.pageBlocks[Number(id)] ?? null
+          else {
+            const addr = id.split(':')
+            if (isNumeric(addr[0]) && isNumeric(addr[1])) {
+              const block: Block = this.pageBlocks[Number(addr[0])]
+              if (block.shards?.length)
+              return block.shards[Number(addr[1])]
+            }
+          }
+          return null
+        }
       }
     },
     // optional actions
@@ -60,6 +102,7 @@ export const useMainStore = defineStore('tonexp', {
         try {
           const { data } = await apiRequest(`/blocks?${query}`, 'GET')
           this.latestBlocks = data.results;
+          this.pageBlocks = data.results;
           this.totalBlocks = data.total;
         } catch (error) {
           console.log(error)
@@ -89,6 +132,20 @@ export const useMainStore = defineStore('tonexp', {
           this.pageBlocks = data.results;
         } catch (error) {
           console.log(error)
+        }
+      },
+      async fetchBlock(id: number, shard: number, seq_no: number) {
+        const fullReq: PayloadData = {
+          workchain: id,
+          with_transactions: true,
+          seq_no
+        }
+        const query = getQueryString(fullReq, false);
+        try {
+          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          return data.results
+        } catch (error) {
+          return null
         }
       }
     }

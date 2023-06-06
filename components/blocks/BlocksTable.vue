@@ -14,8 +14,8 @@ const updateValues = async (next: boolean = true) => {
     else {
         await store.updateBlockValues(itemCount.value, next ? lastMC.value : firstMC.value)
     }
-    firstMC.value = store.combinedBlock[0].seq_no
-    for (const block of store.combinedBlock.slice(0, itemCount.value).reverse()) {
+    firstMC.value = store.combinedParcedBlock[0].seq_no
+    for (const block of store.combinedParcedBlock.slice(0, itemCount.value).reverse()) {
         if (block.workchain === -1) {
             lastMC.value = block.seq_no;
             return
@@ -29,7 +29,7 @@ watch(pageNum, async() => {
 }, {deep : true})
 
 watch(itemCount, async() => {
-    if (itemCount.value > store.combinedBlock.length)
+    if (itemCount.value > store.combinedParcedBlock.length)
         await updateValues(false)
 }, {deep : true})
 </script>
@@ -46,16 +46,13 @@ watch(itemCount, async() => {
             </tr>
         </thead>
         <tbody>
-            <template v-for="block in store.combinedBlock.slice(0, itemCount)">
-                <tr @click="navigateTo(`/blocks/?id=${block.workchain}&shard=${block.shard}&seq_no=${block.seq_no}`)" style="cursor: pointer;">
+            <template v-for="block in store.combinedParcedBlock.slice(0, itemCount)">
+                <tr @click="navigateTo(`/blocks?id=${block.workchain}&shard=${block.shard}&seq_no=${block.seq_no}`)" style="cursor: pointer;">
                     <td>{{ chainTitle(block.workchain) }}</td>
                     <td :uk-tooltip="`title: ${block.shard}; offset: -10`">{{ truncString(block.shard.toString(), 5, 2) }}</td>
                     <td>{{ block.seq_no}}</td>
                     <td>{{ block.tr_count }}</td>
-                    <td class="uk-flex uk-flex-column">
-                        <p class="uk-margin-remove-bottom uk-text-right uk-text-medium"> {{ block.scanned_at? new Date(block.scanned_at).toLocaleTimeString() : 'Error' }}</p>
-                        <p v-if="block.scanned_at" class="uk-margin-remove uk-text-right" style="font-size: small;">{{ new Date(block.scanned_at).toLocaleDateString(localeProperties.iso, {year: 'numeric', month: 'short', day: 'numeric' }) }}</p>
-                    </td>
+                    <AtomsTableDateCell :date-time="block.scanned_at"/>
                 </tr>
             </template>
         </tbody>
@@ -89,7 +86,7 @@ watch(itemCount, async() => {
         </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .arrow {
     * {
         color: white

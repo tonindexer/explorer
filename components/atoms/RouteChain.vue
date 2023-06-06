@@ -2,10 +2,15 @@
 const route = useRoute()
 
 const parsedRoute = computed<Array<string>>(() => {
-    let output = route.path.slice(1,).split('/')
+    let output : Array<string>;
+    if (!route.fullPath.includes('/')) return []
     if (route.fullPath !== route.path) {
+        output = route.path.slice(1,).split('/')
+        output = output.slice(0, output.length)
         let type = output[output.length - 1]
         output.push(type.slice(0, type.length - 1))
+    } else {
+        output = route.path.slice(1,).split('/')
     }
     return output;
 })

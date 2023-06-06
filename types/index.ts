@@ -114,7 +114,7 @@ declare global {
         root_hash: string,
         master: Master,
         transactions: Array<Transaction> | null,
-        scanned_at?: string,
+        scanned_at: string,
     }
     type Block = {
         workchain: number,
@@ -124,7 +124,7 @@ declare global {
         root_hash: string,
         shards?: Array<Shard>,
         transactions: Array<Transaction> | null
-        scanned_at?: string,
+        scanned_at: string,
     }
     type SmallShard = {
         workchain: number,
