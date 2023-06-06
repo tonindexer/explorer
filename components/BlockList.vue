@@ -31,7 +31,7 @@ const chainTitle = (id: number) => {
             {{ chainTitle(block.workchain) }}
           </div>
           <div class="uk-width-1-3 uk-text-center" style="align-self: center; font-size: 1.1rem;">
-            <NuxtLink :to="{ path: '/blocks', query: { id: block.workchain, shard: block.shard, seq_no: block.seq_no }}">
+            <NuxtLink :to="{ path: 'blocks', query: { id: block.workchain, shard: block.shard, seq_no: block.seq_no }}">
               {{ block.seq_no }}
             </NuxtLink>
           </div>
@@ -47,7 +47,7 @@ const chainTitle = (id: number) => {
             </div>
             <div class="uk-width-1-3 uk-text-center uk-margin-left" style="align-self: center;">
               <p class="uk-margin-remove uk-inline"> {{ prefix(true, index == ((block.shards?.length ?? 0) - 1)) }} </p>
-              <NuxtLink :to="{ path: '/blocks', query: { id: shard.workchain, shard: shard.shard, seq_no: shard.seq_no }}">
+              <NuxtLink :to="{ path: 'blocks', query: { id: shard.workchain, shard: shard.shard, seq_no: shard.seq_no }}">
                   {{ shard.seq_no }}
               </NuxtLink>
             </div>

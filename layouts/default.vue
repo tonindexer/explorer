@@ -13,3 +13,5 @@ const route = useRoute()
         <slot />
     </div>
 </template>
+
+<style src="~/assets/styles/main.scss" lang="scss"></style>

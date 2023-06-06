@@ -10,15 +10,6 @@ export default defineNuxtConfig({
       '@pinia/nuxt',
       '@fedorae/nuxt-uikit'
     ],
-    vite: {
-      css: {
-        preprocessorOptions: {
-          scss: {
-            additionalData: '@use "@/assets/styles/main.scss" as *;',
-          },
-        },
-      }
-  },
     pinia: {
       autoImports: [
         'defineStore', 
