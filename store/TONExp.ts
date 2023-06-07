@@ -1,3 +1,4 @@
+import JSONBigInt from 'json-bigint'
 export const useMainStore = defineStore('tonexp', {
     // a function that returns a fresh state
     state: () => ({
@@ -25,7 +26,8 @@ export const useMainStore = defineStore('tonexp', {
             const oneBlock: SmallBlock = {
                 workchain: state.blocks[blockKey].workchain,
                 seq_no: state.blocks[blockKey].seq_no,
-                shard: state.blocks[blockKey].shard,
+                // tslint:disable-next-line
+                shard: BigInt(state.blocks[blockKey].shard),
                 tr_count: state.blocks[blockKey].transaction_keys?.length ?? 0,
                 tr_final: 0,
                 shards: []
@@ -36,7 +38,8 @@ export const useMainStore = defineStore('tonexp', {
                     const oneShard: SmallShard = {
                         workchain: state.blocks[shardKey].workchain,
                         seq_no: state.blocks[shardKey].seq_no,
-                        shard: state.blocks[shardKey].shard,
+                        // tslint:disable-next-line
+                        shard: BigInt(state.blocks[shardKey].shard),
                         tr_count: state.blocks[shardKey].transaction_keys?.length ?? 0,
                         tr_final: 0,
                     }
@@ -68,17 +71,15 @@ export const useMainStore = defineStore('tonexp', {
           out_msg_keys: []
         }
         for (const key in item) {
-          if (item.hasOwnProperty(key)) {
-            if (key === 'in_msg' && item[key]) {
-              transaction[key] = this.processMessage(item[key])
-            } else if (key === 'out_msg' && item[key]) {
-              item.out_msg.forEach((msg : MockType)=> {
-                const msgKey = this.processMessage(msg)
-                transaction.out_msg_keys.push(msgKey)
-              })
-            } else {
-              transaction[key] = item[key]
-            }
+          if (key === 'in_msg' && item[key]) {
+            transaction[key] = this.processMessage(item[key])
+          } else if (key === 'out_msg' && item[key]) {
+            item.out_msg.forEach((msg : MockType)=> {
+              const msgKey = this.processMessage(msg)
+              transaction.out_msg_keys.push(msgKey)
+            })
+          } else {
+            transaction[key] = item[key]
           }
         }
         this.transactions[transactionName] = transaction
@@ -91,20 +92,18 @@ export const useMainStore = defineStore('tonexp', {
           shard_keys: []
         }
         for (const key in item) {
-          if (item.hasOwnProperty(key)) {
-            if (key === 'transactions' && item[key]) {
-              item.transactions.forEach((trn : MockType)=> {
-                const trnKey = this.processTransaction(trn)
-                block.transaction_keys.push(trnKey)
-              })
-            } else if (key === 'shards' && item[key]) {
-              item.shards.forEach((shard : MockType)=> {
-                const shrdKey = this.processBlock(shard)
-                block.shard_keys.push(shrdKey)
-              })
-            } else {
-              block[key] = item[key]
-            }
+          if (key === 'transactions' && item[key]) {
+            item.transactions.forEach((trn : MockType)=> {
+              const trnKey = this.processTransaction(trn)
+              block.transaction_keys.push(trnKey)
+            })
+          } else if (key === 'shards' && item[key]) {
+            item.shards.forEach((shard : MockType)=> {
+              const shrdKey = this.processBlock(shard)
+              block.shard_keys.push(shrdKey)
+            })
+          } else {
+            block[key] = item[key]
           }
         }
         this.blocks[blockName] = block
@@ -119,7 +118,8 @@ export const useMainStore = defineStore('tonexp', {
         }
         const query = getQueryString(latestReq, false);
         try {
-          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          let { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          data = JSONBigInt({useNativeBigInt: true}).parse(data)
           for (const key in data.results) {
             const block = this.processBlock(data.results[key])
             this.latestBlocks.push(block)
@@ -129,7 +129,7 @@ export const useMainStore = defineStore('tonexp', {
         }
         try {
           const { data } = await apiRequest(`/statistics`, 'GET')
-          this.stats = data;
+          this.stats = JSON.parse(data);
           Object.keys(this.stats).forEach(key => {
             if (this.stats[key] instanceof Array) delete this.stats[key];
           });

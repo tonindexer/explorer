@@ -20,7 +20,8 @@ export function apiRequest (url: string, method: Method, headers = {}, baseURL? 
         url,
         method,
         headers,
-        data
+        data,
+        transformResponse: [data  => data]
       })
         .then(resolve)
         .catch((err) => {

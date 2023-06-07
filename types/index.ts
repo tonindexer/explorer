@@ -128,7 +128,7 @@ declare global {
     // }
     type SmallShard = {
         workchain: number,
-        shard: number,
+        shard: bigint,
         seq_no: number,
         tr_count: number,
         tr_final: number
@@ -163,4 +163,5 @@ declare global {
     type NullableStrNumRef = Ref<string | number | null>
     type NullableNumRef = Ref<number | null>
     type NullableStrRef = Ref<string | null>
+    type NullableBigRef = Ref<bigint | null>
 }

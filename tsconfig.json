@@ -5,7 +5,8 @@
     "types" : [
       "@nuxt/types",
       "@nuxtjs/i18n",
-      "@pinia/nuxt"
+      "@pinia/nuxt",
+      "@types/json-bigint"
     ]
   }
 }
