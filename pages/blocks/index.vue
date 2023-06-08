@@ -5,13 +5,14 @@ const route = useRoute()
 const isLoading = ref(true)
 const isGeneral = ref(true)
 const error = ref(false)
-const id : NullableNumRef = ref(null)
-const shard : NullableNumRef = ref(null)
+const id : NullableStrNumRef = ref(null)
+const shard : NullableBigRef = ref(null)
 const seq_no : NullableNumRef = ref(null)
 
 function routeChecker(newQuery: LocationQuery) {
-    id.value = (isNumeric(newQuery.id)) ? Number(newQuery.id) : null;
-    shard.value = (isNumeric(newQuery.shard)) ? Number(newQuery.shard) : null;
+    id.value = (typeof newQuery.id === "string") ? newQuery.id : null;
+    if (isNumeric(id.value)) id.value = Number(id.value)
+    shard.value = (isNumeric(newQuery.shard) && newQuery.shard) ? BigInt(newQuery.shard?.toString()) : null;
     seq_no.value = (isNumeric(newQuery.seq_no)) ? Number(newQuery.seq_no) : null;
 
     if ((id.value || id.value ===0) && shard.value && seq_no.value) {

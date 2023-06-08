@@ -1,9 +1,9 @@
-export const shortTON = (rawTON: number, cutOff: number = 3) : string => {
-    return (rawTON / 1000000000).toPrecision(cutOff)
+export const shortTON = (rawTON: bigint) : string => {
+    return (Number(rawTON * 100n / 1000000000n) / 100).toPrecision(3).toString()
 }
 
-export const fullTON = (rawTON: number) : string => {
-    return (rawTON / 1000000000).toString()
+export const fullTON = (rawTON: bigint) : string => {
+    return (Number(rawTON * 100n / 1000000000n) / 100).toString()
 }
 
 export const isNumeric = (value: any) : boolean => {
