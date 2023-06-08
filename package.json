@@ -12,6 +12,7 @@
   "devDependencies": {
     "@fedorae/nuxt-uikit": "^3.0.2",
     "@nuxtjs/i18n": "^8.0.0-beta.12",
+    "@types/json-bigint": "^1.0.1",
     "@types/node": "^18",
     "node-sass": "^9.0.0",
     "nuxt": "^3.5.2",
@@ -22,6 +23,7 @@
     "@nuxt/types": "^2.16.3",
     "@pinia/nuxt": "^0.4.11",
     "axios": "^1.4.0",
-    "cytoscape": "^3.25.0"
+    "cytoscape": "^3.25.0",
+    "json-bigint": "^1.0.0"
   }
 }

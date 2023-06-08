@@ -1,57 +1,119 @@
+import JSONBigInt from 'json-bigint'
 export const useMainStore = defineStore('tonexp', {
     // a function that returns a fresh state
     state: () => ({
       counter: 0,
       name: 'Eduardo',
       totalBlocks: 0 as number,
-      latestBlocks: [] as Array<Block>,
-      stats : {} as Statistics
+      blocks: {} as BlockMap,
+      messages: {} as MessageMap,
+      transactions: {} as TransactionMap,
+      accounts: {} as AccountMap,
+      latestBlocks: [] as Array<BlockKey>,
+      stats : {} as Statistics,
     }),
-    // optional getters
     getters: {
-      // getters receive the state as first parameter
-      doubleCounter: (state) => state.counter * 2,
-      // use getters in other getters
-      doubleCounterPlusOne(): number {
-        return this.doubleCounter + 1
-      },
-      parsedLatest(state): Array<SmallBlock> {
-        const output = []
-        for (const block of state.latestBlocks) {
-            const oneBlock: SmallBlock = {
-                workchain: block.workchain,
-                seq_no: block.seq_no,
-                shard: block.shard,
-                tr_count: block.transactions?.length ?? 0,
-                tr_final: 0,
-                shards: []
-            }
-            block.transactions?.forEach(tr => oneBlock.tr_final += (tr.in_amount - tr.out_amount))
-            if (block.shards?.length)
-                for (const shard of block.shards) {
-                    const oneShard: SmallShard = {
-                        workchain: shard.workchain,
-                        seq_no: shard.seq_no,
-                        shard: shard.shard,
-                        tr_count: shard.transactions?.length ?? 0,
-                        tr_final: 0,
-                    }
-                    shard.transactions?.forEach(tr => oneShard.tr_final += (tr.in_amount - tr.out_amount))
-                    oneBlock.shards?.push(oneShard)
-                }
-            output.push(oneBlock);
-        }
-        return output
-      }
+      getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
+      getBlockShards: (state) => (key: BlockKey) => state.blocks[key].shard_keys.map((shardKey) => state.blocks[shardKey])
     },
-    // optional actions
     actions: {
-      reset() {
-        // `this` is the store instance
-        this.counter = 0
+      blockKeyGen: (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`,
+      processAccount(account: Account) {
+        const accountKey = account.address.hex
+
+        // Don't override account if the stored state matched given
+        if (accountKey in this.accounts) {
+          if (this.accounts[accountKey].block_seq_no === account.block_seq_no) return accountKey
+        }
+
+        this.accounts[accountKey] = account
+        return accountKey
       },
-      increment() {
-         this.counter += 2
+      processMessage(message: MessageAPI) {
+        const messageKey = message.hash
+
+        // Don't override messages
+        if (messageKey in this.messages) return messageKey
+
+        const mappedMessage = <Message>{}
+
+        if (message.src_state) {
+          mappedMessage.src_state_key = this.processAccount(message.src_state)
+          delete message.src_state
+        }
+        if (message.dst_state) {
+          mappedMessage.dst_state_key = this.processAccount(message.dst_state)
+          delete message.dst_state
+        }
+
+        Object.assign(mappedMessage, message)
+
+        this.messages[messageKey] = mappedMessage
+        return messageKey
+      },
+      processTransaction(transaction: TransactionAPI) {
+        const transactionKey = transaction.hash
+
+        // Don't override transactions
+        if (transactionKey in this.transactions) return transactionKey
+
+        const mappedTransaction = <Transaction>{}
+        mappedTransaction.out_msg_keys = []
+
+        if (transaction.account) {
+          mappedTransaction.account_key = this.processAccount(transaction.account)
+          delete transaction.account
+        }
+        if (transaction.in_msg) {
+          mappedTransaction.in_msg_key = this.processMessage(transaction.in_msg)
+          delete transaction.in_msg
+        }
+        if (transaction.out_msg !== undefined) {
+          if (transaction.out_msg?.length)
+            mappedTransaction.out_msg_keys.push(...transaction.out_msg.map(msg => this.processMessage(msg)))
+          delete transaction.out_msg
+        }
+
+        Object.assign(mappedTransaction, transaction)
+
+        this.transactions[transactionKey] = mappedTransaction
+        return transactionKey
+      },
+      processBlock(block: BlockAPI) {
+        const blockKey : BlockKey = this.blockKeyGen(block.workchain, block.shard, block.seq_no)
+
+        // Don't override existing blocks
+        if (blockKey in this.blocks) return blockKey
+
+        const mappedBlock = <Block>{}
+        mappedBlock.shard_keys = []
+        mappedBlock.transaction_keys = []
+        mappedBlock.transaction_delta = 0n
+        
+        if (block.master !== undefined) {
+          if (block.master) {
+            mappedBlock.master_key = `${block.master.workchain}:${block.master.shard}:${block.master.seq_no}`
+          }
+          delete block.master
+        }
+        if (block.shards !== undefined) {
+          if (block.shards) {
+            mappedBlock.shard_keys.push(...block.shards.map(shard => this.processBlock(shard)))
+          }
+          delete block.shards
+        }
+        if (block.transactions !== undefined) {
+          if (block.transactions) {
+            mappedBlock.transaction_keys.push(...block.transactions.map(tr => this.processTransaction(tr)))
+            block.transactions.forEach((tr: TransactionAPI) => mappedBlock.transaction_delta += ((BigInt(tr.in_amount ?? 0n)) - BigInt(tr.out_amount ?? 0n)))
+          }
+          delete block.transactions
+        }
+
+        Object.assign(mappedBlock, block)
+
+        this.blocks[blockKey] = mappedBlock
+        return blockKey
       },
       async initLoad() {
         const latestReq = {
@@ -62,16 +124,18 @@ export const useMainStore = defineStore('tonexp', {
         }
         const query = getQueryString(latestReq, false);
         try {
-          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
-          this.latestBlocks = data.results;
-          this.totalBlocks = data.total;
+          let { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          data = JSONBigInt({useNativeBigInt: true}).parse(data)
+          for (const key in data.results) {
+            const block = this.processBlock(data.results[key])
+            this.latestBlocks.push(block)
+          }
         } catch (error) {
           console.log(error)
         }
         try {
-          // 
           const { data } = await apiRequest(`/statistics`, 'GET')
-          this.stats = data;
+          this.stats = JSON.parse(data);
           Object.keys(this.stats).forEach(key => {
             if (this.stats[key] instanceof Array) delete this.stats[key];
           });
