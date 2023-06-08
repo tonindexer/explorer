@@ -8,14 +8,14 @@ const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '
 
 <template>
     <div class="uk-flex uk-flex-column">
-      <div class="uk-flex uk-flex-row">
-        <div class="uk-width-1-3 uk-text-center" style="font-size: 1.2rem; align-self: center;">
+      <div class="uk-flex uk-flex-row table-header">
+        <div class="uk-width-1-3 uk-text-center" style="align-self: center;">
           {{ $t('ton.workchain') }}
         </div>
-        <div class="uk-width-1-3 uk-text-center" style="font-size: 1.2rem; align-self: center; margin-left:15px;">
+        <div class="uk-width-1-3 uk-text-center" style="align-self: center; margin-left:15px;">
           {{ $t('ton.block') }}
         </div>
-        <div class="uk-width-1-3 uk-text-center" style="font-size: 1.2rem; align-self: center;"> 
+        <div class="uk-width-1-3 uk-text-center" style="align-self: center;"> 
           {{ $t('ton.transactions-count') }}
         </div>
       </div>

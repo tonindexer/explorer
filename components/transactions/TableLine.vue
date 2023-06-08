@@ -1,21 +1,20 @@
 <script setup lang="ts">
 interface Props {
-    hash: string,
-    addressHex: string,
-    type: string,
-    balance: number,
-    created_at: string | null
+    trn: Transaction
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const balance = computed(() => {
+    return (props.trn.in_amount ?? 0n) - (props.trn.out_amount ?? 0n)
+})
 </script>
 
 <template>
     <tr>
-        <td> {{ truncString(hash, 4) }}</td>
-        <td> {{ truncString(addressHex, 4) }}</td>
-        <td> {{ type }}</td>
+        <td> {{ truncString(trn.hash, 4) }}</td>
+        <td> {{ truncString(trn.address.hex, 4) }}</td>
         <td> {{ balance ? `${fullTON(balance)}💎` : 'None'}}</td>
-        <AtomsTableDateCell :date-time="created_at"/>
+        <AtomsTableDateCell :date-time="trn.created_at"/>
     </tr>
 </template>

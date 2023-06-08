@@ -24,7 +24,7 @@ declare global {
         // transactions?: Transaction[] | null -- API data only -- remapped
         transaction_keys: TransactionKey[]
 
-        // scanned_at: string -- not present in current API
+        scanned_at: string
 
         transaction_delta: bigint
     }

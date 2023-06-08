@@ -47,7 +47,7 @@ export function getQueryString (query: Query, caseSensitive: boolean) {
     if (!query) return ''
     return Object.keys(query).reduce((acc, key) => {
         if (query[key]=== null && key === 'is_active') return acc
-        if (!query[key] && !['is_active','broadcast'].includes(key)) return acc
+        if ((!query[key] && !isNumeric(query[key])) && !['is_active','broadcast'].includes(key)) return acc
         const queryStr = caseSensitive ? String(query[key]) : String(query[key]).toLowerCase()
         const res = key === 'search_fields' ? queryStr : encodeURIComponent(queryStr)
         if (!res) return acc

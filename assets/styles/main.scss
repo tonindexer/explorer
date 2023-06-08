@@ -7,3 +7,14 @@ $global-font-family: 'Fira Mono' , sans-serif;
 @import "uikit/src/scss/mixins-theme.scss";
 
 @import "uikit/src/scss/uikit-theme.scss";
+
+.table-header {
+    div {
+      text-align: left;
+      vertical-align: bottom;
+      font-size: 0.875rem;
+      font-weight: normal;
+      color: #999;
+      text-transform: uppercase;
+    }
+}

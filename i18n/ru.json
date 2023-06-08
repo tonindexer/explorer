@@ -5,7 +5,15 @@
         "block" : "Блок",
         "transactions-count": "Транзакции",
         "shard" : "Шард",
-        "shards" : "Шарды"
+        "shards" : "Шарды",
+        "seq_no" : "Номер блока",
+        "shard_keys" : "Шарды",
+        "transaction_keys": "Транзакции",
+        "transaction_delta": "Дельта баланса",
+        "master_key": "Мастер",
+        "root_hash": "Корневой хэш",
+        "file_hash": "Хэш файла",
+        "scanned_at": "Отсканировано"
     },
     "general" : {
         "last_blocks": "Последние блоки",

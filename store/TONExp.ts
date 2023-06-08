@@ -8,6 +8,7 @@ export const useMainStore = defineStore('tonexp', {
       transactions: {} as TransactionMap,
       accounts: {} as AccountMap,
       latestBlocks: [] as Array<BlockKey>,
+      exploredBlocks: [] as BlockKey[],
       stats : {} as Statistics,
     }),
     getters: {
@@ -114,6 +115,7 @@ export const useMainStore = defineStore('tonexp', {
         return blockKey
       },
       async initLoad() {
+        this.latestBlocks = []
         const latestReq = {
           workchain: -1,
           with_transactions: true,
@@ -142,7 +144,8 @@ export const useMainStore = defineStore('tonexp', {
         }
       },
       async updateBlockValues(limit: number = 20, seqOffset: number | null, order: "ASC" | "DESC" = "DESC") {
-        const fullReq: PayloadData = {
+        this.exploredBlocks = []
+        const fullReq: MockType = {
           workchain: -1,
           with_transactions: true,
           order,
@@ -151,22 +154,29 @@ export const useMainStore = defineStore('tonexp', {
         if (seqOffset) fullReq.after = seqOffset
         const query = getQueryString(fullReq, false);
         try {
-          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
-          this.pageBlocks = data.results;
+          let { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          data = JSONBigInt({useNativeBigInt: true}).parse(data)
+          for (const key in data.results) {
+            const block = this.processBlock(data.results[key])
+            this.exploredBlocks.push(block)
+            this.exploredBlocks.push(...this.blocks[block].shard_keys)
+          }
         } catch (error) {
           console.log(error)
         }
       },
-      async fetchBlock(id: number, shard: number, seq_no: number) {
-        const fullReq: PayloadData = {
-          workchain: id,
+      async fetchBlock(id: number, shard: bigint, seq_no: number) {
+        const fullReq: MockType = {
+          workchain: id? -1 : 0,
+          shard,
           with_transactions: true,
           seq_no
         }
         const query = getQueryString(fullReq, false);
         try {
-          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
-          return data.results
+          let { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          data = JSONBigInt({useNativeBigInt: true}).parse(data)
+          this.processBlock(data.results[0])
         } catch (error) {
           return null
         }

@@ -1,28 +1,40 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 const { t } = useI18n()
 interface Props {
-    block: SmallBlock | SmallShard | null
+    block: Block
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const tableOrder = ['workchain', 'shard', 'seq_no', 'master_key', 'shard_keys', 'transaction_keys','transaction_delta', 'root_hash', 'file_hash', 'scanned_at'] as const
+
+const shardSwitcher = computed(() => {
+    if (props.block.master_key) return [...tableOrder.slice(0, 4), ...tableOrder.slice(5, tableOrder.length)]
+    else return [...tableOrder.slice(0, 3), ...tableOrder.slice(4, tableOrder.length)]
+})
 
 function itemPreprocess(index: string, item: any) {
-    if (index === 'shards' && Array.isArray(item)) return item.length;
-    if (index === 'tr_final' && isNumeric(item)) return item ? `${fullTON(item)}💎` : t('general.none')
-    return item
+  switch (index) {
+    case 'workchain': return chainTitle(item);
+    case 'shard_keys': return item.length;
+    case 'transaction_keys': return item.length;
+    case 'transaction_delta': return item ? `${fullTON(item)}💎` : t('general.none');
+    case 'scanned_at': return new Date(item).toLocaleString();
+    default: return item;
+  }
 }
+
 </script>
 
 <template>
     <table class="uk-table uk-table-middle">
-        <tbody class="uk-table-divider ">
-            <tr v-for="item, index in block" :key="index + block?.seq_no">
+        <tbody class="uk-table-divider">
+            <tr v-for="index of shardSwitcher" :key="index + block?.seq_no">
                 <td class="uk-width-1-4">
-                    {{ index }}
+                    {{ $t(`ton.${index}`) }}
                 </td>
                 <td>
-                    {{ itemPreprocess(index, item) }}
+                    {{ itemPreprocess(index, block[index]) }}
                 </td>
             </tr>
         </tbody>
@@ -33,7 +45,8 @@ function itemPreprocess(index: string, item: any) {
 <style lang="scss">
 .arrow {
     * {
-        color: white
+        color: white;
+        fill: white;
     }
 }
 .disabled {

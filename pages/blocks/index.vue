@@ -5,24 +5,23 @@ const route = useRoute()
 const isLoading = ref(true)
 const isGeneral = ref(true)
 const error = ref(false)
-const id : NullableStrNumRef = ref(null)
+const workchain : NullableNumRef = ref(null)
 const shard : NullableBigRef = ref(null)
 const seq_no : NullableNumRef = ref(null)
 
 function routeChecker(newQuery: LocationQuery) {
-    id.value = (typeof newQuery.id === "string") ? newQuery.id : null;
-    if (isNumeric(id.value)) id.value = Number(id.value)
+    workchain.value = (isNumeric(newQuery.id)) ? Number(newQuery.id) : null;
     shard.value = (isNumeric(newQuery.shard) && newQuery.shard) ? BigInt(newQuery.shard?.toString()) : null;
     seq_no.value = (isNumeric(newQuery.seq_no)) ? Number(newQuery.seq_no) : null;
 
-    if ((id.value || id.value ===0) && shard.value && seq_no.value) {
+    if ((workchain.value || workchain.value === 0) && shard.value && seq_no.value) {
         isGeneral.value = false;
         error.value = false;
         isLoading.value = false;
         return;
     }
 
-    if (!id.value && !shard.value && !seq_no.value) {
+    if (!workchain.value && !shard.value && !seq_no.value) {
         isGeneral.value = true;
         error.value = false;
         isLoading.value = false;
@@ -47,16 +46,16 @@ onMounted(() => routeChecker(route.query))
             <h1>{{  $t('route.blocks') }}</h1>
             <LazyBlocksTable/>
         </div>
-        <div v-else-if="(id || id === 0)&& shard && seq_no" class="uk-flex uk-flex-column">
+        <div v-else-if="(workchain || workchain === 0)&& shard && seq_no" class="uk-flex uk-flex-column">
             <div class="uk-flex uk-flex-bottom">
                 <h1 class="uk-inline uk-margin-remove-vertical">
                 {{ $t('route.block')}}
                 </h1>
                 <h2 class="uk-inline uk-margin-remove-vertical uk-text-primary uk-margin-left uk-text-bold" style="line-height: 1.35;">
-                    {{ `${id}:${truncString(shard.toString(), 5, 4)}:${seq_no}` }}
+                    {{ `${workchain}:${truncString(shard.toString(), 5, 4)}:${seq_no}` }}
                 </h2>
             </div>
-            <BlocksBlockInfo :shard="shard" :seq_no="seq_no" :workchain="id"/>
+            <BlocksBlockInfo :shard="shard" :seq_no="seq_no" :workchain="workchain"/>
         </div>
     </template>
 </template>

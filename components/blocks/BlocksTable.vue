@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
 
-const { localeProperties } = useI18n()
 const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(20)
@@ -9,15 +8,15 @@ const firstMC = ref(0)
 const lastMC = ref(0)
 
 const updateValues = async (next: boolean = true) => {
-    if (store.pageBlocks.length === 0 || pageNum.value === 0)
+    if (store.exploredBlocks.length === 0 || pageNum.value === 0)
         await store.updateBlockValues(itemCount.value, null)
     else {
         await store.updateBlockValues(itemCount.value, next ? lastMC.value : firstMC.value)
     }
-    firstMC.value = store.combinedParcedBlock[0].seq_no
-    for (const block of store.combinedParcedBlock.slice(0, itemCount.value).reverse()) {
-        if (block.workchain === -1) {
-            lastMC.value = block.seq_no;
+    firstMC.value = store.blocks[store.exploredBlocks[0]].seq_no
+    for (const block of store.exploredBlocks.slice(0, itemCount.value).reverse()) {
+        if (store.blocks[block].workchain === -1) {
+            lastMC.value = store.blocks[block].seq_no;
             return
         }
     }
@@ -29,7 +28,7 @@ watch(pageNum, async() => {
 }, {deep : true})
 
 watch(itemCount, async() => {
-    if (itemCount.value > store.combinedParcedBlock.length)
+    if (itemCount.value > store.exploredBlocks.length)
         await updateValues(false)
 }, {deep : true})
 </script>
@@ -46,14 +45,8 @@ watch(itemCount, async() => {
             </tr>
         </thead>
         <tbody>
-            <template v-for="block in store.combinedParcedBlock.slice(0, itemCount)">
-                <tr @click="navigateTo(`/blocks?id=${block.workchain}&shard=${block.shard}&seq_no=${block.seq_no}`)" style="cursor: pointer;">
-                    <td>{{ chainTitle(block.workchain) }}</td>
-                    <td :uk-tooltip="`title: ${block.shard}; offset: -10`">{{ truncString(block.shard.toString(), 5, 2) }}</td>
-                    <td>{{ block.seq_no}}</td>
-                    <td>{{ block.tr_count }}</td>
-                    <AtomsTableDateCell :date-time="block.scanned_at"/>
-                </tr>
+            <template v-for="block in store.exploredBlocks.slice(0, itemCount)">
+                <BlocksTableLine :block="store.blocks[block]"/>
             </template>
         </tbody>
     </table>
