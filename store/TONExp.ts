@@ -5,109 +5,115 @@ export const useMainStore = defineStore('tonexp', {
       counter: 0,
       name: 'Eduardo',
       totalBlocks: 0 as number,
-      blocks: {} as MockType,
-      messages: {} as MockType,
-      transactions: {} as MockType,
-      accounts: {} as MockType,
-      latestBlocks: [] as Array<string>,
+      blocks: {} as BlockMap,
+      messages: {} as MessageMap,
+      transactions: {} as TransactionMap,
+      accounts: {} as AccountMap,
+      latestBlocks: [] as Array<BlockKey>,
       stats : {} as Statistics,
     }),
-    // optional getters
     getters: {
-      // getters receive the state as first parameter
-      doubleCounter: (state) => state.counter * 2,
-      // use getters in other getters
-      doubleCounterPlusOne(): number {
-        return this.doubleCounter + 1
-      },
-      parsedLatest(state): Array<MockType> {
-        const output = []
-        for (const blockKey of state.latestBlocks) {
-            const oneBlock: SmallBlock = {
-                workchain: state.blocks[blockKey].workchain,
-                seq_no: state.blocks[blockKey].seq_no,
-                // tslint:disable-next-line
-                shard: BigInt(state.blocks[blockKey].shard),
-                tr_count: state.blocks[blockKey].transaction_keys?.length ?? 0,
-                tr_final: 0,
-                shards: []
-            }
-            state.blocks[blockKey].transaction_keys?.forEach((tr: string) => oneBlock.tr_final += (state.transactions[tr].in_amount - state.transactions[tr].out_amount))
-            if (state.blocks[blockKey].shard_keys?.length)
-                for (const shardKey of state.blocks[blockKey].shard_keys) {
-                    const oneShard: SmallShard = {
-                        workchain: state.blocks[shardKey].workchain,
-                        seq_no: state.blocks[shardKey].seq_no,
-                        // tslint:disable-next-line
-                        shard: BigInt(state.blocks[shardKey].shard),
-                        tr_count: state.blocks[shardKey].transaction_keys?.length ?? 0,
-                        tr_final: 0,
-                    }
-                    state.blocks[shardKey].transaction_keys?.forEach((tr: string) => oneShard.tr_final += (state.transactions[tr].in_amount - state.transactions[tr].out_amount))
-                    oneBlock.shards.push(oneShard)
-                }
-            output.push(oneBlock);
-        }
-        return output
-      }
+      getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
+      getBlockShards: (state) => (key: BlockKey) => state.blocks[key].shard_keys.map((shardKey) => state.blocks[shardKey])
     },
-    // optional actions
     actions: {
-      reset() {
-        // `this` is the store instance
-        this.counter = 0
-      },
-      increment() {
-         this.counter += 2
-      },
-      processMessage(item: MockType) {
-        const messageName = item.hash
-        this.messages[messageName] = item
-        return messageName
-      },
-      processTransaction(item: MockType) {
-        const transactionName = item.hash
-        const transaction : MockType= {
-          out_msg_keys: []
+      blockKeyGen: (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`,
+      processAccount(account: Account) {
+        const accountKey = account.address.hex
+
+        // Don't override account if the stored state matched given
+        if (accountKey in this.accounts) {
+          if (this.accounts[accountKey].block_seq_no === account.block_seq_no) return accountKey
         }
-        for (const key in item) {
-          if (key === 'in_msg' && item[key]) {
-            transaction[key] = this.processMessage(item[key])
-          } else if (key === 'out_msg' && item[key]) {
-            item.out_msg.forEach((msg : MockType)=> {
-              const msgKey = this.processMessage(msg)
-              transaction.out_msg_keys.push(msgKey)
-            })
-          } else {
-            transaction[key] = item[key]
+
+        this.accounts[accountKey] = account
+        return accountKey
+      },
+      processMessage(message: MessageAPI) {
+        const messageKey = message.hash
+
+        // Don't override messages
+        if (messageKey in this.messages) return messageKey
+
+        const mappedMessage = <Message>{}
+
+        if (message.src_state) {
+          mappedMessage.src_state_key = this.processAccount(message.src_state)
+          delete message.src_state
+        }
+        if (message.dst_state) {
+          mappedMessage.dst_state_key = this.processAccount(message.dst_state)
+          delete message.dst_state
+        }
+
+        Object.assign(mappedMessage, message)
+
+        this.messages[messageKey] = mappedMessage
+        return messageKey
+      },
+      processTransaction(transaction: TransactionAPI) {
+        const transactionKey = transaction.hash
+
+        // Don't override transactions
+        if (transactionKey in this.transactions) return transactionKey
+
+        const mappedTransaction = <Transaction>{}
+        mappedTransaction.out_msg_keys = []
+
+        if (transaction.account) {
+          mappedTransaction.account_key = this.processAccount(transaction.account)
+          delete transaction.account
+        }
+        if (transaction.in_msg) {
+          mappedTransaction.in_msg_key = this.processMessage(transaction.in_msg)
+          delete transaction.in_msg
+        }
+        if (transaction.out_msg !== undefined) {
+          if (transaction.out_msg?.length)
+            mappedTransaction.out_msg_keys.push(...transaction.out_msg.map(msg => this.processMessage(msg)))
+          delete transaction.out_msg
+        }
+
+        Object.assign(mappedTransaction, transaction)
+
+        this.transactions[transactionKey] = mappedTransaction
+        return transactionKey
+      },
+      processBlock(block: BlockAPI) {
+        const blockKey : BlockKey = this.blockKeyGen(block.workchain, block.shard, block.seq_no)
+
+        // Don't override existing blocks
+        if (blockKey in this.blocks) return blockKey
+
+        const mappedBlock = <Block>{}
+        mappedBlock.shard_keys = []
+        mappedBlock.transaction_keys = []
+        mappedBlock.transaction_delta = 0n
+        
+        if (block.master !== undefined) {
+          if (block.master) {
+            mappedBlock.master_key = `${block.master.workchain}:${block.master.shard}:${block.master.seq_no}`
           }
+          delete block.master
         }
-        this.transactions[transactionName] = transaction
-        return transactionName
-      },
-      processBlock(item: MockType) {
-        const blockName = `${item.workchain}:${item.shard}:${item.seq_no}`
-        const block : MockType= {
-          transaction_keys: [],
-          shard_keys: []
-        }
-        for (const key in item) {
-          if (key === 'transactions' && item[key]) {
-            item.transactions.forEach((trn : MockType)=> {
-              const trnKey = this.processTransaction(trn)
-              block.transaction_keys.push(trnKey)
-            })
-          } else if (key === 'shards' && item[key]) {
-            item.shards.forEach((shard : MockType)=> {
-              const shrdKey = this.processBlock(shard)
-              block.shard_keys.push(shrdKey)
-            })
-          } else {
-            block[key] = item[key]
+        if (block.shards !== undefined) {
+          if (block.shards) {
+            mappedBlock.shard_keys.push(...block.shards.map(shard => this.processBlock(shard)))
           }
+          delete block.shards
         }
-        this.blocks[blockName] = block
-        return blockName
+        if (block.transactions !== undefined) {
+          if (block.transactions) {
+            mappedBlock.transaction_keys.push(...block.transactions.map(tr => this.processTransaction(tr)))
+            block.transactions.forEach((tr: TransactionAPI) => mappedBlock.transaction_delta += ((BigInt(tr.in_amount ?? 0n)) - BigInt(tr.out_amount ?? 0n)))
+          }
+          delete block.transactions
+        }
+
+        Object.assign(mappedBlock, block)
+
+        this.blocks[blockKey] = mappedBlock
+        return blockKey
       },
       async initLoad() {
         const latestReq = {
