@@ -13,7 +13,10 @@
         "master_key": "Мастер",
         "root_hash": "Корневой хэш",
         "file_hash": "Хэш файла",
-        "scanned_at": "Отсканировано"
+        "scanned_at": "Отсканировано",
+        "id": "Идентификатор",
+        "address": "Адрес",
+        "balance": "Баланс"
     },
     "general" : {
         "last_blocks": "Последние блоки",
@@ -22,7 +25,8 @@
         "language": "Язык",
         "type" : "Тип",
         "amount" : "Кол-во",
-        "scanned" : "Отслежено"
+        "scanned" : "Отслежено",
+        "created" : "Создано"
     },
     "route" : {
         "explorer" : "Главная страница",

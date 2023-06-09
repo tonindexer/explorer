@@ -13,8 +13,8 @@ const balance = computed(() => {
 <template>
     <tr>
         <td> {{ truncString(trn.hash, 4) }}</td>
-        <td> {{ truncString(trn.address.hex, 4) }}</td>
-        <td> {{ balance ? `${fullTON(balance)}💎` : 'None'}}</td>
+        <td > {{ truncString(trn.address.hex, 4) }}</td>
+        <td class="uk-text-right"> {{ balance ? `${fullTON(balance)}💎` : $t('general.none')}}</td>
         <AtomsTableDateCell :date-time="trn.created_at"/>
     </tr>
 </template>

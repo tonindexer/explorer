@@ -26,7 +26,7 @@ const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '
             {{ chainTitle(block.workchain) }}
           </div>
           <div class="uk-width-1-3 uk-text-center" style="align-self: center; font-size: 1.1rem;">
-            <NuxtLink :to="{ path: 'blocks', query: { id: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }}">
+            <NuxtLink :to="{ path: 'blocks', query: { id: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }, hash: '#overview'}">
               {{ block.seq_no }}
             </NuxtLink>
           </div>
@@ -42,12 +42,12 @@ const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '
             </div>
             <div class="uk-width-1-3 uk-text-center uk-margin-left" style="align-self: center;">
               <p class="uk-margin-remove uk-inline"> {{ prefix(true, lastId(store.blockKeyGen(shard.workchain, shard.shard, shard.seq_no), block.shard_keys)) }} </p>
-              <NuxtLink :to="{ path: 'blocks', query: { id: shard.workchain, shard: shard.shard.toString(), seq_no: shard.seq_no }}">
+              <NuxtLink :to="{ path: 'blocks', query: { id: shard.workchain, shard: shard.shard.toString(), seq_no: shard.seq_no }, hash: '#overview'}">
                   {{ shard.seq_no }}
               </NuxtLink>
             </div>
             <div class="uk-width-1-3 uk-text-center" style="align-self: center;" :uk-tooltip="shard.transaction_delta ? fullTON(shard.transaction_delta): 'cls: uk-hidden'">
-              {{ shard.transaction_keys.length !== 0 ? `${shard.transaction_keys.length} (${ shortTON(shard.transaction_delta) }💎)` : $t('general.none') }}
+              {{ shard.transaction_keys.length !== 0 ? `${shard.transaction_keys.length} (${shard.transaction_delta ? shortTON(shard.transaction_delta) + '💎' : ''})` : $t('general.none') }}
             </div>
           </div>
       </div>

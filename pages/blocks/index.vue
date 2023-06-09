@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { LocationQuery } from 'vue-router';
+import { useMainStore } from '~/store/TONExp';
 
 const route = useRoute()
 const isLoading = ref(true)
@@ -8,6 +9,9 @@ const error = ref(false)
 const workchain : NullableNumRef = ref(null)
 const shard : NullableBigRef = ref(null)
 const seq_no : NullableNumRef = ref(null)
+const excludeEmpty = ref(false)
+
+const store = useMainStore()
 
 function routeChecker(newQuery: LocationQuery) {
     workchain.value = (isNumeric(newQuery.id)) ? Number(newQuery.id) : null;
@@ -31,6 +35,9 @@ function routeChecker(newQuery: LocationQuery) {
     error.value = true;
 }
 
+
+const filteredKeys = computed(() => store.getBlockKeys(store.exploredBlocks, excludeEmpty.value))
+
 watch(() => route.query, (newQuery) => routeChecker(newQuery))
 onMounted(() => routeChecker(route.query))
 </script>
@@ -44,7 +51,10 @@ onMounted(() => routeChecker(route.query))
     <template v-else>
         <div v-if="isGeneral">
             <h1>{{  $t('route.blocks') }}</h1>
-            <LazyBlocksTable/>
+            <div class="uk-child-width-auto uk-text-right">
+                <label><input v-model="excludeEmpty" class="uk-checkbox uk-margin-small-right" type="checkbox">Exclude empty blocks?</label>
+            </div>
+            <LazyBlocksTable :keys="filteredKeys" :update="true" :default-length="10" :item-selector="true" :hidden="false"/>
         </div>
         <div v-else-if="(workchain || workchain === 0)&& shard && seq_no" class="uk-flex uk-flex-column">
             <div class="uk-flex uk-flex-bottom">

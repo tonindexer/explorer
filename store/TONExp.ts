@@ -13,7 +13,18 @@ export const useMainStore = defineStore('tonexp', {
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
-      getBlockShards: (state) => (key: BlockKey) => state.blocks[key].shard_keys.map((shardKey) => state.blocks[shardKey])
+      getBlockShards: (state) => (key: BlockKey) => state.blocks[key].shard_keys.map((shardKey) => state.blocks[shardKey]),
+      getBlockKeys: (state) => (keys: BlockKey[], excludeEmpty: boolean) => excludeEmpty ? keys.filter((item: BlockKey) => state.blocks[item].transaction_keys.length > 0) : keys,
+      deepTransactionKeys: (state) => (key: BlockKey) => {
+        const output: string[] = [...state.blocks[key].transaction_keys]
+        state.blocks[key].shard_keys.forEach((shrd: BlockKey) => output.push(...state.blocks[shrd].transaction_keys))
+        return output
+      },
+      messageKeys: (state) => (keys: TransactionKey[])  : MessageKey[] => {
+        const output: MessageKey[] = []
+        keys.forEach((tr: TransactionKey) => output.push(state.transactions[tr].in_msg_key, ...state.transactions[tr].out_msg_keys))
+        return output
+      }
     },
     actions: {
       blockKeyGen: (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`,
@@ -57,6 +68,7 @@ export const useMainStore = defineStore('tonexp', {
         if (transactionKey in this.transactions) return transactionKey
 
         const mappedTransaction = <Transaction>{}
+        mappedTransaction.in_msg_key = ""
         mappedTransaction.out_msg_keys = []
 
         if (transaction.account) {

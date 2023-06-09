@@ -13,7 +13,10 @@
         "master_key": "Master",
         "root_hash": "Root hash",
         "file_hash": "File hash",
-        "scanned_at": "Scanned"
+        "scanned_at": "Scanned",
+        "id": "ID",
+        "address": "Address",
+        "balace": "Balance"
     },
     "general" : {
         "last_blocks": "Last blocks",
@@ -22,7 +25,8 @@
         "language": "Language",
         "type" : "Type",
         "amount" : "Amount",
-        "scanned" : "Scanned"
+        "scanned" : "Scanned",
+        "created" : "Created"
     },
     "route" : {
         "explorer" : "Main Page",
