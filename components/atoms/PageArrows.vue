@@ -13,7 +13,7 @@ defineEmits(['increase', 'decrease'])
 
 <template>
      <div class="uk-flex uk-flex-middle uk-margin-small-left" v-if="!hidden">
-        <p class="uk-margin-remove">Page {{ page + 1 }}</p>
+        <p class="uk-margin-remove">{{ `${$t('general.page')} ${page + 1}` }}</p>
         <div uk-icon="icon: arrow-left" 
             class="arrow uk-button uk-background-primary uk-border-rounded uk-margin-small-left"
             :class="{'disabled' : leftDisabled}"
@@ -28,3 +28,10 @@ defineEmits(['increase', 'decrease'])
         </div>
     </div>
 </template>
+
+<style lang="scss" scoped>
+.disabled {
+    background-color: rgb(126, 191, 255);
+    pointer-events: none;
+}
+</style>

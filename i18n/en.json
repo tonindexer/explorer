@@ -1,5 +1,4 @@
 {
-    "message" : "Default message",
     "ton" : {
         "workchain" : "Workchain",
         "block" : "Block",
@@ -16,7 +15,8 @@
         "scanned_at": "Scanned",
         "id": "ID",
         "address": "Address",
-        "balace": "Balance"
+        "balace": "Balance",
+        "type": "Operation type"
     },
     "general" : {
         "last_blocks": "Last blocks",
@@ -26,7 +26,11 @@
         "type" : "Type",
         "amount" : "Amount",
         "scanned" : "Scanned",
-        "created" : "Created"
+        "created" : "Created",
+        "page" : "Page",
+        "items": "Items",
+        "in_msg" : "Messages In",
+        "out_msg" : "Messages Out"
     },
     "route" : {
         "explorer" : "Main Page",
@@ -54,5 +58,10 @@
         "parsed_address_count": "Parsed addresses",
         "parsed_message_count": "Parsed messages",
         "transaction_count": "Transactions"
+    },
+    "options" : {
+        "exclude_blocks" : "Exclude empty blocks",
+        "deep_transactions" : "Shard transactions",
+        "deep_messages" : "Shard messages"
     }
 }

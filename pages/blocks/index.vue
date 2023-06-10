@@ -52,7 +52,7 @@ onMounted(() => routeChecker(route.query))
         <div v-if="isGeneral">
             <h1>{{  $t('route.blocks') }}</h1>
             <div class="uk-child-width-auto uk-text-right">
-                <label><input v-model="excludeEmpty" class="uk-checkbox uk-margin-small-right" type="checkbox">Exclude empty blocks?</label>
+                <label><input v-model="excludeEmpty" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_blocks') }}</label>
             </div>
             <LazyBlocksTable :keys="filteredKeys" :update="true" :default-length="10" :item-selector="true" :hidden="false"/>
         </div>

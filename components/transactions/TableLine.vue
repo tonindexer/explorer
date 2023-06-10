@@ -6,7 +6,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const balance = computed(() => {
-    return (props.trn.in_amount ?? 0n) - (props.trn.out_amount ?? 0n)
+    return BigInt(props.trn.in_amount ?? 0n) - BigInt(props.trn.out_amount ?? 0n)
 })
 </script>
 

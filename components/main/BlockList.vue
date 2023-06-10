@@ -47,7 +47,7 @@ const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '
               </NuxtLink>
             </div>
             <div class="uk-width-1-3 uk-text-center" style="align-self: center;" :uk-tooltip="shard.transaction_delta ? fullTON(shard.transaction_delta): 'cls: uk-hidden'">
-              {{ shard.transaction_keys.length !== 0 ? `${shard.transaction_keys.length} (${shard.transaction_delta ? shortTON(shard.transaction_delta) + '💎' : ''})` : $t('general.none') }}
+              {{ shard.transaction_keys.length !== 0 ? `${shard.transaction_keys.length}${shard.transaction_delta ? ' (' + shortTON(shard.transaction_delta) + '💎)' : ''})` : $t('general.none') }}
             </div>
           </div>
       </div>

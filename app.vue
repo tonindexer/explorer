@@ -9,12 +9,12 @@ onServerPrefetch(async () => {
 
 watch(route, async value => {
     if (value.path === '/') {
-      await store.initLoad()
+      await store.mainPageLoad()
     }
     if (value.fullPath === '/blocks') {
-      await store.updateBlockValues(20, null)
+      await store.updateBlockValues(10, null)
     }
-  }, {deep: true, immediate: true})
+  }, {deep: true})
 </script>
 
 <template>

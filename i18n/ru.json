@@ -1,5 +1,4 @@
 {
-    "message" : "Просто сообщение",
     "ton" : {
         "workchain" : "Имя цепи",
         "block" : "Блок",
@@ -16,7 +15,8 @@
         "scanned_at": "Отсканировано",
         "id": "Идентификатор",
         "address": "Адрес",
-        "balance": "Баланс"
+        "balance": "Баланс",
+        "type": "Тип операции"
     },
     "general" : {
         "last_blocks": "Последние блоки",
@@ -26,7 +26,11 @@
         "type" : "Тип",
         "amount" : "Кол-во",
         "scanned" : "Отслежено",
-        "created" : "Создано"
+        "created" : "Создано",
+        "page" : "Страница",
+        "items" : "Элементов",
+        "in_msg" : "Входящие сообщения",
+        "out_msg" : "Исходящие сообщения"
     },
     "route" : {
         "explorer" : "Главная страница",
@@ -54,5 +58,10 @@
         "parsed_address_count": "Обработанные адреса",
         "parsed_message_count": "Обработанные сообщения",
         "transaction_count": "Транзакции"
+    },
+    "options" : {
+        "exclude_blocks" : "Скрыть пустые блоки",
+        "deep_transactions" : "Транзакции шардов",
+        "deep_messages" : "Сообщения шардов"
     }
 }

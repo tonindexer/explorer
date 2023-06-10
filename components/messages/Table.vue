@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
 
-interface TransactionTable {
+interface MessageTable {
     keys: string[]
     update: boolean
     defaultLength: number
@@ -9,7 +9,7 @@ interface TransactionTable {
     hidden: boolean
 }
 
-const props = defineProps<TransactionTable>()
+const props = defineProps<MessageTable>()
 
 const store = useMainStore()
 const pageNum = ref(0)
@@ -21,14 +21,14 @@ const itemCount = ref(props.defaultLength)
         <thead>
             <tr>
                 <th class="uk-width-1-6">{{ $t('ton.id')}}</th>
-                <th class="uk-width-1-6">{{ $t('ton.address')}}</th>
+                <th class="uk-width-1-6">{{ $t('ton.type')}}</th>
                 <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
                 <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.created')}}</th>
             </tr>
         </thead>
         <tbody>
-            <template v-for="trn in update ? props.keys.slice(0, itemCount) : props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <TransactionsTableLine :trn="store.transactions[trn]"/>
+            <template v-for="msg in update ? props.keys.slice(0, itemCount) : props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+                <MessagesTableLine :msg="store.messages[msg]"/>
             </template>
         </tbody>
     </table>
@@ -48,7 +48,7 @@ const itemCount = ref(props.defaultLength)
                 :hidden="itemCount >= keys.length && !update"
                 @increase="pageNum += 1"
                 @decrease="pageNum -= 1"
-            />            
+            />
         </div>
 </template>
 

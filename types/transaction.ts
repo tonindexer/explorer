@@ -17,7 +17,6 @@ declare global {
 
         in_msg_hash: string
         // in_msg: Message | null -- API data only -- remapped
-        in_msg_key: MessageKey
         in_amount?: bigint | null
 
         // out_msg?: Message[] | null -- API data only -- remapped
