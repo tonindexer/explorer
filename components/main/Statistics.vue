@@ -5,11 +5,11 @@ const store = useMainStore()
 
 <template>
     <div class="uk-flex uk-flex-column">
-        <div class="uk-flex uk-flex-row">
-            <div class="uk-width-1-2 uk-text-left" style="font-size: 1.2rem; align-self: center;">
+        <div class="uk-flex uk-flex-row table-header">
+            <div class="uk-width-1-2 uk-text-left" style="align-self: center;">
             {{ $t('general.type') }}
             </div>
-            <div class="uk-width-1-2 uk-text-right" style="font-size: 1.2rem; align-self: center; margin-left:15px;">
+            <div class="uk-width-1-2 uk-text-right" style="align-self: center; margin-left:15px;">
             {{ $t('general.amount') }}
             </div>
         </div>

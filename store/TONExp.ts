@@ -1,20 +1,36 @@
 import JSONBigInt from 'json-bigint'
+
 export const useMainStore = defineStore('tonexp', {
     // a function that returns a fresh state
     state: () => ({
-      counter: 0,
-      name: 'Eduardo',
       totalBlocks: 0 as number,
       blocks: {} as BlockMap,
       messages: {} as MessageMap,
       transactions: {} as TransactionMap,
       accounts: {} as AccountMap,
       latestBlocks: [] as Array<BlockKey>,
+      exploredBlocks: [] as BlockKey[],
       stats : {} as Statistics,
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
-      getBlockShards: (state) => (key: BlockKey) => state.blocks[key].shard_keys.map((shardKey) => state.blocks[shardKey])
+      getBlockShards: (state) => (key: BlockKey) => state.blocks[key].shard_keys.map((shardKey) => state.blocks[shardKey]),
+      getBlockKeys: (state) => (keys: BlockKey[], excludeEmpty: boolean) => excludeEmpty ? keys.filter((item: BlockKey) => state.blocks[item].transaction_keys.length > 0) : keys,
+      deepTransactionKeys: (state) => (key: BlockKey) => {
+        const output: string[] = [...state.blocks[key].transaction_keys]
+        state.blocks[key].shard_keys.forEach((shrd: BlockKey) => output.push(...state.blocks[shrd].transaction_keys))
+        return output
+      },
+      messageKeys: (state) => (keys: TransactionKey[], in_: boolean, out_: boolean)  : MessageKey[] => {
+        const output: MessageKey[] = []
+        for (const key of keys) {
+          if (key in state.transactions) {
+            if (state.transactions[key].in_msg_hash && in_) output.push(state.transactions[key].in_msg_hash)
+            if (out_) output.push(...state.transactions[key].out_msg_keys)
+          }
+        }
+        return output
+      }
     },
     actions: {
       blockKeyGen: (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`,
@@ -65,7 +81,7 @@ export const useMainStore = defineStore('tonexp', {
           delete transaction.account
         }
         if (transaction.in_msg) {
-          mappedTransaction.in_msg_key = this.processMessage(transaction.in_msg)
+          this.processMessage(transaction.in_msg)
           delete transaction.in_msg
         }
         if (transaction.out_msg !== undefined) {
@@ -115,15 +131,17 @@ export const useMainStore = defineStore('tonexp', {
         this.blocks[blockKey] = mappedBlock
         return blockKey
       },
-      async initLoad() {
-        const latestReq = {
-          workchain: -1,
-          with_transactions: true,
-          order: 'DESC',
-          limit: 10
-        }
-        const query = getQueryString(latestReq, false);
+      async mainPageLoad() {
         try {
+          this.latestBlocks = []
+          const latestReq = {
+            workchain: -1,
+            with_transactions: true,
+            order: 'DESC',
+            limit: 10
+          }
+          const query = getQueryString(latestReq, false);
+        
           let { data } = await apiRequest(`/blocks?${query}`, 'GET')
           data = JSONBigInt({useNativeBigInt: true}).parse(data)
           for (const key in data.results) {
@@ -142,6 +160,65 @@ export const useMainStore = defineStore('tonexp', {
         } catch (error) {
           console.log(error)
         }
+      },
+      async initLoad() {
+        const route = useRoute()
+        switch (route.path) {
+          case '/': {
+            await this.mainPageLoad()
+            break
+          } case '/blocks': {
+            if (Object.entries(route.query).length === 0) {
+              await this.updateBlockValues(10, null)
+            } else {
+              const wc = route.query.id && isNumeric(route.query.id) ? Number(route.query.id) : null
+              const sh = route.query.shard  && isNumeric(route.query.id) ? BigInt(route.query.shard.toString()) : null
+              const sq = route.query.seq_no && isNumeric(route.query.seq_no) ? Number(route.query.seq_no) : null
+              if (wc && sh && sq) await this.fetchBlock(wc, sh, sq)
+            }
+            break;
+          }
+        }
+        
+        
+      },
+      async updateBlockValues(limit: number = 10, seqOffset: number | null, order: "ASC" | "DESC" = "DESC") {
+        this.exploredBlocks = []
+        const fullReq: MockType = {
+          workchain: -1,
+          with_transactions: true,
+          order,
+          limit
+        }
+        if (seqOffset) fullReq.after = seqOffset
+        const query = getQueryString(fullReq, false);
+        try {
+          let { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          data = JSONBigInt({useNativeBigInt: true}).parse(data)
+          for (const key in data.results) {
+            const block = this.processBlock(data.results[key])
+            this.exploredBlocks.push(block)
+            this.exploredBlocks.push(...this.blocks[block].shard_keys)
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async fetchBlock(id: number, shard: bigint, seq_no: number) {
+        const fullReq: MockType = {
+          workchain: id? -1 : 0,
+          shard,
+          with_transactions: true,
+          seq_no
+        }
+        const query = getQueryString(fullReq, false);
+        try {
+          let { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          data = JSONBigInt({useNativeBigInt: true}).parse(data)
+          this.processBlock(data.results[0])
+        } catch (error) {
+          return null
+        }
       }
-    },
+    }
   })

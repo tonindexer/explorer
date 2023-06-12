@@ -1,5 +1,5 @@
 <template>
-        <form class="uk-search uk-search-default uk-width-1-1">
+        <form class="uk-search uk-search-default uk-width-1-1" id="overview">
             <a href="" uk-search-icon></a>
             <input class="uk-search-input" type="search" placeholder="Search TON adresses, tokens..." aria-label="Search">
         </form>

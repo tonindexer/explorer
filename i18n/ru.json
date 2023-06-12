@@ -1,9 +1,22 @@
 {
-    "message" : "Просто сообщение",
     "ton" : {
         "workchain" : "Имя цепи",
         "block" : "Блок",
-        "transactions-count": "Транзакции"
+        "transactions-count": "Транзакции",
+        "shard" : "Шард",
+        "shards" : "Шарды",
+        "seq_no" : "Номер блока",
+        "shard_keys" : "Шарды",
+        "transaction_keys": "Транзакции",
+        "transaction_delta": "Дельта баланса",
+        "master_key": "Мастер",
+        "root_hash": "Корневой хэш",
+        "file_hash": "Хэш файла",
+        "scanned_at": "Отсканировано",
+        "id": "Идентификатор",
+        "address": "Адрес",
+        "balance": "Баланс",
+        "type": "Тип операции"
     },
     "general" : {
         "last_blocks": "Последние блоки",
@@ -11,7 +24,13 @@
         "none" : "Нет",
         "language": "Язык",
         "type" : "Тип",
-        "amount" : "Кол-во"
+        "amount" : "Кол-во",
+        "scanned" : "Отслежено",
+        "created" : "Создано",
+        "page" : "Страница",
+        "items" : "Элементов",
+        "in_msg" : "Входящие сообщения",
+        "out_msg" : "Исходящие сообщения"
     },
     "route" : {
         "explorer" : "Главная страница",
@@ -39,5 +58,10 @@
         "parsed_address_count": "Обработанные адреса",
         "parsed_message_count": "Обработанные сообщения",
         "transaction_count": "Транзакции"
+    },
+    "options" : {
+        "exclude_blocks" : "Скрыть пустые блоки",
+        "deep_transactions" : "Транзакции шардов",
+        "deep_messages" : "Сообщения шардов"
     }
 }
