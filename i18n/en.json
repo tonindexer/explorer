@@ -20,7 +20,7 @@
     },
     "general" : {
         "last_blocks": "Last blocks",
-        "end_stats": "Endpoint stats",
+        "end_stats": "Status",
         "none" : "None",
         "language": "Language",
         "type" : "Type",
@@ -30,7 +30,8 @@
         "page" : "Page",
         "items": "Items",
         "in_msg" : "Messages In",
-        "out_msg" : "Messages Out"
+        "out_msg" : "Messages Out",
+        "about": "About project"
     },
     "route" : {
         "explorer" : "Main Page",

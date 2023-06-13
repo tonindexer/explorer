@@ -5,14 +5,6 @@ const store = useMainStore()
 
 <template>
     <div class="uk-flex uk-flex-column">
-        <div class="uk-flex uk-flex-row table-header">
-            <div class="uk-width-1-2 uk-text-left" style="align-self: center;">
-            {{ $t('general.type') }}
-            </div>
-            <div class="uk-width-1-2 uk-text-right" style="align-self: center; margin-left:15px;">
-            {{ $t('general.amount') }}
-            </div>
-        </div>
         <template v-for="(value, key) in store.stats">
             <hr style="margin: 0.7rem 0">
             <div class="uk-text-medium uk-flex" 
