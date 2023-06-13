@@ -49,7 +49,7 @@ onMounted(() => routeChecker(route.query))
             <div class="uk-child-width-auto uk-text-right">
                 <label><input v-model="excludeMC" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_masterchain') }}</label>
             </div>
-            <LazyTransactionsTable :keys="store.exploredTransactions" :update="true" :default-length="20" :item-selector="true" :hidden="false" :line-link="true" :exclude-m-c="excludeMC"/>
+            <LazyTransactionsTable :keys="store.exploredTransactions" :update="true" :default-length="20" :item-selector="true" :hidden="false" :exclude-m-c="excludeMC"/>
         </div>
         <div v-else-if="hash" class="uk-flex uk-flex-column">
             <div class="uk-flex uk-flex-bottom">

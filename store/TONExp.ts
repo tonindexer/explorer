@@ -235,7 +235,7 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async updateTransactions(limit: number, seqOffset: number | null, excludeWC: boolean = false, order: "ASC" | "DESC" = "DESC") { 
+      async updateTransactions(limit: number, seqOffset: bigint | null, excludeWC: boolean = false, order: "ASC" | "DESC" = "DESC") { 
         this.exploredTransactions = []
         const fullReq: MockType = {
           order, 
@@ -268,7 +268,7 @@ export const useMainStore = defineStore('tonexp', {
           data = JSONBigInt({useNativeBigInt: true}).parse(data)
           this.processBlock(data.results[0])
         } catch (error) {
-          return null
+          console.log(error)
         }
       }
     }

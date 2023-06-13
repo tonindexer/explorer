@@ -15,11 +15,39 @@ const props = defineProps<TransactionTable>()
 const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
+const firstMC: NullableBigRef = ref(0n)
+const lastMC: NullableBigRef = ref(0n)
+
+const updateValues = async (next: boolean = true) => {
+    if (!props.update) return
+    if (props.keys.length === 0 || pageNum.value === 0)
+        await store.updateTransactions(itemCount.value, null, props.excludeMC)
+    else {
+        await store.updateTransactions(itemCount.value, next ? lastMC.value : firstMC.value, props.excludeMC)
+    }
+    firstMC.value = BigInt(store.transactions[props.keys[0]].created_lt)
+    lastMC.value = BigInt(store.transactions[props.keys[props.keys.length - 1]].created_lt)
+}
 
 watch(() => props.excludeMC, () => {
     store.updateTransactions(itemCount.value, null, props.excludeMC)
     pageNum.value = 0
 })
+
+watch(pageNum, async() => {
+    if (props.update) { 
+        await updateValues() 
+    }
+}, {deep : true}) 
+
+watch(itemCount, async() => {
+    if (itemCount.value > props.keys.length)
+        await updateValues(false)
+    else lastMC.value = BigInt(store.transactions[props.keys[itemCount.value - 1]].created_lt)
+    
+}, {deep : true})
+
+onMounted(() => updateValues())
 </script>
 
 <template>

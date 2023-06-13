@@ -15,7 +15,7 @@
         "scanned_at": "Scanned",
         "id": "ID",
         "address": "Address",
-        "balace": "Balance",
+        "balance": "Balance",
         "type": "Operation type"
     },
     "general" : {

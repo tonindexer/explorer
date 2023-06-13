@@ -54,7 +54,7 @@ onMounted(() => routeChecker(route.query))
             <div class="uk-child-width-auto uk-text-right">
                 <label><input v-model="excludeEmpty" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_blocks') }}</label>
             </div>
-            <LazyBlocksTable :keys="filteredKeys" :update="true" :default-length="10" :item-selector="true" :hidden="false" :line-link="true"/>
+            <LazyBlocksTable :keys="filteredKeys" :update="true" :default-length="10" :item-selector="true" :hidden="false" :line-link="true" :exclude-last="excludeEmpty"/>
         </div>
         <div v-else-if="(workchain || workchain === 0)&& shard && seq_no" class="uk-flex uk-flex-column">
             <div class="uk-flex uk-flex-bottom">

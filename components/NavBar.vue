@@ -8,6 +8,7 @@ const route = useRoute()
             <div class="uk-flex" style="align-items: center;">
                 <NuxtLink :to="'/'" uk-icon="icon: grid" class="white_svg link"></NuxtLink>
                 <NuxtLink :to="'/blocks'" class="link" :class="{ 'active' : route.path === '/blocks'}"> {{ $t('route.blocks') }}</NuxtLink>
+                <NuxtLink :to="'/transactions'" class="link" :class="{ 'active' : route.path === '/transactions'}"> {{ $t('route.transactions') }}</NuxtLink>
                 <NuxtLink :to="'https://anton.tools/'" class="link"> {{ $t('general.about') }} </NuxtLink>
             </div>
             <AtomsLangSwitcher/>
