@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface Props {
     block: Block
+    linkBlock?: boolean
 }
 
 const props = defineProps<Props>()
@@ -8,10 +9,17 @@ const props = defineProps<Props>()
 </script>
 
 <template>
-    <tr @click="navigateTo(`/blocks?id=${block.workchain}&shard=${block.shard}&seq_no=${block.seq_no}#overview`)" style="cursor: pointer;">
+    <tr>
         <td>{{ chainTitle(block.workchain) }}</td>
-        <td :uk-tooltip="`title: ${block.shard}; offset: -10`">{{ truncString(block.shard.toString(), 5, 2) }}</td>
-        <td>{{ block.seq_no}}</td>
+        <td>{{ block.shard.toString() }}</td>
+        <td v-if="linkBlock" >
+            <NuxtLink :to="{ path: 'blocks', query: { id: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }, hash: '#overview'}">
+                {{ block.seq_no}}
+            </NuxtLink>
+        </td>
+        <td v-else>
+            {{ block.seq_no}}
+        </td>
         <td>{{ block.transaction_keys.length }}</td>
         <AtomsTableDateCell :date-time="block.scanned_at"/>
     </tr>

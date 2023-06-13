@@ -17,7 +17,7 @@ const itemCount = ref(props.defaultLength)
 </script>
 
 <template>
-    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-hover uk-table-middle uk-margin-remove-top">
+    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
         <thead>
             <tr>
                 <th class="uk-width-1-6">{{ $t('ton.id')}}</th>
@@ -51,9 +51,3 @@ const itemCount = ref(props.defaultLength)
             />            
         </div>
 </template>
-
-<style lang="scss" scoped>
-tbody > tr:hover {
-        background-color: #f3f3ff !important;
-}
-</style>

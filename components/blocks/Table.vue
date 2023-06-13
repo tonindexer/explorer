@@ -7,6 +7,7 @@ interface BlockTable {
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
+    lineLink: boolean
 }
 
 const props = defineProps<BlockTable>()
@@ -48,7 +49,7 @@ watch(itemCount, async() => {
 </script>
 
 <template>
-    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-hover uk-table-middle uk-margin-remove-top">
+    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
         <thead>
             <tr>
                 <th class="uk-width-1-6">{{ $t('ton.workchain')}}</th>
@@ -60,7 +61,13 @@ watch(itemCount, async() => {
         </thead>
         <tbody>
             <template v-for="block in update ? props.keys.slice(0, itemCount) : props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <BlocksTableLine :block="store.blocks[block]"/>
+                <BlocksTableLine 
+                    v-if="lineLink"
+                    :class="{'hover' : lineLink}" 
+                    :block="store.blocks[block]" 
+                    @click="navigateTo(`/blocks?id=${store.blocks[block].workchain}&shard=${store.blocks[block].shard}&seq_no=${store.blocks[block].seq_no}#overview`)" 
+                    style="cursor: pointer;"/>
+                <BlocksTableLine v-else :block="store.blocks[block]" :link-block="true"/>
             </template>
         </tbody>
     </table>
@@ -83,9 +90,3 @@ watch(itemCount, async() => {
             />
         </div>
 </template>
-
-<style lang="scss" scoped>
-tbody > tr:hover {
-        background-color: #f3f3ff !important;
-}
-</style>

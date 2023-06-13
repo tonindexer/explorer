@@ -2,6 +2,7 @@
 
 $global-link-color: #666;
 $global-font-family: 'Fira Mono' , sans-serif;
+$hover-color: #f3f3ff;
 
 @import "uikit/src/scss/variables-theme.scss";
 @import "uikit/src/scss/mixins-theme.scss";
@@ -25,4 +26,8 @@ $global-font-family: 'Fira Mono' , sans-serif;
       stroke: white;
       fill: white;
   }
+}
+
+.hover:hover {
+  background-color: $hover-color;
 }

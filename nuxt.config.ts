@@ -15,5 +15,27 @@ export default defineNuxtConfig({
         'defineStore', 
         ['defineStore', 'definePiniaStore'],
       ],
+    },
+    i18n: {
+      strategy: 'no_prefix',
+      defaultLocale: 'en',
+      detectBrowserLanguage: {
+        useCookie: true,
+        cookieKey: 'i18n_redirected',
+        redirectOn: 'root'
+      },
+      locales : [
+        {
+          code: 'en',
+          iso: 'en-US',
+          file: 'en.json'
+        },
+        {
+          code: 'ru',
+          iso: 'ru-RU',
+          file: 'ru.json'
+        }
+      ],
+      langDir: 'i18n'
     }
 })

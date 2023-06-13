@@ -20,7 +20,7 @@
     },
     "general" : {
         "last_blocks": "Последние блоки",
-        "end_stats": "Статистика эндпоинтов",
+        "end_stats": "Статус",
         "none" : "Нет",
         "language": "Язык",
         "type" : "Тип",
@@ -46,18 +46,18 @@
         "account" : "Аккаунт"
     },
     "stats" : {
-        "account_count": "Аккаунты",
-        "address_count": "Адреса",
-        "contract_interface_count": "Контракты интерфейсов",
-        "contract_operation_count": "Контракты операций",
+        "account_count": "Аккаунтов",
+        "address_count": "Адресов",
+        "contract_interface_count": "Контрактов интерфейсов",
+        "contract_operation_count": "Контрактов операций",
         "first_masterchain_block": "Первый MasterChain",
         "last_masterchain_block": "Последний MasterChain",
         "masterchain_block_count": "Всего MasterChain",
-        "message_count": "Сообщения",
-        "parsed_account_count": "Обработанные аккаунты",
-        "parsed_address_count": "Обработанные адреса",
-        "parsed_message_count": "Обработанные сообщения",
-        "transaction_count": "Транзакции"
+        "message_count": "Сообщений",
+        "parsed_account_count": "Обработанных аккаунтов",
+        "parsed_address_count": "Обработанных адресов",
+        "parsed_message_count": "Обработанных сообщений",
+        "transaction_count": "Транзакций"
     },
     "options" : {
         "exclude_blocks" : "Скрыть пустые блоки",
