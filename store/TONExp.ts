@@ -217,7 +217,7 @@ export const useMainStore = defineStore('tonexp', {
           data = JSONBigInt({useNativeBigInt: true}).parse(data)
           this.processBlock(data.results[0])
         } catch (error) {
-          return null
+          console.log(error)
         }
       }
     }
