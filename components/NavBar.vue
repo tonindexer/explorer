@@ -1,16 +1,18 @@
+<script setup lang="ts">
+const route = useRoute()
+</script>
+
 <template>
-    <div class="uk-background-primary header">
-        <div class="nav-tabs uk-flex uk-flex-center">
-            <button class="uk-button uk-button-default uk-background-muted navtab" @click.prevent.stop="navigateTo('/')">
-                {{ $t('route.explorer' )}}
-            </button>
-            <button class="uk-button uk-button-default uk-background-muted navtab" @click.prevent.stop="navigateTo('/blocks')">
-                {{ $t('route.blocks' )}}
-            </button>
+    <nav class="uk-background-primary header">
+        <div class="uk-flex uk-container uk-width-3-4 uk-margin-auto" style="justify-content: space-between;">
+            <div class="uk-flex" style="align-items: center;">
+                <NuxtLink :to="'/'" uk-icon="icon: grid" class="white_svg link"></NuxtLink>
+                <NuxtLink :to="'/blocks'" class="link" :class="{ 'active' : route.path === '/blocks'}"> {{ $t('route.blocks') }}</NuxtLink>
+                <NuxtLink :to="'https://anton.tools/'" class="link"> {{ $t('general.about') }} </NuxtLink>
+            </div>
             <AtomsLangSwitcher/>
-            <div class="uk-flex-inline uk-background-muted navtab">About project</div>
         </div>
-    </div>
+    </nav>
 </template>
 
 
@@ -25,16 +27,18 @@
             margin: 0 1rem;
         }
     }
-    button {
-        font-size: 16px;
-        font-weight: normal;
-        line-height: 1.5;
-        -webkit-text-size-adjust: 100%;
-        background: #fff;
-        color: #666;
-        text-transform: none;
+    .link {
+        margin-right: 15px;
+        line-height: normal;
+        &:not(.active) {
+            color: #eee;
+        }
+        &.active {
+            color: white;
+            text-decoration: underline
+        }
         &:hover {
-            background-color: #f8f8f8;
+            color: white;
         }
     }
 }
