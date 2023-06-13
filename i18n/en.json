@@ -61,6 +61,7 @@
     },
     "options" : {
         "exclude_blocks" : "Exclude empty blocks",
+        "exclude_masterchain" : "Exclude MasterChain transactions",
         "deep_transactions" : "Shard transactions",
         "deep_messages" : "Shard messages"
     }

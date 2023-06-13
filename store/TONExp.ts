@@ -1,17 +1,22 @@
 import JSONBigInt from 'json-bigint'
 
 export const useMainStore = defineStore('tonexp', {
-    // a function that returns a fresh state
     state: () => ({
+      // Total counters per type - returned with the request for latest info
       totalBlocks: 0 as number,
+      totalTransactions: 0 as number,
+      // Maps to store blocks / messages / transactions / accounts efficiently
       blocks: {} as BlockMap,
       messages: {} as MessageMap,
       transactions: {} as TransactionMap,
       accounts: {} as AccountMap,
-      latestBlocks: [] as Array<BlockKey>,
-      latestTransactions: [] as Array<TransactionKey>,
+      // Arrays with keys to fetch the correct info from maps
+      latestBlocks: [] as BlockKey[],
+      latestTransactions: [] as TransactionKey[],
       exploredBlocks: [] as BlockKey[],
-      stats : {} as Statistics,
+      exploredTransactions: [] as TransactionKey[],
+      // Statistics.
+      stats : {} as Statistics
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
@@ -192,12 +197,17 @@ export const useMainStore = defineStore('tonexp', {
             if (Object.entries(route.query).length === 0) {
               await this.updateBlockValues(10, null)
             } else {
-              const wc = route.query.id && isNumeric(route.query.id) ? Number(route.query.id) : null
-              const sh = route.query.shard  && isNumeric(route.query.id) ? BigInt(route.query.shard.toString()) : null
+              const wc = route.query.workchain && isNumeric(route.query.workchain) ? Number(route.query.workchain) : null
+              const sh = route.query.shard  && isNumeric(route.query.shard) ? BigInt(route.query.shard.toString()) : null
               const sq = route.query.seq_no && isNumeric(route.query.seq_no) ? Number(route.query.seq_no) : null
               if (wc && sh && sq) await this.fetchBlock(wc, sh, sq)
             }
             break;
+          }
+          case '/transactions': {
+            if (Object.entries(route.query).length === 0) {
+              await this.updateTransactions(20, null)
+            }
           }
         }
         
@@ -212,7 +222,7 @@ export const useMainStore = defineStore('tonexp', {
           limit
         }
         if (seqOffset) fullReq.after = seqOffset
-        const query = getQueryString(fullReq, false);
+        const query = getQueryString(fullReq, false)
         try {
           let { data } = await apiRequest(`/blocks?${query}`, 'GET')
           data = JSONBigInt({useNativeBigInt: true}).parse(data)
@@ -225,9 +235,29 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async fetchBlock(id: number, shard: bigint, seq_no: number) {
+      async updateTransactions(limit: number, seqOffset: number | null, excludeWC: boolean = false, order: "ASC" | "DESC" = "DESC") { 
+        this.exploredTransactions = []
         const fullReq: MockType = {
-          workchain: id? -1 : 0,
+          order, 
+          limit
+        }
+        if (seqOffset) fullReq.after = seqOffset
+        if (excludeWC) fullReq.workchain = 0
+        const query = getQueryString(fullReq, false)
+        try {
+          let { data } = await apiRequest(`/transactions?${query}`, 'GET')
+          data = JSONBigInt({useNativeBigInt: true}).parse(data)
+          for (const key in data.results) {
+            const trn = this.processTransaction(data.results[key])
+            this.exploredTransactions.push(trn)
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async fetchBlock(workchain: number, shard: bigint, seq_no: number) {
+        const fullReq: MockType = {
+          workchain: workchain? -1 : 0,
           shard,
           with_transactions: true,
           seq_no

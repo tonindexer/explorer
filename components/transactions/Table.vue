@@ -7,6 +7,7 @@ interface TransactionTable {
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
+    excludeMC?: boolean
 }
 
 const props = defineProps<TransactionTable>()
@@ -14,6 +15,11 @@ const props = defineProps<TransactionTable>()
 const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
+
+watch(() => props.excludeMC, () => {
+    store.updateTransactions(itemCount.value, null, props.excludeMC)
+    pageNum.value = 0
+})
 </script>
 
 <template>

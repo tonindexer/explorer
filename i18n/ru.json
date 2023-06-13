@@ -61,6 +61,7 @@
     },
     "options" : {
         "exclude_blocks" : "Скрыть пустые блоки",
+        "exclude_masterchain" : "Скрыть транзакции в MasterChain",
         "deep_transactions" : "Транзакции шардов",
         "deep_messages" : "Сообщения шардов"
     }
