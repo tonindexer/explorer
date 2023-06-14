@@ -208,7 +208,11 @@ export const useMainStore = defineStore('tonexp', {
           case '/transactions': {
             if (Object.entries(route.query).length === 0) {
               await this.updateTransactions(20, null)
+            } else {
+              const hash = route.hash && toBase64Rfc(route.hash)
+              if (hash) await this.fetchTransaction(hash)
             }
+            break;
           }
         }
         
@@ -244,6 +248,8 @@ export const useMainStore = defineStore('tonexp', {
           order, 
           limit
         }
+        // https://anton.tools/api/v0/transactions?hash=l0ohtwtr1bl75zjfmyob5byjpzeeceoeb1%2Fcrke007w%3D
+        // https://anton.tools/api/v0/transactions?hash=l0OHtWTR1BL75ZJfMYob5ByJPZEeCEOEB1%2FCrKe007w%3D&order=DESC&limit=10
         if (seqOffset) fullReq.after = seqOffset
         if (excludeWC) fullReq.workchain = 0
         const query = getQueryString(fullReq, false)
@@ -272,6 +278,20 @@ export const useMainStore = defineStore('tonexp', {
           const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           this.processBlock(parsed.results[0])
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async fetchTransaction(hash: string) {
+        const fullReq: MockType = {
+          hash
+        }
+        const query = getQueryString(fullReq, true);
+        try {
+          const { data } = await apiRequest(`/transactions?${query}`, 'GET')
+          const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          this.processTransaction(parsed.results[0])
         } catch (error) {
           console.log(error)
         }

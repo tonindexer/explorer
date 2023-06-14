@@ -12,7 +12,11 @@ const balance = computed(() => {
 
 <template>
     <tr>
-        <td> {{ truncString(trn.hash, 4) }}</td>
+        <td> 
+            <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
+                {{ truncString(trn.hash, 4) }}
+            </NuxtLink>
+        </td>
         <td > {{ truncString(trn.address.hex, 4) }}</td>
         <td class="uk-text-right"> {{ balance ? `${fullTON(balance)}💎` : $t('general.none')}}</td>
         <AtomsTableDateCell :date-time="trn.created_at"/>

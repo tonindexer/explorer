@@ -12,24 +12,16 @@ const excludeMC = ref(false)
 const store = useMainStore()
 
 function routeChecker(newQuery: LocationQuery) {
-    hash.value = newQuery.hash? newQuery.hash.toString() : null;
+    hash.value = newQuery.hash? toBase64Rfc(newQuery.hash.toString()) : null;
 
     if (hash.value) {
         isGeneral.value = false;
-        error.value = false;
         isLoading.value = false;
         return;
     }
-
-    if (!hash.value) {
-        isGeneral.value = true;
-        error.value = false;
-        isLoading.value = false;
-        return;
-    }
-
+    isGeneral.value = true;
     isLoading.value = false;
-    error.value = true;
+    return;
 }
 
 watch(() => route.query, (newQuery) => routeChecker(newQuery))
@@ -57,10 +49,10 @@ onMounted(() => routeChecker(route.query))
                 {{ $t('route.transaction')}}
                 </h1>
                 <h2 class="uk-inline uk-margin-remove-vertical uk-text-primary uk-margin-left uk-text-bold" style="line-height: 1.35;">
-                    {{ hash }}
+                    {{ truncString(hash, 5) }}
                 </h2>
             </div>
-            <!-- <BlocksBlockInfo :shard="shard" :seq_no="seq_no" :workchain="workchain"/> -->
+            <TransactionsTransactionInfo :hash="hash"/>
         </div>
     </template>
 </template>

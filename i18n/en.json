@@ -9,6 +9,7 @@
         "shard_keys" : "Shards",
         "transaction_keys": "Transactions",
         "transaction_delta": "Balance delta",
+        "delta": "Balance delta",
         "master_key": "Master",
         "root_hash": "Root hash",
         "file_hash": "File hash",
@@ -16,7 +17,14 @@
         "id": "ID",
         "address": "Address",
         "balance": "Balance",
-        "type": "Operation type"
+        "type": "Operation type",
+        "hash" : "Hash (ID)",
+        "account_key": "Account key",
+        "prev_tx_hash": "Prev tx hash",
+        "total_fees": "Total fees",
+        "orig_status": "Orig status",
+        "end_status": "End status",
+        "created_at": "Created"
     },
     "general" : {
         "last_blocks": "Last blocks",
@@ -31,7 +39,7 @@
         "items": "Items",
         "in_msg" : "Messages In",
         "out_msg" : "Messages Out",
-        "about": "About project"
+        "about": "About"
     },
     "route" : {
         "explorer" : "Main Page",
