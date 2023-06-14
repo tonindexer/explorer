@@ -54,12 +54,3 @@ function itemPreprocess(index: string, item: any) {
     </table>
         
 </template>
-
-<style lang="scss">
-.arrow {
-    * {
-        color: white;
-        fill: white;
-    }
-}
-</style>

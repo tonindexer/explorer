@@ -18,8 +18,10 @@ const deepMsgKeys = ref(false)
 const key = computed(() => store.blockKeyGen(props.workchain, props.shard, props.seq_no))
 const block = computed(() => store.blocks[key.value] ?? null)
 const trKeys = computed(() => (deepTrKeys.value || deepMsgKeys.value) ? store.deepTransactionKeys(key.value) : block.value?.transaction_keys ?? [])
-const inMessageKeys = computed(() => store.messageKeys(trKeys.value, true, false))
-const outMessageKeys = computed(() => store.messageKeys(trKeys.value, false, true))
+const inMessageKeys = computed(() => store.getMessageKeys(trKeys.value, true, false))
+const outMessageKeys = computed(() => store.getMessageKeys(trKeys.value, false, true))
+const loadedAccountKeys = computed(() => store.getAccountKeys([...inMessageKeys.value, ...outMessageKeys.value]))
+const unloadedAccountKeys = computed(() => store.getAccountKeys([...inMessageKeys.value, ...outMessageKeys.value], false))
 
 const reloadInfo = async() => {
     error.value = false
@@ -41,9 +43,26 @@ watch(props, async() => await reloadInfo())
     <BlocksPropsTable v-if="block" :block="block"/>
     <div>
         <ul v-if="block?.transaction_keys.length" class="uk-child-width-expand uk-text-medium" uk-tab>
-            <li :class="{'uk-active' : (route.hash === '#transactions' || route.hash === '#overview')}"><NuxtLink :to="{ hash: '#transactions', query: route.query}" @click="deepMsgKeys = false">{{ $t('route.transactions') }}</NuxtLink></li>
-            <li v-if="[...inMessageKeys, ...outMessageKeys].length > 0" :class="{'uk-active' : (route.hash === '#messages')}"><NuxtLink :to="{ hash: '#messages', query: route.query}" @click="deepTrKeys = false">{{ $t('route.messages') }}</NuxtLink></li>
-            <li v-if="block?.shard_keys.length > 0" :class="{'uk-active' : (route.hash === '#shards')}"><NuxtLink :to="{ hash: '#shards', query: route.query}">{{ $t('ton.shards') }}</NuxtLink></li>
+            <li :class="{'uk-active' : (route.hash === '#transactions' || route.hash === '#overview')}">
+                <NuxtLink :to="{ hash: '#transactions', query: route.query}" @click="deepMsgKeys = false">
+                    {{ $t('route.transactions') }}
+                </NuxtLink>
+            </li>
+            <li v-if="inMessageKeys.length + outMessageKeys.length > 0" :class="{'uk-active' : (route.hash === '#messages')}">
+                <NuxtLink :to="{ hash: '#messages', query: route.query}" @click="deepTrKeys = false">
+                    {{ $t('route.messages') }}
+                </NuxtLink>
+            </li>
+            <li v-if="loadedAccountKeys.length + unloadedAccountKeys.length > 0" :class="{'uk-active' : (route.hash === '#accounts')}">
+                <NuxtLink :to="{ hash: '#accounts', query: route.query}">
+                    {{ $t('route.accounts') }}
+                </NuxtLink>
+            </li>
+            <li v-if="block.shard_keys.length > 0" :class="{'uk-active' : (route.hash === '#shards')}">
+                <NuxtLink :to="{ hash: '#shards', query: route.query}">
+                    {{ $t('ton.shards') }}
+                </NuxtLink>
+            </li>
         </ul>
     </div>
     <div v-if="(route.hash === '#transactions' || route.hash === '#overview')&& block?.transaction_keys.length" id="transactions">
@@ -61,7 +80,13 @@ watch(props, async() => await reloadInfo())
         <h3 v-if="outMessageKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.out_msg') }}</h3>
         <MessagesTable :item-selector="false" :default-length="5" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
     </div>
-    <div v-if="(route.hash === '#shards' )&& block?.shard_keys" id="shards">
-        <BlocksTable :item-selector="false" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block?.shard_keys.length === 0" :line-link="false" :exclude-last="false" :exclude-empty="false"/>
+    <div v-if="(route.hash === '#accounts' )&& loadedAccountKeys.length + unloadedAccountKeys.length > 0" id="accounts">
+        <h3 v-if="loadedAccountKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.loaded_accs') }}</h3>
+        <AccountsTable :default-length="5" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false"/>
+        <h3 v-if="unloadedAccountKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.unloaded_accs') }}</h3>
+        <AccountsUnloadedTable :default-length="5" :keys="unloadedAccountKeys" :hidden="unloadedAccountKeys.length === 0"/>
+    </div>
+    <div v-if="(route.hash === '#shards' )&& block.shard_keys" id="shards">
+        <BlocksTable :item-selector="false" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block.shard_keys.length === 0" :line-link="false" :exclude-empty="false"/>
     </div>
 </template>

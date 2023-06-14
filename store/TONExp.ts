@@ -15,6 +15,7 @@ export const useMainStore = defineStore('tonexp', {
       latestTransactions: [] as TransactionKey[],
       exploredBlocks: [] as BlockKey[],
       exploredTransactions: [] as TransactionKey[],
+      exploredAccounts: [] as AccountKey[],
       // Statistics.
       stats : {} as Statistics
     }),
@@ -28,7 +29,7 @@ export const useMainStore = defineStore('tonexp', {
         state.blocks[key].shard_keys.forEach((shrd: BlockKey) => output.push(...state.blocks[shrd].transaction_keys))
         return output
       },
-      messageKeys: (state) => (keys: TransactionKey[], in_: boolean, out_: boolean)  : MessageKey[] => {
+      getMessageKeys: (state) => (keys: TransactionKey[], in_: boolean, out_: boolean)  : MessageKey[] => {
         const output: MessageKey[] = []
         for (const key of keys) {
           if (key in state.transactions) {
@@ -37,6 +38,18 @@ export const useMainStore = defineStore('tonexp', {
           }
         }
         return output
+      },
+      getAccountKeys: (state) => (keys: MessageKey[], loaded_: boolean = true) => {
+        const output: AccountKey[] = []
+        for (const key of keys) {
+          if (key in state.messages) {
+            const dst = state.messages[key].dst_address?.hex
+            const src = state.messages[key].src_address?.hex
+            if (dst && ((loaded_ && dst in state.accounts) || (!loaded_ && !(dst in state.accounts)))) output.push(dst)
+            if (src && ((loaded_ && src in state.accounts) || (!loaded_ && !(src in state.accounts)))) output.push(src)
+          }
+        }
+        return [...new Set(output)]
       }
     },
     actions: {
@@ -209,9 +222,15 @@ export const useMainStore = defineStore('tonexp', {
             if (Object.entries(route.query).length === 0) {
               await this.updateTransactions(20, null)
             } else {
-              const hash = route.hash && toBase64Rfc(route.hash)
+              const hash = route.query.hash && toBase64Rfc(route.query.hash.toString())
               if (hash) await this.fetchTransaction(hash)
             }
+            break;
+          }
+          case '/accounts': {
+            if (Object.entries(route.query).length === 0) {
+              await this.updateAccounts(20, null)
+            } 
             break;
           }
         }
@@ -248,8 +267,6 @@ export const useMainStore = defineStore('tonexp', {
           order, 
           limit
         }
-        // https://anton.tools/api/v0/transactions?hash=l0ohtwtr1bl75zjfmyob5byjpzeeceoeb1%2Fcrke007w%3D
-        // https://anton.tools/api/v0/transactions?hash=l0OHtWTR1BL75ZJfMYob5ByJPZEeCEOEB1%2FCrKe007w%3D&order=DESC&limit=10
         if (seqOffset) fullReq.after = seqOffset
         if (excludeWC) fullReq.workchain = 0
         const query = getQueryString(fullReq, false)
@@ -260,6 +277,26 @@ export const useMainStore = defineStore('tonexp', {
           for (const key in parsed.results) {
             const trn = this.processTransaction(parsed.results[key])
             this.exploredTransactions.push(trn)
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async updateAccounts(limit: number, seqOffset: bigint | null, order: "ASC" | "DESC" = "DESC") { 
+        this.exploredAccounts = []
+        const fullReq: MockType = {
+          order, 
+          limit
+        }
+        if (seqOffset) fullReq.after = seqOffset
+        const query = getQueryString(fullReq, false)
+        try {
+          const { data } = await apiRequest(`/accounts?${query}`, 'GET')
+          const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          for (const key in parsed.results) {
+            const acc = this.processAccount(parsed.results[key])
+            this.exploredAccounts.push(acc)
           }
         } catch (error) {
           console.log(error)
@@ -292,6 +329,21 @@ export const useMainStore = defineStore('tonexp', {
           const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           this.processTransaction(parsed.results[0])
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async fetchAccount(hex: string) {
+        const fullReq: MockType = {
+          address: hex,
+          latest: true
+        }
+        const query = getQueryString(fullReq, true);
+        try {
+          const { data } = await apiRequest(`/accounts?${query}`, 'GET')
+          const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          this.processAccount(parsed.results[0])
         } catch (error) {
           console.log(error)
         }

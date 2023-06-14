@@ -14,17 +14,26 @@
         "root_hash": "Root hash",
         "file_hash": "File hash",
         "scanned_at": "Scanned",
+
         "id": "ID",
         "address": "Address",
         "balance": "Balance",
         "type": "Operation type",
+
         "hash" : "Hash (ID)",
         "account_key": "Account key",
         "prev_tx_hash": "Prev tx hash",
         "total_fees": "Total fees",
         "orig_status": "Orig status",
         "end_status": "End status",
-        "created_at": "Created"
+        "created_at": "Created",
+
+        "last_tx_hash": "Last tx",
+        "code": "Code",
+        "code_hash": "Code hash",
+        "data": "Data",
+        "data_hash": "Data hash",
+        "updated_at": "Updated"
     },
     "general" : {
         "last_blocks": "Last blocks",
@@ -39,7 +48,10 @@
         "items": "Items",
         "in_msg" : "Messages In",
         "out_msg" : "Messages Out",
-        "about": "About"
+        "about": "About",
+        "updated": "Updated",
+        "loaded_accs": "Loaded accounts",
+        "unloaded_accs": "Unloaded accounts"
     },
     "route" : {
         "explorer" : "Main Page",
