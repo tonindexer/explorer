@@ -35,6 +35,11 @@ declare global {
         transactions?: TransactionAPI[] | null
     }
 
+    type BlockAPIData = {
+        total: number
+        results: BlockAPI[]
+    }
+
     type BlockKey = `${number}:${bigint}:${number}`
 
     type BlockMap = {

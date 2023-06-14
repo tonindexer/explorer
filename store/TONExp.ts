@@ -1,4 +1,4 @@
-import JSONBigInt from 'json-bigint'
+import { parseJson } from '@ton.js/json-parser';
 
 export const useMainStore = defineStore('tonexp', {
     // a function that returns a fresh state
@@ -140,12 +140,13 @@ export const useMainStore = defineStore('tonexp', {
             order: 'DESC',
             limit: 10
           }
-          const query = getQueryString(latestReq, false);
+          const query = getQueryString(latestReq, false)
         
-          let { data } = await apiRequest(`/blocks?${query}`, 'GET')
-          data = JSONBigInt({useNativeBigInt: true}).parse(data)
-          for (const key in data.results) {
-            const block = this.processBlock(data.results[key])
+          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          for (const key in parsed.results) {
+            const block = this.processBlock(parsed.results[key])
             this.latestBlocks.push(block)
           }
         } catch (error) {
@@ -193,10 +194,12 @@ export const useMainStore = defineStore('tonexp', {
         if (seqOffset) fullReq.after = seqOffset
         const query = getQueryString(fullReq, false);
         try {
-          let { data } = await apiRequest(`/blocks?${query}`, 'GET')
-          data = JSONBigInt({useNativeBigInt: true}).parse(data)
-          for (const key in data.results) {
-            const block = this.processBlock(data.results[key])
+          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+
+          for (const key in parsed.results) {
+            const block = this.processBlock(parsed.results[key])
             this.exploredBlocks.push(block)
             this.exploredBlocks.push(...this.blocks[block].shard_keys)
           }
@@ -213,9 +216,10 @@ export const useMainStore = defineStore('tonexp', {
         }
         const query = getQueryString(fullReq, false);
         try {
-          let { data } = await apiRequest(`/blocks?${query}`, 'GET')
-          data = JSONBigInt({useNativeBigInt: true}).parse(data)
-          this.processBlock(data.results[0])
+          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
+          const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          this.processBlock(parsed.results[0])
         } catch (error) {
           console.log(error)
         }

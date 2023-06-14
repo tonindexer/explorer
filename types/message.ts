@@ -61,6 +61,11 @@ declare global {
         src_state?: Account | null // '?' for mapping the interface
         dst_state?: Account | null // '?' for mapping the interface
     }
+
+    type MessageAPIData = {
+        total: number
+        results: MessageAPI[]
+    }
     
     type MessageKey = string
 

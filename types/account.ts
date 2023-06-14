@@ -72,7 +72,10 @@ declare global {
 
         updated_at: string
     }
-
+    type AccountAPIData = {
+        total: number
+        results: Account[]
+    }
     type AccountKey = string
 
     type AccountMap = {
