@@ -11,23 +11,20 @@ const error = ref(false)
 const store = useMainStore()
 const props = defineProps<Props>()
 const route = useRoute()
-const block: Ref<Block | null> = ref(null)
 const deepTrKeys = ref(false)
 const deepMsgKeys = ref(false)
 
 
 const key = computed(() => store.blockKeyGen(props.workchain, props.shard, props.seq_no))
+const block = computed(() => store.blocks[key.value] ?? null)
 const trKeys = computed(() => (deepTrKeys.value || deepMsgKeys.value) ? store.deepTransactionKeys(key.value) : block.value?.transaction_keys ?? [])
 const inMessageKeys = computed(() => store.messageKeys(trKeys.value, true, false))
 const outMessageKeys = computed(() => store.messageKeys(trKeys.value, false, true))
 
 const reloadInfo = async() => {
     error.value = false
-    if (key.value in store.blocks) {
-        block.value = store.blocks[key.value]
-    } else {
+    if (!block.value) {
         await store.fetchBlock(props.workchain, props.shard, props.seq_no)
-        block.value = store.blocks[key.value] ?? null
     }
     if (!block.value) {
         error.value = true

@@ -11,6 +11,24 @@ type Method =
   | 'link' | 'LINK'
   | 'unlink' | 'UNLINK'
 
+export const bigintFields = {
+  shard: true, 
+  balance: true, 
+  jetton_balance: true, 
+  last_tx_lt: true,
+  src_shard: true,
+  dst_shard: true,
+  src_tx_lt: true,
+  dst_tx_lt: true,
+  in_amount: true,
+  out_amount: true,
+  total_fees: true,
+  amount: true,
+  ihr_fee: true,
+  fwd_fee: true,
+  created_lt: true,
+}
+
 export function apiRequest (url: string, method: Method, headers = {}, baseURL? : string, data?: Object): any  {
     const runtimeConfig = useRuntimeConfig()
     const request = (resolve : any, reject: any) => {

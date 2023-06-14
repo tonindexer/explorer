@@ -46,6 +46,11 @@ declare global {
         out_msg?: MessageAPI[] | null
     }
 
+    type TransactionAPIData = {
+        total: number
+        results: TransactionAPI[]
+    }
+    
     type TransactionKey = string
 
     type TransactionMap = {
