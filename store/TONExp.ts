@@ -167,11 +167,11 @@ export const useMainStore = defineStore('tonexp', {
             limit: 10
           }
           const query = getQueryString(latestReq, false);
-        
-          let { data } = await apiRequest(`/transactions?${query}`, 'GET')
-          data = JSONBigInt({useNativeBigInt: true}).parse(data)
-          for (const key in data.results) {
-            const trn = this.processTransaction(data.results[key])
+          const { data } = await apiRequest(`/transactions?${query}`, 'GET')
+          const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          for (const key in parsed.results) {
+            const trn = this.processTransaction(parsed.results[key])
             this.latestTransactions.push(trn)
           }
         } catch (error) {
@@ -248,10 +248,11 @@ export const useMainStore = defineStore('tonexp', {
         if (excludeWC) fullReq.workchain = 0
         const query = getQueryString(fullReq, false)
         try {
-          let { data } = await apiRequest(`/transactions?${query}`, 'GET')
-          data = JSONBigInt({useNativeBigInt: true}).parse(data)
-          for (const key in data.results) {
-            const trn = this.processTransaction(data.results[key])
+          const { data } = await apiRequest(`/transactions?${query}`, 'GET')
+          const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          for (const key in parsed.results) {
+            const trn = this.processTransaction(parsed.results[key])
             this.exploredTransactions.push(trn)
           }
         } catch (error) {

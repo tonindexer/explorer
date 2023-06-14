@@ -62,6 +62,6 @@ watch(props, async() => await reloadInfo())
         <MessagesTable :item-selector="false" :default-length="5" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
     </div>
     <div v-if="(route.hash === '#shards' )&& block?.shard_keys" id="shards">
-        <BlocksTable :item-selector="false" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block?.shard_keys.length === 0" :line-link="false"/>
+        <BlocksTable :item-selector="false" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block?.shard_keys.length === 0" :line-link="false" :exclude-last="false" :exclude-empty="false"/>
     </div>
 </template>

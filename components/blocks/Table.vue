@@ -7,7 +7,7 @@ interface BlockTable {
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
-    excludeLast: boolean
+    excludeEmpty: boolean
     lineLink: boolean
 }
 
@@ -37,7 +37,7 @@ const updateValues = async (next: boolean = true) => {
 
 onMounted(() => updateValues())
 
-watch(() => props.excludeLast, () => {
+watch(() => props.excludeEmpty, () => {
     for (const block of props.keys.reverse()) {
         if (store.blocks[block].workchain === -1) {
             lastMC.value = store.blocks[block].seq_no;
