@@ -1,19 +1,26 @@
 import { parseJson } from '@ton.js/json-parser';
 
 export const useMainStore = defineStore('tonexp', {
-    // a function that returns a fresh state
     state: () => ({
+      // Total counters per type - returned with the request for latest info
       totalBlocks: 0 as number,
+      totalTransactions: 0 as number,
+      // Maps to store blocks / messages / transactions / accounts efficiently
       blocks: {} as BlockMap,
       messages: {} as MessageMap,
       transactions: {} as TransactionMap,
       accounts: {} as AccountMap,
-      latestBlocks: [] as Array<BlockKey>,
+      // Arrays with keys to fetch the correct info from maps
+      latestBlocks: [] as BlockKey[],
+      latestTransactions: [] as TransactionKey[],
       exploredBlocks: [] as BlockKey[],
-      stats : {} as Statistics,
+      exploredTransactions: [] as TransactionKey[],
+      // Statistics.
+      stats : {} as Statistics
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
+      getLatestTransactions: (state) => state.latestTransactions.map((key) => state.transactions[key]),
       getBlockShards: (state) => (key: BlockKey) => state.blocks[key].shard_keys.map((shardKey) => state.blocks[shardKey]),
       getBlockKeys: (state) => (keys: BlockKey[], excludeEmpty: boolean) => excludeEmpty ? keys.filter((item: BlockKey) => state.blocks[item].transaction_keys.length > 0) : keys,
       deepTransactionKeys: (state) => (key: BlockKey) => {
@@ -75,6 +82,7 @@ export const useMainStore = defineStore('tonexp', {
 
         const mappedTransaction = <Transaction>{}
         mappedTransaction.out_msg_keys = []
+        mappedTransaction.delta = 0n + BigInt(transaction.in_amount ?? 0n) - BigInt(transaction.out_amount ?? 0n)
 
         if (transaction.account) {
           mappedTransaction.account_key = this.processAccount(transaction.account)
@@ -121,7 +129,7 @@ export const useMainStore = defineStore('tonexp', {
         if (block.transactions !== undefined) {
           if (block.transactions) {
             mappedBlock.transaction_keys.push(...block.transactions.map(tr => this.processTransaction(tr)))
-            block.transactions.forEach((tr: TransactionAPI) => mappedBlock.transaction_delta += ((BigInt(tr.in_amount ?? 0n)) - BigInt(tr.out_amount ?? 0n)))
+            mappedBlock.transaction_keys.forEach((tr: TransactionKey) => mappedBlock.transaction_delta += this.transactions[tr].delta)
           }
           delete block.transactions
         }
@@ -153,6 +161,23 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
         try {
+          this.latestTransactions = []
+          const latestReq = {
+            order: 'DESC',
+            limit: 10
+          }
+          const query = getQueryString(latestReq, false);
+          const { data } = await apiRequest(`/transactions?${query}`, 'GET')
+          const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          for (const key in parsed.results) {
+            const trn = this.processTransaction(parsed.results[key])
+            this.latestTransactions.push(trn)
+          }
+        } catch (error) {
+          console.log(error)
+        }
+        try {
           const { data } = await apiRequest(`/statistics`, 'GET')
           this.stats = JSON.parse(data);
           Object.keys(this.stats).forEach(key => {
@@ -168,14 +193,24 @@ export const useMainStore = defineStore('tonexp', {
           case '/': {
             await this.mainPageLoad()
             break
-          } case '/blocks': {
+          } 
+          case '/blocks': {
             if (Object.entries(route.query).length === 0) {
               await this.updateBlockValues(10, null)
             } else {
-              const wc = route.query.id && isNumeric(route.query.id) ? Number(route.query.id) : null
-              const sh = route.query.shard  && isNumeric(route.query.id) ? BigInt(route.query.shard.toString()) : null
+              const wc = route.query.workchain && isNumeric(route.query.workchain) ? Number(route.query.workchain) : null
+              const sh = route.query.shard  && isNumeric(route.query.shard) ? BigInt(route.query.shard.toString()) : null
               const sq = route.query.seq_no && isNumeric(route.query.seq_no) ? Number(route.query.seq_no) : null
               if (wc && sh && sq) await this.fetchBlock(wc, sh, sq)
+            }
+            break;
+          }
+          case '/transactions': {
+            if (Object.entries(route.query).length === 0) {
+              await this.updateTransactions(20, null)
+            } else {
+              const hash = route.hash && toBase64Rfc(route.hash)
+              if (hash) await this.fetchTransaction(hash)
             }
             break;
           }
@@ -192,7 +227,7 @@ export const useMainStore = defineStore('tonexp', {
           limit
         }
         if (seqOffset) fullReq.after = seqOffset
-        const query = getQueryString(fullReq, false);
+        const query = getQueryString(fullReq, false)
         try {
           const { data } = await apiRequest(`/blocks?${query}`, 'GET')
           const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
@@ -207,9 +242,32 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async fetchBlock(id: number, shard: bigint, seq_no: number) {
+      async updateTransactions(limit: number, seqOffset: bigint | null, excludeWC: boolean = false, order: "ASC" | "DESC" = "DESC") { 
+        this.exploredTransactions = []
         const fullReq: MockType = {
-          workchain: id? -1 : 0,
+          order, 
+          limit
+        }
+        // https://anton.tools/api/v0/transactions?hash=l0ohtwtr1bl75zjfmyob5byjpzeeceoeb1%2Fcrke007w%3D
+        // https://anton.tools/api/v0/transactions?hash=l0OHtWTR1BL75ZJfMYob5ByJPZEeCEOEB1%2FCrKe007w%3D&order=DESC&limit=10
+        if (seqOffset) fullReq.after = seqOffset
+        if (excludeWC) fullReq.workchain = 0
+        const query = getQueryString(fullReq, false)
+        try {
+          const { data } = await apiRequest(`/transactions?${query}`, 'GET')
+          const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          for (const key in parsed.results) {
+            const trn = this.processTransaction(parsed.results[key])
+            this.exploredTransactions.push(trn)
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async fetchBlock(workchain: number, shard: bigint, seq_no: number) {
+        const fullReq: MockType = {
+          workchain: workchain? -1 : 0,
           shard,
           with_transactions: true,
           seq_no
@@ -220,6 +278,20 @@ export const useMainStore = defineStore('tonexp', {
           const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           this.processBlock(parsed.results[0])
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async fetchTransaction(hash: string) {
+        const fullReq: MockType = {
+          hash
+        }
+        const query = getQueryString(fullReq, true);
+        try {
+          const { data } = await apiRequest(`/transactions?${query}`, 'GET')
+          const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          this.processTransaction(parsed.results[0])
         } catch (error) {
           console.log(error)
         }

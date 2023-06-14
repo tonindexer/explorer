@@ -9,6 +9,7 @@
         "shard_keys" : "Шарды",
         "transaction_keys": "Транзакции",
         "transaction_delta": "Дельта баланса",
+        "delta": "Дельта баланса",
         "master_key": "Мастер",
         "root_hash": "Корневой хэш",
         "file_hash": "Хэш файла",
@@ -16,7 +17,14 @@
         "id": "Идентификатор",
         "address": "Адрес",
         "balance": "Баланс",
-        "type": "Тип операции"
+        "type": "Тип операции",
+        "hash" : "Хэш (ID)",
+        "account_key": "Ключ аккаунта",
+        "prev_tx_hash": "Хэш пред. транзакции",
+        "total_fees": "Платеж",
+        "orig_status": "Статус созд.",
+        "end_status": "Статус получ.",
+        "created_at": "Создано"
     },
     "general" : {
         "last_blocks": "Последние блоки",
@@ -62,6 +70,7 @@
     },
     "options" : {
         "exclude_blocks" : "Скрыть пустые блоки",
+        "exclude_masterchain" : "Скрыть транзакции в MasterChain",
         "deep_transactions" : "Транзакции шардов",
         "deep_messages" : "Сообщения шардов"
     }

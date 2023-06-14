@@ -47,7 +47,7 @@ function itemPreprocess(index: string, item: any) {
                     {{ itemPreprocess(index, block[index]) }}
                 </td>
                 <td v-if="index === 'master_key'">
-                    <NuxtLink :to="`/blocks?id=${masterLink.workchain}&shard=${masterLink.shard}&seq_no=${masterLink.seq_no}#overview`">{{ itemPreprocess(index, block[index]) }}</NuxtLink>
+                    <NuxtLink :to="`/blocks?workchain=${masterLink.workchain}&shard=${masterLink.shard}&seq_no=${masterLink.seq_no}#overview`">{{ itemPreprocess(index, block[index]) }}</NuxtLink>
                 </td>
             </tr>
         </tbody>

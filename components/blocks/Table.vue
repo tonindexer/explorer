@@ -7,6 +7,7 @@ interface BlockTable {
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
+    excludeEmpty: boolean
     lineLink: boolean
 }
 
@@ -20,13 +21,13 @@ const lastMC = ref(0)
 
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
-    if (store.exploredBlocks.length === 0 || pageNum.value === 0)
+    if (props.keys.length === 0 || pageNum.value === 0)
         await store.updateBlockValues(itemCount.value, null)
     else {
         await store.updateBlockValues(itemCount.value, next ? lastMC.value : firstMC.value)
     }
-    firstMC.value = store.blocks[store.exploredBlocks[0]].seq_no
-    for (const block of store.exploredBlocks.slice(0, itemCount.value).reverse()) {
+    firstMC.value = store.blocks[props.keys[0]].seq_no
+    for (const block of props.keys.slice(0, itemCount.value).reverse()) {
         if (store.blocks[block].workchain === -1) {
             lastMC.value = store.blocks[block].seq_no;
             return
@@ -34,8 +35,16 @@ const updateValues = async (next: boolean = true) => {
     }
 }
 
-onServerPrefetch(() => updateValues())
+onMounted(() => updateValues())
 
+watch(() => props.excludeEmpty, () => {
+    for (const block of props.keys.reverse()) {
+        if (store.blocks[block].workchain === -1) {
+            lastMC.value = store.blocks[block].seq_no;
+            return
+        }
+    }
+})
 watch(pageNum, async() => {
     if (props.update) { 
         await updateValues() 
@@ -65,7 +74,7 @@ watch(itemCount, async() => {
                     v-if="lineLink"
                     :class="{'hover' : lineLink}" 
                     :block="store.blocks[block]" 
-                    @click="navigateTo(`/blocks?id=${store.blocks[block].workchain}&shard=${store.blocks[block].shard}&seq_no=${store.blocks[block].seq_no}#overview`)" 
+                    @click="navigateTo(`/blocks?workchain=${store.blocks[block].workchain}&shard=${store.blocks[block].shard}&seq_no=${store.blocks[block].seq_no}#overview`)" 
                     style="cursor: pointer;"/>
                 <BlocksTableLine v-else :block="store.blocks[block]" :link-block="true"/>
             </template>

@@ -24,6 +24,8 @@ declare global {
         out_msg_count: number
         out_amount?: bigint | null
 
+        delta: bigint
+
         total_fees: bigint | null
 
         description_boc?: string
