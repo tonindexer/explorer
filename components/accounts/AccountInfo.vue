@@ -37,5 +37,18 @@ watch(props, async() => await reloadInfo())
     </template>
     <template v-else>
         <AccountsPropsTable v-if="account" :acc="account"/>
+        <div>
+            <ul v-if="account?.jetton_wallets?.length > 0" class="uk-child-width-expand uk-text-medium" uk-tab>
+                <li v-if="account.jetton_wallets.length > 0" :class="{'uk-active' : (route.hash === '#jettons' || route.hash === '#overview')}">
+                    <NuxtLink :to="{ hash: '#jettons', query: route.query}">
+                        {{ $t('route.jettons') }}
+                    </NuxtLink>
+                </li>
+            </ul>
+        </div>
+        <div v-if="route.hash === '#jettons' || route.hash === '#overview'" id="messages">
+            <h3 v-if="account?.jetton_wallets?.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.in_msg') }}</h3>
+            <AccountsJettonsTable :keys="account.jetton_wallets" :default-length="10" :hidden="account.jetton_wallets.length === 0" />
+        </div>
     </template>
 </template>

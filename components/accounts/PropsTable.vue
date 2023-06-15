@@ -14,8 +14,6 @@ function itemPreprocess(index: string, item: any) {
     case 'updated_at': return new Date(item).toLocaleString();
     case 'block': return `${item.workchain}:${item.shard}:${item.block_seq_no}`
     case 'address': return truncString(item.hex, 20)
-    case 'code': return truncString(item, 15)
-    case 'data': return truncString(item, 15)
     default: return item;
   }
 }
@@ -30,7 +28,7 @@ function itemPreprocess(index: string, item: any) {
                     <td class="uk-width-1-4">
                         {{ $t(`ton.${index}`) }}
                     </td>
-                    <td v-if="index !== 'last_tx_hash'">
+                    <td class="uk-text-truncate" v-if="index !== 'last_tx_hash'">
                         {{ itemPreprocess(index, acc[index]) }}
                     </td>
                     <td v-else-if="index === 'last_tx_hash' && acc[index]">

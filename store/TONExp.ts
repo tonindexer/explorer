@@ -1,4 +1,5 @@
 import { parseJson } from '@ton.js/json-parser';
+import { getQueryArrayString } from '~/utils/api';
 
 export const useMainStore = defineStore('tonexp', {
     state: () => ({
@@ -10,6 +11,8 @@ export const useMainStore = defineStore('tonexp', {
       messages: {} as MessageMap,
       transactions: {} as TransactionMap,
       accounts: {} as AccountMap,
+      // wallets and nfts
+      jettonWallets: {} as JettonWalletMap,
       // Arrays with keys to fetch the correct info from maps
       latestBlocks: [] as BlockKey[],
       latestTransactions: [] as TransactionKey[],
@@ -54,15 +57,29 @@ export const useMainStore = defineStore('tonexp', {
     },
     actions: {
       blockKeyGen: (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`,
-      processAccount(account: Account) {
+      processAccount(account: AccountAPI) {
         const accountKey = account.address.hex
+        const mappedAccount = <Account>{}
+        mappedAccount.nft_items = []
+        mappedAccount.jetton_wallets = []
 
         // Don't override account if the stored state matched given
         if (accountKey in this.accounts) {
           if (this.accounts[accountKey].block_seq_no === account.block_seq_no) return accountKey
         }
+        if (account.jetton_balance && account.minter_address?.hex) {
+          const jt_key : JettonWalletKey= `${account.address.hex}|${account.minter_address?.hex}`
+          if (!(jt_key in this.jettonWallets)) this.jettonWallets[jt_key] = {
+            jetton_balance: account.jetton_balance,
+            minter_address: account.minter_address.hex,
+            name: ""
+          } 
+          mappedAccount.jetton_wallets.push(jt_key)
+        }
 
-        this.accounts[accountKey] = account
+        Object.assign(mappedAccount, account)
+
+        this.accounts[accountKey] = mappedAccount
         return accountKey
       },
       processMessage(message: MessageAPI) {
@@ -230,7 +247,10 @@ export const useMainStore = defineStore('tonexp', {
           case '/accounts': {
             if (Object.entries(route.query).length === 0) {
               await this.updateAccounts(20, null)
-            } 
+            }  else {
+              const hex = route.query.hex && toBase64Rfc(route.query.hex.toString())
+              if (hex) await this.fetchAccount(hex)
+            }
             break;
           }
         }
@@ -334,12 +354,15 @@ export const useMainStore = defineStore('tonexp', {
         }
       },
       async fetchAccount(hex: string) {
+        let jt_count = 0
+        let nft_count = 0
+        try {
         const fullReq: MockType = {
           address: hex,
           latest: true
         }
         const query = getQueryString(fullReq, true);
-        try {
+        // get latest account state
           const { data } = await apiRequest(`/accounts?${query}`, 'GET')
           const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
@@ -347,6 +370,55 @@ export const useMainStore = defineStore('tonexp', {
         } catch (error) {
           console.log(error)
         }
+        // get all jetton_wallet of account
+        try {
+          const jettonReq: MockType = {
+            owner_address: hex,
+            latest: true,
+            interface: 'jetton_wallet',
+            limit: 50
+          }
+          // TODO paginate requests
+          const query = getQueryString(jettonReq, true);
+          const { data } = await apiRequest(`/accounts?${query}`, 'GET')
+          const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
+            (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          jt_count = parsed.total
+          if (jt_count)
+            for (const acc of parsed.results) {
+              if (acc.jetton_balance && acc.minter_address?.hex) {
+                const jt_key : JettonWalletKey= `${hex}|${acc.minter_address?.hex}`
+                if (!(jt_key in this.jettonWallets)) this.jettonWallets[jt_key] = {
+                  jetton_balance: acc.jetton_balance,
+                  minter_address: acc.minter_address.hex,
+                  name: ""
+                } 
+                this.accounts[hex].jetton_wallets.push(jt_key)
+              }
+            }
+            // get all jetton_wallet minters of account
+            try {
+              const jettonReq: MockType = {
+                address: this.accounts[hex].jetton_wallets.map(jt_key => jt_key.split('|')[1]),
+                latest: true,
+                limit: jt_count
+              }
+              const query = getQueryArrayString(jettonReq, true);
+              const { data } = await apiRequest(`/accounts?${query}`, 'GET')
+              const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+              if (parsed.results && parsed.results.length > 0)
+                for (const acc of parsed.results) {
+                  this.processAccount(acc)
+                  this.jettonWallets[`${hex}|${acc.address.hex}`].name = acc.content_name ?? 'Unnamed minter'
+                }
+            } catch (error) {
+              console.log(error)
+            }
+        } catch (error) {
+          console.log(error)
+        }
+        // get all nft_item of account
       }
     }
   })

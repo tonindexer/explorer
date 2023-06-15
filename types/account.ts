@@ -35,7 +35,19 @@ declare global {
     type FTWalletData = {
         jetton_balance?: bigint
     }
-    type Account = {
+
+    type JettonWallet = {
+        jetton_balance: bigint
+        minter_address: string
+        name: string
+    }
+
+    type JettonWalletKey = `${string}|${string}`
+
+    type JettonWalletMap = {
+        [key: JettonWalletKey] : JettonWallet
+    }
+    interface Account extends NFTContentData, FTWalletData {
 
         address: Address
         label?: AddressLabel
@@ -67,14 +79,17 @@ declare global {
 
         executes_get_methods?: GetMethod[]
 
-        nft_content_data?: NFTContentData
-        ft_wallet_data?: FTWalletData
+        jetton_wallets: JettonWalletKey[]
+        nft_items: NFTContentData[]
 
         updated_at: string
     }
+
+    interface AccountAPI extends Omit<Account, 'jetton_wallets' | 'nft_items'> {}
+
     type AccountAPIData = {
         total: number
-        results: Account[]
+        results: AccountAPI[]
     }
     type AccountKey = string
 
