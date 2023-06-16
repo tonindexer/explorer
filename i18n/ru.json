@@ -33,7 +33,11 @@
         "code_hash": "Хэш кода",
         "data": "Данные",
         "data_hash": "Хэш данных",
-        "updated_at": "Обновлено"
+        "updated_at": "Обновлено",
+
+        "name": "Название",
+        "minter": "Минтер",
+        "wallet": "Кошелек"
     },
     "general" : {
         "last_blocks": "Последние блоки",
@@ -64,7 +68,9 @@
         "block" : "Блок",
         "transaction" : "Транзакция",
         "message" : "Сообщение",
-        "account" : "Аккаунт"
+        "account" : "Аккаунт",
+        "jetton" : "Jetton",
+        "jettons" : "Jettons"
     },
     "stats" : {
         "account_count": "Аккаунтов",

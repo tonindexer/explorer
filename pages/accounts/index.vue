@@ -24,7 +24,7 @@ function routeChecker(newQuery: LocationQuery) {
 }
 
 watch(() => route.query, (newQuery) => routeChecker(newQuery))
-// watch(excludeWorkCh => store.updateTransactions())
+
 onMounted(() => routeChecker(route.query))
 </script>
 
@@ -45,10 +45,10 @@ onMounted(() => routeChecker(route.query))
                 {{ $t('route.account')}}
                 </h1>
                 <h2 class="uk-inline uk-margin-remove-vertical uk-text-primary uk-margin-left uk-text-bold" style="line-height: 1.35;">
-                    {{ truncString(hex, 5) }}
+                    {{ truncString(store.accounts[hex]?.address?.base64 ?? 'loading..', 12) }}
                 </h2>
             </div>
-            <AccountsAccountInfo :hex="hex"/>
+            <AccountsAccountInfo :hex="hex" @set-hex="(e) => hex = e"/>
         </div>
     </template>
 </template>

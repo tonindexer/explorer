@@ -14,34 +14,52 @@ const props = defineProps<AccountTable>()
 const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
-const firstMC: NullableBigRef = ref(0n)
-const lastMC: NullableBigRef = ref(0n)
+const firstTX: NullableBigRef = ref(0n)
+const lastTX: NullableBigRef = ref(0n)
+const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), 'acc'))
+
+const maxExploredPage = ref(0)
+
+const setExtraFields = () => {
+    if (props.keys.length > 0) {
+        if (props.keys[0] in store.accounts) {
+            firstTX.value = BigInt(store.accounts[props.keys[0]].last_tx_lt)
+        }
+        if (props.keys[props.keys.length - 1] in store.accounts) {
+            lastTX.value = BigInt(store.accounts[props.keys[props.keys.length - 1]].last_tx_lt)
+        }
+    }
+}
 
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     if (props.keys.length === 0 || pageNum.value === 0)
         await store.updateAccounts(itemCount.value, null)
     else {
-        await store.updateAccounts(itemCount.value, next ? lastMC.value : firstMC.value)
+        await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value)
     }
-    firstMC.value = BigInt(store.accounts[props.keys[0]].last_tx_lt)
-    lastMC.value = BigInt(store.accounts[props.keys[props.keys.length - 1]].last_tx_lt)
+    setExtraFields()
 }
 
-watch(pageNum, async() => {
-    if (props.update) { 
-        await updateValues() 
+watch(pageNum, async(to, from) => {
+    if (props.update) {
+        if (to === 0 || (to > from && to > maxExploredPage.value)) { 
+            maxExploredPage.value = to
+            await updateValues()
+        }
     }
 }, {deep : true}) 
 
 watch(itemCount, async() => {
-    if (itemCount.value > props.keys.length)
-        await updateValues(false)
-    else lastMC.value = BigInt(store.accounts[props.keys[itemCount.value - 1]].last_tx_lt)
-    
+    if (pageNum.value === 0) updateValues()
+    else pageNum.value = 0
 }, {deep : true})
 
-onMounted(() => updateValues())
+watch(props, () => {
+    setExtraFields()
+})
+
+onMounted(() => setExtraFields())
 </script>
 
 <template>
@@ -54,7 +72,7 @@ onMounted(() => updateValues())
             </tr>
         </thead>
         <tbody>
-            <template v-for="acc in update ? keys.slice(0, itemCount) : keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+            <template v-for="acc in keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                 <AccountsTableLine :acc="store.accounts[acc]"/>
             </template>
         </tbody>
@@ -71,7 +89,7 @@ onMounted(() => updateValues())
             <AtomsPageArrows    
                 :page="pageNum" 
                 :left-disabled="pageNum === 0" 
-                :right-disabled="(pageNum+1)*itemCount >= keys.length && !update"
+                :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
                 :hidden="itemCount >= keys.length && !update"
                 @increase="pageNum += 1"
                 @decrease="pageNum -= 1"

@@ -20,7 +20,7 @@ const itemCount = ref(props.defaultLength)
         <thead>
             <tr>
                 <th class="uk-width-1-5">{{ $t('ton.name')}}</th>
-                <th class="uk-width-1-5">{{ $t('ton.minter')}}</th>
+                <th class="uk-width-1-5">{{ $t('ton.wallet')}}</th>
                 <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
             </tr>
         </thead>
@@ -28,15 +28,17 @@ const itemCount = ref(props.defaultLength)
             <template template v-for="jt of wallets.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                 <tr>
                     <td>
-                        {{ jt.name }}
+                        <NuxtLink :to="{ path: 'accounts', query: { hex: jt.minter_address }, hash: '#overview'}">
+                            {{ jt.name }}
+                        </NuxtLink>
                     </td>
                     <td> 
-                        <NuxtLink :to="{ path: 'accounts', query: { hex: jt.minter_address }, hash: '#overview'}">
-                            {{ truncString(jt.minter_address, 10) }}
+                        <NuxtLink :to="{ path: 'accounts', query: { hex: jt.wallet_address }, hash: '#overview'}">
+                            {{ truncString(jt.wallet_address, 10) }}
                         </NuxtLink>
                     </td>
                     <td class="uk-text-right">
-                        {{ jt.jetton_balance ? `${fullTON(jt.jetton_balance)}` : $t('general.none') }}
+                        {{ jt.jetton_balance ? jt.jetton_balance : $t('general.none') }}
                     </td>
                 </tr>
             </template>

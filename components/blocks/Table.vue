@@ -16,26 +16,35 @@ const props = defineProps<BlockTable>()
 const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
+
 const firstMC = ref(0)
 const lastMC = ref(0)
+const maxExploredPage = ref(0)
+const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), 'block'))
+
+const setExtraFields = () => {
+    if (props.keys.length > 0) {
+        if (props.keys[0] in store.blocks) {
+            firstMC.value = store.blocks[props.keys[0]].seq_no;
+        }
+        for (const block of props.keys.slice(0, itemCount.value * (pageNum.value+1)).reverse()) {
+            if (store.blocks[block].workchain === -1) {
+                lastMC.value = store.blocks[block].seq_no;
+                return
+            }
+        }
+    }
+}
 
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     if (props.keys.length === 0 || pageNum.value === 0)
         await store.updateBlockValues(itemCount.value, null)
     else {
-        await store.updateBlockValues(itemCount.value, next ? lastMC.value : firstMC.value)
+        await store.updateBlockValues(itemCount.value, next ? lastMC.value : firstMC.value, pageNum.value)
     }
-    firstMC.value = store.blocks[props.keys[0]].seq_no
-    for (const block of props.keys.slice(0, itemCount.value).reverse()) {
-        if (store.blocks[block].workchain === -1) {
-            lastMC.value = store.blocks[block].seq_no;
-            return
-        }
-    }
+    setExtraFields()
 }
-
-onMounted(() => updateValues())
 
 watch(() => props.excludeEmpty, () => {
     for (const block of props.keys.reverse()) {
@@ -45,16 +54,25 @@ watch(() => props.excludeEmpty, () => {
         }
     }
 })
-watch(pageNum, async() => {
-    if (props.update) { 
-        await updateValues() 
+watch(pageNum, async(to, from) => {
+    if (props.update) {
+        if (to === 0 || (to > from && to > maxExploredPage.value)) { 
+            maxExploredPage.value = to
+            await updateValues()
+        }
     }
 }, {deep : true}) 
 
 watch(itemCount, async() => {
-    if (itemCount.value > props.keys.length)
-        await updateValues(false)
+    if (pageNum.value === 0) updateValues()
+    else pageNum.value = 0
 }, {deep : true})
+
+watch(props, () => {
+    setExtraFields()
+})
+
+onMounted(() => setExtraFields())
 </script>
 
 <template>
@@ -69,7 +87,7 @@ watch(itemCount, async() => {
             </tr>
         </thead>
         <tbody>
-            <template v-for="block in update ? props.keys.slice(0, itemCount) : props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+            <template v-for="block in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                 <BlocksTableLine 
                     v-if="lineLink"
                     :class="{'hover' : lineLink}" 
@@ -92,7 +110,7 @@ watch(itemCount, async() => {
             <AtomsPageArrows    
                 :page="pageNum" 
                 :left-disabled="pageNum === 0" 
-                :right-disabled="(pageNum+1)*itemCount >= keys.length && !update"
+                :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
                 :hidden="itemCount >= keys.length && !update"
                 @increase="pageNum += 1"
                 @decrease="pageNum -= 1"

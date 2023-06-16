@@ -12,7 +12,7 @@ export const isNumeric = (value: any) : boolean => {
 }
 
 export const truncString = (value: string, keepLeft: number = 3, keepRight: number = keepLeft) : string => {
-    if (value.length < 7) return value;
+    if (value.length < (keepLeft + keepRight)) return value;
     return value.slice(0, keepLeft) + '...' + value.slice(value.length - keepRight, value.length);
 }
 
@@ -25,3 +25,23 @@ export const chainTitle = (id: number) => {
 export const toBase64Web = (base64: string) => base64.replace(/\+/g, '-').replace(/\//g, '_');
 
 export const toBase64Rfc = (base64: string) => base64.replace(/\-/g, '+').replace(/_/g, '/');
+
+const feeFormatter = new Intl.NumberFormat('fullwide', {
+    maximumFractionDigits: 9,
+    minimumFractionDigits: 0,
+});
+
+const currencyFormatter = new Intl.NumberFormat('en', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+});
+
+export const formatTons = function formatNanoTonsLimitNumberLength(value: number, decimals = 9, round = false) {
+    const valueMultiplier = Number.isInteger(decimals)
+        ? Math.pow(10, decimals)
+        : 10**9;
+
+    return round
+        ? currencyFormatter.format(value / valueMultiplier)
+        : feeFormatter.format(value / valueMultiplier);
+};

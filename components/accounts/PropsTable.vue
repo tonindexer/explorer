@@ -13,7 +13,7 @@ function itemPreprocess(index: string, item: any) {
     case 'balance': return item ? `${fullTON(item)}💎` : t('general.none');
     case 'updated_at': return new Date(item).toLocaleString();
     case 'block': return `${item.workchain}:${item.shard}:${item.block_seq_no}`
-    case 'address': return truncString(item.hex, 20)
+    case 'address': return item.base64
     default: return item;
   }
 }
@@ -24,7 +24,7 @@ function itemPreprocess(index: string, item: any) {
     <table class="uk-table uk-table-middle">
         <tbody class="uk-table-divider">
             <tr v-for="index of tableOrder" :key="index + acc.address.hex">
-                <template v-if="index !== 'block' && acc[index]">
+                <template v-if="index !== 'block' && (acc[index] ?? null) === acc[index]">
                     <td class="uk-width-1-4">
                         {{ $t(`ton.${index}`) }}
                     </td>
@@ -35,7 +35,7 @@ function itemPreprocess(index: string, item: any) {
                         <NuxtLink :to="`/transactions?hash=${toBase64Web(acc[index])}#overview`">{{ itemPreprocess(index, acc[index]) }}</NuxtLink>
                     </td>
                 </template>
-                <template v-else>
+                <template v-else-if="index === 'block'">
                     <td class="uk-width-1-4">
                         {{ $t(`ton.${index}`) }}
                     </td>

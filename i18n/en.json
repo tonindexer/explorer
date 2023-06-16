@@ -33,7 +33,11 @@
         "code_hash": "Code hash",
         "data": "Data",
         "data_hash": "Data hash",
-        "updated_at": "Updated"
+        "updated_at": "Updated",
+
+        "name": "Название",
+        "minter": "Минтер",
+        "wallet": "Wallet"
     },
     "general" : {
         "last_blocks": "Last blocks",
@@ -64,7 +68,9 @@
         "block" : "Block",
         "transaction" : "Transaction",
         "message" : "Message",
-        "account" : "Account"
+        "account" : "Account",
+        "jetton" : "Jetton",
+        "jettons" : "Jettons"
     },
     "stats" : {
         "account_count": "Accounts",

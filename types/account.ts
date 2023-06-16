@@ -37,7 +37,8 @@ declare global {
     }
 
     type JettonWallet = {
-        jetton_balance: bigint
+        jetton_balance: string
+        wallet_address: string
         minter_address: string
         name: string
     }
@@ -81,6 +82,7 @@ declare global {
 
         jetton_wallets: JettonWalletKey[]
         nft_items: NFTContentData[]
+        transaction_keys: TransactionKey[]
 
         updated_at: string
     }
@@ -95,5 +97,29 @@ declare global {
 
     type AccountMap = {
         [key: AccountKey] : Account
+    }
+
+    // tonapi
+    type AddressAPI = {
+        address: string
+        name?: string
+        is_scam: boolean
+        icon?: string
+    }
+    type JettonAPI = {
+        address: string
+        name: string
+        symbol: string
+        decimals: number
+        image: string
+        verification:  'whitelist' | 'blacklist' | 'none'
+    }
+    type JettonAPIFull = {
+        balance: string
+        wallet_address: AddressAPI
+        jetton: JettonAPI
+    }
+    type JettonAPIData = {
+        balances: JettonAPIFull[]
     }
 }
