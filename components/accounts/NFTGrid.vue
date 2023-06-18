@@ -49,9 +49,9 @@ watch(itemCount, async() => {
                 </div>
                 <div class="uk-card-body">
                     <NuxtLink :to="`/accounts?hex=${nft.address}`">
-                        {{ nft.metadata?.name ? nft.metadata?.name : "No name" }}
+                        {{ nft.metadata?.name ? nft.metadata.name : "No name" }}
                     </NuxtLink>
-                    <h4 class="uk-margin-remove-top"> {{ nft.collection.name ? nft.collection.name : "No collection" }}</h4>
+                    <h4 class="uk-margin-remove-top"> {{ nft.collection?.name ? nft.collection.name : "No collection" }}</h4>
                 </div>
             </div>
         </div>

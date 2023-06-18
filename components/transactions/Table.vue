@@ -23,7 +23,6 @@ const lastLT: NullableBigRef = ref(0n)
 const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), 'trn'))
 
 const setExtraFields = () => {
-    console.log(store.totalQueryTransactions)
     if (props.keys.length > 0) {
         if (props.keys[0] in store.transactions) {
             firstLT.value = BigInt(store.transactions[props.keys[0]].created_lt)

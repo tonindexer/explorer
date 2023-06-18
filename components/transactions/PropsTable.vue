@@ -35,7 +35,12 @@ function itemPreprocess(index: string, item: any) {
                     <NuxtLink :to="`/blocks?workchain=${trn.workchain}&shard=${trn.shard}&seq_no=${trn.block_seq_no}#overview`">{{ itemPreprocess(index, trn) }}</NuxtLink>
                 </td>
                 <td v-else-if="index === 'address'">
-                    <NuxtLink :to="`/accounts?hex=${trn.address.hex}#overview`">{{ itemPreprocess(index, trn[index]) }}</NuxtLink>
+                    <template v-if="trn[index].hex in badAddresses">
+                        <p>{{ badAddresses[trn[index].hex].name }}</p>
+                    </template>
+                    <template v-else>
+                        <NuxtLink :to="`/accounts?hex=${trn.address.hex}#overview`">{{ itemPreprocess(index, trn[index]) }}</NuxtLink>
+                    </template>
                 </td>
                 <td v-else-if="index === 'prev_tx_hash' && trn.prev_tx_hash">
                     <NuxtLink :to="`/transactions?hash=${toBase64Web(trn.prev_tx_hash)}#overview`">{{ itemPreprocess(index, trn[index]) }}</NuxtLink>

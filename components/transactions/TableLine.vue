@@ -14,7 +14,8 @@ const props = defineProps<Props>()
                 {{ truncString(trn.hash, 4) }}
             </NuxtLink>
         </td>
-        <td > {{ truncString(trn.address.hex, 4) }}</td>
+        <td style="text-wrap: nowrap;" v-if="trn.address.hex in badAddresses"> {{ badAddresses[trn.address.hex].name }}</td>
+        <td v-else> {{ truncString(trn.address.base64, 4) }}</td>
         <td class="uk-text-right"> {{ trn.delta ? `${fullTON(trn.delta)}💎` : $t('general.none')}}</td>
         <AtomsTableDateCell :date-time="trn.created_at"/>
     </tr>

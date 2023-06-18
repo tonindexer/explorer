@@ -25,7 +25,10 @@ const store = useMainStore()
               {{ truncString(trn.hash, 4) }}
             </NuxtLink>
           </div>
-          <div class="uk-width-1-3 uk-text-center" style="align-self: center;">
+          <div v-if="trn.address.hex in badAddresses" class="uk-width-1-3 uk-text-center" style="align-self: center; text-wrap: nowrap">
+              {{ badAddresses[trn.address.hex].name }}
+          </div>
+          <div v-else class="uk-width-1-3 uk-text-center" style="align-self: center;">
               {{ truncString(trn.address.hex, 4, 3) }}
           </div>
           <div class="uk-width-1-3 uk-text-center" style="align-self: center; font-size: 1rem" :uk-tooltip="fullTON(trn.delta)">

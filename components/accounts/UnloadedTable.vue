@@ -28,14 +28,23 @@ const itemCount = ref(props.defaultLength)
                 <template v-if="acc in store.accounts">
                     <AccountsTableLine :acc="store.accounts[acc]"/>
                 </template>
-                <template v-else>
+                <template v-else-if="!(acc in badAddresses)">
                     <tr>
                         <td> 
                             <NuxtLink :to="{ path: 'accounts', query: { hex: acc }, hash: '#overview'}">
                                 {{ truncString(acc, 15) }}
                             </NuxtLink>
                         </td>
+                        <td class="uk-text-right">Unloaded</td>
                         <td class="uk-text-right">-</td>
+                    </tr>
+                </template>
+                <template v-else-if="acc in badAddresses">
+                    <tr>
+                        <td style="text-wrap: nowrap;"> 
+                            {{ badAddresses[acc].name }}
+                        </td>
+                        <td class="uk-text-right">Unloaded</td>
                         <td class="uk-text-right">-</td>
                     </tr>
                 </template>
