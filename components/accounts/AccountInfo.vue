@@ -46,7 +46,7 @@ watch(account, () => {
     <template v-else>
         <AccountsPropsTable v-if="account" :acc="account"/>
         <div v-if="account">
-            <ul v-if="account.jetton_wallets.length > 0 || account.transaction_keys.length > 0" class="uk-child-width-expand uk-text-medium" uk-tab>
+            <ul v-if="account.transaction_keys.length > 0" class="uk-child-width-expand uk-text-medium" uk-tab>
                 <li v-if="account.transaction_keys.length > 0" :class="{'uk-active' : (route.hash === '#transactions' || route.hash === '#overview')}">
                     <NuxtLink :to="{ hash: '#transactions', query: route.query}">
                         {{ $t('route.transactions') }}
@@ -57,6 +57,11 @@ watch(account, () => {
                         {{ $t('route.jettons') }}
                     </NuxtLink>
                 </li>
+                <li v-if="account.nft_keys.length > 0" :class="{'uk-active' : (route.hash === '#nfts')}">
+                    <NuxtLink :to="{ hash: '#nfts', query: route.query}">
+                        {{ $t('route.nfts') }}
+                    </NuxtLink>
+                </li>
             </ul>
         </div>
         <div v-show="account && (route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
@@ -64,6 +69,9 @@ watch(account, () => {
         </div>
         <div v-if="account && route.hash === '#jettons'" id="jettons">
             <AccountsJettonsTable :keys="jtKeys" :default-length="10" :hidden="jtKeys.length === 0" />
+        </div>
+        <div v-if="account && route.hash === '#nfts'" id="nfts">
+            <AccountsNFTGrid :keys="account.nft_keys" :default-length="18" :hidden="account.nft_keys.length === 0" :account="hex" />
         </div>
     </template>
 </template>

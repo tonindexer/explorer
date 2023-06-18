@@ -44,9 +44,13 @@ declare global {
     }
 
     type JettonWalletKey = `${string}|${string}`
+    type NFTKey = `${string}|${string}`
 
     type JettonWalletMap = {
         [key: JettonWalletKey] : JettonWallet
+    }
+    type NFTMap = {
+        [key: NFTKey] : NFTAPI
     }
     interface Account extends NFTContentData, FTWalletData {
 
@@ -82,6 +86,7 @@ declare global {
 
         jetton_wallets: JettonWalletKey[]
         nft_items: NFTContentData[]
+        nft_keys: NFTKey[]
         transaction_keys: TransactionKey[]
 
         updated_at: string
@@ -121,5 +126,34 @@ declare global {
     }
     type JettonAPIData = {
         balances: JettonAPIFull[]
+    }
+
+    type NFTMeta = {
+        image?: string
+        description?: string
+        marketplace?: string
+        external_url?: string
+        name?: string
+    }
+    type NFTCollection = {
+        address: string
+        name: string
+    }
+    type NFTPreview = {
+        resolution: `${number}:${number}`
+        url: string
+    }
+    type NFTAPI = {
+        address: string
+        index: bigint
+        owner: AccountAPI
+        collection: NFTCollection
+        verified: boolean
+        metadata: NFTMeta
+        previews: NFTPreview[]
+        approved_by: ('getgems' | 'tonkeeper')[]
+    }
+    type NFTAPIData = {
+        nft_items: NFTAPI[]
     }
 }

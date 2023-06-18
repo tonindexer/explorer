@@ -1,5 +1,4 @@
 import { parseJson } from '@ton.js/json-parser';
-import { getQueryArrayString } from '~/utils/api';
 
 export const useMainStore = defineStore('tonexp', {
     state: () => ({
@@ -10,6 +9,7 @@ export const useMainStore = defineStore('tonexp', {
       accounts: {} as AccountMap,
       // wallets and nfts
       jettonWallets: {} as JettonWalletMap,
+      nftItems: {} as NFTMap,
       // Arrays with keys to fetch the correct info from maps
       latestBlocks: [] as BlockKey[],
       latestTransactions: [] as TransactionKey[],
@@ -21,6 +21,8 @@ export const useMainStore = defineStore('tonexp', {
       totalQueryTransactions: 0 as number,
       totalQueryBlocks: 0 as number,
       totalQueryAccounts: 0 as number,
+      // Flag for NFT
+      loadNextNFTFlag: true,
       // Statistics.
       stats : {} as Statistics
     }),
@@ -63,14 +65,15 @@ export const useMainStore = defineStore('tonexp', {
           case 'acc': return loaded > state.totalQueryAccounts;
           default: return false;
         }
-      }
+      },
+      getNFTs: (state) => (keys: NFTKey[]) => keys.map(key => state.nftItems[key])
     },
     actions: {
       blockKeyGen: (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`,
       processAccount(account: AccountAPI) {
         const accountKey = account.address.hex
         const mappedAccount = <Account>{}
-        mappedAccount.nft_items = []
+        mappedAccount.nft_keys = []
         mappedAccount.jetton_wallets = []
         mappedAccount.transaction_keys = []
 
@@ -373,6 +376,7 @@ export const useMainStore = defineStore('tonexp', {
         }
       },
       async fetchAccount(hex: string) {
+        this.loadNextNFTFlag = false
         if (!(hex in this.accounts))
           try {
           const fullReq: MockType = {
@@ -412,7 +416,35 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
         // get all nft_item of account
+        await this.loadAccountNFTs(hex, 18)
         return hex
+      },
+      async loadAccountNFTs(address: AccountKey, limit: number = 18, offset: number = 0) {
+        try {
+          const req = {
+            limit: limit + 1,
+            offset,
+            indirect_ownership: false
+          }
+          const query = getQueryString(req, true);
+          const { data } = await apiRequest(`accounts/${address}/nfts?${query}`, 'GET', {}, `https://tonapi.io/v2/`)
+          const parsed = parseJson<NFTAPIData>(data, (key, value, context) => (
+            (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          if (offset === 0) this.accounts[address].nft_keys = []
+          if (parsed.nft_items.length >= limit) {
+            parsed.nft_items = parsed.nft_items.slice(0, limit)
+            this.loadNextNFTFlag = true
+          } else this.loadNextNFTFlag = false
+          
+          for (const nft of parsed.nft_items) {
+            const nft_Key: NFTKey = `${address}|${nft.address}`
+            this.accounts[address].nft_keys.push(nft_Key)
+            this.nftItems[nft_Key] = nft
+          }
+          console.log(parsed.nft_items.length)
+        } catch (error) {
+          console.log(error)
+        }
       }
     }
   })

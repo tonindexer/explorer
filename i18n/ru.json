@@ -70,7 +70,9 @@
         "message" : "Сообщение",
         "account" : "Аккаунт",
         "jetton" : "Jetton",
-        "jettons" : "Jettons"
+        "jettons" : "Jettons",
+        "nfts" : "NFTs",
+        "nft" : "NFT"
     },
     "stats" : {
         "account_count": "Аккаунтов",
