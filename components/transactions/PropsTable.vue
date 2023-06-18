@@ -14,7 +14,7 @@ function itemPreprocess(index: string, item: any) {
     case 'total_fees': return item ? `${fullTON(item)}💎` : t('general.none');
     case 'created_at': return new Date(item).toLocaleString();
     case 'block': return `${item.workchain}:${item.shard}:${item.block_seq_no}`
-    case 'address': return item.base64
+    case 'address': return truncString(item.hex, 20)
     default: return item;
   }
 }
@@ -25,14 +25,17 @@ function itemPreprocess(index: string, item: any) {
     <table class="uk-table uk-table-middle">
         <tbody class="uk-table-divider">
             <tr v-for="index of tableOrder" :key="index + trn?.hash">
-                <td class="uk-width-1-4">
+                <td class="uk-width-1-5">
                     {{ $t(`ton.${index}`) }}
                 </td>
-                <td v-if="index !== 'block' && index !== 'prev_tx_hash'">
+                <td v-if="index !== 'block' && index !== 'prev_tx_hash' && index !== 'address'">
                     {{ itemPreprocess(index, trn[index]) }}
                 </td>
                 <td v-else-if="index === 'block'">
                     <NuxtLink :to="`/blocks?workchain=${trn.workchain}&shard=${trn.shard}&seq_no=${trn.block_seq_no}#overview`">{{ itemPreprocess(index, trn) }}</NuxtLink>
+                </td>
+                <td v-else-if="index === 'address'">
+                    <NuxtLink :to="`/accounts?hex=${trn.address.hex}#overview`">{{ itemPreprocess(index, trn[index]) }}</NuxtLink>
                 </td>
                 <td v-else-if="index === 'prev_tx_hash' && trn.prev_tx_hash">
                     <NuxtLink :to="`/transactions?hash=${toBase64Web(trn.prev_tx_hash)}#overview`">{{ itemPreprocess(index, trn[index]) }}</NuxtLink>
@@ -42,12 +45,3 @@ function itemPreprocess(index: string, item: any) {
     </table>
         
 </template>
-
-<style lang="scss">
-.arrow {
-    * {
-        color: white;
-        fill: white;
-    }
-}
-</style>

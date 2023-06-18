@@ -1,37 +1,32 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
 
-interface BlockTable {
-    keys: BlockKey[]
+interface AccountTable {
+    keys: AccountKey[]
     update: boolean
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
-    excludeEmpty: boolean
-    lineLink: boolean
 }
 
-const props = defineProps<BlockTable>()
+const props = defineProps<AccountTable>()
 
 const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
+const firstTX: NullableBigRef = ref(0n)
+const lastTX: NullableBigRef = ref(0n)
+const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), 'acc'))
 
-const firstMC = ref(0)
-const lastMC = ref(0)
 const maxExploredPage = ref(0)
-const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), 'block'))
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {
-        if (props.keys[0] in store.blocks) {
-            firstMC.value = store.blocks[props.keys[0]].seq_no;
+        if (props.keys[0] in store.accounts) {
+            firstTX.value = BigInt(store.accounts[props.keys[0]].last_tx_lt)
         }
-        for (const block of props.keys.slice(0, itemCount.value * (pageNum.value+1)).reverse()) {
-            if (store.blocks[block].workchain === -1) {
-                lastMC.value = store.blocks[block].seq_no;
-                return
-            }
+        if (props.keys[props.keys.length - 1] in store.accounts) {
+            lastTX.value = BigInt(store.accounts[props.keys[props.keys.length - 1]].last_tx_lt)
         }
     }
 }
@@ -39,21 +34,13 @@ const setExtraFields = () => {
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     if (props.keys.length === 0 || pageNum.value === 0)
-        await store.updateBlockValues(itemCount.value, null)
+        await store.updateAccounts(itemCount.value, null)
     else {
-        await store.updateBlockValues(itemCount.value, next ? lastMC.value : firstMC.value, pageNum.value)
+        await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value)
     }
     setExtraFields()
 }
 
-watch(() => props.excludeEmpty, () => {
-    for (const block of props.keys.reverse()) {
-        if (store.blocks[block].workchain === -1) {
-            lastMC.value = store.blocks[block].seq_no;
-            return
-        }
-    }
-})
 watch(pageNum, async(to, from) => {
     if (props.update) {
         if (to === 0 || (to > from && to > maxExploredPage.value)) { 
@@ -79,22 +66,14 @@ onMounted(() => setExtraFields())
     <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
         <thead>
             <tr>
-                <th class="uk-width-1-6">{{ $t('ton.workchain')}}</th>
-                <th class="uk-width-1-6">{{ $t('ton.shard')}}</th>
-                <th class="uk-width-1-6">{{ $t('ton.block')}}</th>
-                <th class="uk-width-1-6">{{ $t('ton.transactions-count')}}</th>
-                <th class="uk-table-expand uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.scanned')}}</th>
+                <th class="uk-width-1-5">{{ $t('ton.id')}}</th>
+                <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
+                <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
             </tr>
         </thead>
         <tbody>
-            <template v-for="block in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <BlocksTableLine 
-                    v-if="lineLink"
-                    :class="{'hover' : lineLink}" 
-                    :block="store.blocks[block]" 
-                    @click="navigateTo(`/blocks?workchain=${store.blocks[block].workchain}&shard=${store.blocks[block].shard}&seq_no=${store.blocks[block].seq_no}#overview`)" 
-                    style="cursor: pointer;"/>
-                <BlocksTableLine v-else :block="store.blocks[block]" :link-block="true"/>
+            <template v-for="acc in keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+                <AccountsTableLine :acc="store.accounts[acc]"/>
             </template>
         </tbody>
     </table>

@@ -7,6 +7,7 @@ interface TransactionTable {
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
+    account: AccountKey | null
     excludeMC?: boolean
 }
 
@@ -14,40 +15,61 @@ const props = defineProps<TransactionTable>()
 
 const store = useMainStore()
 const pageNum = ref(0)
-const itemCount = ref(props.defaultLength)
-const firstMC: NullableBigRef = ref(0n)
-const lastMC: NullableBigRef = ref(0n)
+const maxExploredPage = ref(0)
 
+const itemCount = ref(props.defaultLength)
+const firstLT: NullableBigRef = ref(0n)
+const lastLT: NullableBigRef = ref(0n)
+const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), 'trn'))
+
+const setExtraFields = () => {
+    console.log(store.totalQueryTransactions)
+    if (props.keys.length > 0) {
+        if (props.keys[0] in store.transactions) {
+            firstLT.value = BigInt(store.transactions[props.keys[0]].created_lt)
+        }
+        if (props.keys[props.keys.length - 1] in store.transactions) {
+            lastLT.value = BigInt(store.transactions[props.keys[props.keys.length - 1]].created_lt)
+        }
+    }
+}
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
-    if (props.keys.length === 0 || pageNum.value === 0)
-        await store.updateTransactions(itemCount.value, null, props.excludeMC)
-    else {
-        await store.updateTransactions(itemCount.value, next ? lastMC.value : firstMC.value, props.excludeMC)
+    if (props.keys.length === 0 || pageNum.value === 0) {
+        await store.updateTransactions(itemCount.value, null, props.excludeMC, props.account)
     }
-    firstMC.value = BigInt(store.transactions[props.keys[0]].created_lt)
-    lastMC.value = BigInt(store.transactions[props.keys[props.keys.length - 1]].created_lt)
+    else {
+        await store.updateTransactions(itemCount.value, next ? lastLT.value : firstLT.value, props.excludeMC, props.account)
+    }
+    setExtraFields()
 }
 
-watch(() => props.excludeMC, () => {
-    store.updateTransactions(itemCount.value, null, props.excludeMC)
-    pageNum.value = 0
-})
-
-watch(pageNum, async() => {
-    if (props.update) { 
-        await updateValues() 
+watch(pageNum, async(to, from) => {
+    if (props.update) {
+        if (to === 0 || (to > from && to > maxExploredPage.value)) { 
+            maxExploredPage.value = to
+            await updateValues()
+        }
     }
 }, {deep : true}) 
 
+watch(() => props.excludeMC, () => {
+    if (pageNum.value === 0) updateValues()
+    else pageNum.value = 0
+})
+
 watch(itemCount, async() => {
-    if (itemCount.value > props.keys.length)
-        await updateValues(false)
-    else lastMC.value = BigInt(store.transactions[props.keys[itemCount.value - 1]].created_lt)
-    
+    if (pageNum.value === 0) updateValues()
+    else pageNum.value = 0
 }, {deep : true})
 
-onMounted(() => updateValues())
+watch(props, () => {
+    setExtraFields()
+})
+
+onMounted(() => {
+    setExtraFields()
+})
 </script>
 
 <template>
@@ -61,7 +83,7 @@ onMounted(() => updateValues())
             </tr>
         </thead>
         <tbody>
-            <template v-for="trn in update ? props.keys.slice(0, itemCount) : props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+            <template v-for="trn in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                 <TransactionsTableLine :trn="store.transactions[trn]"/>
             </template>
         </tbody>
@@ -78,7 +100,7 @@ onMounted(() => updateValues())
             <AtomsPageArrows    
                 :page="pageNum" 
                 :left-disabled="pageNum === 0" 
-                :right-disabled="(pageNum+1)*itemCount >= keys.length && !update"
+                :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
                 :hidden="itemCount >= keys.length && !update"
                 @increase="pageNum += 1"
                 @decrease="pageNum -= 1"

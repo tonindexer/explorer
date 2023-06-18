@@ -5,9 +5,6 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const balance = computed(() => {
-    return BigInt(props.trn.in_amount ?? 0n) - BigInt(props.trn.out_amount ?? 0n)
-})
 </script>
 
 <template>
@@ -18,7 +15,7 @@ const balance = computed(() => {
             </NuxtLink>
         </td>
         <td > {{ truncString(trn.address.hex, 4) }}</td>
-        <td class="uk-text-right"> {{ balance ? `${fullTON(balance)}💎` : $t('general.none')}}</td>
+        <td class="uk-text-right"> {{ trn.delta ? `${fullTON(trn.delta)}💎` : $t('general.none')}}</td>
         <AtomsTableDateCell :date-time="trn.created_at"/>
     </tr>
 </template>

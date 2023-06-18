@@ -35,7 +35,24 @@ declare global {
     type FTWalletData = {
         jetton_balance?: bigint
     }
-    type Account = {
+
+    type JettonWallet = {
+        jetton_balance: string
+        wallet_address: string
+        minter_address: string
+        name: string
+    }
+
+    type JettonWalletKey = `${string}|${string}`
+    type NFTKey = `${string}|${string}`
+
+    type JettonWalletMap = {
+        [key: JettonWalletKey] : JettonWallet
+    }
+    type NFTMap = {
+        [key: NFTKey] : NFTAPI
+    }
+    interface Account extends NFTContentData, FTWalletData {
 
         address: Address
         label?: AddressLabel
@@ -67,18 +84,76 @@ declare global {
 
         executes_get_methods?: GetMethod[]
 
-        nft_content_data?: NFTContentData
-        ft_wallet_data?: FTWalletData
+        jetton_wallets: JettonWalletKey[]
+        nft_items: NFTContentData[]
+        nft_keys: NFTKey[]
+        transaction_keys: TransactionKey[]
 
         updated_at: string
     }
+
+    interface AccountAPI extends Omit<Account, 'jetton_wallets' | 'nft_items'> {}
+
     type AccountAPIData = {
         total: number
-        results: Account[]
+        results: AccountAPI[]
     }
     type AccountKey = string
 
     type AccountMap = {
         [key: AccountKey] : Account
+    }
+
+    // tonapi
+    type AddressAPI = {
+        address: string
+        name?: string
+        is_scam: boolean
+        icon?: string
+    }
+    type JettonAPI = {
+        address: string
+        name: string
+        symbol: string
+        decimals: number
+        image: string
+        verification:  'whitelist' | 'blacklist' | 'none'
+    }
+    type JettonAPIFull = {
+        balance: string
+        wallet_address: AddressAPI
+        jetton: JettonAPI
+    }
+    type JettonAPIData = {
+        balances: JettonAPIFull[]
+    }
+
+    type NFTMeta = {
+        image?: string
+        description?: string
+        marketplace?: string
+        external_url?: string
+        name?: string
+    }
+    type NFTCollection = {
+        address: string
+        name: string
+    }
+    type NFTPreview = {
+        resolution: `${number}:${number}`
+        url: string
+    }
+    type NFTAPI = {
+        address: string
+        index: bigint
+        owner: AccountAPI
+        collection: NFTCollection
+        verified: boolean
+        metadata: NFTMeta
+        previews: NFTPreview[]
+        approved_by: ('getgems' | 'tonkeeper')[]
+    }
+    type NFTAPIData = {
+        nft_items: NFTAPI[]
     }
 }

@@ -6,15 +6,14 @@ const route = useRoute()
 const isLoading = ref(true)
 const isGeneral = ref(true)
 const error = ref(false)
-const hash : NullableStrRef = ref(null)
-const excludeMC = ref(false)
+const hex : NullableStrRef = ref(null)
 
 const store = useMainStore()
 
 function routeChecker(newQuery: LocationQuery) {
-    hash.value = newQuery.hash? toBase64Rfc(newQuery.hash.toString()) : null;
+    hex.value = newQuery.hex? newQuery.hex.toString() : null;
 
-    if (hash.value) {
+    if (hex.value) {
         isGeneral.value = false;
         isLoading.value = false;
         return;
@@ -25,34 +24,31 @@ function routeChecker(newQuery: LocationQuery) {
 }
 
 watch(() => route.query, (newQuery) => routeChecker(newQuery))
-// watch(excludeWorkCh => store.updateTransactions())
+
 onMounted(() => routeChecker(route.query))
 </script>
 
 <template>
     <template v-if="error || isLoading">
-        <NuxtLink to="/transactions">
+        <NuxtLink to="/accounts">
             {{ 'An error occured while parsing query parameters! Go back..' }}
         </NuxtLink>
     </template>
     <template v-else>
         <div v-if="isGeneral">
-            <h1>{{  $t('route.transactions') }}</h1>
-            <div class="uk-child-width-auto uk-text-right">
-                <label><input v-model="excludeMC" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_masterchain') }}</label>
-            </div>
-            <LazyTransactionsTable :keys="store.exploredTransactions" :update="true" :default-length="20" :item-selector="true" :hidden="false" :exclude-m-c="excludeMC" :account="null"/>
+            <h1>{{  $t('route.accounts') }}</h1>
+            <LazyAccountsTable :keys="store.exploredAccounts" :update="true" :default-length="20" :item-selector="true" :hidden="false"/>
         </div>
-        <div v-else-if="hash" class="uk-flex uk-flex-column">
+        <div v-else-if="hex" class="uk-flex uk-flex-column">
             <div class="uk-flex uk-flex-bottom">
                 <h1 class="uk-inline uk-margin-remove-vertical">
-                {{ $t('route.transaction')}}
+                {{ $t('route.account')}}
                 </h1>
                 <h2 class="uk-inline uk-margin-remove-vertical uk-text-primary uk-margin-left uk-text-bold" style="line-height: 1.35;">
-                    {{ truncString(hash, 5) }}
+                    {{ truncString(store.accounts[hex]?.address?.base64 ?? 'loading..', 12) }}
                 </h2>
             </div>
-            <TransactionsTransactionInfo :hash="hash"/>
+            <AccountsAccountInfo :hex="hex" @set-hex="(e) => hex = e"/>
         </div>
     </template>
 </template>
