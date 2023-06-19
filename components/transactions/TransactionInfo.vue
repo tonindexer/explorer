@@ -21,6 +21,7 @@ const reloadInfo = async() => {
     if (!transaction.value) {
         await store.fetchTransaction(props.hash)
     }
+    await store.fetchBareAccounts(unloadedAccountKeys.value)
     if (!transaction.value) {
         error.value = true
         return;

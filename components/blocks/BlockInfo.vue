@@ -28,6 +28,7 @@ const reloadInfo = async() => {
     if (!block.value) {
         await store.fetchBlock(props.workchain, props.shard, props.seq_no)
     }
+    await store.fetchBareAccounts(unloadedAccountKeys.value)
     if (!block.value) {
         error.value = true
         return;

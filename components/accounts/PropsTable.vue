@@ -15,8 +15,8 @@ function itemPreprocess(index: string, item: any) {
     case 'updated_at': return new Date(item).toLocaleString();
     case 'block': return `${item.workchain}:${item.shard}:${item.block_seq_no}`
     case 'address': return item.base64
-    case 'code': return truncString(item, 30, 0)
-    case 'data': return truncString(item, 30, 0)
+    case 'data': return truncString(item, 40, 0)
+    case 'code': return truncString(item, 40, 0)
     default: return item;
   }
 }
@@ -46,7 +46,7 @@ function itemPreprocess(index: string, item: any) {
                         </AtomsCopyableText>
                         
                     </td>
-                    <td class="uk-text-truncate" v-else>
+                    <td class="uk-text-truncate uk-text-truncate" v-else>
                         {{ itemPreprocess(index, acc[index]) }}
                     </td>
                 </template>

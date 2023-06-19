@@ -34,6 +34,7 @@ const itemProp = computed(() => {
         @click="copy"
         :uk-icon="itemProp.icon"
         :class="itemProp.class"
+        style="min-width: 20px;"
         >
     </button>
 </template>

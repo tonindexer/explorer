@@ -354,7 +354,8 @@ export const useMainStore = defineStore('tonexp', {
           const { data } = await apiRequest(`/blocks?${query}`, 'GET')
           const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          this.processBlock(parsed.results[0])
+          const key = this.processBlock(parsed.results[0])
+          this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys(this.deepTransactionKeys(key), true, true), false))
         } catch (error) {
           console.log(error)
         }
@@ -368,11 +369,34 @@ export const useMainStore = defineStore('tonexp', {
           const { data } = await apiRequest(`/transactions?${query}`, 'GET')
           const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (parsed.results.length > 0)
+          if (parsed.results.length > 0) {
             this.processTransaction(parsed.results[0])
+            await this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys([hash], true, true), false))
+          }
         } catch (error) {
           console.log(error)
         }
+      },
+      async fetchBareAccounts(hex: string[]) {
+        hex = hex.filter(key => !(key in badAddresses))
+        if (hex.length === 0) return hex
+        try {
+          const fullReq: MockType = {
+            address: hex,
+            latest: true
+          }
+          const query = getQueryArrayString(fullReq, true);
+          // get latest account state
+            const { data } = await apiRequest(`/accounts?${query}`, 'GET')
+            const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            parsed.results.forEach((acc: AccountAPI) => {
+              this.processAccount(acc)
+            })
+          } catch (error) {
+            console.log(error)
+          }
+        return hex
       },
       async fetchAccount(hex: string) {
         this.loadNextNFTFlag = false

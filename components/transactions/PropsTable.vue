@@ -15,7 +15,7 @@ function itemPreprocess(index: string, item: any) {
     case 'total_fees': return item ? `${fullTON(item, false)}💎` : t('general.none');
     case 'created_at': return new Date(item).toLocaleString();
     case 'block': return `${item.workchain}:${item.shard}:${item.block_seq_no}`
-    case 'address': return truncString(item.base64, 30, 0)
+    case 'address': return item.base64;
     default: return item;
   }
 }
@@ -46,7 +46,7 @@ function itemPreprocess(index: string, item: any) {
                             <p class="uk-display-inline">{{ badAddresses[trn[index].hex].name }}</p>
                         </template>
                         <template v-else>
-                            <NuxtLink :to="`/accounts?hex=${trn.address.hex}#overview`">{{ itemPreprocess(index, trn[index]) }}</NuxtLink>
+                            <NuxtLink :to="`/accounts?hex=${trn.address.hex}#overview`" class="uk-text-truncate">{{ itemPreprocess(index, trn[index]) }}</NuxtLink>
                         </template>
                     </AtomsCopyableText>                    
                 </td>
