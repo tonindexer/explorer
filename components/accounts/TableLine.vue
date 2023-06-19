@@ -3,18 +3,16 @@ interface Props {
     acc: Account
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 </script>
 
 <template>
     <tr>
         <td> 
-            <NuxtLink :to="{ path: 'accounts', query: { hex: acc.address.hex }, hash: '#overview'} " style="word-break: break-all;">
-                {{acc.address.base64}}
-            </NuxtLink>
+            <AtomsAddressField :addr="acc.address"/>
         </td>
-        <td class="uk-text-right"> {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none')}}</td>
+        <td class="uk-text-right uk-text-nowrap"> {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none')}}</td>
         <AtomsTableDateCell :date-time="acc.updated_at"/>
     </tr>
 </template>

@@ -1,6 +1,12 @@
 export {}
 
 declare global {
+    type OPKey = number | string
+
+    type OPMap = {
+        [key: OPKey] : string
+    }
+
     type Transaction = {
 
         address: Address
@@ -35,6 +41,8 @@ declare global {
 
         orig_status: AccountStatus
         end_status: AccountStatus
+
+        op_type: OPKey
 
         created_at: string
         created_lt: bigint

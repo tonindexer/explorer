@@ -6,6 +6,7 @@ export const useMainStore = defineStore('tonexp', {
       blocks: {} as BlockMap,
       messages: {} as MessageMap,
       transactions: {} as TransactionMap,
+      transactionMsgFlag: {} as { [key: TransactionKey] : boolean } ,
       accounts: {} as AccountMap,
       // wallets and nfts
       jettonWallets: {} as JettonWalletMap,
@@ -92,7 +93,7 @@ export const useMainStore = defineStore('tonexp', {
 
         // Don't override messages
         if (messageKey in this.messages) return messageKey
-        
+
         const mappedMessage = <Message>{}
         mappedMessage.parent_tx_key = tr_key ?? 'parentless'
 
@@ -121,6 +122,7 @@ export const useMainStore = defineStore('tonexp', {
         const mappedTransaction = <Transaction>{}
         mappedTransaction.out_msg_keys = []
         mappedTransaction.delta = 0n + BigInt(transaction.in_amount ?? 0n) - BigInt(transaction.out_amount ?? 0n)
+        let op_type: OPKey = 0
 
         if (transaction.account) {
           if (parseAccount) mappedTransaction.account_key = this.processAccount(transaction.account)
@@ -129,17 +131,26 @@ export const useMainStore = defineStore('tonexp', {
         }
         if (transaction.in_msg) {
           this.processMessage(transaction.in_msg, transactionKey, 'IN')
+          transaction.in_msg.operation_name ? op_type = transaction.in_msg.operation_name :
+            (transaction.in_msg.operation_id ? op_type = `Contract op=${opToHex(transaction.in_msg.operation_id)}` : op_type = 1)
           delete transaction.in_msg
         }
         if (transaction.out_msg !== undefined) {
           if (transaction.out_msg?.length)
-            mappedTransaction.out_msg_keys.push(...transaction.out_msg.map(msg => this.processMessage(msg, transactionKey, 'OUT', parseAccount)))
+            mappedTransaction.out_msg_keys.push(...transaction.out_msg.map(msg => {
+              msg.operation_name ? ( (op_type ===0 || op_type === 1) ? op_type = msg.operation_name : op_type = 99) :
+                (msg.operation_id ? ( (op_type ===0 || op_type === 1) ? op_type = `Contract op=0x${opToHex(msg.operation_id)}` : op_type = 99) :
+                  op_type = 2)
+              return this.processMessage(msg, transactionKey, 'OUT', parseAccount)
+            }))
           delete transaction.out_msg
         }
 
+        mappedTransaction.op_type = op_type
         Object.assign(mappedTransaction, transaction)
 
         this.transactions[transactionKey] = mappedTransaction
+        this.transactionMsgFlag[transactionKey] = false
         return transactionKey
       },
       processBlock(block: BlockAPI) {
@@ -200,19 +211,7 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
         try {
-          this.latestTransactions = []
-          const latestReq = {
-            order: 'DESC',
-            limit: 10
-          }
-          const query = getQueryString(latestReq, false);
-          const { data } = await apiRequest(`/transactions?${query}`, 'GET')
-          const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          for (const key in parsed.results) {
-            const trn = this.processTransaction(parsed.results[key])
-            this.latestTransactions.push(trn)
-          }
+          await this.updateTransactions(20, null, true)
         } catch (error) {
           console.log(error)
         }

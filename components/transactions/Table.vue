@@ -21,6 +21,7 @@ const itemCount = ref(props.defaultLength)
 const firstLT: NullableBigRef = ref(0n)
 const lastLT: NullableBigRef = ref(0n)
 const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'trn'): false)
+const toggleMsg = (key: TransactionKey) => store.transactionMsgFlag[key] = !store.transactionMsgFlag[key]
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {
@@ -34,13 +35,13 @@ const setExtraFields = () => {
 }
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
+    setExtraFields()
     if (props.keys.length === 0 || pageNum.value === 0) {
         await store.updateTransactions(itemCount.value, null, props.excludeMC, props.account)
     }
     else {
         await store.updateTransactions(itemCount.value, next ? lastLT.value : firstLT.value, props.excludeMC, props.account)
     }
-    setExtraFields()
 }
 
 watch(pageNum, async(to, from) => {
@@ -57,14 +58,15 @@ watch(() => props.excludeMC, () => {
     else pageNum.value = 0
 })
 
+watch(() => props.account, () => {
+    if (pageNum.value === 0) updateValues()
+    else pageNum.value = 0
+})
+
 watch(itemCount, async() => {
     if (pageNum.value === 0) updateValues()
     else pageNum.value = 0
 }, {deep : true})
-
-watch(props, () => {
-    setExtraFields()
-})
 
 onMounted(() => {
     setExtraFields()
@@ -72,22 +74,36 @@ onMounted(() => {
 </script>
 
 <template>
-    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-vertical">
         <thead>
             <tr>
-                <th class="uk-width-1-6">{{ $t('ton.id')}}</th>
-                <th class="uk-width-1-6">{{ $t('ton.address')}}</th>
-                <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
+                <th class="uk-table-shrink" style="min-width: 20px"></th>
+                <th class="uk-table-shrink" style="min-width: 20px"></th>
+                <th class="uk-width-1-5">OP</th>
+                <th class="uk-table-expand">{{ $t('route.transaction')}}</th>
+                <th class="uk-width-1-6 uk-text-right">{{ $t('ton.balance')}}</th>
                 <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.created')}}</th>
             </tr>
         </thead>
         <tbody>
             <template v-for="trn in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <TransactionsTableLine :trn="store.transactions[trn]"/>
+                <TransactionsTableLine :trn="store.transactions[trn]" :msg-show="store.transactionMsgFlag[trn]" @toggle-msg="(e) => toggleMsg(e)"/>
+                    <td colspan="6" class="uk-padding-remove" 
+                        v-if="[store.transactions[trn].in_msg_hash, ...store.transactions[trn].out_msg_keys].length > 0 && store.transactionMsgFlag[trn]"
+                        style="border-bottom: 2px solid #d0d0d0; border-top: 2px solid #d0d0d0;">
+                        <MessagesTable 
+                            :parent_tx="trn" 
+                            :item-selector="false" 
+                            :default-length="5" 
+                            :update="false" 
+                            :keys="[store.transactions[trn].in_msg_hash, ...store.transactions[trn].out_msg_keys]" 
+                            :hidden="[store.transactions[trn].in_msg_hash, ...store.transactions[trn].out_msg_keys].length === 0"
+                        />
+                    </td>
             </template>
         </tbody>
     </table>
-        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle" style="justify-content: flex-end;">
+        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end;">
             <div class="uk-flex uk-flex-middle" v-if="itemSelector">
                 <AtomsSelector 
                     :item-count="itemCount"

@@ -68,10 +68,6 @@ watch(itemCount, async() => {
     else pageNum.value = 0
 }, {deep : true})
 
-watch(props, () => {
-    setExtraFields()
-})
-
 onMounted(() => setExtraFields())
 </script>
 

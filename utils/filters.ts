@@ -7,6 +7,8 @@ export const fullTON = (rawTON: bigint, delta: boolean = true) : string => {
     return (BigInt(rawTON) > 0n && delta ? '+' : '') + (Number(BigInt(rawTON) * 100n) / 100000000000).toString()
 }
 
+export const opToHex = (op: number) => `0x${op.toString(16)}`
+
 export const colorAmount = (ton : bigint) => BigInt(ton) > 0n ? 'green' : BigInt(ton) === 0n ? '' : 'red'
 
 export const isNumeric = (value: any) : boolean => {
@@ -92,3 +94,10 @@ export const badAddresses = {
         base64: "EQCuzvIOXLjH2tv35gY4tzhIvXCqZWDuK9kUhFGXKLImgxT5"
     }
 } as badList
+
+export const knownOp = {
+    0: "System op in ",
+    1: "Received TONs in ",
+    2: "Sending TONs in ",
+    99: 'Multisend'
+} as OPMap

@@ -19,18 +19,18 @@ const itemCount = ref(props.defaultLength)
 const messageDir = ((msgKey: MessageKey) : MessageDirection => 
     store.messages[msgKey].type === 'EXTERNAL_IN' ? 'EXT_IN' : 
         (store.messages[msgKey].type === 'EXTERNAL_OUT' ? 'EXT_OUT' :
-            (store.transactions[props.parent_tx ?? store.messages[msgKey].parent_tx_key]?.in_msg_hash === msgKey ? 'IN' : 'OUT'))
-)
+            (store.transactions[props.parent_tx ?? store.messages[msgKey].parent_tx_key]?.in_msg_hash === msgKey ? 'IN' : 'OUT')))
+            
 </script>
 
 <template>
-    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-vertical">
         <thead>
             <tr>
                 <th class="uk-table-shrink"></th>
-                <th class="uk-width-1-3" style="word-wrap: break-word;"> {{ $t('general.from') }}</th>
+                <th class="uk-width-1-4" style="word-wrap: break-word;"> {{ $t('general.from') }}</th>
                 <th class="uk-text-center">{{ $t('ton.type')}}</th>
-                <th class="uk-width-1-3" style="word-wrap: break-word;"> {{ $t('general.to') }}</th>
+                <th class="uk-width-1-4" style="word-wrap: break-word;"> {{ $t('general.to') }}</th>
                 <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
                 <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.created')}}</th>
             </tr>
