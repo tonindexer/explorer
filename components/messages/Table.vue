@@ -4,6 +4,7 @@ import { useMainStore } from '~/store/TONExp';
 interface MessageTable {
     keys: string[]
     update: boolean
+    parent_tx: TransactionKey | null
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
@@ -14,6 +15,12 @@ const props = defineProps<MessageTable>()
 const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
+
+const messageDir = ((msgKey: MessageKey) : MessageDirection => 
+    store.messages[msgKey].type === 'EXTERNAL_IN' ? 'EXT_IN' : 
+        (store.messages[msgKey].type === 'EXTERNAL_OUT' ? 'EXT_OUT' :
+            (store.transactions[props.parent_tx ?? store.messages[msgKey].parent_tx_key]?.in_msg_hash === msgKey ? 'IN' : 'OUT'))
+)
 </script>
 
 <template>
@@ -30,7 +37,7 @@ const itemCount = ref(props.defaultLength)
         </thead>
         <tbody>
             <template v-for="msg in update ? props.keys.slice(0, itemCount) : props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <MessagesTableLine :msg="store.messages[msg]"/>
+                <MessagesTableLine :msg="store.messages[msg]" :dir="messageDir(msg)"/>
             </template>
         </tbody>
     </table>

@@ -11,7 +11,6 @@ declare global {
         hash: string
 
         parent_tx_key: string
-        direction: MessageDirection
 
         src_address?: Address
         src_tx_lt?: bigint

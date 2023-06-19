@@ -92,10 +92,9 @@ export const useMainStore = defineStore('tonexp', {
 
         // Don't override messages
         if (messageKey in this.messages) return messageKey
-
+        
         const mappedMessage = <Message>{}
         mappedMessage.parent_tx_key = tr_key ?? 'parentless'
-        mappedMessage.direction = message.type === 'EXTERNAL_IN' ? 'EXT_IN' : (message.type === 'EXTERNAL_OUT' ? 'EXT_OUT' : dir)
 
         if (message.src_state) {
           if (parseAccounts) mappedMessage.src_state_key = this.processAccount(message.src_state)

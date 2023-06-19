@@ -16,7 +16,7 @@ const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
 const firstTX: NullableBigRef = ref(0n)
 const lastTX: NullableBigRef = ref(0n)
-const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), 'acc'))
+const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'acc') : false)
 
 const maxExploredPage = ref(0)
 

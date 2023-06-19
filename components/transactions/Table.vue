@@ -20,7 +20,7 @@ const maxExploredPage = ref(0)
 const itemCount = ref(props.defaultLength)
 const firstLT: NullableBigRef = ref(0n)
 const lastLT: NullableBigRef = ref(0n)
-const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), 'trn'))
+const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'trn'): false)
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {

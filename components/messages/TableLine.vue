@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface Props {
     msg: Message
+    dir: MessageDirection
 }
 
 const props = defineProps<Props>()
@@ -18,7 +19,7 @@ const props = defineProps<Props>()
         <td>
             <AtomsAddressField :addr="props.msg.src_address ?? null"/>
         </td>
-        <td class="uk-text-center" style="min-width: 60px;"> {{ msg.direction }}</td>
+        <td class="uk-text-center" style="min-width: 60px;"> {{ dir }}</td>
         <td>
             <AtomsAddressField :addr="props.msg.dst_address ?? null"/>
         </td>
