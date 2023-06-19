@@ -43,7 +43,10 @@ function itemPreprocess(index: string, item: any) {
                 <td class="uk-width-1-4">
                     {{ $t(`ton.${index}`) }}
                 </td>
-                <td v-if="index !== 'master_key'">
+                <td v-if="index !== 'master_key' && index !== 'transaction_delta'">
+                    {{ itemPreprocess(index, block[index]) }}
+                </td>
+                <td v-if="index === 'transaction_delta'" :class="colorAmount(block[index])">
                     {{ itemPreprocess(index, block[index]) }}
                 </td>
                 <td v-if="index === 'master_key'">

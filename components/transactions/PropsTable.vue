@@ -11,8 +11,8 @@ const copyField = ['hash', 'address', 'prev_tx_hash']
 
 function itemPreprocess(index: string, item: any) {
   switch (index) {
-    case 'delta': return item ? `${fullTON(item)}💎` : t('general.none');
-    case 'total_fees': return item ? `${fullTON(item)}💎` : t('general.none');
+    case 'delta': return item ? `${fullTON(item, false)}💎` : t('general.none');
+    case 'total_fees': return item ? `${fullTON(item, false)}💎` : t('general.none');
     case 'created_at': return new Date(item).toLocaleString();
     case 'block': return `${item.workchain}:${item.shard}:${item.block_seq_no}`
     case 'address': return truncString(item.base64, 30, 0)

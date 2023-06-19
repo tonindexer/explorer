@@ -87,7 +87,7 @@ export const useMainStore = defineStore('tonexp', {
         this.accounts[accountKey] = mappedAccount
         return accountKey
       },
-      processMessage(message: MessageAPI, tr_key: TransactionKey | null, parseAccounts: boolean = true) {
+      processMessage(message: MessageAPI, tr_key: TransactionKey | null, dir: 'IN' | 'OUT', parseAccounts: boolean = true) {
         const messageKey = message.hash
 
         // Don't override messages
@@ -95,6 +95,7 @@ export const useMainStore = defineStore('tonexp', {
 
         const mappedMessage = <Message>{}
         mappedMessage.parent_tx_key = tr_key ?? 'parentless'
+        mappedMessage.direction = message.type === 'EXTERNAL_IN' ? 'EXT_IN' : (message.type === 'EXTERNAL_OUT' ? 'EXT_OUT' : dir)
 
         if (message.src_state) {
           if (parseAccounts) mappedMessage.src_state_key = this.processAccount(message.src_state)
@@ -128,12 +129,12 @@ export const useMainStore = defineStore('tonexp', {
           delete transaction.account
         }
         if (transaction.in_msg) {
-          this.processMessage(transaction.in_msg, transactionKey)
+          this.processMessage(transaction.in_msg, transactionKey, 'IN')
           delete transaction.in_msg
         }
         if (transaction.out_msg !== undefined) {
           if (transaction.out_msg?.length)
-            mappedTransaction.out_msg_keys.push(...transaction.out_msg.map(msg => this.processMessage(msg, transactionKey, parseAccount)))
+            mappedTransaction.out_msg_keys.push(...transaction.out_msg.map(msg => this.processMessage(msg, transactionKey, 'OUT', parseAccount)))
           delete transaction.out_msg
         }
 

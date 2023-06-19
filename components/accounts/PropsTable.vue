@@ -11,7 +11,7 @@ const copyFields = {'address': true, 'last_tx_hash': true, 'code': true, 'code_h
 
 function itemPreprocess(index: string, item: any) {
   switch (index) {
-    case 'balance': return item ? `${fullTON(item)}💎` : t('general.none');
+    case 'balance': return item ? `${fullTON(item, false)}💎` : t('general.none');
     case 'updated_at': return new Date(item).toLocaleString();
     case 'block': return `${item.workchain}:${item.shard}:${item.block_seq_no}`
     case 'address': return item.base64

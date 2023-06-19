@@ -18,7 +18,7 @@
         "id": "ID",
         "address": "Address",
         "balance": "Balance",
-        "type": "Operation type",
+        "type": "Type",
 
         "hash" : "Hash (ID)",
         "account_key": "Account key",
@@ -45,6 +45,8 @@
         "none" : "None",
         "language": "Language",
         "type" : "Type",
+        "from" : "Sender",
+        "to" : "Recipient",
         "amount" : "Amount",
         "scanned" : "Scanned",
         "created" : "Created",

@@ -31,7 +31,7 @@ const store = useMainStore()
           <div v-else class="uk-width-1-3 uk-text-center" style="align-self: center;">
               {{ truncString(trn.address.hex, 4, 3) }}
           </div>
-          <div class="uk-width-1-3 uk-text-center" style="align-self: center; font-size: 1rem" :uk-tooltip="fullTON(trn.delta)">
+          <div class="uk-width-1-3 uk-text-center" style="align-self: center; font-size: 1rem" :uk-tooltip="fullTON(trn.delta, false)">
             {{ trn.delta ? `${shortTON(trn.delta)}💎` : $t('general.none') }}
           </div>
         </div>

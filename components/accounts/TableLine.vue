@@ -14,7 +14,7 @@ const props = defineProps<Props>()
                 {{acc.address.base64}}
             </NuxtLink>
         </td>
-        <td class="uk-text-right"> {{ acc.balance ? `${fullTON(acc.balance)}💎` : $t('general.none')}}</td>
+        <td class="uk-text-right"> {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none')}}</td>
         <AtomsTableDateCell :date-time="acc.updated_at"/>
     </tr>
 </template>

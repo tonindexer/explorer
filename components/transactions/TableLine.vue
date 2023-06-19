@@ -16,7 +16,7 @@ const props = defineProps<Props>()
         </td>
         <td style="text-wrap: nowrap;" v-if="trn.address.hex in badAddresses"> {{ badAddresses[trn.address.hex].name }}</td>
         <td style="text-wrap: nowrap;" v-else> {{ truncString(trn.address.base64, 4) }}</td>
-        <td class="uk-text-right"> {{ trn.delta ? `${fullTON(trn.delta)}💎` : $t('general.none')}}</td>
+        <td class="uk-text-right" :class="colorAmount(trn.delta)"> {{ trn.delta ? `${fullTON(trn.delta)}💎` : $t('general.none')}}</td>
         <AtomsTableDateCell :date-time="trn.created_at"/>
     </tr>
 </template>

@@ -3,9 +3,11 @@ export const shortTON = (rawTON: bigint) : string => {
     return Math.abs(out) < 0.1 ? out.toFixed(3).toString() : Math.abs(out) > 100 ? out.toString() : out.toPrecision(3).toString()
 }
 
-export const fullTON = (rawTON: bigint) : string => {
-    return (Number(BigInt(rawTON) * 100n) / 100000000000).toString()
+export const fullTON = (rawTON: bigint, delta: boolean = true) : string => {
+    return (BigInt(rawTON) > 0n && delta ? '+' : '') + (Number(BigInt(rawTON) * 100n) / 100000000000).toString()
 }
+
+export const colorAmount = (ton : bigint) => BigInt(ton) > 0n ? 'green' : BigInt(ton) === 0n ? '' : 'red'
 
 export const isNumeric = (value: any) : boolean => {
     return /^-?\d+$/.test(value)

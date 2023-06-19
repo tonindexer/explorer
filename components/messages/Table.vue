@@ -20,8 +20,10 @@ const itemCount = ref(props.defaultLength)
     <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
         <thead>
             <tr>
-                <th class="uk-width-1-6">{{ $t('ton.id')}}</th>
-                <th class="uk-width-1-6">{{ $t('ton.type')}}</th>
+                <th class="uk-table-shrink"></th>
+                <th class="uk-width-1-3" style="word-wrap: break-word;"> {{ $t('general.from') }}</th>
+                <th class="uk-text-center">{{ $t('ton.type')}}</th>
+                <th class="uk-width-1-3" style="word-wrap: break-word;"> {{ $t('general.to') }}</th>
                 <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
                 <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.created')}}</th>
             </tr>
