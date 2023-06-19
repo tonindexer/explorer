@@ -44,8 +44,8 @@ onMounted(() => routeChecker(route.query))
                 <h1 class="uk-inline uk-margin-remove-vertical">
                 {{ $t('route.account')}}
                 </h1>
-                <h2 class="uk-inline uk-margin-remove-vertical uk-text-primary uk-margin-left uk-text-bold" style="line-height: 1.35;">
-                    {{ truncString(store.accounts[hex]?.address?.base64 ?? 'loading..', 12) }}
+                <h2 class="uk-inline uk-margin-remove-vertical uk-text-primary uk-margin-left uk-text-bold uk-text-truncate" style="line-height: 1.35;">
+                    {{ store.accounts[hex]?.address?.base64 ?? 'loading..' }}
                 </h2>
             </div>
             <AccountsAccountInfo :hex="hex" @set-hex="(e) => hex = e"/>

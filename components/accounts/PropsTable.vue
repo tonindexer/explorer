@@ -7,6 +7,7 @@ interface Props {
 defineProps<Props>()
 
 const tableOrder = ['address', 'balance', 'block', 'last_tx_hash', 'code', 'code_hash', 'data', 'data_hash', 'updated_at'] as const
+const copyFields = {'address': true, 'last_tx_hash': true, 'code': true, 'code_hash': true, 'data': true, 'data_hash': true} as const 
 
 function itemPreprocess(index: string, item: any) {
   switch (index) {
@@ -14,6 +15,8 @@ function itemPreprocess(index: string, item: any) {
     case 'updated_at': return new Date(item).toLocaleString();
     case 'block': return `${item.workchain}:${item.shard}:${item.block_seq_no}`
     case 'address': return item.base64
+    case 'code': return truncString(item, 30, 0)
+    case 'data': return truncString(item, 30, 0)
     default: return item;
   }
 }
@@ -28,11 +31,23 @@ function itemPreprocess(index: string, item: any) {
                     <td class="uk-width-1-4">
                         {{ $t(`ton.${index}`) }}
                     </td>
-                    <td class="uk-text-truncate" v-if="index !== 'last_tx_hash'">
-                        {{ itemPreprocess(index, acc[index]) }}
+                    <td class="uk-text-truncate" v-if="index !== 'last_tx_hash' && index in copyFields">
+                        <AtomsCopyableText :text="index === 'address' ? acc[index].base64 : acc[index]?.toString() ?? ''">
+                            <slot>
+                                {{ itemPreprocess(index, acc[index]) }}
+                            </slot>
+                        </AtomsCopyableText>
                     </td>
                     <td v-else-if="index === 'last_tx_hash' && acc[index]">
-                        <NuxtLink :to="`/transactions?hash=${toBase64Web(acc[index])}#overview`">{{ itemPreprocess(index, acc[index]) }}</NuxtLink>
+                        <AtomsCopyableText :text="acc[index]">
+                            <slot>
+                                <NuxtLink :to="`/transactions?hash=${toBase64Web(acc[index])}#overview`">{{ itemPreprocess(index, acc[index]) }}</NuxtLink>
+                            </slot>
+                        </AtomsCopyableText>
+                        
+                    </td>
+                    <td class="uk-text-truncate" v-else>
+                        {{ itemPreprocess(index, acc[index]) }}
                     </td>
                 </template>
                 <template v-else-if="index === 'block'">

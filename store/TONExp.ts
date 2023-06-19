@@ -441,7 +441,6 @@ export const useMainStore = defineStore('tonexp', {
             this.accounts[address].nft_keys.push(nft_Key)
             this.nftItems[nft_Key] = nft
           }
-          console.log(parsed.nft_items.length)
         } catch (error) {
           console.log(error)
         }
