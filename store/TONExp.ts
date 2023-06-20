@@ -368,8 +368,11 @@ export const useMainStore = defineStore('tonexp', {
           const { data } = await apiRequest(`/blocks?${query}`, 'GET')
           const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          const key = this.processBlock(parsed.results[0])
-          this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys(this.deepTransactionKeys(key), true, true), false))
+          if (parsed.results && parsed.results.length > 0) {
+            const key = this.processBlock(parsed.results[0])
+            this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys(this.deepTransactionKeys(key), true, true), false))
+            return key
+          } else return null
         } catch (error) {
           console.log(error)
         }
@@ -383,11 +386,12 @@ export const useMainStore = defineStore('tonexp', {
           const { data } = await apiRequest(`/transactions?${query}`, 'GET')
           const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (parsed.results.length > 0) {
+          if (parsed.results && parsed.results.length > 0) {
             this.processTransaction(parsed.results[0])
             if (hash !== parsed.results[0].hash) hash = parsed.results[0].hash
             await this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys([hash], true, true), false))
-          }
+            return hash
+          } else return null
         } catch (error) {
           console.log(error)
         }
@@ -406,9 +410,10 @@ export const useMainStore = defineStore('tonexp', {
             const { data } = await apiRequest(`/accounts?${query}`, 'GET')
             const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            parsed.results.forEach((acc: AccountAPI) => {
-              this.processAccount(acc)
-            })
+            if (parsed.results && parsed.results.length > 0)
+              parsed.results.forEach((acc: AccountAPI) => {
+                this.processAccount(acc)
+              })
           } catch (error) {
             console.log(error)
           }
@@ -427,8 +432,10 @@ export const useMainStore = defineStore('tonexp', {
             const { data } = await apiRequest(`/accounts?${query}`, 'GET')
             const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            this.processAccount(parsed.results[0])
-            if (hex !== parsed.results[0].address.hex) hex = parsed.results[0].address.hex
+            if (parsed.results && parsed.results.length > 0) {
+              this.processAccount(parsed.results[0])
+              if (hex !== parsed.results[0].address.hex) hex = parsed.results[0].address.hex
+            } else return null
           } catch (error) {
             console.log(error)
           }
@@ -483,6 +490,41 @@ export const useMainStore = defineStore('tonexp', {
         } catch (error) {
           console.log(error)
         }
+      },
+      async search(req: BlockSearch | TxSearch | AccSearch): Promise<Search> {
+        if (req.type == 'account') {
+          if (req.value.hex in this.accounts) return [req]
+
+          const key = await this.fetchAccount(req.value.hex)
+          if (key) return [{
+            type: 'account',
+            value: {
+              hex: key
+            }}] 
+          else return []
+        } else if (req.type === 'block') {
+          if (this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) return [req]
+
+          const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no)
+          if (key) return [{
+            type: 'block',
+            value: {
+              workchain: this.blocks[key].workchain,
+              shard: this.blocks[key].shard,
+              seq_no: this.blocks[key].seq_no
+            }}] 
+          else return []
+        } else if (req.type === 'transaction') {
+          if (req.value.hash in this.transactions) return [req]
+
+          const key = await this.fetchTransaction(req.value.hash)
+          if (key) return [{
+            type: 'transaction',
+            value: {
+              hash: key
+            }}] 
+            else return []
+        } else return []
       }
     }
   })

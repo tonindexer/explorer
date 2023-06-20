@@ -60,7 +60,9 @@
         "updated": "Updated",
         "loaded_accs": "Loaded accounts",
         "unloaded_accs": "Unloaded accounts",
-        "external": "External links"
+        "external": "External links",
+        "nothing-found": "Nothing found! Try again..",
+        "incorrect-input": "Incorrect input.."
     },
     "route" : {
         "explorer" : "Main Page",
