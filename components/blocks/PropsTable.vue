@@ -34,6 +34,14 @@ function itemPreprocess(index: string, item: any) {
   }
 }
 
+const externalLink = computed(() : MockType=> {
+    return {
+    // 'Ton.cx': 'https://ton.cx/address/'.concat(this.bounceable),
+        'Toncoin': `https://explorer.toncoin.org/search?workchain=${props.block.workchain}&shard=8000000000000000&seqno=${props.block.seq_no}&lt=&utime=&roothash=&filehash=`,
+        'TonWhales': props.block.workchain === -1 ? `https://tonwhales.com/explorer/block/${props.block.seq_no}`: null,
+        'Ton.sh': `https://ton.sh/block/${props.block.workchain}/${props.block.seq_no}`
+    }
+})
 </script>
 
 <template>
@@ -51,6 +59,18 @@ function itemPreprocess(index: string, item: any) {
                 </td>
                 <td v-if="index === 'master_key'">
                     <NuxtLink :to="`/blocks?workchain=${masterLink.workchain}&shard=${masterLink.shard}&seq_no=${masterLink.seq_no}#overview`">{{ itemPreprocess(index, block[index]) }}</NuxtLink>
+                </td>
+            </tr>
+            <tr>
+                <td class="uk-width-1-4">
+                    {{ $t(`general.external`) }}
+                </td>
+                <td>
+                    <template v-for="key of Object.keys(externalLink)">
+                        <NuxtLink v-if="externalLink[key]" :to="externalLink[key]" class="uk-margin-right uk-text-primary" uk-icon="icon:link" target="_blank">
+                            {{ key }}
+                        </NuxtLink>
+                    </template>
                 </td>
             </tr>
         </tbody>

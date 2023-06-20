@@ -4,7 +4,7 @@ interface Props {
     acc: Account
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const tableOrder = ['address', 'balance', 'block', 'last_tx_hash', 'code', 'code_hash', 'data', 'data_hash', 'updated_at'] as const
 const copyFields = {'address': true, 'last_tx_hash': true, 'code': true, 'code_hash': true, 'data': true, 'data_hash': true} as const 
@@ -21,6 +21,19 @@ function itemPreprocess(index: string, item: any) {
   }
 }
 
+const externalLink = computed(() : MockType=> {
+    return {
+        'Ton.cx': `https://ton.cx/address/${props.acc.address.base64}`,
+        'Toncoin': `https://explorer.toncoin.org/account?workchain=&shard=&seqno=&roothash=&filehash=&account=${props.acc.address.base64}`,
+        'TonWhales': `https://tonwhales.com/explorer/address/${props.acc.address.base64}`,
+        'Ton.sh': `https://ton.sh/address/${props.acc.address.base64}`,
+        'Tonviewer': `https://tonviewer.com/${props.acc.address.base64}`,
+        'tonscan.org' : `https://tonscan.org/address/${props.acc.address.base64}`,
+        'Ton NFT': `https://explorer.tonnft.tools/address/${props.acc.address.base64}`,
+        'TonObserver': `https://tonobserver.com/explorer/info?address=${props.acc.address.base64}`,
+        'dton': `https://dton.io/a/${props.acc.address.base64}`
+    }
+})
 </script>
 
 <template>
@@ -59,7 +72,19 @@ function itemPreprocess(index: string, item: any) {
                         </NuxtLink>
                     </td>
                 </template>
-            </tr>   
+            </tr>
+            <tr>
+                <td class="uk-width-1-4">
+                    {{ $t(`general.external`) }}
+                </td>
+                <td>
+                    <template v-for="key of Object.keys(externalLink)">
+                        <NuxtLink v-if="externalLink[key]" :to="externalLink[key]" class="uk-margin-right uk-text-primary" uk-icon="icon:link" target="_blank">
+                            {{ key }}
+                        </NuxtLink>
+                    </template>
+                </td>
+            </tr>  
         </tbody>
     </table>
         

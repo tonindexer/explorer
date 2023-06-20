@@ -11,6 +11,7 @@ declare global {
 
         address: Address
         hash: string
+        hex: string
         // account: Account | null -- API data only -- remapped
         account_key: AccountKey | null
 
@@ -48,7 +49,7 @@ declare global {
         created_lt: bigint
     }
 
-    interface TransactionAPI extends Omit<Transaction, 'account_key' | 'in_msg_key' | 'out_msg_keys'> {
+    interface TransactionAPI extends Omit<Transaction, 'account_key' | 'in_msg_key' | 'out_msg_keys' | 'base64'> {
         account?: Account | null // '?' for mapping the interface
         in_msg?: MessageAPI | null // '?' for mapping the interface
         out_msg?: MessageAPI[] | null

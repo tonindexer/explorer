@@ -71,6 +71,19 @@ export const useMainStore = defineStore('tonexp', {
     },
     actions: {
       blockKeyGen: (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`,
+      convertBase64ToHex: (value: string) => {
+        if (process.server) {
+          return Buffer.from(value, 'base64').toString('hex');
+        } else {
+          const raw = atob(value);
+          let result = '';
+          for (let i = 0; i < raw.length; i++) {
+            const hex = raw.charCodeAt(i).toString(16);
+            result += (hex.length === 2 ? hex : '0' + hex);
+          }
+          return result
+        }
+      },
       processAccount(account: AccountAPI) {
         const accountKey = account.address.hex
         const mappedAccount = <Account>{}
@@ -120,6 +133,7 @@ export const useMainStore = defineStore('tonexp', {
         if (transactionKey in this.transactions) return transactionKey
 
         const mappedTransaction = <Transaction>{}
+        mappedTransaction.hex = this.convertBase64ToHex(transactionKey)
         mappedTransaction.out_msg_keys = []
         mappedTransaction.delta = 0n + BigInt(transaction.in_amount ?? 0n) - BigInt(transaction.out_amount ?? 0n)
         let op_type: OPKey = 0
