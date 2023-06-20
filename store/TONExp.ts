@@ -26,6 +26,8 @@ export const useMainStore = defineStore('tonexp', {
       totalQueryAccounts: 0 as number,
       // Flag for NFT
       loadNextNFTFlag: true,
+      // search results
+      searchResults: [] as Search,
       // Statistics.
       stats : {} as Statistics
     }),
@@ -497,33 +499,34 @@ export const useMainStore = defineStore('tonexp', {
         }
       },
       async search(req: BlockSearch | TxSearch | AccSearch): Promise<Search> {
+        this.searchResults = []
         if (req.type == 'account') {
-          if (req.value.hex in this.accounts) return [req]
+          if (req.value.hex in this.accounts) { this.searchResults = [req]; return this.searchResults }
 
           if (req.value.hex in this.accountBases) {
-            return [{
+            this.searchResults = [{
               type: 'account',
               value: {
                 hex: this.accountBases[req.value.hex]
               },
               show: req.value.hex
-            }] 
+            }]
+          } else {
+            const key = await this.fetchAccount(req.value.hex)
+            if (key) this.searchResults = [{
+              type: 'account',
+              value: {
+                hex: key
+              },
+              show: req.value.hex
+            }]
           }
 
-          const key = await this.fetchAccount(req.value.hex)
-          if (key) return [{
-            type: 'account',
-            value: {
-              hex: key
-            },
-            show: req.value.hex
-          }] 
-          else return []
         } else if (req.type === 'block') {
-          if (this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) return [req]
+          if (this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) { this.searchResults = [req]; return this.searchResults }
 
           const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no)
-          if (key) return [{
+          if (key) this.searchResults = [{
             type: 'block',
             value: {
               workchain: this.blocks[key].workchain,
@@ -531,29 +534,30 @@ export const useMainStore = defineStore('tonexp', {
               seq_no: this.blocks[key].seq_no
             },
             show: this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
-          }] 
-          else return []
+          }]
         } else if (req.type === 'transaction') {
-          if (req.value.hash in this.transactions) return [req]
+          if (req.value.hash in this.transactions) { this.searchResults = [req]; return this.searchResults }
+
           if (req.value.hash in this.transactionHexes) {
-            return [{
+            this.searchResults = [{
               type: 'transaction',
               value: {
                 hash: this.transactionHexes[req.value.hash]
               },
               show: req.value.hash
-            }] 
+            }]
+          } else {
+            const key = await this.fetchTransaction(req.value.hash)
+            if (key) this.searchResults = [{
+              type: 'transaction',
+              value: {
+                hash: key
+              },
+              show: req.value.hash
+            }]
           }
-          const key = await this.fetchTransaction(req.value.hash)
-          if (key) return [{
-            type: 'transaction',
-            value: {
-              hash: key
-            },
-            show: req.value.hash
-          }] 
-            else return []
-        } else return []
+        }
+        return this.searchResults
       }
     }
   })

@@ -80,7 +80,9 @@
         "jetton" : "Jetton",
         "jettons" : "Jettons",
         "nfts" : "NFTs",
-        "nft" : "NFT"
+        "nft" : "NFT",
+        "search" : "Резульаты поиска",
+        "result" : "Результат"
     },
     "stats" : {
         "account_count": "Аккаунтов",
