@@ -16,7 +16,7 @@ const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
 const firstTX: NullableBigRef = ref(0n)
 const lastTX: NullableBigRef = ref(0n)
-const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), 'acc'))
+const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'acc') : false)
 
 const maxExploredPage = ref(0)
 
@@ -66,7 +66,7 @@ onMounted(() => setExtraFields())
     <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
         <thead>
             <tr>
-                <th class="uk-width-1-5">{{ $t('ton.id')}}</th>
+                <th class="uk-width-1-3">{{ $t('ton.id')}}</th>
                 <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
                 <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
             </tr>

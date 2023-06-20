@@ -20,7 +20,7 @@ const itemCount = ref(props.defaultLength)
 const firstMC = ref(0)
 const lastMC = ref(0)
 const maxExploredPage = ref(0)
-const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), 'block'))
+const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'block'): false)
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {
@@ -67,10 +67,6 @@ watch(itemCount, async() => {
     if (pageNum.value === 0) updateValues()
     else pageNum.value = 0
 }, {deep : true})
-
-watch(props, () => {
-    setExtraFields()
-})
 
 onMounted(() => setExtraFields())
 </script>

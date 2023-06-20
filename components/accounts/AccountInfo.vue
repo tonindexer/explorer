@@ -31,10 +31,6 @@ const reloadInfo = async() => {
 onMounted(async() => reloadInfo())
 
 watch(props, async() => await reloadInfo())
-
-watch(account, () => {
-    console.log(store.accounts[props.hex])
-})
 </script>
 
 <template>

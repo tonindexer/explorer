@@ -30,7 +30,7 @@ const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '
               {{ block.seq_no }}
             </NuxtLink>
           </div>
-          <div class="uk-width-1-3 uk-text-center" style="align-self: center; font-size: 1rem" :uk-tooltip="fullTON(block.transaction_delta)">
+          <div class="uk-width-1-3 uk-text-center" style="align-self: center; font-size: 1rem" :uk-tooltip="fullTON(block.transaction_delta, false)">
             {{ block.transaction_keys ? `${block.transaction_keys.length} (${shortTON(block.transaction_delta)}💎)` : $t('general.none') }}
           </div>
         </div>
@@ -46,7 +46,7 @@ const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '
                   {{ shard.seq_no }}
               </NuxtLink>
             </div>
-            <div class="uk-width-1-3 uk-text-center" style="align-self: center;" :uk-tooltip="shard.transaction_delta ? fullTON(shard.transaction_delta): 'cls: uk-hidden'">
+            <div class="uk-width-1-3 uk-text-center" style="align-self: center;" :uk-tooltip="shard.transaction_delta ? fullTON(shard.transaction_delta, false): 'cls: uk-hidden'">
               {{ shard.transaction_keys.length !== 0 ? `${shard.transaction_keys.length}${shard.transaction_delta ? ' (' + shortTON(shard.transaction_delta) + '💎)' : ''}` : $t('general.none') }}
             </div>
           </div>

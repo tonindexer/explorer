@@ -28,6 +28,7 @@ const reloadInfo = async() => {
     if (!block.value) {
         await store.fetchBlock(props.workchain, props.shard, props.seq_no)
     }
+    await store.fetchBareAccounts(unloadedAccountKeys.value)
     if (!block.value) {
         error.value = true
         return;
@@ -76,9 +77,9 @@ watch(props, async() => await reloadInfo())
             <label><input v-model="deepMsgKeys" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.deep_messages') }}</label>
         </div>
         <h3 v-if="inMessageKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.in_msg') }}</h3>
-        <MessagesTable :item-selector="false" :default-length="5" :update="false" :keys="inMessageKeys" :hidden="inMessageKeys.length === 0"/>
+        <MessagesTable :parent_tx="null" :item-selector="false" :default-length="5" :update="false" :keys="inMessageKeys" :hidden="inMessageKeys.length === 0"/>
         <h3 v-if="outMessageKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.out_msg') }}</h3>
-        <MessagesTable :item-selector="false" :default-length="5" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
+        <MessagesTable :parent_tx="null" :item-selector="false" :default-length="5" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
     </div>
     <div v-if="(route.hash === '#accounts' )&& loadedAccountKeys.length + unloadedAccountKeys.length > 0" id="accounts">
         <h3 v-if="loadedAccountKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.loaded_accs') }}</h3>

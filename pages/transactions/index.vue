@@ -48,8 +48,8 @@ onMounted(() => routeChecker(route.query))
                 <h1 class="uk-inline uk-margin-remove-vertical">
                 {{ $t('route.transaction')}}
                 </h1>
-                <h2 class="uk-inline uk-margin-remove-vertical uk-text-primary uk-margin-left uk-text-bold" style="line-height: 1.35;">
-                    {{ truncString(hash, 5) }}
+                <h2 class="uk-inline uk-margin-remove-vertical uk-text-primary uk-margin-left uk-text-bold uk-text-truncate" style="line-height: 1.35;">
+                    {{ hash }}
                 </h2>
             </div>
             <TransactionsTransactionInfo :hash="hash"/>

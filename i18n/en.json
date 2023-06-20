@@ -18,15 +18,17 @@
         "id": "ID",
         "address": "Address",
         "balance": "Balance",
-        "type": "Operation type",
+        "type": "Type",
 
-        "hash" : "Hash (ID)",
+        "hash" : "Hash (base64)",
+        "hex" : "Hash (hex)",
         "account_key": "Account key",
         "prev_tx_hash": "Prev tx hash",
         "total_fees": "Total fees",
         "orig_status": "Orig status",
         "end_status": "End status",
         "created_at": "Created",
+        "created_lt": "Logical time",
 
         "last_tx_hash": "Last tx",
         "code": "Code",
@@ -45,6 +47,8 @@
         "none" : "None",
         "language": "Language",
         "type" : "Type",
+        "from" : "Sender",
+        "to" : "Recipient",
         "amount" : "Amount",
         "scanned" : "Scanned",
         "created" : "Created",
@@ -55,7 +59,8 @@
         "about": "About",
         "updated": "Updated",
         "loaded_accs": "Loaded accounts",
-        "unloaded_accs": "Unloaded accounts"
+        "unloaded_accs": "Unloaded accounts",
+        "external": "External links"
     },
     "route" : {
         "explorer" : "Main Page",

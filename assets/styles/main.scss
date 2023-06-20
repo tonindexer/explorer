@@ -28,6 +28,24 @@ $hover-color: #f3f3ff;
   }
 }
 
+.red {
+  color: rgb(255, 152, 152);
+  stroke: rgb(255, 152, 152);
+  * {
+    color: rgb(255, 152, 152);
+    stroke: rgb(255, 152, 152);
+  }
+}
+
+.green {
+  color: rgb(88, 218, 81);
+  stroke: rgb(88, 218, 81);
+  * {
+    color: rgb(88, 218, 81);
+    stroke: rgb(88, 218, 81);
+  }
+}
+
 .hover:hover {
   background-color: $hover-color;
 }

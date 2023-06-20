@@ -3,7 +3,7 @@ export {};
 declare global {
     
     type MessageType = "INTERNAL" | "EXTERNAL_IN" | "EXTERNAL_OUT"
-
+    type MessageDirection = 'IN' | 'OUT' | 'EXT_IN' | 'EXT_OUT'
     type Message = {
 
         type: MessageType
@@ -59,7 +59,7 @@ declare global {
         created_lt: bigint
     }
 
-    interface MessageAPI extends Omit<Message, 'src_state_key' | 'dst_state_key' | 'parent_tx_key'> {
+    interface MessageAPI extends Omit<Message, 'src_state_key' | 'dst_state_key' | 'parent_tx_key' | 'direction'> {
         src_state?: Account | null // '?' for mapping the interface
         dst_state?: Account | null // '?' for mapping the interface
     }

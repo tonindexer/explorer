@@ -6,6 +6,7 @@ export const useMainStore = defineStore('tonexp', {
       blocks: {} as BlockMap,
       messages: {} as MessageMap,
       transactions: {} as TransactionMap,
+      transactionMsgFlag: {} as { [key: TransactionKey] : boolean } ,
       accounts: {} as AccountMap,
       // wallets and nfts
       jettonWallets: {} as JettonWalletMap,
@@ -70,6 +71,19 @@ export const useMainStore = defineStore('tonexp', {
     },
     actions: {
       blockKeyGen: (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`,
+      convertBase64ToHex: (value: string) => {
+        if (process.server) {
+          return Buffer.from(value, 'base64').toString('hex');
+        } else {
+          const raw = atob(value);
+          let result = '';
+          for (let i = 0; i < raw.length; i++) {
+            const hex = raw.charCodeAt(i).toString(16);
+            result += (hex.length === 2 ? hex : '0' + hex);
+          }
+          return result
+        }
+      },
       processAccount(account: AccountAPI) {
         const accountKey = account.address.hex
         const mappedAccount = <Account>{}
@@ -87,7 +101,7 @@ export const useMainStore = defineStore('tonexp', {
         this.accounts[accountKey] = mappedAccount
         return accountKey
       },
-      processMessage(message: MessageAPI, tr_key: TransactionKey | null, parseAccounts: boolean = true) {
+      processMessage(message: MessageAPI, tr_key: TransactionKey | null, dir: 'IN' | 'OUT', parseAccounts: boolean = true) {
         const messageKey = message.hash
 
         // Don't override messages
@@ -119,8 +133,10 @@ export const useMainStore = defineStore('tonexp', {
         if (transactionKey in this.transactions) return transactionKey
 
         const mappedTransaction = <Transaction>{}
+        mappedTransaction.hex = this.convertBase64ToHex(transactionKey)
         mappedTransaction.out_msg_keys = []
         mappedTransaction.delta = 0n + BigInt(transaction.in_amount ?? 0n) - BigInt(transaction.out_amount ?? 0n)
+        let op_type: OPKey = 0
 
         if (transaction.account) {
           if (parseAccount) mappedTransaction.account_key = this.processAccount(transaction.account)
@@ -128,18 +144,27 @@ export const useMainStore = defineStore('tonexp', {
           delete transaction.account
         }
         if (transaction.in_msg) {
-          this.processMessage(transaction.in_msg, transactionKey)
+          this.processMessage(transaction.in_msg, transactionKey, 'IN')
+          transaction.in_msg.operation_name ? op_type = transaction.in_msg.operation_name :
+            (transaction.in_msg.operation_id ? op_type = `Contract op=${opToHex(transaction.in_msg.operation_id)}` : op_type = 1)
           delete transaction.in_msg
         }
         if (transaction.out_msg !== undefined) {
           if (transaction.out_msg?.length)
-            mappedTransaction.out_msg_keys.push(...transaction.out_msg.map(msg => this.processMessage(msg, transactionKey, parseAccount)))
+            mappedTransaction.out_msg_keys.push(...transaction.out_msg.map(msg => {
+              msg.operation_name ? ( (op_type ===0 || op_type === 1) ? op_type = msg.operation_name : op_type = 99) :
+                (msg.operation_id ? ( (op_type ===0 || op_type === 1) ? op_type = `Contract op=0x${opToHex(msg.operation_id)}` : op_type = 99) :
+                  op_type = 2)
+              return this.processMessage(msg, transactionKey, 'OUT', parseAccount)
+            }))
           delete transaction.out_msg
         }
 
+        mappedTransaction.op_type = op_type
         Object.assign(mappedTransaction, transaction)
 
         this.transactions[transactionKey] = mappedTransaction
+        this.transactionMsgFlag[transactionKey] = false
         return transactionKey
       },
       processBlock(block: BlockAPI) {
@@ -200,19 +225,7 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
         try {
-          this.latestTransactions = []
-          const latestReq = {
-            order: 'DESC',
-            limit: 10
-          }
-          const query = getQueryString(latestReq, false);
-          const { data } = await apiRequest(`/transactions?${query}`, 'GET')
-          const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          for (const key in parsed.results) {
-            const trn = this.processTransaction(parsed.results[key])
-            this.latestTransactions.push(trn)
-          }
+          await this.updateTransactions(20, null, true)
         } catch (error) {
           console.log(error)
         }
@@ -355,7 +368,8 @@ export const useMainStore = defineStore('tonexp', {
           const { data } = await apiRequest(`/blocks?${query}`, 'GET')
           const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          this.processBlock(parsed.results[0])
+          const key = this.processBlock(parsed.results[0])
+          this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys(this.deepTransactionKeys(key), true, true), false))
         } catch (error) {
           console.log(error)
         }
@@ -369,11 +383,34 @@ export const useMainStore = defineStore('tonexp', {
           const { data } = await apiRequest(`/transactions?${query}`, 'GET')
           const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (parsed.results.length > 0)
+          if (parsed.results.length > 0) {
             this.processTransaction(parsed.results[0])
+            await this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys([hash], true, true), false))
+          }
         } catch (error) {
           console.log(error)
         }
+      },
+      async fetchBareAccounts(hex: string[]) {
+        hex = hex.filter(key => !(key in badAddresses))
+        if (hex.length === 0) return hex
+        try {
+          const fullReq: MockType = {
+            address: hex,
+            latest: true
+          }
+          const query = getQueryArrayString(fullReq, true);
+          // get latest account state
+            const { data } = await apiRequest(`/accounts?${query}`, 'GET')
+            const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            parsed.results.forEach((acc: AccountAPI) => {
+              this.processAccount(acc)
+            })
+          } catch (error) {
+            console.log(error)
+          }
+        return hex
       },
       async fetchAccount(hex: string) {
         this.loadNextNFTFlag = false
@@ -441,7 +478,6 @@ export const useMainStore = defineStore('tonexp', {
             this.accounts[address].nft_keys.push(nft_Key)
             this.nftItems[nft_Key] = nft
           }
-          console.log(parsed.nft_items.length)
         } catch (error) {
           console.log(error)
         }
