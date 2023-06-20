@@ -385,11 +385,13 @@ export const useMainStore = defineStore('tonexp', {
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           if (parsed.results.length > 0) {
             this.processTransaction(parsed.results[0])
+            if (hash !== parsed.results[0].hash) hash = parsed.results[0].hash
             await this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys([hash], true, true), false))
           }
         } catch (error) {
           console.log(error)
         }
+        return hash
       },
       async fetchBareAccounts(hex: string[]) {
         hex = hex.filter(key => !(key in badAddresses))

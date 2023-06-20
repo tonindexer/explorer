@@ -52,7 +52,7 @@ onMounted(() => routeChecker(route.query))
                     {{ hash }}
                 </h2>
             </div>
-            <TransactionsTransactionInfo :hash="hash"/>
+            <TransactionsTransactionInfo :hash="hash" @set-hash="(e) => hash = e"/>
         </div>
     </template>
 </template>

@@ -8,6 +8,7 @@ interface Props {
 const error = ref(false)
 const store = useMainStore()
 const props = defineProps<Props>()
+const emits = defineEmits(['setHash'])
 const route = useRoute()
 
 const transaction = computed(() => store.transactions[props.hash] ?? null)
@@ -19,7 +20,9 @@ const unloadedAccountKeys = computed(() => store.getAccountKeys([...inMessageKey
 const reloadInfo = async() => {
     error.value = false
     if (!transaction.value) {
-        await store.fetchTransaction(props.hash)
+        const key = await store.fetchTransaction(props.hash)
+        if (props.hash != key) emits('setHash', key) 
+        return
     }
     await store.fetchBareAccounts(unloadedAccountKeys.value)
     if (!transaction.value) {
