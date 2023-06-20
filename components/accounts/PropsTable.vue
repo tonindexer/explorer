@@ -6,7 +6,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const tableOrder = ['hex', 'base64', 'balance', 'block', 'last_tx_hash', 'code', 'code_hash', 'data', 'data_hash', 'updated_at'] as const
+const tableOrder = ['label', 'hex', 'base64', 'status', 'balance', 'block', 'last_tx_hash', 'code', 'code_hash', 'data', 'data_hash', 'updated_at'] as const
 const copyFields = {'last_tx_hash': true, 'code': true, 'code_hash': true, 'data': true, 'data_hash': true} as const 
 
 function itemPreprocess(index: string, item: any) {
@@ -16,6 +16,7 @@ function itemPreprocess(index: string, item: any) {
     case 'block': return `${item.workchain}:${item.shard}:${item.block_seq_no}`
     case 'data': return truncString(item, 40, 0)
     case 'code': return truncString(item, 40, 0)
+    case 'label': return item.name
     default: return item;
   }
 }
@@ -40,15 +41,18 @@ const externalLink = computed(() : MockType=> {
         <tbody class="uk-table-divider">
             <tr v-for="index of tableOrder" :key="index + acc.address.hex">
                 <template v-if="index !== 'block' && index !== 'hex'&& index !== 'base64' && (acc[index] ?? null) === acc[index]">
-                    <td class="uk-width-1-4">
+                    <td class="uk-width-1-5">
                         {{ $t(`ton.${index}`) }}
                     </td>
-                    <td class="uk-text-truncate" v-if="index !== 'last_tx_hash' && index in copyFields">
+                    <td class="uk-text-truncate" v-if="index !== 'label' && index !== 'last_tx_hash' && index in copyFields">
                         <AtomsCopyableText :text="acc[index]?.toString() ?? ''">
                             <slot>
                                 {{ itemPreprocess(index, acc[index]) }}
                             </slot>
                         </AtomsCopyableText>
+                    </td>
+                    <td class="uk-text-truncate uk-text-bold" v-else-if="index === 'label' && acc[index]">
+                        {{ itemPreprocess(index, acc[index]) }}
                     </td>
                     <td v-else-if="index === 'last_tx_hash' && acc[index]">
                         <AtomsCopyableText :text="acc[index]">
@@ -62,7 +66,7 @@ const externalLink = computed(() : MockType=> {
                     </td>
                 </template>
                 <template v-else-if="index === 'block'">
-                    <td class="uk-width-1-4">
+                    <td class="uk-width-1-5">
                         {{ $t(`ton.${index}`) }}
                     </td>
                     <td>
@@ -71,7 +75,7 @@ const externalLink = computed(() : MockType=> {
                     </td>
                 </template>
                 <template v-else-if="index === 'hex' || index == 'base64'">
-                    <td class="uk-width-1-4">
+                    <td class="uk-width-1-5">
                         {{ $t(`ton.${index}`) }}
                     </td>
                     <td class="uk-text-truncate" >
@@ -83,8 +87,20 @@ const externalLink = computed(() : MockType=> {
                     </td>
                 </template>
             </tr>
+            <tr v-if="acc.label?.categories && acc.label.categories.length > 0">
+                <td class="uk-width-1-5">
+                    {{ $t(`general.categories`) }}
+                </td>
+                <td>
+                    <template v-for="cat of acc.label.categories">
+                        <p class="uk-margin-right" :class="{'red' : cat === 'scam'}">
+                            {{ cat[0].toUpperCase() + cat.replaceAll('_', ' ').slice(1,) }}
+                        </p>
+                    </template>
+                </td>
+            </tr>  
             <tr>
-                <td class="uk-width-1-4">
+                <td class="uk-width-1-5">
                     {{ $t(`general.external`) }}
                 </td>
                 <td>
