@@ -3,7 +3,6 @@ interface Props {
     page: number
     leftDisabled: boolean
     rightDisabled: boolean
-    hidden: boolean
 }
 
 defineProps<Props>()
@@ -12,7 +11,7 @@ defineEmits(['increase', 'decrease'])
 </script>
 
 <template>
-     <div class="uk-flex uk-flex-middle uk-margin-small-left" v-if="!hidden">
+     <div class="uk-flex uk-flex-middle uk-margin-small-left" v-if="(!leftDisabled) || (!rightDisabled)">
         <p class="uk-margin-remove">{{ `${$t('general.page')} ${page + 1}` }}</p>
         <div uk-icon="icon: arrow-left" 
             class="arrow uk-button uk-background-primary uk-border-rounded uk-margin-small-left"

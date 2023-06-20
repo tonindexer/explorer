@@ -10,6 +10,7 @@ declare global {
             shard: bigint
             seq_no: number
         }
+        show?: string
     }
 
     type TxSearch = {
@@ -17,6 +18,7 @@ declare global {
         value: {
             hash: string
         }
+        show?: string
     }
 
     type AccSearch = {
@@ -24,6 +26,7 @@ declare global {
         value: {
             hex: string
         }
+        show?: string
     }
 
     type Search = Array<BlockSearch | TxSearch | AccSearch>

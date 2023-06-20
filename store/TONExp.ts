@@ -6,8 +6,10 @@ export const useMainStore = defineStore('tonexp', {
       blocks: {} as BlockMap,
       messages: {} as MessageMap,
       transactions: {} as TransactionMap,
-      transactionMsgFlag: {} as { [key: TransactionKey] : boolean } ,
+      transactionMsgFlag: {} as { [key: TransactionKey] : boolean },
+      transactionHexes: {} as { [key: string] : TransactionKey},
       accounts: {} as AccountMap,
+      accountBases: {} as { [key: string] : AccountKey},
       // wallets and nfts
       jettonWallets: {} as JettonWalletMap,
       nftItems: {} as NFTMap,
@@ -96,6 +98,8 @@ export const useMainStore = defineStore('tonexp', {
           if (this.accounts[accountKey].block_seq_no > account.block_seq_no) return accountKey
         }
 
+        this.accountBases[account.address.base64] = accountKey
+
         Object.assign(mappedAccount, account)
 
         this.accounts[accountKey] = mappedAccount
@@ -134,6 +138,7 @@ export const useMainStore = defineStore('tonexp', {
 
         const mappedTransaction = <Transaction>{}
         mappedTransaction.hex = this.convertBase64ToHex(transactionKey)
+        this.transactionHexes[mappedTransaction.hex] = transactionKey
         mappedTransaction.out_msg_keys = []
         mappedTransaction.delta = 0n + BigInt(transaction.in_amount ?? 0n) - BigInt(transaction.out_amount ?? 0n)
         let op_type: OPKey = 0
@@ -440,7 +445,7 @@ export const useMainStore = defineStore('tonexp', {
             console.log(error)
           }
         // get first 10 transactions for account if they are empty
-        if (this.accounts[hex].transaction_keys.length === 0)
+        if (this.accounts[hex]?.transaction_keys.length === 0)
           await this.updateTransactions(10, null, false, hex)
         // get all jetton_wallet of account
         try {
@@ -495,12 +500,24 @@ export const useMainStore = defineStore('tonexp', {
         if (req.type == 'account') {
           if (req.value.hex in this.accounts) return [req]
 
+          if (req.value.hex in this.accountBases) {
+            return [{
+              type: 'account',
+              value: {
+                hex: this.accountBases[req.value.hex]
+              },
+              show: req.value.hex
+            }] 
+          }
+
           const key = await this.fetchAccount(req.value.hex)
           if (key) return [{
             type: 'account',
             value: {
               hex: key
-            }}] 
+            },
+            show: req.value.hex
+          }] 
           else return []
         } else if (req.type === 'block') {
           if (this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) return [req]
@@ -512,17 +529,29 @@ export const useMainStore = defineStore('tonexp', {
               workchain: this.blocks[key].workchain,
               shard: this.blocks[key].shard,
               seq_no: this.blocks[key].seq_no
-            }}] 
+            },
+            show: this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
+          }] 
           else return []
         } else if (req.type === 'transaction') {
           if (req.value.hash in this.transactions) return [req]
-
+          if (req.value.hash in this.transactionHexes) {
+            return [{
+              type: 'transaction',
+              value: {
+                hash: this.transactionHexes[req.value.hash]
+              },
+              show: req.value.hash
+            }] 
+          }
           const key = await this.fetchTransaction(req.value.hash)
           if (key) return [{
             type: 'transaction',
             value: {
               hash: key
-            }}] 
+            },
+            show: req.value.hash
+          }] 
             else return []
         } else return []
       }

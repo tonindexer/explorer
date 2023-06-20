@@ -49,7 +49,6 @@ const itemCount = ref(props.defaultLength)
                 :page="pageNum" 
                 :left-disabled="pageNum === 0" 
                 :right-disabled="(pageNum+1)*itemCount >= keys.length"
-                :hidden="itemCount >= keys.length"
                 @increase="pageNum += 1"
                 @decrease="pageNum -= 1"
             />

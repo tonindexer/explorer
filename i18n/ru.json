@@ -21,6 +21,7 @@
         "type": "Тип",
 
         "hash" : "Хэш (base64)",
+        "base64" : "Хэш (base64)",
         "hex" : "Хэш (hex)",
         "account_key": "Ключ аккаунта",
         "prev_tx_hash": "Пред. транзакция",

@@ -136,14 +136,15 @@ const parse = () => {
         // if nothing found
         status.value = 'INCORRECT'
         lastStatus.value = status.value
+        lastSearch.value = search.value
     }
 }
 
 const goToLink = (res: BlockSearch | AccSearch | TxSearch) => {
     switch (res.type) {
-        case 'account': navigateTo({path: '/accounts', query: { hex: res.value.hex}}); break;
-        case 'block': navigateTo({path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }}); break;
-        case 'transaction': navigateTo({path: '/transactions', query: { hash: res.value.hash}}); break;
+        case 'account': navigateTo({path: '/accounts', query: { hex: res.value.hex}, hash: '#overview'}); break;
+        case 'block': navigateTo({path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }, hash: '#overview'}); break;
+        case 'transaction': navigateTo({path: '/transactions', query: { hash: res.value.hash}, hash: '#overview'}); break;
         default:
     }
 }
@@ -162,13 +163,13 @@ watch (search, (to) => {
                     <tr style="cursor: pointer;">
                         <td v-for="res in searchRes" class="uk-flex uk-flex-column" style="padding: 0.3rem 1rem" @mousedown="goToLink(res)">
                             <h4 class="uk-margin-remove-vertical uk-text-truncate" v-if="res.type === 'account'">
-                                {{ res.value.hex }}
+                                {{ res.show ?? res.value.hex }}
                             </h4>
                             <h4 class="uk-margin-remove-vertical uk-text-truncate" v-else-if="res.type === 'transaction'">
-                                {{ res.value.hash }}
+                                {{ res.show ?? res.value.hash }}
                             </h4>
                             <h4 class="uk-margin-remove-vertical uk-text-truncate" v-else-if="res.type === 'block'">
-                                {{ store.blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no) }}
+                                {{ res.show ?? store.blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no) }}
                             </h4>
                             <p class="uk-margin-remove-vertical">
                                 {{ $t(`route.${res.type}`) }}

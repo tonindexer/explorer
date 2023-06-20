@@ -116,7 +116,6 @@ onMounted(() => {
                 :page="pageNum" 
                 :left-disabled="pageNum === 0" 
                 :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
-                :hidden="itemCount >= keys.length && !update"
                 @increase="pageNum += 1"
                 @decrease="pageNum -= 1"
             />            

@@ -21,6 +21,7 @@
         "type": "Type",
 
         "hash" : "Hash (base64)",
+        "base64" : "Hash (base64)",
         "hex" : "Hash (hex)",
         "account_key": "Account key",
         "prev_tx_hash": "Prev tx hash",

@@ -61,7 +61,6 @@ watch(itemCount, async() => {
             :page="pageNum" 
             :left-disabled="pageNum === 0" 
             :right-disabled="!loadNext"
-            :hidden="itemCount > keys.length"
             @increase="pageNum += 1"
             @decrease="pageNum -= 1"
         />
