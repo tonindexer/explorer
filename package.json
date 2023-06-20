@@ -22,7 +22,6 @@
     "v-clipboard": "^3.0.0-next.1"
   },
   "dependencies": {
-    "@nuxt/types": "^2.16.3",
     "@pinia/nuxt": "^0.4.11",
     "axios": "^1.4.0",
     "cytoscape": "^3.25.0"
