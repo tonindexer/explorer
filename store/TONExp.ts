@@ -276,8 +276,10 @@ export const useMainStore = defineStore('tonexp', {
             break;
           }
           case '/accounts': {
-            if (Object.entries(route.query).length === 0) {
-              await this.updateAccounts(20, null, null)
+            if (Object.entries(route.query).length === 0 || 'contract' in route.query) {
+              const sq = route.query.contract ? route.query.contract.toString() : null
+
+              await this.updateAccounts(20, null, sq)
             }  else {
               const hex = route.query.hex && route.query.hex.toString()
               if (hex) await this.fetchAccount(hex)

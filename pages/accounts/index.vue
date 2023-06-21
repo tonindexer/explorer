@@ -8,6 +8,8 @@ type SelectItem = {
     text: string
 }
 const route = useRoute()
+const router = useRouter()
+
 const isLoading = ref(true)
 const isGeneral = ref(true)
 const error = ref(false)
@@ -18,8 +20,19 @@ const store = useMainStore()
 const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}))
 
 const reset = () => selected.value = {}
+
+const setRoute = () => {
+    if ('value' in selected.value)
+        router.replace({path: route.path, query: { contract: selected.value.value} })
+    else if (!('hex' in route.query)) router.replace({path: route.path })
+}
 function routeChecker(newQuery: LocationQuery) {
     hex.value = newQuery.hex? newQuery.hex.toString() : null;
+    if ('contract' in newQuery) {
+        selected.value = {value: newQuery.contract, text: newQuery.contract }
+    } else {
+        selected.value = {}
+    }
 
     if (hex.value) {
         isGeneral.value = false;
@@ -31,7 +44,11 @@ function routeChecker(newQuery: LocationQuery) {
     return;
 }
 
-watch(() => route.query, (newQuery) => routeChecker(newQuery))
+watch(() => route.query, (newQuery) => { 
+    routeChecker(newQuery) 
+})
+
+watch(selected, () => setRoute())
 
 onMounted(() => routeChecker(route.query))
 </script>
