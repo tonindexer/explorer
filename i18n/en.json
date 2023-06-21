@@ -40,8 +40,10 @@
         "data_hash": "Data hash",
         "updated_at": "Updated",
 
-        "name": "Название",
-        "minter": "Минтер",
+        "name": "Name",
+        "minter": "Minter",
+        "owner": "Owner",
+        "contract" : "Contract",
         "wallet": "Wallet"
     },
     "general" : {

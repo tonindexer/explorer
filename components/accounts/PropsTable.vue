@@ -1,25 +1,9 @@
 <script setup lang="ts">
-const { t } = useI18n()
 interface Props {
     acc: Account
 }
 
 const props = defineProps<Props>()
-
-const tableOrder = ['label', 'hex', 'base64', 'status', 'balance', 'block', 'last_tx_hash', 'code', 'code_hash', 'data', 'data_hash', 'updated_at'] as const
-const copyFields = {'last_tx_hash': true, 'code': true, 'code_hash': true, 'data': true, 'data_hash': true} as const 
-
-function itemPreprocess(index: string, item: any) {
-  switch (index) {
-    case 'balance': return item ? `${fullTON(item, false)}💎` : t('general.none');
-    case 'updated_at': return new Date(item).toLocaleString();
-    case 'block': return `${item.workchain}:${item.shard}:${item.block_seq_no}`
-    case 'data': return truncString(item, 40, 0)
-    case 'code': return truncString(item, 40, 0)
-    case 'label': return item.name
-    default: return item;
-  }
-}
 
 const externalLink = computed(() : MockType=> {
     return {
@@ -39,64 +23,157 @@ const externalLink = computed(() : MockType=> {
 <template>
     <table class="uk-table uk-table-middle">
         <tbody class="uk-table-divider">
-            <tr v-for="index of tableOrder" :key="index + acc.address.hex">
-                <template v-if="index !== 'block' && index !== 'hex'&& index !== 'base64' && (acc[index] ?? null) === acc[index]">
-                    <td class="uk-width-1-5">
-                        {{ $t(`ton.${index}`) }}
-                    </td>
-                    <td class="uk-text-truncate" v-if="index !== 'label' && index !== 'last_tx_hash' && index in copyFields">
-                        <AtomsCopyableText :text="acc[index]?.toString() ?? ''">
-                            <slot>
-                                {{ itemPreprocess(index, acc[index]) }}
-                            </slot>
-                        </AtomsCopyableText>
-                    </td>
-                    <td class="uk-text-truncate uk-text-bold" v-else-if="index === 'label' && acc[index]">
-                        {{ itemPreprocess(index, acc[index]) }}
-                    </td>
-                    <td v-else-if="index === 'last_tx_hash' && acc[index]">
-                        <AtomsCopyableText :text="acc[index]">
-                            <slot>
-                                <NuxtLink :to="`/transactions?hash=${toBase64Web(acc[index])}#overview`">{{ itemPreprocess(index, acc[index]) }}</NuxtLink>
-                            </slot>
-                        </AtomsCopyableText>
-                    </td>
-                    <td class="uk-text-truncate uk-text-truncate" v-else>
-                        {{ itemPreprocess(index, acc[index]) }}
-                    </td>
-                </template>
-                <template v-else-if="index === 'block'">
-                    <td class="uk-width-1-5">
-                        {{ $t(`ton.${index}`) }}
-                    </td>
-                    <td>
-                        <NuxtLink :to="`/blocks?workchain=${acc.workchain}&shard=${acc.shard}&seq_no=${acc.block_seq_no}#overview`">{{ itemPreprocess(index, acc) }}
+            <tr v-if="acc.label && acc.label.name">
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.label`) }}
+                </td>
+                <td class="uk-text-truncate uk-text-bold">
+                    {{ acc.label.name }}
+                </td>
+            </tr>
+            <tr>
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.hex`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    <AtomsCopyableText :text="acc.address.hex">
+                        {{ acc.address.hex }}
+                    </AtomsCopyableText>
+                </td>
+            </tr>
+            <tr>
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.base64`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    <AtomsCopyableText :text="acc.address.base64">
+                        {{ acc.address.base64 }}
+                    </AtomsCopyableText>
+                </td>
+            </tr>
+            <tr>
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.status`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    {{ acc.status }}
+                </td>
+            </tr>
+            <tr>
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.balance`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none') }}
+                </td>
+            </tr>
+            <tr v-if="acc.types && acc.types.length > 0">
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.contract`) }}
+                </td>
+                <td class="uk-flex">
+                    <p v-for="item of acc.types" class="uk-margin-remove-vertical uk-margin-right">
+                        {{ item }}
+                    </p>
+                </td>
+            </tr>
+            <tr v-if="acc.minter_address">
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.minter`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    <AtomsCopyableText :text="acc.minter_address.base64">
+                        <AtomsAddressField :addr="acc.minter_address" :break_word="false"/>
+                    </AtomsCopyableText>   
+                </td>
+            </tr>
+            <tr v-if="acc.owner_address">
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.owner`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    <AtomsCopyableText :text="acc.owner_address.base64">
+                        <AtomsAddressField :addr="acc.owner_address" :break_word="false"/>
+                    </AtomsCopyableText>   
+                </td>
+            </tr>
+            <tr>
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.block`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    <AtomsCopyableText :text="`${acc.workchain}:${acc.shard}:${acc.block_seq_no}`">
+                        <NuxtLink :to="`/blocks?workchain=${acc.workchain}&shard=${acc.shard}&seq_no=${acc.block_seq_no}#overview`">{{ `${acc.workchain}:${acc.shard}:${acc.block_seq_no}` }}
                         </NuxtLink>
-                    </td>
-                </template>
-                <template v-else-if="index === 'hex' || index == 'base64'">
-                    <td class="uk-width-1-5">
-                        {{ $t(`ton.${index}`) }}
-                    </td>
-                    <td class="uk-text-truncate" >
-                        <AtomsCopyableText :text="acc.address[index]">
-                            <slot>
-                                {{ acc.address[index] }}
-                            </slot>
-                        </AtomsCopyableText>
-                    </td>
-                </template>
+                    </AtomsCopyableText>   
+                </td>
+            </tr>
+            <tr>
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.last_tx_hash`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    <AtomsCopyableText :text="acc.last_tx_hash">
+                        <NuxtLink :to="`/transactions?hash=${toBase64Web(acc.last_tx_hash)}#overview`">{{ acc.last_tx_hash }}</NuxtLink>
+                    </AtomsCopyableText>
+                </td>
+            </tr>
+            <tr v-if="acc.data">
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.data`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    <AtomsCopyableText :text="acc.data">
+                        {{ truncString(acc.data, 40, 0) }}
+                    </AtomsCopyableText>
+                </td>
+            </tr>
+            <tr v-if="acc.data_hash">
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.data_hash`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    <AtomsCopyableText :text="acc.data_hash">
+                        {{ acc.data_hash }}
+                    </AtomsCopyableText>
+                </td>
+            </tr>
+            <tr v-if="acc.code">
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.code`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    <AtomsCopyableText :text="acc.code">
+                        {{ truncString(acc.code, 40, 0) }}
+                    </AtomsCopyableText>
+                </td>
+            </tr>
+            <tr v-if="acc.code_hash">
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.code_hash`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    <AtomsCopyableText :text="acc.code_hash">
+                        {{ acc.code_hash }}
+                    </AtomsCopyableText>
+                </td>
+            </tr>
+            <tr>
+                <td class="uk-width-1-5">
+                    {{ $t(`ton.updated_at`) }}
+                </td>
+                <td class="uk-text-truncate">
+                    {{ new Date(acc.updated_at).toLocaleString() }}
+                </td>
             </tr>
             <tr v-if="acc.label?.categories && acc.label.categories.length > 0">
                 <td class="uk-width-1-5">
                     {{ $t(`general.categories`) }}
                 </td>
                 <td>
-                    <template v-for="cat of acc.label.categories">
-                        <p class="uk-margin-right" :class="{'red' : cat === 'scam'}">
-                            {{ cat[0].toUpperCase() + cat.replaceAll('_', ' ').slice(1,) }}
-                        </p>
-                    </template>
+                    <p v-for="cat of acc.label.categories" class="uk-margin-remove-vertical uk-margin-right uk-display-inline" :class="{'red' : cat === 'scam'}">
+                        {{ cat[0].toUpperCase() + cat.replaceAll('_', ' ').slice(1,) }}
+                    </p>
                 </td>
             </tr>  
             <tr>
