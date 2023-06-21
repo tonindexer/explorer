@@ -72,6 +72,14 @@ const externalLink = computed(() : MockType=> {
             </tr>
             <tr>
                 <td class="uk-width-1-4">
+                    {{ $t(`ton.exit_code`) }}
+                </td>
+                <td class="uk-flex">
+                    <AtomsExitCodeField :code="trn.compute_phase_exit_code"/>
+                </td>
+            </tr> 
+            <tr>
+                <td class="uk-width-1-4">
                     {{ $t(`general.external`) }}
                 </td>
                 <td>

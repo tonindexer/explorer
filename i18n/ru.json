@@ -32,6 +32,7 @@
         "end_status": "Статус получ.",
         "created_at": "Создано",
         "created_lt": "Лог. время",
+        "exit_code": "Код выхода",
 
         "last_tx_hash": "Посл. транзакция",
         "code": "Код",

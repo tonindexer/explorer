@@ -32,6 +32,7 @@
         "end_status": "End status",
         "created_at": "Created",
         "created_lt": "Logical time",
+        "exit_code": "Exit code",
 
         "last_tx_hash": "Last tx",
         "code": "Code",
