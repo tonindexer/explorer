@@ -4,25 +4,42 @@ import { useMainStore } from '~/store/TONExp';
 interface NFTGrid {
     keys: NFTKey[]
     account: AccountKey
+    minterFlag: boolean
     defaultLength: number
-    hidden: boolean
 }
 
 const props = defineProps<NFTGrid>()
 const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
-const loadNext = computed(() => store.loadNextNFTFlag)
 const maxExploredPage = ref(0)
+const loading = ref(true)
 
+const firstLT: NullableBigRef = ref(0n)
+const lastLT: NullableBigRef = ref(0n)
+const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), props.minterFlag ? 'mint' : 'own'))
+
+const nftAccs = computed(() => props.keys.map(item => item.split('|')[1]))
 const nftList = computed(() => store.getNFTs(props.keys.slice(pageNum.value*itemCount.value, (pageNum.value + 1)*itemCount.value)))
+
+const setExtraFields = () => {
+    if (props.keys.length > 0) {
+        if (nftAccs.value[0] in store.accounts) {
+            firstLT.value = BigInt(store.accounts[nftAccs.value[0]].last_tx_lt)
+        }
+        if (nftAccs.value[nftAccs.value.length - 1] in store.accounts) {
+            lastLT.value = BigInt(store.accounts[nftAccs.value[nftAccs.value.length - 1]].last_tx_lt)
+        }
+    }
+}
 
 const updateValues = async (next: boolean = true) => {
     if (props.keys.length === 0 || pageNum.value === 0)
-        await store.loadAccountNFTs(props.account, itemCount.value)
+        await store.loadAccountNFTAddresses(props.account, false, props.minterFlag, itemCount.value, null)
     else {
-        await store.loadAccountNFTs(props.account, itemCount.value, itemCount.value * (pageNum.value))
+        await store.loadAccountNFTAddresses(props.account, false, props.minterFlag, itemCount.value, next ? lastLT.value : firstLT.value, itemCount.value * (pageNum.value))
     }
+    setExtraFields()
 }
 
 watch(pageNum, async(to, from) => {
@@ -36,10 +53,30 @@ watch(itemCount, async() => {
     if (pageNum.value === 0) updateValues()
     else pageNum.value = 0
 }, {deep : true})
+
+watch(props, () => {
+    setExtraFields()
+})
+
+onMounted(async () => {
+    if (props.keys.length === 0 || props.keys.length === nftList.value.length) {
+        await store.loadAccountNFTAddresses(props.account, false, props.minterFlag, 18, null)
+
+    } else if (props.keys.length > 0 && nftList.value.length !== props.keys.length) {
+        loading.value = true
+        await store.requestNFTBulk(props.account, props.minterFlag, 18, 0)
+        loading.value = false
+    }
+    if (nftList.value.length > 0) loading.value = false
+    setExtraFields()
+})
 </script>
 
 <template>
-    <div v-if="!hidden" class="uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l uk-child-width-1-6@xl" uk-grid>
+    <div v-if="loading" class="uk-flex uk-flex-center">
+        <Loader :ratio="2"/>
+    </div>
+    <div v-else-if="!loading" class="uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l uk-child-width-1-6@xl" uk-grid>
         <div v-for="nft in nftList">
             <div class="uk-card uk-card-default">
                 <div class="uk-card-media-top">
@@ -47,7 +84,7 @@ watch(itemCount, async() => {
                     <img v-else-if="nft.metadata?.image" :src="nft.metadata.image" width="500" height="500" alt="">
                     <img v-else src="@/assets/images/default.png" width="250" height="250" alt="">
                 </div>
-                <div class="uk-card-body">
+                <div class="uk-card-body uk-text-truncate">
                     <NuxtLink :to="`/accounts?hex=${nft.address}#overview`">
                         {{ nft.metadata?.name ? nft.metadata.name : "No name" }}
                     </NuxtLink>
@@ -60,7 +97,7 @@ watch(itemCount, async() => {
         <AtomsPageArrows    
             :page="pageNum" 
             :left-disabled="pageNum === 0" 
-            :right-disabled="!loadNext"
+            :right-disabled="lastPageFlag"
             @increase="pageNum += 1"
             @decrease="pageNum -= 1"
         />
