@@ -48,7 +48,7 @@ watch(itemCount, async() => {
                     <img v-else src="@/assets/images/default.png" width="250" height="250" alt="">
                 </div>
                 <div class="uk-card-body">
-                    <NuxtLink :to="`/accounts?hex=${nft.address}`">
+                    <NuxtLink :to="`/accounts?hex=${nft.address}#overview`">
                         {{ nft.metadata?.name ? nft.metadata.name : "No name" }}
                     </NuxtLink>
                     <h4 class="uk-margin-remove-top"> {{ nft.collection?.name ? nft.collection.name : "No collection" }}</h4>
@@ -61,7 +61,6 @@ watch(itemCount, async() => {
             :page="pageNum" 
             :left-disabled="pageNum === 0" 
             :right-disabled="!loadNext"
-            :hidden="itemCount > keys.length"
             @increase="pageNum += 1"
             @decrease="pageNum -= 1"
         />

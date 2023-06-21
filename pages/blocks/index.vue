@@ -61,8 +61,10 @@ onMounted(() => routeChecker(route.query))
                 <h1 class="uk-inline uk-margin-remove-vertical">
                 {{ $t('route.block')}}
                 </h1>
-                <h2 class="uk-inline uk-margin-remove-vertical uk-text-primary uk-margin-left uk-text-bold" style="line-height: 1.35;">
-                    {{ `${workchain}:${truncString(shard.toString(), 5, 4)}:${seq_no}` }}
+                <h2 class="uk-inline uk-margin-remove-vertical uk-text-primary uk-margin-left uk-text-bold uk-text-truncate" style="line-height: 1.35;">
+                    <AtomsCopyableText :text="`${workchain}:${shard.toString()}:${seq_no}`">
+                        {{ `${workchain}:${shard.toString()}:${seq_no}` }}
+                    </AtomsCopyableText>
                 </h2>
             </div>
             <BlocksBlockInfo :shard="shard" :seq_no="seq_no" :workchain="workchain"/>

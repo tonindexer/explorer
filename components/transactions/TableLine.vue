@@ -25,7 +25,7 @@ defineEmits(['toggleMsg'])
             <p style="overflow-wrap: break-word; max-width: 150px;">{{ trn.op_type in knownOp ? knownOp[trn.op_type] : trn.op_type }}</p>
         </td>
         <td>
-            <AtomsAddressField :addr="trn.address"/>
+            <AtomsAddressField :addr="trn.address" :break_word="true"/>
         </td>
         <td class="uk-text-right uk-text-nowrap" :class="colorAmount(trn.delta)"> {{ trn.delta ? `${shortTON(trn.delta)}💎` : $t('general.none')}}</td>
         <AtomsTableDateCell :date-time="trn.created_at"/>

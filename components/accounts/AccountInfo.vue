@@ -61,7 +61,7 @@ watch(props, async() => await reloadInfo())
             </ul>
         </div>
         <div v-show="account && (route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
-            <TransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :account="hex" />
+            <TransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="false" :account="hex" />
         </div>
         <div v-if="account && route.hash === '#jettons'" id="jettons">
             <AccountsJettonsTable :keys="jtKeys" :default-length="10" :hidden="jtKeys.length === 0" />

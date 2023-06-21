@@ -19,8 +19,11 @@
         "address": "Address",
         "balance": "Balance",
         "type": "Type",
+        "label": "Name",
+        "status": "Status",
 
         "hash" : "Hash (base64)",
+        "base64" : "Hash (base64)",
         "hex" : "Hash (hex)",
         "account_key": "Account key",
         "prev_tx_hash": "Prev tx hash",
@@ -37,8 +40,10 @@
         "data_hash": "Data hash",
         "updated_at": "Updated",
 
-        "name": "Название",
-        "minter": "Минтер",
+        "name": "Name",
+        "minter": "Minter",
+        "owner": "Owner",
+        "contract" : "Contract",
         "wallet": "Wallet"
     },
     "general" : {
@@ -58,9 +63,12 @@
         "out_msg" : "Messages Out",
         "about": "About",
         "updated": "Updated",
+        "categories": "Categories",
         "loaded_accs": "Loaded accounts",
         "unloaded_accs": "Unloaded accounts",
-        "external": "External links"
+        "external": "External links",
+        "nothing-found": "Nothing found! Try again..",
+        "incorrect-input": "Incorrect input.."
     },
     "route" : {
         "explorer" : "Main Page",
@@ -77,7 +85,9 @@
         "jetton" : "Jetton",
         "jettons" : "Jettons",
         "nfts" : "NFTs",
-        "nft" : "NFT"
+        "nft" : "NFT",
+        "search" : "Search results",
+        "result" : "Result"
     },
     "stats" : {
         "account_count": "Accounts",

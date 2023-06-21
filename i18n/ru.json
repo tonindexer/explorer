@@ -19,8 +19,11 @@
         "address": "Адрес",
         "balance": "Баланс",
         "type": "Тип",
+        "label": "Имя",
+        "status": "Статус",
 
         "hash" : "Хэш (base64)",
+        "base64" : "Хэш (base64)",
         "hex" : "Хэш (hex)",
         "account_key": "Ключ аккаунта",
         "prev_tx_hash": "Пред. транзакция",
@@ -30,7 +33,7 @@
         "created_at": "Создано",
         "created_lt": "Лог. время",
 
-        "last_tx_hash": "Последняя транзакция",
+        "last_tx_hash": "Посл. транзакция",
         "code": "Код",
         "code_hash": "Хэш кода",
         "data": "Данные",
@@ -39,6 +42,8 @@
 
         "name": "Название",
         "minter": "Минтер",
+        "owner": "Владелец",
+        "contract" : "Контракт",
         "wallet": "Кошелек"
     },
     "general" : {
@@ -58,9 +63,12 @@
         "out_msg" : "Исходящие сообщения",
         "about": "О проекте",
         "updated": "Обновлено",
+        "categories": "Категории",
         "loaded_accs": "Загруженные аккаунты",
         "unloaded_accs": "Не загруженные аккаунты",
-        "external": "Внешние ссылки"
+        "external": "Внешние ссылки",
+        "nothing-found": "Поиск не дал результатов! Попробуйте ещё..",
+        "incorrect-input": "Данные некорректны! Введите что-то другое.."
     },
     "route" : {
         "explorer" : "Главная страница",
@@ -77,7 +85,9 @@
         "jetton" : "Jetton",
         "jettons" : "Jettons",
         "nfts" : "NFTs",
-        "nft" : "NFT"
+        "nft" : "NFT",
+        "search" : "Резульаты поиска",
+        "result" : "Результат"
     },
     "stats" : {
         "account_count": "Аккаунтов",

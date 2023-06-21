@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface Props {
     addr: Address | null
+    break_word: boolean
 }
 defineProps<Props>()
 
@@ -16,7 +17,7 @@ defineProps<Props>()
         </p>
     </template>
     <template v-else> 
-        <NuxtLink class="uk-text-primary" :to="{ path: 'accounts', query: { hex: addr.hex }, hash: '#overview'} " style="word-break: break-all;">
+        <NuxtLink class="uk-text-primary" :to="{ path: 'accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
             {{ addr.base64 }}
         </NuxtLink>
     </template>

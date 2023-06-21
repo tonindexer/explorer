@@ -1,7 +1,36 @@
 export { };
 
 declare global {
-    
+    type SearchType = 'account' | 'transaction' | 'block'
+
+    type BlockSearch = {
+        type: 'block'
+        value: {
+            workchain: number
+            shard: bigint
+            seq_no: number
+        }
+        show?: string
+    }
+
+    type TxSearch = {
+        type: 'transaction'
+        value: {
+            hash: string
+        }
+        show?: string
+    }
+
+    type AccSearch = {
+        type: 'account'
+        value: {
+            hex: string
+        }
+        show?: string
+    }
+
+    type Search = Array<BlockSearch | TxSearch | AccSearch>
+
     type Statistics = {
         account_count : number,
         address_count : number,

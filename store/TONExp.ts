@@ -6,8 +6,10 @@ export const useMainStore = defineStore('tonexp', {
       blocks: {} as BlockMap,
       messages: {} as MessageMap,
       transactions: {} as TransactionMap,
-      transactionMsgFlag: {} as { [key: TransactionKey] : boolean } ,
+      transactionMsgFlag: {} as { [key: TransactionKey] : boolean },
+      transactionHexes: {} as { [key: string] : TransactionKey},
       accounts: {} as AccountMap,
+      accountBases: {} as { [key: string] : AccountKey},
       // wallets and nfts
       jettonWallets: {} as JettonWalletMap,
       nftItems: {} as NFTMap,
@@ -24,6 +26,8 @@ export const useMainStore = defineStore('tonexp', {
       totalQueryAccounts: 0 as number,
       // Flag for NFT
       loadNextNFTFlag: true,
+      // search results
+      searchResults: [] as Search,
       // Statistics.
       stats : {} as Statistics
     }),
@@ -96,6 +100,8 @@ export const useMainStore = defineStore('tonexp', {
           if (this.accounts[accountKey].block_seq_no > account.block_seq_no) return accountKey
         }
 
+        this.accountBases[account.address.base64] = accountKey
+
         Object.assign(mappedAccount, account)
 
         this.accounts[accountKey] = mappedAccount
@@ -134,6 +140,7 @@ export const useMainStore = defineStore('tonexp', {
 
         const mappedTransaction = <Transaction>{}
         mappedTransaction.hex = this.convertBase64ToHex(transactionKey)
+        this.transactionHexes[mappedTransaction.hex] = transactionKey
         mappedTransaction.out_msg_keys = []
         mappedTransaction.delta = 0n + BigInt(transaction.in_amount ?? 0n) - BigInt(transaction.out_amount ?? 0n)
         let op_type: OPKey = 0
@@ -368,8 +375,11 @@ export const useMainStore = defineStore('tonexp', {
           const { data } = await apiRequest(`/blocks?${query}`, 'GET')
           const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          const key = this.processBlock(parsed.results[0])
-          this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys(this.deepTransactionKeys(key), true, true), false))
+          if (parsed.results && parsed.results.length > 0) {
+            const key = this.processBlock(parsed.results[0])
+            this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys(this.deepTransactionKeys(key), true, true), false))
+            return key
+          } else return null
         } catch (error) {
           console.log(error)
         }
@@ -383,11 +393,12 @@ export const useMainStore = defineStore('tonexp', {
           const { data } = await apiRequest(`/transactions?${query}`, 'GET')
           const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (parsed.results.length > 0) {
+          if (parsed.results && parsed.results.length > 0) {
             this.processTransaction(parsed.results[0])
             if (hash !== parsed.results[0].hash) hash = parsed.results[0].hash
             await this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys([hash], true, true), false))
-          }
+            return hash
+          } else return null
         } catch (error) {
           console.log(error)
         }
@@ -406,9 +417,10 @@ export const useMainStore = defineStore('tonexp', {
             const { data } = await apiRequest(`/accounts?${query}`, 'GET')
             const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            parsed.results.forEach((acc: AccountAPI) => {
-              this.processAccount(acc)
-            })
+            if (parsed.results && parsed.results.length > 0)
+              parsed.results.forEach((acc: AccountAPI) => {
+                this.processAccount(acc)
+              })
           } catch (error) {
             console.log(error)
           }
@@ -427,13 +439,15 @@ export const useMainStore = defineStore('tonexp', {
             const { data } = await apiRequest(`/accounts?${query}`, 'GET')
             const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            this.processAccount(parsed.results[0])
-            if (hex !== parsed.results[0].address.hex) hex = parsed.results[0].address.hex
+            if (parsed.results && parsed.results.length > 0) {
+              this.processAccount(parsed.results[0])
+              if (hex !== parsed.results[0].address.hex) hex = parsed.results[0].address.hex
+            } else return null
           } catch (error) {
             console.log(error)
           }
         // get first 10 transactions for account if they are empty
-        if (this.accounts[hex].transaction_keys.length === 0)
+        if (this.accounts[hex]?.transaction_keys.length === 0)
           await this.updateTransactions(10, null, false, hex)
         // get all jetton_wallet of account
         try {
@@ -483,6 +497,67 @@ export const useMainStore = defineStore('tonexp', {
         } catch (error) {
           console.log(error)
         }
+      },
+      async search(req: BlockSearch | TxSearch | AccSearch): Promise<Search> {
+        this.searchResults = []
+        if (req.type == 'account') {
+          if (req.value.hex in this.accounts) { this.searchResults = [req]; return this.searchResults }
+
+          if (req.value.hex in this.accountBases) {
+            this.searchResults = [{
+              type: 'account',
+              value: {
+                hex: this.accountBases[req.value.hex]
+              },
+              show: req.value.hex
+            }]
+          } else {
+            const key = await this.fetchAccount(req.value.hex)
+            if (key) this.searchResults = [{
+              type: 'account',
+              value: {
+                hex: key
+              },
+              show: req.value.hex
+            }]
+          }
+
+        } else if (req.type === 'block') {
+          if (this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) { this.searchResults = [req]; return this.searchResults }
+
+          const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no)
+          if (key) this.searchResults = [{
+            type: 'block',
+            value: {
+              workchain: this.blocks[key].workchain,
+              shard: this.blocks[key].shard,
+              seq_no: this.blocks[key].seq_no
+            },
+            show: this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
+          }]
+        } else if (req.type === 'transaction') {
+          if (req.value.hash in this.transactions) { this.searchResults = [req]; return this.searchResults }
+
+          if (req.value.hash in this.transactionHexes) {
+            this.searchResults = [{
+              type: 'transaction',
+              value: {
+                hash: this.transactionHexes[req.value.hash]
+              },
+              show: req.value.hash
+            }]
+          } else {
+            const key = await this.fetchTransaction(req.value.hash)
+            if (key) this.searchResults = [{
+              type: 'transaction',
+              value: {
+                hash: key
+              },
+              show: req.value.hash
+            }]
+          }
+        }
+        return this.searchResults
       }
     }
   })
