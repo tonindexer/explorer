@@ -502,7 +502,7 @@ export const useMainStore = defineStore('tonexp', {
           const parsed = parseJson<NFTAPIData>(data, (key, value, context) => (
             (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           if (offset === 0) this.accounts[address].nft_keys = []
-          if (parsed.nft_items.length >= limit) {
+          if (parsed.nft_items.length >= limit + 1) {
             parsed.nft_items = parsed.nft_items.slice(0, limit)
             this.loadNextNFTFlag = true
           } else this.loadNextNFTFlag = false
