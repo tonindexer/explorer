@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import { LocationQuery } from 'vue-router';
 import { useMainStore } from '~/store/TONExp';
+import { ModelSelect } from 'vue-search-select'
 
+type SelectItem = {
+    value: string,
+    text: string
+}
 const route = useRoute()
 const isLoading = ref(true)
 const isGeneral = ref(true)
 const error = ref(false)
 const hex : NullableStrRef = ref(null)
-
+const selected: Ref<SelectItem | {}> = ref({})
 const store = useMainStore()
 
+const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}))
+
+const reset = () => selected.value = {}
 function routeChecker(newQuery: LocationQuery) {
     hex.value = newQuery.hex? newQuery.hex.toString() : null;
 
@@ -37,7 +45,13 @@ onMounted(() => routeChecker(route.query))
     <template v-else>
         <div v-if="isGeneral">
             <h1>{{  $t('route.accounts') }}</h1>
-            <LazyAccountsTable :keys="store.exploredAccounts" :update="true" :default-length="20" :item-selector="true" :hidden="false"/>
+            <div class="uk-flex uk-flex-right">
+                <div class="uk-width-2-5">
+                    <ModelSelect :options="options" v-model="selected" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
+                </div>
+                <a v-if="Object.keys(selected).length > 0" uk-icon="icon: close" @click="reset" style="align-self: center; margin-left: 0.5rem;"></a>
+            </div>
+            <LazyAccountsTable :keys="store.exploredAccounts" :update="true" :default-length="20" :item-selector="true" :hidden="false" :contract="'value' in selected ? selected.value : null"/>
         </div>
         <div v-else-if="hex" class="uk-flex uk-flex-column">
             <div class="uk-flex uk-flex-bottom">
@@ -52,3 +66,9 @@ onMounted(() => routeChecker(route.query))
         </div>
     </template>
 </template>
+
+<style lang="scss">
+.search {
+    font-family: 'Fira Mono';
+}
+</style>

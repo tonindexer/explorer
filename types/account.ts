@@ -82,7 +82,7 @@ declare global {
         owner_address?: Address
         minter_address?: Address
 
-        executes_get_methods?: GetMethod[]
+        executed_get_methods?: GetMethod[]
 
         jetton_wallets: JettonWalletKey[]
         nft_items: NFTContentData[]

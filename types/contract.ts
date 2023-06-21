@@ -22,7 +22,13 @@ declare global {
         get_methods_descriptors?: GetMethod[]
         get_method_hashes?: number[]
     }
-
+    type ContractInterfaceMap = {
+        [key: string] : ContractInterface
+    }
+    type ContractInterfaceAPI = {
+        total: number
+        results: ContractInterface[]
+    }
     type ContractOperation = {
         operation_name: string
         contract_name: ContractType

@@ -18,7 +18,7 @@ watch(route, async value => {
       await store.updateTransactions(20, null, false)
     }
     if (value.fullPath === '/accounts') {
-      await store.updateAccounts(20, null)
+      await store.updateAccounts(20, null, null)
     }
   }, {deep: true})
 </script>

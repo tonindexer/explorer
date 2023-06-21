@@ -54,10 +54,10 @@ const externalLink = computed(() : MockType=> {
                         {{ itemPreprocess(index, trn[index]) }}
                     </AtomsCopyableText>
                 </td>
-                <td v-else-if="index === 'address'">
+                <td v-else-if="index === 'address'" class="uk-flex k-margin-remove-horizontal">
                     <AtomsCopyableText :text="trn[index].base64">
                         <template v-if="trn[index].hex in badAddresses">
-                            <p class="uk-display-inline">{{ `${badAddresses[trn[index].hex].name} (${truncString(trn[index].hex, 6, 4)})` }}</p>
+                            <p class="uk-margin-remove-vertical uk-display-inline uk-text-truncate">{{ `${badAddresses[trn[index].hex].name} (${truncString(trn[index].base64, 10, 6)})` }}</p>
                         </template>
                         <template v-else>
                             <NuxtLink :to="`/accounts?hex=${trn.address.hex}#overview`" class="uk-text-truncate">{{ itemPreprocess(index, trn[index]) }}</NuxtLink>
@@ -76,6 +76,14 @@ const externalLink = computed(() : MockType=> {
                 </td>
                 <td class="uk-flex">
                     <AtomsExitCodeField :code="trn.compute_phase_exit_code"/>
+                </td>
+            </tr> 
+            <tr>
+                <td class="uk-width-1-4">
+                    {{ $t(`ton.action_phase_result_code`) }}
+                </td>
+                <td class="uk-flex">
+                    <AtomsExitCodeField :code="trn.action_phase_result_code"/>
                 </td>
             </tr> 
             <tr>

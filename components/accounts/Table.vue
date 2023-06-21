@@ -7,6 +7,7 @@ interface AccountTable {
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
+    contract: string | null
 }
 
 const props = defineProps<AccountTable>()
@@ -34,9 +35,9 @@ const setExtraFields = () => {
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     if (props.keys.length === 0 || pageNum.value === 0)
-        await store.updateAccounts(itemCount.value, null)
+        await store.updateAccounts(itemCount.value, null, props.contract)
     else {
-        await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value)
+        await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value, props.contract)
     }
     setExtraFields()
 }
@@ -54,6 +55,11 @@ watch(itemCount, async() => {
     if (pageNum.value === 0) updateValues()
     else pageNum.value = 0
 }, {deep : true})
+
+watch(() => props.contract, () => {
+    if (pageNum.value === 0) updateValues()
+    else pageNum.value = 0
+})
 
 watch(props, () => {
     setExtraFields()

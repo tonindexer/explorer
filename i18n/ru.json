@@ -33,6 +33,7 @@
         "created_at": "Создано",
         "created_lt": "Лог. время",
         "exit_code": "Код выхода",
+        "action_phase_result_code": "Результат действия",
 
         "last_tx_hash": "Посл. транзакция",
         "code": "Код",

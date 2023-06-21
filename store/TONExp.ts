@@ -29,7 +29,9 @@ export const useMainStore = defineStore('tonexp', {
       // search results
       searchResults: [] as Search,
       // Statistics.
-      stats : {} as Statistics
+      stats : {} as Statistics,
+      // Interfaces
+      interfaces : {} as ContractInterfaceMap
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
@@ -275,7 +277,7 @@ export const useMainStore = defineStore('tonexp', {
           }
           case '/accounts': {
             if (Object.entries(route.query).length === 0) {
-              await this.updateAccounts(20, null)
+              await this.updateAccounts(20, null, null)
             }  else {
               const hex = route.query.hex && route.query.hex.toString()
               if (hex) await this.fetchAccount(hex)
@@ -283,7 +285,19 @@ export const useMainStore = defineStore('tonexp', {
             break;
           }
         }
-        
+        if (Object.keys(this.interfaces).length === 0) {
+          try {
+            const { data } = await apiRequest(`/contract/interfaces`, 'GET')
+            const parsed = parseJson<ContractInterfaceAPI>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            this.totalQueryTransactions = parsed.total
+            for (const inter of parsed.results) {
+              this.interfaces[inter.name] = inter
+            }
+          } catch (error) {
+            console.log(error)
+          }
+        }
         
       },
       async updateBlockValues(limit: number = 10, seqOffset: number | null, cutPage: number = 0, order: "ASC" | "DESC" = "DESC") {
@@ -341,12 +355,14 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async updateAccounts(limit: number, seqOffset: bigint | null, order: "ASC" | "DESC" = "DESC") { 
+      async updateAccounts(limit: number, seqOffset: bigint | null, contract: string | null, order: "ASC" | "DESC" = "DESC") { 
         const fullReq: MockType = {
           order, 
-          limit
+          limit,
+          latest : true
         }
         if (seqOffset) fullReq.after = seqOffset
+        if (contract) fullReq.interface = contract
         if (!seqOffset) this.exploredAccounts = []
 
         const query = getQueryString(fullReq, false)

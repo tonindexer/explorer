@@ -33,6 +33,7 @@
         "created_at": "Created",
         "created_lt": "Logical time",
         "exit_code": "Exit code",
+        "action_phase_result_code": "Action result",
 
         "last_tx_hash": "Last tx",
         "code": "Code",

@@ -9,6 +9,8 @@ $hover-color: #f3f3ff;
 
 @import "uikit/src/scss/uikit-theme.scss";
 
+@import "vue-search-select/dist/VueSearchSelect.css";
+
 .table-header {
     div {
       text-align: left;
