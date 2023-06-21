@@ -500,10 +500,10 @@ export const useMainStore = defineStore('tonexp', {
         // get 18 nft_item of account
         if (this.accounts[hex]?.nft_keys.length === 0)
           // await this.loadAccountNFTs(hex, 18)
-          this.loadAccountNFTAddresses(hex, true, false, 18, null, 0)
+          await this.loadAccountNFTAddresses(hex, true, false, 18, null, 0)
         // get 18 minted nft_item of account
         if (this.accounts[hex]?.minted_nfts.length === 0)
-          this.loadAccountNFTAddresses(hex, true, true, 18, null, 0)
+          await this.loadAccountNFTAddresses(hex, true, true, 18, null, 0)
         return hex
       },
       async loadAccountJettonWallets(account: AccountKey) {
