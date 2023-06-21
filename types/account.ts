@@ -87,12 +87,13 @@ declare global {
         jetton_wallets: JettonWalletKey[]
         nft_items: NFTContentData[]
         nft_keys: NFTKey[]
+        minted_nfts: NFTKey[]
         transaction_keys: TransactionKey[]
 
         updated_at: string
     }
 
-    interface AccountAPI extends Omit<Account, 'jetton_wallets' | 'nft_items'> {}
+    interface AccountAPI extends Omit<Account, 'jetton_wallets' | 'nft_keys' | 'nft_items' | 'minted_nfts' | 'transaction_keys'> {}
 
     type AccountAPIData = {
         total: number

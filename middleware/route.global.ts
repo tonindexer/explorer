@@ -2,7 +2,7 @@ import { useMainStore } from "~/store/TONExp"
 
 export default defineNuxtRouteMiddleware((to, from) => {
     const store = useMainStore()
-    if (to.path === '/') {
+    if (to.path === '/' && from.path !== '/') {
         store.mainPageLoad()
     }
     if (to.fullPath === '/blocks') {

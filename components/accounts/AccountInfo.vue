@@ -58,16 +58,24 @@ watch(props, async() => await reloadInfo())
                         {{ $t('route.nfts') }}
                     </NuxtLink>
                 </li>
+                <li v-if="account.minted_nfts.length > 0" :class="{'uk-active' : (route.hash === '#minter')}">
+                    <NuxtLink :to="{ hash: '#minter', query: route.query}">
+                        {{ $t('ton.minter') }}
+                    </NuxtLink>
+                </li>
             </ul>
         </div>
         <div v-show="account && (route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
-            <TransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="false" :account="hex" />
+            <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="false" :account="hex" />
         </div>
         <div v-if="account && route.hash === '#jettons'" id="jettons">
-            <AccountsJettonsTable :keys="jtKeys" :default-length="10" :hidden="jtKeys.length === 0" />
+            <LazyAccountsJettonsTable :keys="jtKeys" :default-length="10" :hidden="jtKeys.length === 0" />
         </div>
         <div v-if="account && route.hash === '#nfts'" id="nfts">
-            <AccountsNFTGrid :keys="account.nft_keys" :default-length="18" :hidden="account.nft_keys.length === 0" :account="hex" />
+            <LazyAccountsNFTGrid :keys="account.nft_keys" :default-length="18" :hidden="account.nft_keys.length === 0" :account="hex" />
+        </div>
+        <div v-if="account && route.hash === '#minter'" id="minter">
+            <LazyAccountsMinterNFTGrid :keys="account.minted_nfts" :default-length="18" :hidden="account.minted_nfts.length === 0" :minter="hex" />
         </div>
     </template>
 </template>

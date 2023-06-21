@@ -24,6 +24,7 @@ export const useMainStore = defineStore('tonexp', {
       totalQueryTransactions: 0 as number,
       totalQueryBlocks: 0 as number,
       totalQueryAccounts: 0 as number,
+      totalQueryNFTMinters: 0 as number,
       // Flag for NFT
       loadNextNFTFlag: true,
       // search results
@@ -70,6 +71,7 @@ export const useMainStore = defineStore('tonexp', {
           case 'trn': return loaded > state.totalQueryTransactions;
           case 'block': return loaded > state.totalQueryBlocks;
           case 'acc': return loaded > state.totalQueryAccounts;
+          case 'mint': return loaded > state.totalQueryNFTMinters;
           default: return false;
         }
       },
@@ -94,6 +96,7 @@ export const useMainStore = defineStore('tonexp', {
         const accountKey = account.address.hex
         const mappedAccount = <Account>{}
         mappedAccount.nft_keys = []
+        mappedAccount.minted_nfts = []
         mappedAccount.jetton_wallets = []
         mappedAccount.transaction_keys = []
 
@@ -446,7 +449,7 @@ export const useMainStore = defineStore('tonexp', {
       },
       async fetchAccount(hex: string) {
         this.loadNextNFTFlag = false
-        if (!(hex in this.accounts))
+        if (!(hex in this.accounts) && !(hex in this.accountBases))
           try {
           const fullReq: MockType = {
             address: hex,
@@ -468,27 +471,80 @@ export const useMainStore = defineStore('tonexp', {
         if (this.accounts[hex]?.transaction_keys.length === 0)
           await this.updateTransactions(10, null, false, hex)
         // get all jetton_wallet of account
-        try {
-          const { data } = await apiRequest(`accounts/${hex}/jettons`, 'GET', {}, `https://tonapi.io/v2/`)
-          const parsed = parseJson<JettonAPIData>(data, (key, value, context) => (
-            (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          this.accounts[hex].jetton_wallets = []
-          for (const jetton of parsed.balances) {
-            const jt_key: JettonWalletKey = `${hex}|${jetton.wallet_address.address}`
-            this.accounts[hex].jetton_wallets.push(jt_key)
-            this.jettonWallets[jt_key] = {
-              jetton_balance: formatTons(Number(jetton.balance), jetton.jetton.decimals) + ' ' + jetton.jetton.symbol,
-              minter_address: jetton.jetton.address,
-              wallet_address: jetton.wallet_address.address,
-              name: jetton.jetton.name ?? "Unnamed"
+        if (this.accounts[hex]?.jetton_wallets.length === 0)
+          try {
+            const { data } = await apiRequest(`accounts/${hex}/jettons`, 'GET', {}, `https://tonapi.io/v2/`)
+            const parsed = parseJson<JettonAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            this.accounts[hex].jetton_wallets = []
+            for (const jetton of parsed.balances) {
+              const jt_key: JettonWalletKey = `${hex}|${jetton.wallet_address.address}`
+              this.accounts[hex].jetton_wallets.push(jt_key)
+              this.jettonWallets[jt_key] = {
+                jetton_balance: formatTons(Number(jetton.balance), jetton.jetton.decimals) + ' ' + jetton.jetton.symbol,
+                minter_address: jetton.jetton.address,
+                wallet_address: jetton.wallet_address.address,
+                name: jetton.jetton.name ?? "Unnamed"
+              }
             }
+          } catch (error) {
+            console.log(error)
           }
-        } catch (error) {
-          console.log(error)
-        }
-        // get all nft_item of account
-        await this.loadAccountNFTs(hex, 18)
+        // get 18 nft_item of account
+        if (this.accounts[hex]?.nft_keys.length === 0)
+          await this.loadAccountNFTs(hex, 18)
+        // get 18 minted nft_item of account
+        if (this.accounts[hex]?.minted_nfts.length === 0)
+          await this.loadMintedNFTS(hex, 18, null) 
         return hex
+      },
+      async loadMintedNFTS(address: AccountKey, limit: number = 18, seqOffset: bigint | null, offset: number = 0) {
+        const requestNFTs: string[] = []
+        // fetching nft 
+        try {
+          const req: MockType = {
+            limit,
+            minter_address: address,
+            latest: true,
+            order: "DESC",
+            interface: "nft_item"
+          }
+
+        if (seqOffset) req.after = seqOffset
+
+          const query = getQueryString(req, true);
+          // get latest account state
+          const { data } = await apiRequest(`/accounts?${query}`, 'GET')
+          const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          this.totalQueryNFTMinters = parsed.total
+          if (parsed.results && parsed.results.length > 0)
+            parsed.results.forEach((acc: AccountAPI) => {
+              const acc_key = this.processAccount(acc)
+              const nft_Key: NFTKey = `${address}|${acc_key}`
+              if (!(nft_Key in this.nftItems)) requestNFTs.push(acc_key)
+            })
+        } catch (err) {
+          console.log(err)
+        }
+        if (requestNFTs.length === 0) return
+        try {
+          const req = {
+            account_ids: requestNFTs
+          }
+          const { data } = await apiRequest(`/nfts/_bulk`, 'POST', {}, `https://tonapi.io/v2/`, req)
+          const parsed = parseJson<NFTAPIData>(data, (key, value, context) => (
+            (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          if (offset === 0) this.accounts[address].minted_nfts = []
+          
+          for (const nft of parsed.nft_items) {
+            const nft_Key: NFTKey = `${address}|${nft.address}`
+            this.accounts[address].minted_nfts.push(nft_Key)
+            this.nftItems[nft_Key] = nft
+          }
+        } catch (err) {
+          console.log(err)
+        }
       },
       async loadAccountNFTs(address: AccountKey, limit: number = 18, offset: number = 0) {
         try {
