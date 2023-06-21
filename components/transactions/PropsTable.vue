@@ -57,7 +57,7 @@ const externalLink = computed(() : MockType=> {
                 <td v-else-if="index === 'address'">
                     <AtomsCopyableText :text="trn[index].base64">
                         <template v-if="trn[index].hex in badAddresses">
-                            <p class="uk-display-inline">{{ badAddresses[trn[index].hex].name }}</p>
+                            <p class="uk-display-inline">{{ `${badAddresses[trn[index].hex].name} (${truncString(trn[index].hex, 6, 4)})` }}</p>
                         </template>
                         <template v-else>
                             <NuxtLink :to="`/accounts?hex=${trn.address.hex}#overview`" class="uk-text-truncate">{{ itemPreprocess(index, trn[index]) }}</NuxtLink>
