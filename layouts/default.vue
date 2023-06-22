@@ -5,13 +5,14 @@ const route = useRoute()
 
 <template>
     <NavBar/>
-    <div class="uk-section uk-width-3-4" style="margin: 1rem auto 0; padding-top: 0;">
+    <div class="uk-section uk-width-3-4" style="margin: 1rem auto 0; padding-top: 0; min-height: calc(100vh - 120px);">
         <AtomsSearchBar/>
         <div v-if="route.fullPath !== '/'">
             <AtomsRouteChain/>
         </div>
         <slot />
     </div>
+    <FooterBar/>
 </template>
 
 <style src="~/assets/styles/main.scss" lang="scss"></style>
