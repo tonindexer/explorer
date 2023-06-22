@@ -75,7 +75,7 @@ onMounted(() => routeChecker())
                     {{ store.accounts[hex]?.address?.base64 ?? 'loading..' }}
                 </h2>
             </div>
-            <AccountsAccountInfo :hex="hex" @set-hex="(e) => navigateTo({path: 'accounts', query: {hex: e}, hash: '#overview'})"/>
+            <AccountsAccountInfo :hex="hex" @set-hex="(e) => navigateTo( e ? {path: 'accounts', query: {hex: e}, hash: '#overview'} : {path: 'accounts'})"/>
         </div>
     </template>
 </template>
