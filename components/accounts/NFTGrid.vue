@@ -84,11 +84,11 @@ onMounted(async () => {
                     <img v-else-if="nft.metadata?.image" :src="nft.metadata.image" width="500" height="500" alt="">
                     <img v-else src="@/assets/images/default.png" width="250" height="250" alt="">
                 </div>
-                <div class="uk-card-body uk-text-truncate">
-                    <NuxtLink :to="`/accounts?hex=${nft.address}#overview`">
+                <div class="uk-card-body uk-text-truncate uk-padding-small">
+                    <NuxtLink :to="`/accounts?hex=${nft.address}#overview`" :uk-tooltip=" nft.metadata?.name ? nft.metadata.name : 'No name'">
                         {{ nft.metadata?.name ? nft.metadata.name : "No name" }}
                     </NuxtLink>
-                    <h4 class="uk-margin-remove-top"> {{ nft.collection?.name ? nft.collection.name : "No collection" }}</h4>
+                    <h4 class="uk-margin-remove-top uk-text-truncate" :uk-tooltip="nft.collection?.name ? nft.collection.name : 'No collection'"> {{ nft.collection?.name ? nft.collection.name : "No collection" }}</h4>
                 </div>
             </div>
         </div>
