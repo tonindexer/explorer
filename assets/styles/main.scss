@@ -51,11 +51,3 @@ $hover-color: #f3f3ff;
 .hover:hover {
   background-color: $hover-color;
 }
-
-html, body {
-  height: 100%;
-}
-
-body > div {
-  height: 100%;
-}
