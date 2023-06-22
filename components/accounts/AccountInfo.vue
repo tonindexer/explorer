@@ -6,6 +6,7 @@ interface Props {
 }
 
 const error = ref(false)
+const loading = ref(true)
 const store = useMainStore()
 const props = defineProps<Props>()
 const emits = defineEmits(['setHex'])
@@ -20,10 +21,12 @@ const ownerKeys = computed(() => account.value?.nft_keys?.length > 0 ? account.v
 
 const reloadInfo = async() => {
     error.value = false
+    loading.value = true
     if (!(props.hex in store.accounts) || jtKeys.value.length === 0 || minterKeys.value.length === 0 || ownerKeys.value.length === 0) {
         const res = await store.fetchAccount(props.hex)
         if (props.hex != res) emits('setHex', res)
     }
+    loading.value = false
     if (!account.value) {
         error.value = true
         return;
@@ -37,9 +40,14 @@ watch(props, async() => await reloadInfo())
 
 <template>
     <template v-if="error">
-        <NuxtLink @click.prevent.stop="$router.back()">
-            {{ 'An error occured while loading account! Go back..' }}
+        <NuxtLink :to="{ path: 'accounts' }">
+            {{ 'An error occured while loading account! Go to overview page..' }}
         </NuxtLink>
+    </template>
+    <template v-else-if="loading">
+        <div class="uk-flex uk-flex-center">
+            <Loader />
+        </div>
     </template>
     <template v-else>
         <AccountsPropsTable v-if="account" :acc="account"/>

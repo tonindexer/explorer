@@ -8,6 +8,7 @@ interface Props {
 }
 
 const error = ref(false)
+const loading = ref(true)
 const store = useMainStore()
 const props = defineProps<Props>()
 const route = useRoute()
@@ -25,10 +26,12 @@ const unloadedAccountKeys = computed(() => store.getAccountKeys([...inMessageKey
 
 const reloadInfo = async() => {
     error.value = false
+    loading.value = true
     if (!block.value) {
         await store.fetchBlock(props.workchain, props.shard, props.seq_no)
     }
     await store.fetchBareAccounts(unloadedAccountKeys.value)
+    loading.value = false
     if (!block.value) {
         error.value = true
         return;
@@ -41,53 +44,65 @@ watch(props, async() => await reloadInfo())
 </script>
 
 <template>
-    <BlocksPropsTable v-if="block" :block="block"/>
-    <div>
-        <ul v-if="block?.transaction_keys.length" class="uk-child-width-expand uk-text-medium" uk-tab>
-            <li :class="{'uk-active' : (route.hash === '#transactions' || route.hash === '#overview')}">
-                <NuxtLink :to="{ hash: '#transactions', query: route.query}" @click="deepMsgKeys = false">
-                    {{ $t('route.transactions') }}
-                </NuxtLink>
-            </li>
-            <li v-if="inMessageKeys.length + outMessageKeys.length > 0" :class="{'uk-active' : (route.hash === '#messages')}">
-                <NuxtLink :to="{ hash: '#messages', query: route.query}" @click="deepTrKeys = false">
-                    {{ $t('route.messages') }}
-                </NuxtLink>
-            </li>
-            <li v-if="loadedAccountKeys.length + unloadedAccountKeys.length > 0" :class="{'uk-active' : (route.hash === '#accounts')}">
-                <NuxtLink :to="{ hash: '#accounts', query: route.query}">
-                    {{ $t('route.accounts') }}
-                </NuxtLink>
-            </li>
-            <li v-if="block.shard_keys.length > 0" :class="{'uk-active' : (route.hash === '#shards')}">
-                <NuxtLink :to="{ hash: '#shards', query: route.query}">
-                    {{ $t('ton.shards') }}
-                </NuxtLink>
-            </li>
-        </ul>
-    </div>
-    <div v-if="(route.hash === '#transactions' || route.hash === '#overview')&& block?.transaction_keys.length" id="transactions">
-        <div class="uk-child-width-auto uk-text-left uk-margin-small-top">
-            <label><input v-model="deepTrKeys" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.deep_transactions') }}</label>
+    <template v-if="error">
+        <NuxtLink :to="{ path: 'blocks' }">
+            {{ 'An error occured while loading block! Go to overview page..' }}
+        </NuxtLink>
+    </template>
+    <template v-else-if="loading">
+        <div class="uk-flex uk-flex-center">
+            <Loader />
         </div>
-        <TransactionsTable :item-selector="false" :default-length="5" :update="false" :keys="trKeys" :hidden="trKeys.length === 0" :account="null"/>
-    </div>
-    <div v-if="(route.hash === '#messages' )&& block?.shard_keys" id="messages">
-        <div class="uk-child-width-auto uk-text-left uk-margin-small-top">
-            <label><input v-model="deepMsgKeys" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.deep_messages') }}</label>
+    </template>
+    <template v-else>
+        <BlocksPropsTable v-if="block" :block="block"/>
+        <div>
+            <ul v-if="block?.transaction_keys.length" class="uk-child-width-expand uk-text-medium" uk-tab>
+                <li :class="{'uk-active' : (route.hash === '#transactions' || route.hash === '#overview')}">
+                    <NuxtLink :to="{ hash: '#transactions', query: route.query}" @click="deepMsgKeys = false">
+                        {{ $t('route.transactions') }}
+                    </NuxtLink>
+                </li>
+                <li v-if="inMessageKeys.length + outMessageKeys.length > 0" :class="{'uk-active' : (route.hash === '#messages')}">
+                    <NuxtLink :to="{ hash: '#messages', query: route.query}" @click="deepTrKeys = false">
+                        {{ $t('route.messages') }}
+                    </NuxtLink>
+                </li>
+                <li v-if="loadedAccountKeys.length + unloadedAccountKeys.length > 0" :class="{'uk-active' : (route.hash === '#accounts')}">
+                    <NuxtLink :to="{ hash: '#accounts', query: route.query}">
+                        {{ $t('route.accounts') }}
+                    </NuxtLink>
+                </li>
+                <li v-if="block.shard_keys.length > 0" :class="{'uk-active' : (route.hash === '#shards')}">
+                    <NuxtLink :to="{ hash: '#shards', query: route.query}">
+                        {{ $t('ton.shards') }}
+                    </NuxtLink>
+                </li>
+            </ul>
         </div>
-        <h3 v-if="inMessageKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.in_msg') }}</h3>
-        <MessagesTable :parent_tx="null" :item-selector="false" :default-length="5" :update="false" :keys="inMessageKeys" :hidden="inMessageKeys.length === 0"/>
-        <h3 v-if="outMessageKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.out_msg') }}</h3>
-        <MessagesTable :parent_tx="null" :item-selector="false" :default-length="5" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
-    </div>
-    <div v-if="(route.hash === '#accounts' )&& loadedAccountKeys.length + unloadedAccountKeys.length > 0" id="accounts">
-        <h3 v-if="loadedAccountKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.loaded_accs') }}</h3>
-        <AccountsTable :default-length="5" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false"/>
-        <h3 v-if="unloadedAccountKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.unloaded_accs') }}</h3>
-        <AccountsUnloadedTable :default-length="5" :keys="unloadedAccountKeys" :hidden="unloadedAccountKeys.length === 0"/>
-    </div>
-    <div v-if="(route.hash === '#shards' )&& block.shard_keys" id="shards">
-        <BlocksTable :item-selector="false" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block.shard_keys.length === 0" :line-link="false" :exclude-empty="false"/>
-    </div>
+        <div v-if="(route.hash === '#transactions' || route.hash === '#overview')&& block?.transaction_keys.length" id="transactions">
+            <div class="uk-child-width-auto uk-text-left uk-margin-small-top">
+                <label><input v-model="deepTrKeys" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.deep_transactions') }}</label>
+            </div>
+            <TransactionsTable :item-selector="false" :default-length="5" :update="false" :keys="trKeys" :hidden="trKeys.length === 0" :account="null"/>
+        </div>
+        <div v-if="(route.hash === '#messages' )&& block?.shard_keys" id="messages">
+            <div class="uk-child-width-auto uk-text-left uk-margin-small-top">
+                <label><input v-model="deepMsgKeys" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.deep_messages') }}</label>
+            </div>
+            <h3 v-if="inMessageKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.in_msg') }}</h3>
+            <MessagesTable :parent_tx="null" :item-selector="false" :default-length="5" :update="false" :keys="inMessageKeys" :hidden="inMessageKeys.length === 0"/>
+            <h3 v-if="outMessageKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.out_msg') }}</h3>
+            <MessagesTable :parent_tx="null" :item-selector="false" :default-length="5" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
+        </div>
+        <div v-if="(route.hash === '#accounts' )&& loadedAccountKeys.length + unloadedAccountKeys.length > 0" id="accounts">
+            <h3 v-if="loadedAccountKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.loaded_accs') }}</h3>
+            <AccountsTable :default-length="5" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false" :contract="null"/>
+            <h3 v-if="unloadedAccountKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.unloaded_accs') }}</h3>
+            <AccountsUnloadedTable :default-length="5" :keys="unloadedAccountKeys" :hidden="unloadedAccountKeys.length === 0"/>
+        </div>
+        <div v-if="(route.hash === '#shards' )&& block.shard_keys" id="shards">
+            <BlocksTable :item-selector="false" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block.shard_keys.length === 0" :line-link="false" :exclude-empty="false"/>
+        </div>
+    </template>
 </template>

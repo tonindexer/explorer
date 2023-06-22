@@ -22,6 +22,8 @@ const lastMC = ref(0)
 const maxExploredPage = ref(0)
 const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'block'): false)
 
+const loading = computed(() => props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+
 const setExtraFields = () => {
     if (props.keys.length > 0) {
         if (props.keys[0] in store.blocks) {
@@ -72,28 +74,34 @@ onMounted(() => setExtraFields())
 </script>
 
 <template>
-    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
-        <thead>
-            <tr>
-                <th class="uk-width-1-6">{{ $t('ton.workchain')}}</th>
-                <th class="uk-width-1-6">{{ $t('ton.shard')}}</th>
-                <th class="uk-width-1-6">{{ $t('ton.block')}}</th>
-                <th class="uk-width-1-6">{{ $t('ton.transactions-count')}}</th>
-                <th class="uk-table-expand uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.scanned')}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <template v-for="block in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <BlocksTableLine 
-                    v-if="lineLink"
-                    :class="{'hover' : lineLink}" 
-                    :block="store.blocks[block]" 
-                    @click="navigateTo(`/blocks?workchain=${store.blocks[block].workchain}&shard=${store.blocks[block].shard}&seq_no=${store.blocks[block].seq_no}#overview`)" 
-                    style="cursor: pointer;"/>
-                <BlocksTableLine v-else :block="store.blocks[block]" :link-block="true"/>
-            </template>
-        </tbody>
-    </table>
+    <template v-if="loading">
+        <div class="uk-flex uk-flex-center">
+            <Loader />
+        </div>
+    </template>
+    <template v-else>
+        <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+            <thead>
+                <tr>
+                    <th class="uk-width-1-6">{{ $t('ton.workchain')}}</th>
+                    <th class="uk-width-1-6">{{ $t('ton.shard')}}</th>
+                    <th class="uk-width-1-6">{{ $t('ton.block')}}</th>
+                    <th class="uk-width-1-6">{{ $t('ton.transactions-count')}}</th>
+                    <th class="uk-table-expand uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.scanned')}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template v-for="block in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+                    <BlocksTableLine 
+                        v-if="lineLink"
+                        :class="{'hover' : lineLink}" 
+                        :block="store.blocks[block]" 
+                        @click="navigateTo(`/blocks?workchain=${store.blocks[block].workchain}&shard=${store.blocks[block].shard}&seq_no=${store.blocks[block].seq_no}#overview`)" 
+                        style="cursor: pointer;"/>
+                    <BlocksTableLine v-else :block="store.blocks[block]" :link-block="true"/>
+                </template>
+            </tbody>
+        </table>
         <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle" style="justify-content: flex-end;">
             <div class="uk-flex uk-flex-middle" v-if="itemSelector">
                 <AtomsSelector 
@@ -111,4 +119,5 @@ onMounted(() => setExtraFields())
                 @decrease="pageNum -= 1"
             />
         </div>
+    </template>
 </template>

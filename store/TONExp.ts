@@ -219,8 +219,9 @@ export const useMainStore = defineStore('tonexp', {
         return blockKey
       },
       async mainPageLoad() {
+        this.stats = {} as Statistics
+        this.latestBlocks = []
         try {
-          this.latestBlocks = []
           const latestReq = {
             workchain: -1,
             with_transactions: true,
