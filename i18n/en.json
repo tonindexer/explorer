@@ -32,6 +32,8 @@
         "end_status": "End status",
         "created_at": "Created",
         "created_lt": "Logical time",
+        "exit_code": "Exit code",
+        "action_phase_result_code": "Action result",
 
         "last_tx_hash": "Last tx",
         "code": "Code",
@@ -44,7 +46,8 @@
         "minter": "Minter",
         "owner": "Owner",
         "contract" : "Contract",
-        "wallet": "Wallet"
+        "wallet": "Wallet",
+        "get_methods": "Get methods"
     },
     "general" : {
         "last_blocks": "Last blocks",

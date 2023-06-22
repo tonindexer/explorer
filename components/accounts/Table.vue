@@ -7,6 +7,7 @@ interface AccountTable {
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
+    contract: string | null
 }
 
 const props = defineProps<AccountTable>()
@@ -19,6 +20,7 @@ const lastTX: NullableBigRef = ref(0n)
 const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'acc') : false)
 
 const maxExploredPage = ref(0)
+const loading = computed(() => props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {
@@ -34,9 +36,9 @@ const setExtraFields = () => {
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     if (props.keys.length === 0 || pageNum.value === 0)
-        await store.updateAccounts(itemCount.value, null)
+        await store.updateAccounts(itemCount.value, null, props.contract)
     else {
-        await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value)
+        await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value, props.contract)
     }
     setExtraFields()
 }
@@ -55,28 +57,37 @@ watch(itemCount, async() => {
     else pageNum.value = 0
 }, {deep : true})
 
-watch(props, () => {
-    setExtraFields()
+watch(() => props.contract, () => {
+    if (pageNum.value === 0) updateValues()
+    else pageNum.value = 0
 })
 
-onMounted(() => setExtraFields())
+onMounted(() => {
+    setExtraFields()
+})
 </script>
 
 <template>
-    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
-        <thead>
-            <tr>
-                <th class="uk-width-1-3">{{ $t('ton.id')}}</th>
-                <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
-                <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <template v-for="acc in keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <AccountsTableLine :acc="store.accounts[acc]"/>
-            </template>
-        </tbody>
-    </table>
+    <template v-if="loading">
+        <div class="uk-flex uk-flex-center">
+            <Loader />
+        </div>
+    </template>
+    <template v-else>
+        <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+            <thead>
+                <tr>
+                    <th class="uk-width-1-3">{{ $t('ton.id')}}</th>
+                    <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
+                    <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template v-for="acc in keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+                    <AccountsTableLine :acc="store.accounts[acc]"/>
+                </template>
+            </tbody>
+        </table>
         <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle" style="justify-content: flex-end;">
             <div class="uk-flex uk-flex-middle" v-if="itemSelector">
                 <AtomsSelector 
@@ -94,4 +105,5 @@ onMounted(() => setExtraFields())
                 @decrease="pageNum -= 1"
             />
         </div>
+    </template>
 </template>

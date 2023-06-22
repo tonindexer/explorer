@@ -71,10 +71,12 @@ const externalLink = computed(() : MockType=> {
                 <td class="uk-width-1-5">
                     {{ $t(`ton.contract`) }}
                 </td>
-                <td class="uk-flex">
-                    <p v-for="item of acc.types" class="uk-margin-remove-vertical uk-margin-right">
-                        {{ item }}
-                    </p>
+                <td>
+                    <template v-for="item of acc.types">
+                        <NuxtLink :to="`/accounts?contract=${item}`" class="uk-margin-right uk-text-primary" uk-icon="icon:link">
+                            {{ item }}
+                        </NuxtLink>
+                    </template>
                 </td>
             </tr>
             <tr v-if="acc.minter_address">

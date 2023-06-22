@@ -3,20 +3,34 @@ import { useMainStore } from '~/store/TONExp';
 
 interface JettonTable {
     keys: JettonWalletKey[]
+    owner: AccountKey
     defaultLength: number
-    hidden: boolean
 }
 
 const props = defineProps<JettonTable>()
+const loading = ref(true)
 
 const store = useMainStore()
-const wallets = computed(() => props.keys.map(jt_key =>  store.jettonWallets[jt_key] ))
+const wallets = computed(() => store.getWallets(props.keys))
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
+
+onMounted(async() => {
+    if (wallets.value.length === 0) {
+        loading.value = true
+        await store.loadAccountJettonWallets(props.owner)
+    }
+    
+    if (wallets.value.length > 0) loading.value = false
+})
+
 </script>
 
 <template>
-    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <div v-if="loading" class="uk-flex uk-flex-center">
+        <Loader :ratio="2"/>
+    </div>
+    <table v-else-if="!loading" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
         <thead>
             <tr>
                 <th class="uk-width-1-5">{{ $t('ton.name')}}</th>

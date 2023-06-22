@@ -32,6 +32,8 @@
         "end_status": "Статус получ.",
         "created_at": "Создано",
         "created_lt": "Лог. время",
+        "exit_code": "Код выхода",
+        "action_phase_result_code": "Результат действия",
 
         "last_tx_hash": "Посл. транзакция",
         "code": "Код",
@@ -44,7 +46,8 @@
         "minter": "Минтер",
         "owner": "Владелец",
         "contract" : "Контракт",
-        "wallet": "Кошелек"
+        "wallet": "Кошелек",
+        "get_methods": "Get methods"
     },
     "general" : {
         "last_blocks": "Последние блоки",
