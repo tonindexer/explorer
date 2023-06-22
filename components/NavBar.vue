@@ -5,11 +5,11 @@ const showMobileNav = ref(false)
 
 watch(showMobileNav, () => {
     showMobileNav.value ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'auto' 
-})
+}, { deep: true })
 </script>
 
 <template>
-    <nav class="uk-background-primary header">
+    <nav class="uk-background-primary header uk-position-fixed uk-width-1-1">
         <div class="uk-flex uk-container uk-margin-auto" style="justify-content: space-between;" :style="{ 'width' : isMobile() ? '90%' : '75%'}">
             <template v-if="!isMobile()">
                 <div class="uk-flex" style="align-items: center;">
@@ -34,9 +34,9 @@ watch(showMobileNav, () => {
         </div>
     </nav>
     
-    <nav v-show="isMobile()" class="uk-position-absolute uk-position-z-index mob-nav uk-flex uk-flex-column" :class="{ 'open' : showMobileNav , 'closed' : !showMobileNav}" style="justify-content: space-between;">
+    <nav v-show="isMobile()" class="uk-position-fixed uk-position-z-index mob-nav uk-flex uk-flex-column" :class="{ 'open' : showMobileNav , 'closed' : !showMobileNav}" style="justify-content: space-between;">
         <div>
-            <table class="uk-table uk-table-divider uk-padding-remove-top" style="align-items: center; border-top: 1px solid #666;">
+            <table class="uk-table uk-table-divider uk-padding-remove-top" style="align-items: center;">
                 <tbody>
                     <tr><td class="uk-text-large">
                         <NuxtLink :to="'/blocks'" class="link" :class="{ 'active' : route.path === '/blocks'}" @click="showMobileNav = false"> {{ $t('route.blocks') }}</NuxtLink>
@@ -62,7 +62,6 @@ watch(showMobileNav, () => {
 
 <style lang="scss">
 .header {
-    position: sticky;
     top: 0;
     z-index: 90;
     div {
@@ -93,10 +92,10 @@ watch(showMobileNav, () => {
 
     
 .mob-nav {
-    top: 120px;
+    top: 53px;
     right: -100vw;
     width: 0;
-    height: calc(100% - 120px);
+    height: calc(100% - 53px);
     transition: right 0.3s;
     background-color: white;
     overflow: hidden;
