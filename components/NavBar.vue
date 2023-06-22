@@ -10,7 +10,7 @@ const route = useRoute()
                 <NuxtLink :to="'/blocks'" class="link" :class="{ 'active' : route.path === '/blocks'}"> {{ $t('route.blocks') }}</NuxtLink>
                 <NuxtLink :to="'/transactions'" class="link" :class="{ 'active' : route.path === '/transactions'}"> {{ $t('route.transactions') }}</NuxtLink>
                 <NuxtLink :to="'/accounts'" class="link" :class="{ 'active' : route.path === '/accounts'}"> {{ $t('route.accounts') }}</NuxtLink>
-                <NuxtLink :to="'https://anton.tools/'" class="link"> {{ $t('general.about') }} </NuxtLink>
+                <NuxtLink :to="'/about'" class="link"> {{ $t('route.about') }} </NuxtLink>
             </div>
             <AtomsLangSwitcher/>
         </div>

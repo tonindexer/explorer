@@ -64,7 +64,6 @@
         "items": "Items",
         "in_msg" : "Messages In",
         "out_msg" : "Messages Out",
-        "about": "About",
         "updated": "Updated",
         "categories": "Categories",
         "loaded_accs": "Loaded accounts",
@@ -90,7 +89,8 @@
         "nfts" : "NFTs",
         "nft" : "NFT",
         "search" : "Search results",
-        "result" : "Result"
+        "result" : "Result",
+        "about": "About"
     },
     "stats" : {
         "account_count": "Accounts",
