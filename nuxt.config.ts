@@ -8,8 +8,12 @@ export default defineNuxtConfig({
     modules : [
       '@nuxtjs/i18n',
       '@pinia/nuxt',
-      '@fedorae/nuxt-uikit'
+      '@fedorae/nuxt-uikit',
+      '@nuxtjs/device'
     ],
+    device: {
+      refreshOnResize: true
+    },
     pinia: {
       autoImports: [
         'defineStore', 

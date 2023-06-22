@@ -70,7 +70,9 @@
         "unloaded_accs": "Unloaded accounts",
         "external": "External links",
         "nothing-found": "Nothing found! Try again..",
-        "incorrect-input": "Incorrect input.."
+        "incorrect-input": "Incorrect input..",
+        "search" : "Search TON adresses, transactions, blocks...",
+        "search_mobile" : "Search..."
     },
     "route" : {
         "explorer" : "Main Page",
