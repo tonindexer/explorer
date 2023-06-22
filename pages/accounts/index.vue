@@ -10,10 +10,9 @@ type SelectItem = {
 const route = useRoute()
 const router = useRouter()
 
-const isLoading = ref(true)
 const isGeneral = ref(true)
 const error = ref(false)
-const hex : NullableStrRef = ref(null)
+const hex = computed(() => route.query.hex? route.query.hex.toString() : null)
 const selected: Ref<SelectItem | {}> = ref({})
 const store = useMainStore()
 
@@ -26,35 +25,32 @@ const setRoute = () => {
         router.replace({path: route.path, query: { contract: selected.value.value} })
     else if (!('hex' in route.query)) router.replace({path: route.path })
 }
-function routeChecker(newQuery: LocationQuery) {
-    hex.value = newQuery.hex? newQuery.hex.toString() : null;
-    if ('contract' in newQuery) {
-        selected.value = {value: newQuery.contract, text: newQuery.contract }
+function routeChecker() {
+    if ('contract' in route.query) {
+        selected.value = {value: route.query.contract, text: route.query.contract }
     } else {
         selected.value = {}
     }
 
     if (hex.value) {
         isGeneral.value = false;
-        isLoading.value = false;
         return;
     }
     isGeneral.value = true;
-    isLoading.value = false;
     return;
 }
 
-watch(() => route.query, (newQuery) => { 
-    routeChecker(newQuery) 
+watch(() => route.query, () => { 
+    routeChecker() 
 })
 
 watch(selected, () => setRoute())
 
-onMounted(() => routeChecker(route.query))
+onMounted(() => routeChecker())
 </script>
 
 <template>
-    <template v-if="error || isLoading">
+    <template v-if="error">
         <NuxtLink to="/accounts">
             {{ 'An error occured while parsing query parameters! Go back..' }}
         </NuxtLink>
@@ -79,7 +75,7 @@ onMounted(() => routeChecker(route.query))
                     {{ store.accounts[hex]?.address?.base64 ?? 'loading..' }}
                 </h2>
             </div>
-            <AccountsAccountInfo :hex="hex" @set-hex="(e) => hex = e"/>
+            <AccountsAccountInfo :hex="hex" @set-hex="(e) => navigateTo({path: 'accounts', query: {hex: e}, hash: '#overview'})"/>
         </div>
     </template>
 </template>

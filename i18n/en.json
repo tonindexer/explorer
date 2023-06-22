@@ -46,7 +46,8 @@
         "minter": "Minter",
         "owner": "Owner",
         "contract" : "Contract",
-        "wallet": "Wallet"
+        "wallet": "Wallet",
+        "get_methods": "Get methods"
     },
     "general" : {
         "last_blocks": "Last blocks",

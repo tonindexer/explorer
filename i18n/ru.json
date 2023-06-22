@@ -46,7 +46,8 @@
         "minter": "Минтер",
         "owner": "Владелец",
         "contract" : "Контракт",
-        "wallet": "Кошелек"
+        "wallet": "Кошелек",
+        "get_methods": "Get methods"
     },
     "general" : {
         "last_blocks": "Последние блоки",

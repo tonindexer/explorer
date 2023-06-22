@@ -62,10 +62,6 @@ watch(() => props.contract, () => {
     else pageNum.value = 0
 })
 
-watch(props, () => {
-    setExtraFields()
-})
-
 onMounted(() => {
     setExtraFields()
 })

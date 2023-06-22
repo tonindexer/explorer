@@ -18,6 +18,7 @@ const trKeys = computed(() => account.value?.transaction_keys?.length > 0 ? acco
 const jtKeys = computed(() => account.value?.jetton_wallets?.length > 0 ? account.value.jetton_wallets : [] as JettonWalletKey[])
 const minterKeys = computed(() => account.value?.minted_nfts?.length > 0 ? account.value.minted_nfts : [] as NFTKey[])
 const ownerKeys = computed(() => account.value?.nft_keys?.length > 0 ? account.value.nft_keys : [] as NFTKey[])
+const getMethods = computed(() => account.value?.executed_get_methods && Object.keys(account.value.executed_get_methods).length > 0 ? account.value.executed_get_methods : {} as {[key: string] : GetMethod})
 
 const reloadInfo = async() => {
     error.value = false
@@ -35,7 +36,7 @@ const reloadInfo = async() => {
 
 onMounted(async() => reloadInfo())
 
-watch(props, async() => await reloadInfo())
+watch(() => props.hex, async() => await reloadInfo())
 </script>
 
 <template>
@@ -73,6 +74,11 @@ watch(props, async() => await reloadInfo())
                         {{ $t('ton.minter') }}
                     </NuxtLink>
                 </li>
+                <li v-if="Object.keys(getMethods).length > 0" :class="{'uk-active' : (route.hash === '#get_methods')}">
+                    <NuxtLink :to="{ hash: '#get_methods', query: route.query}">
+                        {{ $t('ton.get_methods') }}
+                    </NuxtLink>
+                </li>
             </ul>
         </div>
         <div v-show="account && (route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
@@ -86,6 +92,9 @@ watch(props, async() => await reloadInfo())
         </div>
         <div v-if="account && route.hash === '#minter'" id="minter">
             <LazyAccountsNFTGrid :minter-flag="true" :keys="minterKeys" :default-length="18" :account="hex" />
+        </div>
+        <div v-if="account && route.hash === '#get_methods'" id="get_methods">
+            <AccountsGetMethods :methods="getMethods"/>
         </div>
     </template>
 </template>

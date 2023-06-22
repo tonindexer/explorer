@@ -454,7 +454,8 @@ export const useMainStore = defineStore('tonexp', {
       },
       async fetchAccount(hex: string) {
         this.loadNextNFTFlag = false
-        if (!(hex in this.accounts) && !(hex in this.accountBases))
+        if (hex in this.accountBases) hex = this.accountBases[hex]
+        if (!(hex in this.accounts))
           try {
           const fullReq: MockType = {
             address: hex,
