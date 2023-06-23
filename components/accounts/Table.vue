@@ -30,7 +30,7 @@ const setExtraFields = () => {
         if (props.keys[props.keys.length - 1] in store.accounts) {
             lastTX.value = BigInt(store.accounts[props.keys[props.keys.length - 1]].last_tx_lt)
         }
-    }
+    }   
 }
 
 const updateValues = async (next: boolean = true) => {
@@ -40,7 +40,6 @@ const updateValues = async (next: boolean = true) => {
     else {
         await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value, props.contract)
     }
-    setExtraFields()
 }
 
 watch(pageNum, async(to, from) => {
@@ -57,12 +56,16 @@ watch(itemCount, async() => {
     else pageNum.value = 0
 }, {deep : true})
 
-watch(() => props.contract, () => {
-    if (pageNum.value === 0) updateValues()
+watch(() => props.contract, (to, from) => {
+    if (pageNum.value === 0 && from !== '') updateValues()
     else pageNum.value = 0
 })
 
+watch(loading, (to) => {
+    if (to) setExtraFields()
+})
 onMounted(() => {
+    maxExploredPage.value = 0
     setExtraFields()
 })
 </script>
