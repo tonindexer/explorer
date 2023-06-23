@@ -3,8 +3,8 @@
         <div class="uk-flex uk-width-3-4 uk-margin-auto uk-height-1-1" style="justify-content: space-between;">
             <div class="uk-flex" style="align-self: center;">
                 © 2022–2023 
-                <NuxtLink to="https://datboi420.t.me/" class="uk-margin-small-left uk-text-primary">
-                    Dat Boi.
+                <NuxtLink to="https://t.me/tonindexer" class="uk-margin-small-left uk-text-primary">
+                    Tonindexer
                 </NuxtLink>
             </div>
             <div class="uk-flex icons" style="align-items: center;">
