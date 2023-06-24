@@ -24,172 +24,208 @@ const externalLink = computed(() : MockType=> {
     <table class="uk-table uk-table-middle">
         <tbody class="uk-table-divider">
             <tr v-if="acc.label && acc.label.name">
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.label`) }}
-                </td>
-                <td class="uk-text-truncate uk-text-bold">
-                    {{ acc.label.name }}
-                </td>
+                <AtomsPropLine :bold="true">
+                    <template #name>
+                        {{ $t(`ton.label`) }}
+                    </template>
+                    <template #value>
+                        {{ acc.label.name }}
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr>
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.hex`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    <AtomsCopyableText :text="acc.address.hex">
-                        {{ acc.address.hex }}
-                    </AtomsCopyableText>
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.hex`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="acc.address.hex">
+                            <p class="uk-margin-remove uk-text-left uk-text-truncate">
+                                {{ acc.address.hex }}
+                            </p>
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr>
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.base64`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    <AtomsCopyableText :text="acc.address.base64">
-                        {{ acc.address.base64 }}
-                    </AtomsCopyableText>
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.base64`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="acc.address.base64">
+                            {{ acc.address.base64 }}
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr>
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.status`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    {{ acc.status }}
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.status`) }}
+                    </template>
+                    <template #value>
+                        {{ acc.status }}
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr>
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.balance`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none') }}
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.balance`) }}
+                    </template>
+                    <template #value>
+                        {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none') }}
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr v-if="acc.types && acc.types.length > 0">
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.contract`) }}
-                </td>
-                <td>
-                    <template v-for="item of acc.types">
-                        <NuxtLink :to="`/accounts?contract=${item}`" class="uk-margin-right uk-text-primary" uk-icon="icon:link">
-                            {{ item }}
-                        </NuxtLink>
+                <AtomsPropLine :wrap="true">
+                    <template #name>
+                        {{ $t(`ton.contract`) }}
                     </template>
-                </td>
+                    <template #value>
+                        <template v-for="item of acc.types">
+                            <NuxtLink :to="`/accounts?contract=${item}`" class="uk-margin-right uk-text-primary" uk-icon="icon:link" style="line-height: 1.5;">
+                                {{ item }}
+                            </NuxtLink>
+                        </template>
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr v-if="acc.minter_address">
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.minter`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    <AtomsCopyableText :text="acc.minter_address.base64">
-                        <AtomsAddressField :addr="acc.minter_address" :break_word="false"/>
-                    </AtomsCopyableText>   
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.minter`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="acc.minter_address.base64">
+                            <AtomsAddressField :addr="acc.minter_address" :break_word="false"/>
+                        </AtomsCopyableText> 
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr v-if="acc.owner_address">
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.owner`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    <AtomsCopyableText :text="acc.owner_address.base64">
-                        <AtomsAddressField :addr="acc.owner_address" :break_word="false"/>
-                    </AtomsCopyableText>   
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.owner`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="acc.owner_address.base64">
+                            <AtomsAddressField :addr="acc.owner_address" :break_word="false"/>
+                        </AtomsCopyableText> 
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr>
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.block`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    <AtomsCopyableText :text="`${acc.workchain}:${acc.shard}:${acc.block_seq_no}`">
-                        <NuxtLink :to="`/blocks?workchain=${acc.workchain}&shard=${acc.shard}&seq_no=${acc.block_seq_no}#overview`">{{ `${acc.workchain}:${acc.shard}:${acc.block_seq_no}` }}
-                        </NuxtLink>
-                    </AtomsCopyableText>   
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.block`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="`${acc.workchain}:${acc.shard}:${acc.block_seq_no}`">
+                            <NuxtLink :to="`/blocks?workchain=${acc.workchain}&shard=${acc.shard}&seq_no=${acc.block_seq_no}#overview`">{{ `${acc.workchain}:${acc.shard}:${acc.block_seq_no}` }}
+                            </NuxtLink>
+                    </AtomsCopyableText> 
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr>
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.last_tx_hash`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    <AtomsCopyableText :text="acc.last_tx_hash">
-                        <NuxtLink :to="`/transactions?hash=${toBase64Web(acc.last_tx_hash)}#overview`">{{ acc.last_tx_hash }}</NuxtLink>
-                    </AtomsCopyableText>
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.last_tx_hash`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="acc.last_tx_hash">
+                            <NuxtLink :to="`/transactions?hash=${toBase64Web(acc.last_tx_hash)}#overview`">{{ acc.last_tx_hash }}</NuxtLink>
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>    
             </tr>
             <tr v-if="acc.data">
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.data`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    <AtomsCopyableText :text="acc.data">
-                        {{ truncString(acc.data, 40, 0) }}
-                    </AtomsCopyableText>
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.data`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="acc.data">
+                            {{ acc.data }}
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr v-if="acc.data_hash">
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.data_hash`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    <AtomsCopyableText :text="acc.data_hash">
-                        {{ acc.data_hash }}
-                    </AtomsCopyableText>
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.data_hash`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="acc.data_hash">
+                            {{ acc.data_hash }}
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr v-if="acc.code">
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.code`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    <AtomsCopyableText :text="acc.code">
-                        {{ truncString(acc.code, 40, 0) }}
-                    </AtomsCopyableText>
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.code`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="acc.code">
+                            {{ acc.code }}
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr v-if="acc.code_hash">
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.code_hash`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    <AtomsCopyableText :text="acc.code_hash">
-                        {{ acc.code_hash }}
-                    </AtomsCopyableText>
-                </td>
-            </tr>
-            <tr>
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.updated_at`) }}
-                </td>
-                <td class="uk-text-truncate">
-                    {{ new Date(acc.updated_at).toLocaleString() }}
-                </td>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.code_hash`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="acc.code_hash">
+                            {{ acc.code_hash }}
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr v-if="acc.label?.categories && acc.label.categories.length > 0">
-                <td class="uk-width-1-5">
-                    {{ $t(`general.categories`) }}
-                </td>
-                <td>
-                    <p v-for="cat of acc.label.categories" class="uk-margin-remove-vertical uk-margin-right uk-display-inline" :class="{'red' : cat === 'scam'}">
-                        {{ cat[0].toUpperCase() + cat.replaceAll('_', ' ').slice(1,) }}
-                    </p>
-                </td>
+                <AtomsPropLine :wrap="true">
+                    <template #name>
+                        {{ $t(`general.categories`) }}
+                    </template>
+                    <template #value>
+                        <p v-for="cat of acc.label.categories" class="uk-margin-remove-vertical uk-margin-right uk-display-inline" :class="{'red' : cat === 'scam'}">
+                            {{ cat[0].toUpperCase() + cat.replaceAll('_', ' ').slice(1,) }}
+                        </p>
+                    </template>
+                </AtomsPropLine>
             </tr>  
             <tr>
-                <td class="uk-width-1-5">
-                    {{ $t(`general.external`) }}
-                </td>
-                <td>
-                    <template v-for="key of Object.keys(externalLink)">
-                        <NuxtLink v-if="externalLink[key]" :to="externalLink[key]" class="uk-margin-right uk-text-primary" uk-icon="icon:link" target="_blank">
-                            {{ key }}
-                        </NuxtLink>
+                <AtomsPropLine :wrap="true">
+                    <template #name>
+                        {{ $t(`general.external`) }}
                     </template>
-                </td>
-            </tr>  
+                    <template #value>
+                        <template v-for="key of Object.keys(externalLink)">
+                            <NuxtLink v-if="externalLink[key]" :to="externalLink[key]" class="uk-margin-right uk-text-primary" uk-icon="icon:link" target="_blank" style="line-height: 1.5;">
+                                {{ key }}
+                            </NuxtLink>
+                        </template>
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.updated_at`) }}
+                    </template>
+                    <template #value>
+                        {{ new Date(acc.updated_at).toLocaleString() }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
         </tbody>
     </table>
         

@@ -83,7 +83,7 @@ watch (search, (to) => {
 </script>
 
 <template>
-        <form class="uk-search uk-search-default uk-width-1-1" id="overview" @focusout="emptyEverything" @submit.prevent.stop="navigateTo('/search');">
+        <form class="uk-search uk-search-default uk-width-1-1 uk-margin-small-bottom" id="overview" @focusout="emptyEverything" @submit.prevent.stop="navigateTo('/search');">
             <a href="/search" uk-search-icon></a>
             <input v-model.trim="search" class="uk-search-input" type="search" :placeholder="$t('general.search' + (isMobile() ? '_mobile' : ''))" aria-label="Search" 
                 @focus="parse">

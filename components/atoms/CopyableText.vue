@@ -29,7 +29,9 @@ const itemProp = computed(() => {
 
 </script>
 <template>
-    <slot />
+    <div class="uk-margin-remove uk-text-left uk-text-truncate" :style="`max-width: ${isMobile() ? 'calc(85vw - 20px)' : 'calc(75vw * 0.8 - 20px)'}`">
+        <slot />
+    </div>
     <button class="uk-display-inline" 
         @click="copy"
         :uk-icon="itemProp.icon"

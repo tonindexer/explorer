@@ -6,19 +6,6 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const tableOrder = ['hash', 'hex', 'address', 'block', 'prev_tx_hash','total_fees', 'delta', 'orig_status', 'end_status', 'created_lt', 'created_at'] as const
-
-function itemPreprocess(index: string, item: any) {
-  switch (index) {
-    case 'delta': return item ? `${fullTON(item)}💎` : t('general.none');
-    case 'total_fees': return item ? `${fullTON(item, false)}💎` : t('general.none');
-    case 'created_at': return new Date(item).toLocaleString();
-    case 'block': return `${item.workchain}:${item.shard}:${item.block_seq_no}`
-    case 'address': return item.base64;
-    default: return item;
-  }
-}
-
 const dateForDton = computed(() => {
     const d = new Date(props.trn.created_at)
     return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) +
@@ -39,66 +26,168 @@ const externalLink = computed(() : MockType=> {
 <template>
     <table class="uk-table uk-table-middle">
         <tbody class="uk-table-divider">
-            <tr v-for="index of tableOrder" :key="index + trn?.hash">
-                <td class="uk-width-1-5">
-                    {{ $t(`ton.${index}`) }}
-                </td>
-                <td v-if="index !== 'block' && index !== 'prev_tx_hash' && index !== 'address' && index !== 'hash' && index !== 'hex'">
-                    {{ itemPreprocess(index, trn[index]) }}
-                </td>
-                <td v-else-if="index === 'block'">
-                    <NuxtLink :to="`/blocks?workchain=${trn.workchain}&shard=${trn.shard}&seq_no=${trn.block_seq_no}#overview`">{{ itemPreprocess(index, trn) }}</NuxtLink>
-                </td>
-                <td v-else-if="index === 'hash' || index === 'hex' ">
-                    <AtomsCopyableText :text="trn[index]">
-                        {{ itemPreprocess(index, trn[index]) }}
-                    </AtomsCopyableText>
-                </td>
-                <td v-else-if="index === 'address'" class="uk-flex k-margin-remove-horizontal">
-                    <AtomsCopyableText :text="trn[index].base64">
-                        <template v-if="trn[index].hex in badAddresses">
-                            <p class="uk-margin-remove-vertical uk-display-inline uk-text-truncate">{{ `${badAddresses[trn[index].hex].name} (${truncString(trn[index].base64, 10, 6)})` }}</p>
-                        </template>
-                        <template v-else>
-                            <NuxtLink :to="`/accounts?hex=${trn.address.hex}#overview`" class="uk-text-truncate">{{ itemPreprocess(index, trn[index]) }}</NuxtLink>
-                        </template>
-                    </AtomsCopyableText>                    
-                </td>
-                <td v-else-if="index === 'prev_tx_hash' && trn.prev_tx_hash">
-                    <AtomsCopyableText :text="trn.prev_tx_hash">
-                        <NuxtLink :to="`/transactions?hash=${toBase64Web(trn.prev_tx_hash)}#overview`">{{ itemPreprocess(index, trn[index]) }}</NuxtLink>
-                    </AtomsCopyableText>
-                </td>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.hash`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="trn.hash">
+                            <p class="uk-margin-remove uk-text-left uk-text-truncate">
+                                {{ trn.hash }}
+                            </p>
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr>
-                <td class="uk-width-1-4">
-                    {{ $t(`ton.exit_code`) }}
-                </td>
-                <td class="uk-flex">
-                    <AtomsExitCodeField :code="trn.compute_phase_exit_code"/>
-                </td>
-            </tr> 
-            <tr>
-                <td class="uk-width-1-4">
-                    {{ $t(`ton.action_phase_result_code`) }}
-                </td>
-                <td class="uk-flex">
-                    <AtomsExitCodeField :code="trn.action_phase_result_code"/>
-                </td>
-            </tr> 
-            <tr>
-                <td class="uk-width-1-4">
-                    {{ $t(`general.external`) }}
-                </td>
-                <td>
-                    <template v-for="key of Object.keys(externalLink)">
-                        <NuxtLink v-if="externalLink[key]" :to="externalLink[key]" class="uk-margin-right uk-text-primary" uk-icon="icon:link" target="_blank">
-                            {{ key }}
-                        </NuxtLink>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.hex`) }}
                     </template>
-                </td>
-            </tr>   
+                    <template #value>
+                        <AtomsCopyableText :text="trn.hex">
+                            {{ trn.hex }}
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.address`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="trn.address.base64">
+                            <AtomsAddressField :addr="trn.address" :break_word="false"/>
+                        </AtomsCopyableText> 
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.created_lt`) }}
+                    </template>
+                    <template #value>
+                        {{ trn.created_lt }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.block`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="trn.address.base64">
+                            <NuxtLink :to="`/blocks?workchain=${trn.workchain}&shard=${trn.shard}&seq_no=${trn.block_seq_no}#overview`">
+                                {{ `${trn.workchain}:${trn.shard}:${trn.block_seq_no}` }}
+                            </NuxtLink>
+                        </AtomsCopyableText> 
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr v-if="trn.prev_tx_hash">
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.prev_tx_hash`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="trn.prev_tx_hash">
+                            <NuxtLink :to="`/transactions?hash=${toBase64Web(trn.prev_tx_hash)}#overview`">
+                                {{ trn.prev_tx_hash }}
+                            </NuxtLink>
+                        </AtomsCopyableText> 
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.total_fees`) }}
+                    </template>
+                    <template #value>
+                        {{ trn.total_fees ? `${fullTON(trn.total_fees, false)}💎` : t('general.none') }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.delta`) }}
+                    </template>
+                    <template #value>
+                        <div :class="colorAmount(trn.delta)">
+                            {{ trn.delta ? `${fullTON(trn.delta, true)}💎` : t('general.none') }}
+                        </div>
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.orig_status`) }}
+                    </template>
+                    <template #value>
+                        {{ trn.orig_status }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.end_status`) }}
+                    </template>
+                    <template #value>
+                        {{ trn.end_status }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.exit_code`) }}
+                    </template>
+                    <template #value>
+                        <AtomsExitCodeField :code="trn.compute_phase_exit_code"/>
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.action_phase_result_code`) }}
+                    </template>
+                    <template #value>
+                        <AtomsExitCodeField :code="trn.action_phase_result_code"/>
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine :wrap="true">
+                    <template #name>
+                        {{ $t(`general.external`) }}
+                    </template>
+                    <template #value>
+                        <template v-for="key of Object.keys(externalLink)">
+                            <NuxtLink v-if="externalLink[key]" :to="externalLink[key]" class="uk-margin-right uk-text-primary" uk-icon="icon:link" target="_blank" style="line-height: 1.5;">
+                                {{ key }}
+                            </NuxtLink>
+                        </template>
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.created_at`) }}
+                    </template>
+                    <template #value>
+                        {{ new Date(trn.created_at).toLocaleString() }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
         </tbody>
-    </table>
-        
+    </table>   
 </template>
