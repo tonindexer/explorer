@@ -22,8 +22,8 @@ const overlayStyle = () : StyleValue =>
         <div class="uk-flex uk-margin-auto" :style="overlayStyle()">
             <div class="uk-flex" :style="{'align-self' : isMobile() ? 'left' : 'center', 'margin-left' : isMobile() ? '10px' : '0' }">
                 © 2022–2023 
-                <NuxtLink to="https://datboi420.t.me/" class="uk-margin-small-left uk-text-primary">
-                    Dat Boi.
+                <NuxtLink to="https://t.me/tonindexer" class="uk-margin-small-left uk-text-primary">
+                    Tonindexer
                 </NuxtLink>
             </div>
             <div class="uk-flex icons" style="align-items: center;">

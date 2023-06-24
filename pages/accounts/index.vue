@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { LocationQuery } from 'vue-router';
 import { useMainStore } from '~/store/TONExp';
 import { ModelSelect } from 'vue-search-select'
 
@@ -13,7 +12,7 @@ const router = useRouter()
 const isGeneral = ref(true)
 const error = ref(false)
 const hex = computed(() => route.query.hex? route.query.hex.toString() : null)
-const selected: Ref<SelectItem | {}> = ref({})
+const selected: Ref<SelectItem | {}> = ref({ value: '', text: ''})
 const store = useMainStore()
 
 const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}))
