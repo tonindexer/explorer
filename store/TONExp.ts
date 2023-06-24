@@ -220,13 +220,14 @@ export const useMainStore = defineStore('tonexp', {
       },
       async mainPageLoad() {
         this.stats = {} as Statistics
+        const mobi = isMobile()
         this.latestBlocks = []
         try {
           const latestReq = {
             workchain: -1,
             with_transactions: true,
             order: 'DESC',
-            limit: 10
+            limit: mobi ? 5 : 10
           }
           const query = getQueryString(latestReq, false)
         
@@ -241,7 +242,7 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
         try {
-          await this.updateTransactions(20, null, true)
+          await this.updateTransactions(mobi ? 5 : 10, null, true)
         } catch (error) {
           console.log(error)
         }
@@ -381,6 +382,7 @@ export const useMainStore = defineStore('tonexp', {
           const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           this.totalQueryAccounts = parsed.total
+          if (!seqOffset) this.exploredAccounts = []
           for (const key in parsed.results) {
             const acc = this.processAccount(parsed.results[key])
             this.exploredAccounts.push(acc)
@@ -518,10 +520,11 @@ export const useMainStore = defineStore('tonexp', {
             const jt_key: JettonWalletKey = `${account}|${jetton.wallet_address.address}`
             this.accounts[account].jetton_wallets.push(jt_key)
             this.jettonWallets[jt_key] = {
-              jetton_balance: formatTons(Number(jetton.balance), jetton.jetton.decimals) + ' ' + jetton.jetton.symbol,
+              jetton_balance: formatTons(Number(jetton.balance), jetton.jetton.decimals),
               minter_address: jetton.jetton.address,
               wallet_address: jetton.wallet_address.address,
-              name: jetton.jetton.name ?? "Unnamed"
+              name: jetton.jetton.name ?? "Unnamed",
+              symbol: jetton.jetton.symbol
             }
           }
         } catch (error) {

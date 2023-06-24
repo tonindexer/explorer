@@ -41,6 +41,7 @@ declare global {
         wallet_address: string
         minter_address: string
         name: string
+        symbol: string
     }
 
     type JettonWalletKey = `${string}|${string}`

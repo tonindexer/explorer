@@ -53,6 +53,7 @@ const parse = () => {
         }
         input = trnParse(search.value)
         if (input) {
+            input.value.hash = toBase64Rfc(input.value.hash)
             performSearch(input)
             return
         }
@@ -72,7 +73,7 @@ const goToLink = (res: BlockSearch | AccSearch | TxSearch) => {
     switch (res.type) {
         case 'account': navigateTo({path: '/accounts', query: { hex: res.value.hex}, hash: '#overview'}); break;
         case 'block': navigateTo({path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }, hash: '#overview'}); break;
-        case 'transaction': navigateTo({path: '/transactions', query: { hash: res.value.hash}, hash: '#overview'}); break;
+        case 'transaction': navigateTo({path: '/transactions', query: { hash: toBase64Web(res.value.hash)}, hash: '#overview'}); break;
         default:
     }
 }

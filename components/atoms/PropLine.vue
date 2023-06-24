@@ -8,7 +8,7 @@ defineProps<Props>()
 
 <template>
     <template v-if="isMobile()">
-        <td class="uk-flex uk-flex-column uk-align-center uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
+        <td class="uk-flex uk-flex-column uk-align-center uk-margin-remove-vertical" style="padding: 0.5rem 0;">
             <p class="uk-margin-remove-bottom uk-text-small uk-text-left uk-text-bold">
                 <slot name="name"/>
             </p>

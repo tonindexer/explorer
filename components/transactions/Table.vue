@@ -83,7 +83,7 @@ onMounted(() => {
     </template>
     <template v-else>
         <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-vertical">
-            <thead>
+            <thead v-if="!isMobile()">
                 <tr>
                     <th class="uk-table-shrink" style="min-width: 20px"></th>
                     <th class="uk-table-shrink" style="min-width: 20px"></th>
@@ -97,9 +97,10 @@ onMounted(() => {
                 <template v-for="trn in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                     <TransactionsTableLine :trn="store.transactions[trn]" :msg-show="store.transactionMsgFlag[trn]" @toggle-msg="(e) => toggleMsg(e)"/>
                         <td colspan="6" class="uk-padding-remove" 
-                            v-if="[store.transactions[trn].in_msg_hash, ...store.transactions[trn].out_msg_keys].length > 0 && store.transactionMsgFlag[trn]"
+                            v-if="!isMobile() && [store.transactions[trn].in_msg_hash, ...store.transactions[trn].out_msg_keys].length > 0 && store.transactionMsgFlag[trn]"
                             style="border-bottom: 2px solid #d0d0d0; border-top: 2px solid #d0d0d0;">
                             <MessagesTable 
+                                :show-link="false"
                                 :parent_tx="trn" 
                                 :item-selector="false" 
                                 :default-length="5" 
@@ -112,7 +113,7 @@ onMounted(() => {
             </tbody>
         </table>
         <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end;">
-            <div class="uk-flex uk-flex-middle" v-if="itemSelector">
+            <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
                 <AtomsSelector 
                     :item-count="itemCount"
                     :name="'general.items'"

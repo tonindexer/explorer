@@ -76,11 +76,11 @@ onMounted(async () => {
     <div v-if="loading" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <div v-else-if="!loading" class="uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l uk-child-width-1-6@xl" uk-grid>
+    <div v-else-if="!loading" class="uk-child-width-1-2 uk-child-width-1-3@m uk-child-width-1-4@l uk-child-width-1-6@xl" uk-grid>
         <div v-for="nft in nftList">
             <div class="uk-card uk-card-default">
                 <div class="uk-card-media-top">
-                    <img v-if="nft.previews.length > 0" :src="nft.previews[2].url" width="500" height="500" alt="">
+                    <img v-if="nft.previews.length > 0" :src="nft.previews[1].url" width="500" height="500" alt="">
                     <img v-else-if="nft.metadata?.image" :src="nft.metadata.image" width="500" height="500" alt="">
                     <img v-else src="@/assets/images/default.png" width="250" height="250" alt="">
                 </div>
@@ -93,7 +93,7 @@ onMounted(async () => {
             </div>
         </div>
     </div>
-    <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-small-top" style="justify-content: flex-end;">
+    <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-small-top uk-margin-remove-bottom" style="justify-content: flex-end;">
         <AtomsPageArrows    
             :page="pageNum" 
             :left-disabled="pageNum === 0" 

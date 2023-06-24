@@ -18,7 +18,7 @@ const overlayStyle = () : StyleValue =>
 </script>
 
 <template>
-    <footer class="uk-background-muted">
+    <footer class="uk-background-muted uk-margin-top">
         <div class="uk-flex uk-margin-auto" :style="overlayStyle()">
             <div class="uk-flex" :style="{'align-self' : isMobile() ? 'left' : 'center', 'margin-left' : isMobile() ? '10px' : '0' }">
                 © 2022–2023 

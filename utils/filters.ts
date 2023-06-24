@@ -102,8 +102,8 @@ export const badAddresses = {
 } as badList
 
 export const knownOp = {
-    0: "System op in ",
-    1: "Received TONs in ",
-    2: "Sending TONs in ",
+    0: "System op",
+    1: "Received TONs",
+    2: "Sending TONs",
     99: 'Multisend'
 } as OPMap

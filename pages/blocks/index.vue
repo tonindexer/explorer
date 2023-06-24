@@ -68,7 +68,7 @@ onMounted(() => routeChecker(route.query))
                     <h2 class="uk-margin-remove-vertical uk-text-primary uk-text-bold uk-flex" style="line-height: 1.35; align-self: flex-end;">
                         <AtomsCopyableText :text="`${workchain}:${shard.toString()}:${seq_no}`">
                             <p class="uk-margin-remove">
-                                {{ mobileFieldProcess(`${workchain}:${shard.toString()}:${seq_no}`, 7, 9) }}
+                                {{ `${workchain}:${shard.toString().slice(0,3)}:${seq_no}` }}
                             </p>
                         </AtomsCopyableText>
                     </h2>

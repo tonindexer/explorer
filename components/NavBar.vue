@@ -23,8 +23,8 @@ watch(showMobileNav, () => {
             </template>
             <template v-else>
                 <div class="uk-flex" style="align-items: center;">
-                    <NuxtLink :to="'/'" uk-icon="icon: grid" class="white_svg link"></NuxtLink>
-                    <NuxtLink :to="'/'" class="link">explorer</NuxtLink>
+                    <NuxtLink :to="'/'" uk-icon="icon: grid" class="white_svg link" @click="showMobileNav = false"></NuxtLink>
+                    <NuxtLink :to="'/'" class="link" @click="showMobileNav = false">explorer</NuxtLink>
                 </div>
                 <button v-if="!showMobileNav" uk-icon="icon: menu" class="link" @click="showMobileNav = !showMobileNav">
                 </button>

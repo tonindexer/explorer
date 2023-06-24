@@ -13,21 +13,35 @@ const isGeneral = ref(true)
 const error = ref(false)
 const hex = computed(() => route.query.hex? route.query.hex.toString() : null)
 const selected: Ref<SelectItem | {}> = ref({ value: '', text: ''})
+const selectedMobile = ref('All')
 const store = useMainStore()
 
 const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}))
+const optionsMobile = computed(() : string[] => {
+    const defualt = ['All']
+    defualt.push(...Object.keys(store.interfaces))
+    return defualt
+})
 
-const reset = () => selected.value = {}
+const selectedFilter = computed(() => isMobile() ? (selectedMobile.value !== 'All' ? selectedMobile.value : null ): ('value' in selected.value ? selected.value.value : null))
+
+const reset = () => { 
+    selected.value = {};
+    selectedMobile.value = 'All' 
+}
 
 const setRoute = () => {
-    if ('value' in selected.value)
-        router.replace({path: route.path, query: { contract: selected.value.value} })
+    if (selected.value.hasOwnProperty('value') && 'value' in selected.value && selected.value.value !== '')
+        router.replace({path: route.path, query: { contract: selected['value'].value} })
+    else if (selectedMobile.value !== 'All') router.replace({path: route.path, query: { contract: selectedMobile.value} })
     else if (!('hex' in route.query)) router.replace({path: route.path })
 }
 function routeChecker() {
-    if ('contract' in route.query) {
-        selected.value = {value: route.query.contract, text: route.query.contract }
+    if ('contract' in route.query && route.query.contract !== '') {
+        isMobile() ? (selectedMobile.value = route.query.contract?.toString() ?? 'All') :
+            selected.value = {value: route.query.contract, text: route.query.contract }
     } else {
+        selectedMobile.value = 'All'
         selected.value = {}
     }
 
@@ -43,7 +57,11 @@ watch(() => route.query, () => {
     routeChecker() 
 })
 
-watch(selected, () => setRoute())
+watch(selected, (to, from) => {
+    if (to !== from)
+        setRoute()
+})
+watch(selectedMobile, () => setRoute())
 
 onMounted(() => routeChecker())
 </script>
@@ -58,12 +76,20 @@ onMounted(() => routeChecker())
         <div v-if="isGeneral">
             <h1>{{  $t('route.accounts') }}</h1>
             <div class="uk-flex uk-flex-right">
-                <div class="uk-width-2-5">
+                <div v-if="!isMobile()" class="uk-width-2-5">
                     <ModelSelect :options="options" v-model="selected" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
+                </div>
+                <div v-else-if="isMobile()" class="uk-width-4-5 uk-text-small" style="margin-right: 0.5rem;">
+                    <AtomsSelector 
+                        :item-count="selectedMobile"
+                        :name="null"
+                        :options="optionsMobile"
+                        @set-value="(e: any) => selectedMobile = e.value"
+                    />
                 </div>
                 <a v-if="Object.keys(selected).length > 0" uk-icon="icon: close" @click="reset" style="align-self: center; margin-left: 0.5rem;"></a>
             </div>
-            <LazyAccountsTable :keys="store.exploredAccounts" :update="true" :default-length="20" :item-selector="true" :hidden="false" :contract="'value' in selected ? selected.value : null"/>
+            <LazyAccountsTable :keys="store.exploredAccounts" :update="true" :default-length="20" :item-selector="true" :hidden="false" :contract="selectedFilter"/>
         </div>
         <div v-else-if="hex" class="uk-flex uk-flex-column">
             <div class="uk-flex" :class="{'uk-flex-column' : isMobile()}">
