@@ -20,7 +20,7 @@ const lastTX: NullableBigRef = ref(0n)
 const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'acc') : false)
 
 const maxExploredPage = ref(0)
-const loading = computed(() => props.keys.length !== 0 && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {
