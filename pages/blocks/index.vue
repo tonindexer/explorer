@@ -58,14 +58,21 @@ onMounted(() => routeChecker(route.query))
         </div>
         <div v-else-if="(workchain || workchain === 0)&& shard && seq_no" class="uk-flex uk-flex-column">
             <div class="uk-flex uk-flex-bottom">
-                <h1 class="uk-inline uk-margin-remove-vertical">
-                {{ $t('route.block')}}
-                </h1>
-                <h2 class="uk-inline uk-margin-remove-vertical uk-text-primary uk-margin-left uk-text-bold uk-text-truncate" style="line-height: 1.35;">
-                    <AtomsCopyableText :text="`${workchain}:${shard.toString()}:${seq_no}`">
-                        {{ `${workchain}:${shard.toString()}:${seq_no}` }}
-                    </AtomsCopyableText>
-                </h2>
+                <div class="uk-flex" :class="{'uk-flex-column' : isMobile()}">
+                    <h1 v-if="!isMobile()" class="uk-margin-remove-vertical uk-text-left uk-margin-right">
+                        {{ $t('route.block')}}
+                    </h1>
+                    <h3 v-if="isMobile()" class="uk-margin-remove-vertical uk-text-left">
+                        {{ $t('route.block')}}
+                    </h3>
+                    <h2 class="uk-margin-remove-vertical uk-text-primary uk-text-bold uk-flex" style="line-height: 1.35; align-self: flex-end;">
+                        <AtomsCopyableText :text="`${workchain}:${shard.toString()}:${seq_no}`">
+                            <p class="uk-margin-remove">
+                                {{ mobileFieldProcess(`${workchain}:${shard.toString()}:${seq_no}`, 7, 9) }}
+                            </p>
+                        </AtomsCopyableText>
+                    </h2>
+                </div>
             </div>
             <BlocksBlockInfo :shard="shard" :seq_no="seq_no" :workchain="workchain"/>
         </div>
