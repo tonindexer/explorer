@@ -1,5 +1,10 @@
 <script setup lang="ts">
 const route = useRoute()
+useHead({
+    htmlAttrs: {
+        lang: 'en'
+    }
+})
 useSeoMeta({
     'title' : 'tonindexer',
     'description': 'tonindexer - The project to index data from TON blockchain.',
@@ -9,7 +14,7 @@ useSeoMeta({
     'ogDescription': 'The project to index data from TON blockchain.',
     'ogType': 'website',
     'ogUrl' : 'https://explorer.anton.tools',
-    'ogLocale': 'en_US'
+    'ogLocale': 'en_US',
 });
 </script>
 

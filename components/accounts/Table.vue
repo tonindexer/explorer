@@ -57,7 +57,6 @@ watch(itemCount, async() => {
 }, {deep : true})
 
 watch(() => props.contract, (to, from) => {
-    console.log(to)
     if (pageNum.value === 0 && from !== '') updateValues()
     else pageNum.value = 0
 })
