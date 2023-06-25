@@ -53,6 +53,7 @@ const parse = () => {
         }
         input = trnParse(search.value)
         if (input) {
+            input.value.hash = toBase64Rfc(input.value.hash)
             performSearch(input)
             return
         }
@@ -72,7 +73,7 @@ const goToLink = (res: BlockSearch | AccSearch | TxSearch) => {
     switch (res.type) {
         case 'account': navigateTo({path: '/accounts', query: { hex: res.value.hex}, hash: '#overview'}); break;
         case 'block': navigateTo({path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }, hash: '#overview'}); break;
-        case 'transaction': navigateTo({path: '/transactions', query: { hash: res.value.hash}, hash: '#overview'}); break;
+        case 'transaction': navigateTo({path: '/transactions', query: { hash: toBase64Web(res.value.hash)}, hash: '#overview'}); break;
         default:
     }
 }
@@ -83,22 +84,22 @@ watch (search, (to) => {
 </script>
 
 <template>
-        <form class="uk-search uk-search-default uk-width-1-1" id="overview" @focusout="emptyEverything" @submit.prevent.stop="navigateTo('/search'); parse()">
-            <a href="" uk-search-icon></a>
-            <input v-model.trim="search" class="uk-search-input" type="search" placeholder="Search TON adresses, transactions, blocks..." aria-label="Search" 
+        <form class="uk-search uk-search-default uk-width-1-1 uk-margin-small-bottom" id="overview" @focusout="emptyEverything" @submit.prevent.stop="navigateTo('/search');">
+            <a href="/search" uk-search-icon></a>
+            <input v-model.trim="search" class="uk-search-input" type="search" :placeholder="$t('general.search' + (isMobile() ? '_mobile' : ''))" aria-label="Search" 
                 @focus="parse">
             <table v-if="status !== 'EMPTY'" class="uk-table uk-position-absolute uk-position-bottom uk-width-1-1 uk-margin-remove-vertical uk-border" :class="{'uk-table-hover': status === 'FOUND'}" style="top: 100%; z-index: 100; background-color: white; border: 1px solid #39f">
                 <tbody v-if="status === 'FOUND'">
                     <tr style="cursor: pointer;">
                         <td v-for="res in searchRes" class="uk-flex uk-flex-column" style="padding: 0.3rem 1rem" @mousedown="goToLink(res)">
-                            <h4 class="uk-margin-remove-vertical uk-text-truncate" v-if="res.type === 'account'">
-                                {{ res.show ?? res.value.hex }}
+                            <h4 class="uk-margin-remove-vertical uk-text-ellipsis" v-if="res.type === 'account'">
+                                {{ mobileFieldProcess(res.show ?? res.value.hex) }}
                             </h4>
                             <h4 class="uk-margin-remove-vertical uk-text-truncate" v-else-if="res.type === 'transaction'">
-                                {{ res.show ?? res.value.hash }}
+                                {{ mobileFieldProcess(res.show ?? res.value.hash) }}
                             </h4>
-                            <h4 class="uk-margin-remove-vertical uk-text-truncate" v-else-if="res.type === 'block'">
-                                {{ res.show ?? store.blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no) }}
+                            <h4 class="uk-margin-remove-vertical uk-text-ellipsis" v-else-if="res.type === 'block'">
+                                {{ mobileFieldProcess(res.show ?? store.blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no), 5, 15) }}
                             </h4>
                             <p class="uk-margin-remove-vertical">
                                 {{ $t(`route.${res.type}`) }}

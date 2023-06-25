@@ -9,12 +9,14 @@ defineProps<Props>()
 
 <template>
     <template v-if="addr === null">
-        {{ $t('general.empty') }}
+        <div class="uk-text-primary">
+            {{ $t('general.empty') }}
+        </div> 
     </template>
     <template v-else-if="addr.hex in badAddresses"> 
-        <p class="uk-text-primary">
+        <div class="uk-text-primary">
             {{ badAddresses[addr.hex].name }}
-        </p>
+        </div>
     </template>
     <template v-else> 
         <NuxtLink class="uk-text-primary" :to="{ path: 'accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">

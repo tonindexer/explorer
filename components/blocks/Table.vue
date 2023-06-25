@@ -81,7 +81,7 @@ onMounted(() => setExtraFields())
     </template>
     <template v-else>
         <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
-            <thead>
+            <thead v-if="!isMobile()">
                 <tr>
                     <th class="uk-width-1-6">{{ $t('ton.workchain')}}</th>
                     <th class="uk-width-1-6">{{ $t('ton.shard')}}</th>
@@ -102,8 +102,8 @@ onMounted(() => setExtraFields())
                 </template>
             </tbody>
         </table>
-        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle" style="justify-content: flex-end;">
-            <div class="uk-flex uk-flex-middle" v-if="itemSelector">
+        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+            <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
                 <AtomsSelector 
                     :item-count="itemCount"
                     :name="'general.items'"

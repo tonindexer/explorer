@@ -5,9 +5,9 @@ const route = useRoute()
 
 <template>
     <NavBar/>
-    <div class="uk-section uk-width-3-4" style="margin: 1rem auto 0; padding-top: 0; min-height: calc(100vh - 120px);">
+    <div class="uk-section uk-padding-remove-vertical" style="margin: 66px auto 0; min-height: calc(100vh - 120px);" :style="{ 'width' : isMobile() ? '90%' : '75%'}">
         <AtomsSearchBar/>
-        <div v-if="route.fullPath !== '/'">
+        <div v-if="route.fullPath !== '/' && !isMobile()">
             <AtomsRouteChain/>
         </div>
         <slot />

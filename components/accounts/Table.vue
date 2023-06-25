@@ -57,6 +57,7 @@ watch(itemCount, async() => {
 }, {deep : true})
 
 watch(() => props.contract, (to, from) => {
+    console.log(to)
     if (pageNum.value === 0 && from !== '') updateValues()
     else pageNum.value = 0
 })
@@ -78,7 +79,7 @@ onMounted(() => {
     </template>
     <template v-else>
         <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
-            <thead>
+            <thead v-if="!isMobile()">
                 <tr>
                     <th class="uk-width-1-3">{{ $t('ton.id')}}</th>
                     <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
@@ -91,8 +92,8 @@ onMounted(() => {
                 </template>
             </tbody>
         </table>
-        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle" style="justify-content: flex-end;">
-            <div class="uk-flex uk-flex-middle" v-if="itemSelector">
+        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+            <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
                 <AtomsSelector 
                     :item-count="itemCount"
                     :name="'general.items'"

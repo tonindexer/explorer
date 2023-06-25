@@ -8,6 +8,7 @@ interface MessageTable {
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
+    showLink: boolean
 }
 
 const props = defineProps<MessageTable>()
@@ -25,9 +26,9 @@ const messageDir = ((msgKey: MessageKey) : MessageDirection =>
 
 <template>
     <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-vertical">
-        <thead>
+        <thead v-if="!isMobile()">
             <tr>
-                <th class="uk-table-shrink"></th>
+                <th class="uk-table-shrink" v-if="showLink"></th>
                 <th class="uk-width-1-4" style="word-wrap: break-word;"> {{ $t('general.from') }}</th>
                 <th class="uk-text-center">{{ $t('ton.type')}}</th>
                 <th class="uk-width-1-4" style="word-wrap: break-word;"> {{ $t('general.to') }}</th>
@@ -37,12 +38,12 @@ const messageDir = ((msgKey: MessageKey) : MessageDirection =>
         </thead>
         <tbody>
             <template v-for="msg in update ? props.keys.slice(0, itemCount) : props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <MessagesTableLine :msg="store.messages[msg]" :dir="messageDir(msg)"/>
+                <MessagesTableLine :msg="store.messages[msg]" :dir="messageDir(msg)" :show-link="showLink"/>
             </template>
         </tbody>
     </table>
-        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle" style="justify-content: flex-end;">
-            <div class="uk-flex uk-flex-middle" v-if="itemSelector">
+        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+            <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
                 <AtomsSelector 
                     :item-count="itemCount"
                     :name="'general.items'"

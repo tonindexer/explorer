@@ -70,7 +70,10 @@
         "unloaded_accs": "Unloaded accounts",
         "external": "External links",
         "nothing-found": "Nothing found! Try again..",
-        "incorrect-input": "Incorrect input.."
+        "incorrect-input": "Incorrect input..",
+        "search" : "Search TON adresses, transactions, blocks...",
+        "search_mobile" : "Search...",
+        "empty" : "Empty"
     },
     "route" : {
         "explorer" : "Main Page",
@@ -89,7 +92,7 @@
         "nfts" : "NFTs",
         "nft" : "NFT",
         "search" : "Search results",
-        "result" : "Result",
+        "results" : "Results",
         "about": "About"
     },
     "stats" : {
@@ -108,7 +111,7 @@
     },
     "options" : {
         "exclude_blocks" : "Exclude empty blocks",
-        "exclude_masterchain" : "Exclude MasterChain transactions",
+        "exclude_masterchain" : "Exclude MasterChain",
         "deep_transactions" : "Shard transactions",
         "deep_messages" : "Shard messages"
     }

@@ -7,12 +7,18 @@ export const fullTON = (rawTON: bigint, delta: boolean = true) : string => {
     return (BigInt(rawTON) > 0n && delta ? '+' : '') + (Number(BigInt(rawTON) * 100n) / 100000000000).toString()
 }
 
+export const isMobile = () => useDevice().isMobile
+
 export const opToHex = (op: number) => `0x${op.toString(16)}`
 
 export const colorAmount = (ton : bigint) => BigInt(ton) > 0n ? 'green' : BigInt(ton) === 0n ? '' : 'red'
 
 export const isNumeric = (value: any) : boolean => {
     return /^-?\d+$/.test(value)
+}
+
+export const mobileFieldProcess = (value: string | number | bigint, left: number = 20, right:  number = 0): string => {
+    return isMobile() ? truncString(value.toString(), left, right) : value.toString()
 }
 
 export const truncString = (value: string, keepLeft: number = 3, keepRight: number = keepLeft) : string => {
@@ -96,8 +102,8 @@ export const badAddresses = {
 } as badList
 
 export const knownOp = {
-    0: "System op in ",
-    1: "Received TONs in ",
-    2: "Sending TONs in ",
+    0: "System op",
+    1: "Received TONs",
+    2: "Sending TONs",
     99: 'Multisend'
 } as OPMap

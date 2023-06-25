@@ -16,7 +16,7 @@ const itemCount = ref(props.defaultLength)
 
 <template>
     <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
-        <thead>
+        <thead v-if="!isMobile()">
             <tr>
                 <th class="uk-width-1-5">{{ $t('ton.id')}}</th>
                 <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
@@ -25,11 +25,8 @@ const itemCount = ref(props.defaultLength)
         </thead>
         <tbody>
             <template v-for="acc in keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <template v-if="acc in store.accounts">
-                    <AccountsTableLine :acc="store.accounts[acc]"/>
-                </template>
-                <template v-else-if="!(acc in badAddresses)">
-                    <tr>
+                <template v-if="!(acc in badAddresses)">
+                    <tr v-if="!isMobile()">
                         <td> 
                             <NuxtLink :to="{ path: 'accounts', query: { hex: acc }, hash: '#overview'}">
                                 {{ truncString(acc, 15) }}
@@ -38,14 +35,26 @@ const itemCount = ref(props.defaultLength)
                         <td class="uk-text-right">Unloaded</td>
                         <td class="uk-text-right">-</td>
                     </tr>
+                    <tr v-else>
+                        <td style="padding: 0.5rem 0;"> 
+                            <NuxtLink :to="{ path: 'accounts', query: { hex: acc }, hash: '#overview'}">
+                                {{ truncString(acc, 15) }}
+                            </NuxtLink>
+                        </td>
+                    </tr>
                 </template>
                 <template v-else-if="acc in badAddresses">
-                    <tr>
+                    <tr v-if="!isMobile()">
                         <td style="text-wrap: nowrap;"> 
                             {{ badAddresses[acc].name }}
                         </td>
                         <td class="uk-text-right">Unloaded</td>
                         <td class="uk-text-right">-</td>
+                    </tr>
+                    <tr v-else>
+                        <td style="text-wrap: nowrap; padding: 0.5rem 0;"> 
+                            {{ badAddresses[acc].name }}
+                        </td>
                     </tr>
                 </template>
             </template>

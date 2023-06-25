@@ -47,33 +47,130 @@ const externalLink = computed(() : MockType=> {
 <template>
     <table class="uk-table uk-table-middle">
         <tbody class="uk-table-divider">
-            <tr v-for="index of shardSwitcher" :key="index + block?.seq_no">
-                <td class="uk-width-1-4">
-                    {{ $t(`ton.${index}`) }}
-                </td>
-                <td v-if="index !== 'master_key' && index !== 'transaction_delta'">
-                    {{ itemPreprocess(index, block[index]) }}
-                </td>
-                <td v-if="index === 'transaction_delta'" :class="colorAmount(block[index])">
-                    {{ itemPreprocess(index, block[index]) }}
-                </td>
-                <td v-if="index === 'master_key'">
-                    <NuxtLink :to="`/blocks?workchain=${masterLink.workchain}&shard=${masterLink.shard}&seq_no=${masterLink.seq_no}#overview`">{{ itemPreprocess(index, block[index]) }}</NuxtLink>
-                </td>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.workchain`) }}
+                    </template>
+                    <template #value>
+                        {{ chainTitle(block.workchain) }}
+                    </template>
+                </AtomsPropLine>
             </tr>
             <tr>
-                <td class="uk-width-1-4">
-                    {{ $t(`general.external`) }}
-                </td>
-                <td>
-                    <template v-for="key of Object.keys(externalLink)">
-                        <NuxtLink v-if="externalLink[key]" :to="externalLink[key]" class="uk-margin-right uk-text-primary" uk-icon="icon:link" target="_blank">
-                            {{ key }}
-                        </NuxtLink>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.shard`) }}
                     </template>
-                </td>
+                    <template #value>
+                        {{ block.shard }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.seq_no`) }}
+                    </template>
+                    <template #value>
+                        {{ block.seq_no }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr v-if="block.master_key">
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.master_key`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="block.master_key">
+                            <NuxtLink :to="`/blocks?workchain=${masterLink.workchain}&shard=${masterLink.shard}&seq_no=${masterLink.seq_no}#overview`">
+                                    {{ block.master_key }}
+                            </NuxtLink>
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr v-if="!block.master_key">
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.shard_keys`) }}
+                    </template>
+                    <template #value>
+                        {{ block.shard_keys.length }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.transaction_keys`) }}
+                    </template>
+                    <template #value>
+                        {{ block.transaction_keys.length }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.transaction_delta`) }}
+                    </template>
+                    <template #value>
+                        <div :class="colorAmount(block.transaction_delta)">
+                            {{ block.transaction_delta ? `${fullTON(block.transaction_delta, true)}💎` : t('general.none') }}
+                        </div>
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.root_hash`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="block.root_hash">
+                            {{ block.root_hash }}
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.file_hash`) }}
+                    </template>
+                    <template #value>
+                        <AtomsCopyableText :text="block.file_hash">
+                            {{ block.file_hash }}
+                        </AtomsCopyableText>
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine :wrap="true">
+                    <template #name>
+                        {{ $t(`general.external`) }}
+                    </template>
+                    <template #value>
+                        <template v-for="key of Object.keys(externalLink)">
+                            <NuxtLink v-if="externalLink[key]" :to="externalLink[key]" class="uk-margin-right uk-text-primary" uk-icon="icon:link" target="_blank" style="line-height: 1.5;">
+                                {{ key }}
+                            </NuxtLink>
+                        </template>
+                    </template>
+                </AtomsPropLine>
+            </tr>
+            <tr>
+                <AtomsPropLine>
+                    <template #name>
+                        {{ $t(`ton.scanned_at`) }}
+                    </template>
+                    <template #value>
+                        {{ new Date(block.scanned_at).toLocaleString() }}
+                    </template>
+                </AtomsPropLine>
             </tr>
         </tbody>
-    </table>
-        
+    </table>        
 </template>
