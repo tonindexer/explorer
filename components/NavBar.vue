@@ -17,6 +17,7 @@ watch(showMobileNav, () => {
                     <NuxtLink :to="'/blocks'" class="link" :class="{ 'active' : route.path === '/blocks'}"> {{ $t('route.blocks') }}</NuxtLink>
                     <NuxtLink :to="'/transactions'" class="link" :class="{ 'active' : route.path === '/transactions'}"> {{ $t('route.transactions') }}</NuxtLink>
                     <NuxtLink :to="'/accounts'" class="link" :class="{ 'active' : route.path === '/accounts'}"> {{ $t('route.accounts') }}</NuxtLink>
+                    <NuxtLink :to="'/messages'" class="link" :class="{ 'active' : route.path === '/messages'}"> {{ $t('route.messages') }}</NuxtLink>
                     <NuxtLink :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}"> {{ $t('route.about') }} </NuxtLink>
                 </div>
                 <AtomsLangSwitcher/>
@@ -46,6 +47,9 @@ watch(showMobileNav, () => {
                     </td></tr>
                     <tr><td class="uk-text-large">
                         <NuxtLink :to="'/accounts'" class="link" :class="{ 'active' : route.path === '/accounts'}" @click="showMobileNav = false"> {{ $t('route.accounts') }}</NuxtLink>
+                    </td></tr>
+                    <tr><td class="uk-text-large">
+                        <NuxtLink :to="'/messages'" class="link" :class="{ 'active' : route.path === '/messages'}" @click="showMobileNav = false"> {{ $t('route.messages') }}</NuxtLink>
                     </td></tr>
                     <tr><td class="uk-text-large">
                         <NuxtLink :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}" @click="showMobileNav = false"> {{ $t('route.about') }} </NuxtLink>

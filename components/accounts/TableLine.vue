@@ -39,6 +39,8 @@ defineProps<Props>()
             <AtomsAddressField :addr="acc.address" :break_word="true"/>
         </td>
         <td class="uk-text-right uk-text-nowrap"> {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none')}}</td>
-        <AtomsTableDateCell :date-time="acc.updated_at"/>
+        <td class="uk-padding-remove-right">
+            <AtomsTableDateCell :date-time="acc.updated_at"/>
+        </td>
     </tr>
 </template>

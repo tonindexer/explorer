@@ -41,6 +41,7 @@
         "data": "Data",
         "data_hash": "Data hash",
         "updated_at": "Updated",
+        "fwd_fee": "FWD Fee",
 
         "name": "Name",
         "minter": "Minter",

@@ -43,7 +43,7 @@ watch(props, async() => await reloadInfo())
 
 <template>
     <template v-if="error">
-        <NuxtLink :to="{ path: 'accounts' }">
+        <NuxtLink :to="{ path: 'transactions' }">
             {{ 'An error occured while loading transaction! Go to overview page..' }}
         </NuxtLink>
     </template>

@@ -54,6 +54,8 @@ const props = defineProps<Props>()
             {{ block.seq_no}}
         </td>
         <td>{{ block.transaction_keys.length }}</td>
-        <AtomsTableDateCell :date-time="block.scanned_at"/>
+        <td class="uk-padding-remove-right">    
+            <AtomsTableDateCell :date-time="block.scanned_at"/>
+        </td>
     </tr>
 </template>

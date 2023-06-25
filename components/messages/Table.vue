@@ -16,33 +16,76 @@ const props = defineProps<MessageTable>()
 const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
+const maxExploredPage = ref(0)
 
 const messageDir = ((msgKey: MessageKey) : MessageDirection => 
     store.messages[msgKey].type === 'EXTERNAL_IN' ? 'EXT_IN' : 
         (store.messages[msgKey].type === 'EXTERNAL_OUT' ? 'EXT_OUT' :
             (store.transactions[props.parent_tx ?? store.messages[msgKey].parent_tx_key]?.in_msg_hash === msgKey ? 'IN' : 'OUT')))
-            
+
+const firstLT: NullableBigRef = ref(0n)
+const lastLT: NullableBigRef = ref(0n)
+const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'msg'): false)
+
+const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+
+const setExtraFields = () => {
+    if (props.keys.length > 0) {
+        if (props.keys[0] in store.messages) {
+            firstLT.value = BigInt(store.messages[props.keys[0]].created_lt)
+        }
+        if (props.keys[props.keys.length - 1] in store.messages) {
+            lastLT.value = BigInt(store.messages[props.keys[props.keys.length - 1]].created_lt)
+        }
+    }
+}
+const updateValues = async (next: boolean = true) => {
+    if (!props.update) return
+    setExtraFields()
+    if (props.keys.length === 0 || pageNum.value === 0) {
+        await store.updateMessages(itemCount.value, null)
+    }
+    else {
+        await store.updateMessages(itemCount.value, next ? lastLT.value : firstLT.value)
+    }
+}
+
+watch(pageNum, async(to, from) => {
+    if (props.update) {
+        if (to === 0 || (to > from && to > maxExploredPage.value)) { 
+            maxExploredPage.value = to
+            await updateValues()
+        }
+    }
+}, {deep : true}) 
+
+watch(itemCount, async() => {
+    if (pageNum.value === 0) updateValues()
+    else pageNum.value = 0
+}, {deep : true})
+
+onMounted(() => {
+    setExtraFields()
+})
 </script>
 
 <template>
-    <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-vertical">
-        <thead v-if="!isMobile()">
-            <tr>
-                <th class="uk-table-shrink" v-if="showLink"></th>
-                <th class="uk-width-1-4" style="word-wrap: break-word;"> {{ $t('general.from') }}</th>
-                <th class="uk-text-center">{{ $t('ton.type')}}</th>
-                <th class="uk-width-1-4" style="word-wrap: break-word;"> {{ $t('general.to') }}</th>
-                <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
-                <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.created')}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <template v-for="msg in update ? props.keys.slice(0, itemCount) : props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <MessagesTableLine :msg="store.messages[msg]" :dir="messageDir(msg)" :show-link="showLink"/>
-            </template>
-        </tbody>
-    </table>
-        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+    <template v-if="loading">
+        <div class="uk-flex uk-flex-center">
+            <Loader />
+        </div>
+    </template>
+    <template v-else>
+        <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-vertical">
+            <tbody>
+                <tr v-for="msg in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+                    <td :colspan="isMobile() ? 5 : 6" class="uk-padding-remove">
+                        <MessagesTableLine :msg="store.messages[msg]" :dir="messageDir(msg)" :show-link="showLink"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end;">
             <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
                 <AtomsSelector 
                     :item-count="itemCount"
@@ -54,9 +97,10 @@ const messageDir = ((msgKey: MessageKey) : MessageDirection =>
             <AtomsPageArrows    
                 :page="pageNum" 
                 :left-disabled="pageNum === 0" 
-                :right-disabled="(pageNum+1)*itemCount >= keys.length && !update"
+                :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
                 @increase="pageNum += 1"
                 @decrease="pageNum -= 1"
-            />
+            />            
         </div>
+    </template>
 </template>

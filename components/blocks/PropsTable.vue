@@ -6,13 +6,6 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const tableOrder = ['workchain', 'shard', 'seq_no', 'master_key', 'shard_keys', 'transaction_keys','transaction_delta', 'root_hash', 'file_hash', 'scanned_at'] as const
-
-const shardSwitcher = computed(() => {
-    if (props.block.master_key) return [...tableOrder.slice(0, 4), ...tableOrder.slice(5, tableOrder.length)]
-    else return [...tableOrder.slice(0, 3), ...tableOrder.slice(4, tableOrder.length)]
-})
-
 const masterLink = computed(() => {
     const arr = props.block.master_key ? props.block.master_key.split(':') : '0:1:2'
     return {
@@ -23,20 +16,8 @@ const masterLink = computed(() => {
     }
 )
 
-function itemPreprocess(index: string, item: any) {
-  switch (index) {
-    case 'workchain': return chainTitle(item);
-    case 'shard_keys': return item.length;
-    case 'transaction_keys': return item.length;
-    case 'transaction_delta': return item ? `${fullTON(item)}💎` : t('general.none');
-    case 'scanned_at': return new Date(item).toLocaleString();
-    default: return item;
-  }
-}
-
 const externalLink = computed(() : MockType=> {
     return {
-    // 'Ton.cx': 'https://ton.cx/address/'.concat(this.bounceable),
         'Toncoin': `https://explorer.toncoin.org/search?workchain=${props.block.workchain}&shard=8000000000000000&seqno=${props.block.seq_no}&lt=&utime=&roothash=&filehash=`,
         'TonWhales': props.block.workchain === -1 ? `https://tonwhales.com/explorer/block/${props.block.seq_no}`: null,
         'Ton.sh': `https://ton.sh/block/${props.block.workchain}/${props.block.seq_no}`

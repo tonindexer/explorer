@@ -71,6 +71,8 @@ defineEmits(['toggleMsg'])
             <AtomsAddressField :addr="trn.address" :break_word="true"/>
         </td>
         <td class="uk-text-right uk-text-nowrap" :class="colorAmount(trn.delta)"> {{ trn.delta ? `${shortTON(trn.delta)}💎` : $t('general.none')}}</td>
-        <AtomsTableDateCell :date-time="trn.created_at"/>
+        <td class="uk-padding-remove-right">
+            <AtomsTableDateCell :date-time="trn.created_at"/>
+        </td>    
     </tr>
 </template>
