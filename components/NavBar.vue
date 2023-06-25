@@ -10,7 +10,7 @@ watch(showMobileNav, () => {
 
 <template>
     <nav class="uk-background-primary header uk-position-fixed uk-width-1-1">
-        <div class="uk-flex uk-container uk-margin-auto" style="justify-content: space-between;" :style="{ 'width' : isMobile() ? '90%' : '75%'}">
+        <div class="uk-flex uk-margin-auto" style="justify-content: space-between;" :style="{ 'width' : isMobile() ? '90%' : '75%'}">
             <template v-if="!isMobile()">
                 <div class="uk-flex" style="align-items: center;">
                     <NuxtLink :to="'/'" uk-icon="icon: grid" class="white_svg link"></NuxtLink>
@@ -24,7 +24,7 @@ watch(showMobileNav, () => {
             <template v-else>
                 <div class="uk-flex" style="align-items: center;">
                     <NuxtLink :to="'/'" uk-icon="icon: grid" class="white_svg link" @click="showMobileNav = false"></NuxtLink>
-                    <NuxtLink :to="'/'" class="link" @click="showMobileNav = false">explorer</NuxtLink>
+                    <NuxtLink :to="'/'" class="link" @click="showMobileNav = false">tonexplorer</NuxtLink>
                 </div>
                 <button v-if="!showMobileNav" uk-icon="icon: menu" class="link" @click="showMobileNav = !showMobileNav">
                 </button>

@@ -62,10 +62,10 @@ onMounted(() => routeChecker(route.query))
                     <h1 v-if="!isMobile()" class="uk-margin-remove-vertical uk-text-left uk-margin-right">
                         {{ $t('route.block')}}
                     </h1>
-                    <h3 v-if="isMobile()" class="uk-margin-remove-vertical uk-text-left">
+                    <h3 v-if="isMobile()" class="uk-margin-remove uk-text-left">
                         {{ $t('route.block')}}
                     </h3>
-                    <h2 class="uk-margin-remove-vertical uk-text-primary uk-text-bold uk-flex" style="line-height: 1.35; align-self: flex-end;">
+                    <h2 class="uk-margin-remove-vertical uk-text-primary uk-text-bold uk-flex" style="line-height: 1.35;" :style="isMobile() ? '' : 'align-self: flex-end;'">
                         <AtomsCopyableText :text="`${workchain}:${shard.toString()}:${seq_no}`">
                             <p class="uk-margin-remove">
                                 {{ `${workchain}:${shard.toString().slice(0,3)}:${seq_no}` }}

@@ -45,13 +45,13 @@ onMounted(() => routeChecker(route.query))
         </div>
         <div v-else-if="hash" class="uk-flex uk-flex-column">
             <div class="uk-flex" :class="{'uk-flex-column' : isMobile()}">
-                <h1 v-if="!isMobile()" class="uk-margin-remove-vertical uk-text-left">
+                <h1 v-if="!isMobile()" class="uk-margin-remove-vertical uk-text-left uk-margin-right">
                     {{ $t('route.transaction')}}
                 </h1>
-                <h3 v-if="isMobile()" class="uk-margin-remove-vertical uk-text-left">
+                <h3 v-if="isMobile()" class="uk-margin-remove uk-text-left">
                     {{ $t('route.transaction')}}
                 </h3>
-                <h2 class="uk-margin-remove-vertical uk-text-primary uk-text-bold uk-text-truncate" style="line-height: 1.35; align-self: flex-end;">
+                <h2 class="uk-margin-remove-vertical uk-text-primary uk-text-bold uk-text-truncate" style="line-height: 1.35;" :style="isMobile() ? '' : 'align-self: flex-end;'">
                     {{ hash }}
                 </h2>
             </div>
