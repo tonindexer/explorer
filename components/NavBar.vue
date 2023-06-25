@@ -13,22 +13,23 @@ watch(showMobileNav, () => {
         <div class="uk-flex uk-margin-auto" style="justify-content: space-between;" :style="{ 'width' : isMobile() ? '90%' : '75%'}">
             <template v-if="!isMobile()">
                 <div class="uk-flex" style="align-items: center;">
-                    <NuxtLink :to="'/'" uk-icon="icon: grid" class="white_svg link"></NuxtLink>
+                    <NuxtLink aria-label="main_page" :to="'/'" uk-icon="icon: grid" class="white_svg link"></NuxtLink>
                     <NuxtLink :to="'/blocks'" class="link" :class="{ 'active' : route.path === '/blocks'}"> {{ $t('route.blocks') }}</NuxtLink>
                     <NuxtLink :to="'/transactions'" class="link" :class="{ 'active' : route.path === '/transactions'}"> {{ $t('route.transactions') }}</NuxtLink>
                     <NuxtLink :to="'/accounts'" class="link" :class="{ 'active' : route.path === '/accounts'}"> {{ $t('route.accounts') }}</NuxtLink>
+                    <NuxtLink :to="'/messages'" class="link" :class="{ 'active' : route.path === '/messages'}"> {{ $t('route.messages') }}</NuxtLink>
                     <NuxtLink :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}"> {{ $t('route.about') }} </NuxtLink>
                 </div>
                 <AtomsLangSwitcher/>
             </template>
             <template v-else>
                 <div class="uk-flex" style="align-items: center;">
-                    <NuxtLink :to="'/'" uk-icon="icon: grid" class="white_svg link" @click="showMobileNav = false"></NuxtLink>
+                    <NuxtLink aria-label="main_page" name="main_page" :to="'/'" uk-icon="icon: grid" class="white_svg link" @click="showMobileNav = false"></NuxtLink>
                     <NuxtLink :to="'/'" class="link" @click="showMobileNav = false">tonexplorer</NuxtLink>
                 </div>
-                <button v-if="!showMobileNav" uk-icon="icon: menu" class="link" @click="showMobileNav = !showMobileNav">
+                <button aria-label="open_menu" v-if="!showMobileNav" uk-icon="icon: menu" class="link" @click="showMobileNav = !showMobileNav">
                 </button>
-                <button v-else-if="showMobileNav" uk-icon="icon: close" class="link" @click="showMobileNav = !showMobileNav">
+                <button aria-label="close_menu" v-else-if="showMobileNav" uk-icon="icon: close" class="link" @click="showMobileNav = !showMobileNav">
                 </button>
             </template>
         </div>
@@ -46,6 +47,9 @@ watch(showMobileNav, () => {
                     </td></tr>
                     <tr><td class="uk-text-large">
                         <NuxtLink :to="'/accounts'" class="link" :class="{ 'active' : route.path === '/accounts'}" @click="showMobileNav = false"> {{ $t('route.accounts') }}</NuxtLink>
+                    </td></tr>
+                    <tr><td class="uk-text-large">
+                        <NuxtLink :to="'/messages'" class="link" :class="{ 'active' : route.path === '/messages'}" @click="showMobileNav = false"> {{ $t('route.messages') }}</NuxtLink>
                     </td></tr>
                     <tr><td class="uk-text-large">
                         <NuxtLink :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}" @click="showMobileNav = false"> {{ $t('route.about') }} </NuxtLink>

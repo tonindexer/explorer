@@ -7,50 +7,116 @@ interface Props {
 
 const props = defineProps<Props>()
 
+const desc =  computed(() => {
+    if (props.msg)
+        return (isMobile() && props.showLink ? '· ' : '') + ((props.dir === 'IN' || props.dir === 'OUT' ) ? `${props.msg.type}_`+ props.dir : props.msg.type) +
+            (`${props.msg.bounce ? ' · BOUNCE' : ''}`) + (`${props.msg.bounced ? ' · BOUNCED' : ''}`)
+})
+
+const showData = ref(false)
 </script>
 
 <template>
     <template v-if="msg">
-        <tr v-if="isMobile()">
-            <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 0;">
-                <div class="uk-flex uk-text-large" :class="colorAmount(msg.amount ?? 0n)">
-                    {{ msg.amount ? `${fullTON(msg.amount)}💎` : $t('general.empty') }}
+        <div class="uk-flex uk-align-center uk-width-1-1 uk-flex-wrap" style="justify-content: space-between; margin:1rem 0">
+            <div v-if="!isMobile()" class="uk-margin-left uk-flex uk-flex-middle">
+                <div class="uk-flex uk-margin-small-right" v-if="showLink">
+                    <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(msg.parent_tx_key) }, hash: '#overview'}" class="uk-text-primary" uk-icon="icon: link; ratio: 1.5">
+                    </NuxtLink>
                 </div>
-                <div class="uk-flex uk-margin-small-bottom">
-                    {{ (dir === 'IN' || dir === 'OUT' ) ? `${msg.type}_`+ dir : msg.type }}
+                <div class="uk-flex uk-text-large">
+                    {{ msg.amount ? `${fullTON(msg.amount, false)}💎` : '0💎' }}
                 </div>
+                <div class="uk-flex uk-margin-left">
+                    {{ desc }}
+                </div>
+            </div>
+            <div v-if="isMobile()" class="uk-flex-column uk-flex">
+                
+                <div class="uk-flex uk-text-large">
+                    {{ msg.amount ? `${fullTON(msg.amount, false)}💎` : '0💎' }}
+                </div>
+                <div class="uk-flex uk-text-left">
+                    <div class="uk-flex" v-if="showLink">
+                        <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(msg.parent_tx_key) }, hash: '#overview'}" class="uk-text-primary" uk-icon="icon: link; ratio: 1.2">
+                        </NuxtLink>
+                    </div>
+                    {{ desc }}
+                </div>
+            </div>
+            
+            <div v-if="!isMobile()" class="uk-flex" style="justify-content: space-between;">
+                <div class="uk-margin-remove uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                    <AtomsTableDateCell :date-time="msg.created_at"/>
+                </div>
+            </div>
+        </div>
+        <div class="uk-flex uk-align-center uk-width-1-1 uk-margin-remove-top uk-flex-wrap" style="justify-content: space-between; margin-bottom: 1rem;">
+            <div class="uk-flex uk-flex-column" :style=" isMobile()? 'width: 100%; margin-bottom: 1rem' :`min-width: 250px; width: 48%;`">
                 <div class="uk-flex" style="justify-content: space-between;">
                     <div>   
                         {{ $t('general.from') }}
                     </div>
-                    <div v-if="msg.src_address" class="uk-margin-remove uk-text-right">
-                        <NuxtLink v-if="!(msg.src_address.hex in badAddresses)" :to="{path: 'accounts', query: { hex: msg.src_address.hex}, hash: '#overview'}" class="uk-text-secondary"> {{ truncString(msg.src_address.base64, 7) }}</NuxtLink>
-                        <div class="uk-text-secondary" v-if="msg.src_address.hex in badAddresses"> {{ badAddresses[msg.src_address.hex].name }} </div>
+                    <div v-if="msg.src_address" class="uk-margin-remove uk-text-right uk-flex">
+                        <NuxtLink v-if="!(msg.src_address.hex in badAddresses)" :to="{path: 'accounts', query: { hex: msg.src_address.hex}, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.src_address.base64 }}</NuxtLink>
+                        <div class="uk-text-primary" v-if="msg.src_address.hex in badAddresses"> {{ badAddresses[msg.src_address.hex].name }} </div>
                     </div>
                     <div v-else class="uk-margin-remove uk-text-right">
-                        <div class="uk-text-secondary">{{ $t('general.empty') }}</div>
+                        <div class="uk-text-primary">{{ $t('general.empty') }}</div>
                     </div>
                 </div>
+                <div class="uk-flex" style="justify-content: space-between;">
+                    <div>   
+                        {{ $t('ton.contract') }}
+                    </div>
+                    <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                        <NuxtLink v-if="msg.src_contract" :to="`/accounts?contract=${msg.src_contract}`" class="uk-text-primary" style="line-height: 1.5;">
+                            {{ msg.src_contract }}
+                        </NuxtLink>
+                        <div v-else>
+                            {{ $t('general.none') }}
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-flex" style="justify-content: space-between;">
+                    <div>   
+                        {{ $t('ton.fwd_fee') }}
+                    </div>
+                    <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                        {{ msg.fwd_fee ? `${fullTON(msg.fwd_fee, false)}💎` : $t('general.empty') }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-flex divider" style="padding: 0.5rem 0">
+                <div style="width: 1px; background-color: #ccc;">
+                </div>
+            </div>
+
+            <div class="uk-flex uk-flex-column" :style=" isMobile()? 'width: 100%' :`min-width: 250px; width: 48%;`">
                 <div class="uk-flex" style="justify-content: space-between;">
                     <div>   
                         {{ $t('general.to') }}
                     </div>
-                    <div v-if="msg.dst_address" class="uk-margin-remove uk-text-right">
-                        <NuxtLink v-if="!(msg.dst_address.hex in badAddresses)" :to="{path: 'accounts', query: { hex: msg.dst_address.hex}, hash: '#overview'}" class="uk-text-secondary"> {{ truncString(msg.dst_address.base64, 7) }}</NuxtLink>
-                        <div class="uk-text-secondary" v-if="msg.dst_address.hex in badAddresses"> {{ badAddresses[msg.dst_address.hex].name }} </div>
+                    <div v-if="msg.dst_address" class="uk-margin-remove uk-text-right uk-flex">
+                        <NuxtLink v-if="!(msg.dst_address.hex in badAddresses)" :to="{path: 'accounts', query: { hex: msg.dst_address.hex}, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.dst_address.base64 }}</NuxtLink>
+                        <div class="uk-text-primary" v-if="msg.dst_address.hex in badAddresses"> {{ badAddresses[msg.dst_address.hex].name }} </div>
                     </div>
                     <div v-else class="uk-margin-remove uk-text-right">
-                        <div class="uk-text-secondary">{{ $t('general.empty') }}</div>
+                        <div class="uk-text-primary">{{ $t('general.empty') }}</div>
                     </div>
                 </div>
                 <div class="uk-flex" style="justify-content: space-between;">
                     <div>   
-                        {{ $t('route.transaction') }}
+                        {{ $t('ton.contract') }}
                     </div>
-                    <div class="uk-margin-remove uk-text-right uk-text-truncate">
-                        <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(msg.parent_tx_key) }, hash: '#overview'}" class="uk-text-primary">
-                            {{ truncString(msg.parent_tx_key, 15,0) }}
+                    <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                        <NuxtLink v-if="msg.dst_contract" :to="`/accounts?contract=${msg.dst_contract}`" class="uk-text-primary" style="line-height: 1.5;">
+                            {{ msg.dst_contract }}
                         </NuxtLink>
+                        <div v-else>
+                            {{ $t('general.none') }}
+                        </div>
                     </div>
                 </div>
                 <div v-if="msg.operation_id" class="uk-flex" style="justify-content: space-between;">
@@ -61,31 +127,34 @@ const props = defineProps<Props>()
                         {{ msg.operation_id in knownOp ? knownOp[msg.operation_id] : `op=0x${opToHex(msg.operation_id)}` }}
                     </div>
                 </div>
-                <div class="uk-flex" style="justify-content: space-between;">
+                <div v-if="msg.operation_name" class="uk-flex" style="justify-content: space-between;">
                     <div>   
-                        {{ $t('ton.created_at') }}
+                        {{ $t('ton.name') }}
                     </div>
                     <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                        <AtomsTableDateMobileCell :date-time="msg.created_at"/>
+                        {{ msg.operation_name }}
                     </div>
                 </div>
-            </td>
-        </tr>
-        <tr v-else>
-            <td style="min-width: 20px;" v-if="showLink">
-                <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(msg.parent_tx_key) }, hash: '#overview'}">
-                    <p uk-icon="icon: social"></p>
-                </NuxtLink>
-            </td>
-            <td class="uk-width-1-4">
-                <AtomsAddressField :addr="msg.src_address ?? null" :break_word="true"/>
-            </td>
-            <td class="uk-text-center" style="min-width: 60px; max-width: 70px;"> {{ dir }}</td>
-            <td class="uk-width-1-4">
-                <AtomsAddressField :addr="msg.dst_address ?? null" :break_word="true"/>
-            </td>
-            <td class="uk-text-right uk-text-nowrap" :class="colorAmount(msg.amount ?? 0n)"> {{ msg.amount ? `${fullTON(msg.amount)}💎` : $t('general.none')}}</td>
-            <AtomsTableDateCell :date-time="msg.created_at"/>
-        </tr>
+            </div>
+            <div class="uk-width-1-1 uk-text-primary" :class="isMobile()? '' : 'uk-margin-left'"  v-if="msg.data">
+                <div class="uk-flex uk-flex-middle">
+                    <div class="uk-margin-small-right" style="cursor: pointer;" @click="showData = !showData">
+                        {{ $t('ton.data') }}
+                    </div>
+                    <div :uk-icon="`icon: ${showData ? 'close' : 'more'}`" style="cursor: pointer;" @click="showData = !showData"></div>
+                </div>
+            </div>
+            <pre class="uk-width-1-1 uk-margin-remove-bottom" v-if="msg.data && showData" :style="{ 'max-width' : isMobile() ? '90vw' : '75vw'}">{{ JSON.stringify(msg.data, null, 4)}}</pre>
+        </div>
     </template>
+    
 </template>
+
+<style lang="scss" scoped>
+
+@media screen and (max-width: 550px) {
+    .divider {
+        display: none;
+    }
+}
+</style>

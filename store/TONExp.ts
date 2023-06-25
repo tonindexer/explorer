@@ -19,9 +19,11 @@ export const useMainStore = defineStore('tonexp', {
       // Arrays with keys for loading info from api
       exploredBlocks: [] as BlockKey[],
       exploredTransactions: [] as TransactionKey[],
+      exploredMessages: [] as MessageKey[],
       exploredAccounts: [] as AccountKey[],
       // Total number of resutls left for the api queries
       totalQueryTransactions: 0 as number,
+      totalQueryMessages: 0 as number,
       totalQueryBlocks: 0 as number,
       totalQueryAccounts: 0 as number,
       totalAccountNFTOwned: 0 as number,
@@ -76,6 +78,7 @@ export const useMainStore = defineStore('tonexp', {
           case 'acc': return loaded >= state.totalQueryAccounts;
           case 'mint': return loaded >= state.totalQueryNFTMinters;
           case 'own': return loaded >= state.totalAccountNFTOwned;
+          case 'msg': return loaded >= state.totalQueryMessages;
           default: return false;
         }
       },
@@ -115,14 +118,17 @@ export const useMainStore = defineStore('tonexp', {
         this.accounts[accountKey] = mappedAccount
         return accountKey
       },
-      processMessage(message: MessageAPI, tr_key: TransactionKey | null, dir: 'IN' | 'OUT', parseAccounts: boolean = true) {
+      processMessage(message: MessageAPI, tr_key: TransactionKey | null, parseAccounts: boolean = true) {
         const messageKey = message.hash
 
         // Don't override messages
-        if (messageKey in this.messages) return messageKey
+        if (messageKey in this.messages) {
+          if (this.messages[messageKey].parent_tx_key === '' && tr_key) this.messages[messageKey].parent_tx_key = tr_key
+          return messageKey
+        }
 
         const mappedMessage = <Message>{}
-        mappedMessage.parent_tx_key = tr_key ?? 'parentless'
+        mappedMessage.parent_tx_key = tr_key ?? ''
 
         if (message.src_state) {
           if (parseAccounts) mappedMessage.src_state_key = this.processAccount(message.src_state)
@@ -134,7 +140,7 @@ export const useMainStore = defineStore('tonexp', {
           else mappedMessage.src_state_key = message.dst_state.address.hex
           delete message.dst_state
         }
-
+        
         Object.assign(mappedMessage, message)
 
         this.messages[messageKey] = mappedMessage
@@ -159,7 +165,7 @@ export const useMainStore = defineStore('tonexp', {
           delete transaction.account
         }
         if (transaction.in_msg) {
-          this.processMessage(transaction.in_msg, transactionKey, 'IN')
+          this.processMessage(transaction.in_msg, transactionKey)
           transaction.in_msg.operation_name ? op_type = transaction.in_msg.operation_name :
             (transaction.in_msg.operation_id ? op_type = `Contract op=${opToHex(transaction.in_msg.operation_id)}` : op_type = 1)
           delete transaction.in_msg
@@ -170,7 +176,7 @@ export const useMainStore = defineStore('tonexp', {
               msg.operation_name ? ( (op_type ===0 || op_type === 1) ? op_type = msg.operation_name : op_type = 99) :
                 (msg.operation_id ? ( (op_type ===0 || op_type === 1) ? op_type = `Contract op=0x${opToHex(msg.operation_id)}` : op_type = 99) :
                   op_type = 2)
-              return this.processMessage(msg, transactionKey, 'OUT', parseAccount)
+              return this.processMessage(msg, transactionKey, parseAccount)
             }))
           delete transaction.out_msg
         }
@@ -284,6 +290,9 @@ export const useMainStore = defineStore('tonexp', {
             }
             break;
           }
+          case '/messages': {
+            await this.updateMessages(10, null)
+          }
           case '/accounts': {
             if (Object.entries(route.query).length === 0 || 'contract' in route.query) {
               const sq = route.query.contract ? route.query.contract.toString() : null
@@ -334,6 +343,29 @@ export const useMainStore = defineStore('tonexp', {
             const block = this.processBlock(parsed.results[key])
             this.exploredBlocks.push(block)
             this.exploredBlocks.push(...this.blocks[block].shard_keys)
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async updateMessages(limit: number, seqOffset: bigint | null, order: "ASC" | "DESC" = "DESC") {
+        const fullReq: MockType = {
+          order,
+          limit
+        }
+        if (seqOffset) fullReq.after = seqOffset
+        if (!seqOffset) this.exploredMessages = []
+        const query = getQueryString(fullReq, false)
+        try {
+          const { data } = await apiRequest(`/messages?${query}`, 'GET')
+          const parsed = parseJson<MessageAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          
+          this.totalQueryMessages = parsed.total
+          if (!seqOffset) this.exploredMessages = []
+          for (const msg of parsed.results) {
+            const key = this.processMessage(msg, null)
+            this.exploredMessages.push(key)
           }
         } catch (error) {
           console.log(error)
