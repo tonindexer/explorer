@@ -12,6 +12,7 @@ const excludeMC = ref(false)
 const store = useMainStore()
 
 function routeChecker(newQuery: LocationQuery) {
+    excludeMC.value = false
     hash.value = newQuery.hash? toBase64Rfc(newQuery.hash.toString()) : null;
 
     if (hash.value) {

@@ -23,10 +23,10 @@ const reloadInfo = async() => {
     loading.value = true
     if (!transaction.value) {
         const key = await store.fetchTransaction(props.hash)
-        if (props.hash != key) emits('setHash', key) 
-        return
+        if (props.hash != key) emits('setHash', key)
     }
-    await store.fetchBareAccounts(unloadedAccountKeys.value)
+    if (unloadedAccountKeys.value.length > 0)
+        await store.fetchBareAccounts(unloadedAccountKeys.value)
     loading.value = false
     if (!transaction.value) {
         error.value = true
