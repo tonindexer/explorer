@@ -1,6 +1,16 @@
 <script setup lang="ts">
 const route = useRoute()
-
+useSeoMeta({
+    'title' : 'tonindexer',
+    'description': 'tonindexer - The project to index data from TON blockchain.',
+    'author': 'Anton Tools',
+    'creator': 'Anton Tools',
+    'ogTitle': 'tonindexer',
+    'ogDescription': 'The project to index data from TON blockchain.',
+    'ogType': 'website',
+    'ogUrl' : 'https://explorer.anton.tools',
+    'ogLocale': 'en_US'
+});
 </script>
 
 <template>

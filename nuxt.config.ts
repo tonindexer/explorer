@@ -23,6 +23,7 @@ export default defineNuxtConfig({
     i18n: {
       strategy: 'no_prefix',
       defaultLocale: 'en',
+      baseUrl: 'https://explorer.anton.tools',
       detectBrowserLanguage: {
         useCookie: true,
         cookieKey: 'i18n_redirected',
