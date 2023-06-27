@@ -364,10 +364,11 @@ export const useMainStore = defineStore('tonexp', {
           
           this.totalQueryMessages = parsed.total
           if (!seqOffset) this.exploredMessages = []
-          for (const msg of parsed.results) {
-            const key = this.processMessage(msg, null)
-            this.exploredMessages.push(key)
-          }
+          if (parsed.results && parsed.results.length > 0)
+            for (const msg of parsed.results) {
+              const key = this.processMessage(msg, null)
+              this.exploredMessages.push(key)
+            }
         } catch (error) {
           console.log(error)
         }

@@ -122,5 +122,8 @@
         "deep_transactions" : "Транзакции шардов",
         "deep_messages" : "Сообщения шардов",
         "filter": "Фильтры"
+    },
+    "warning" : {
+        "nothing_found" : "По запросу нет результатов.."
     }
 }

@@ -122,5 +122,8 @@
         "deep_transactions" : "Shard transactions",
         "deep_messages" : "Shard messages",
         "filter": "Filter"
+    },
+    "warning" : {
+        "nothing_found" : "Nothing found.."
     }
 }
