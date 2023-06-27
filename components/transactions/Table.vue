@@ -100,6 +100,7 @@ onMounted(() => {
                             v-if="!isMobile() && [store.transactions[trn].in_msg_hash, ...store.transactions[trn].out_msg_keys].length > 0 && store.transactionMsgFlag[trn]"
                             style="border-bottom: 2px solid #d0d0d0; border-top: 2px solid #d0d0d0;">
                             <MessagesTable 
+                                :filters="{}"
                                 :show-link="false"
                                 :parent_tx="trn" 
                                 :item-selector="false" 

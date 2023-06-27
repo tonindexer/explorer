@@ -33,6 +33,16 @@ $hover-color: #f3f3ff;
 #__nuxt {
   overflow: hidden;
 }
+
+.white {
+  color: white;
+  stroke: white;
+  * {
+    color: white;
+    stroke: white;
+  }
+}
+
 .red {
   color: rgb(255, 152, 152);
   stroke: rgb(255, 152, 152);
@@ -53,4 +63,8 @@ $hover-color: #f3f3ff;
 
 .hover:hover {
   background-color: $hover-color;
+}
+
+.search {
+  width: auto !important;
 }

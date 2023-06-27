@@ -4,6 +4,7 @@ import { useMainStore } from '~/store/TONExp';
 interface MessageTable {
     keys: string[]
     update: boolean
+    filters: MockType
     parent_tx: TransactionKey | null
     defaultLength: number
     itemSelector: boolean
@@ -43,10 +44,10 @@ const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     setExtraFields()
     if (props.keys.length === 0 || pageNum.value === 0) {
-        await store.updateMessages(itemCount.value, null)
+        await store.updateMessages(itemCount.value, null, props.filters)
     }
     else {
-        await store.updateMessages(itemCount.value, next ? lastLT.value : firstLT.value)
+        await store.updateMessages(itemCount.value, next ? lastLT.value : firstLT.value, props.filters)
     }
 }
 
@@ -63,6 +64,11 @@ watch(itemCount, async() => {
     if (pageNum.value === 0) updateValues()
     else pageNum.value = 0
 }, {deep : true})
+
+watch(() => props.filters, () => {
+    if (pageNum.value === 0) updateValues()
+    else pageNum.value = 0
+})
 
 onMounted(() => {
     setExtraFields()

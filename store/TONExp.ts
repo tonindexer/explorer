@@ -291,7 +291,7 @@ export const useMainStore = defineStore('tonexp', {
             break;
           }
           case '/messages': {
-            await this.updateMessages(10, null)
+            await this.updateMessages(10, null, null)
           }
           case '/accounts': {
             if (Object.entries(route.query).length === 0 || 'contract' in route.query) {
@@ -348,10 +348,11 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async updateMessages(limit: number, seqOffset: bigint | null, order: "ASC" | "DESC" = "DESC") {
+      async updateMessages(limit: number, seqOffset: bigint | null, filters: MockType | null, order: "ASC" | "DESC" = "DESC") {
         const fullReq: MockType = {
           order,
-          limit
+          limit,
+          ...filters
         }
         if (seqOffset) fullReq.after = seqOffset
         if (!seqOffset) this.exploredMessages = []

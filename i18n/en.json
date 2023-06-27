@@ -17,9 +17,13 @@
 
         "id": "ID",
         "address": "Address",
+        "src_address" : "Sender",
+        "dst_address" : "Recipient",
         "balance": "Balance",
         "type": "Type",
         "label": "Name",
+        "operation_id": "OP ID",
+        "operation_name": "OP Name",
         "status": "Status",
 
         "hash" : "Hash (base64)",
@@ -47,6 +51,8 @@
         "minter": "Minter",
         "owner": "Owner",
         "contract" : "Contract",
+        "src_contract": "SRC Contract",
+        "dst_contract": "DST Contract",
         "wallet": "Wallet",
         "get_methods": "Get methods"
     },
@@ -114,6 +120,7 @@
         "exclude_blocks" : "Exclude empty blocks",
         "exclude_masterchain" : "Exclude MasterChain",
         "deep_transactions" : "Shard transactions",
-        "deep_messages" : "Shard messages"
+        "deep_messages" : "Shard messages",
+        "filter": "Filter"
     }
 }

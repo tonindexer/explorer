@@ -59,8 +59,10 @@ export const removeClutter = (input: string) => {
 export const addParse = (input: string) : AccSearch | null => {
     input = removeClutter(input)
 
-    if (input.length !== 48 && input.length !== 66) return null
-    if ((input.length === 66 && input[1] === ':' && input.split(':')[1].match(/^[\da-f]{64}$/)) || input.match(ADDRESS_REGEX)) return {
+    if (input.length !== 48 && input.length !== 66 && input.length !== 67) return null
+    if ((input.length === 66 && input[1] === ':' && input.split(':')[1].match(/^[\da-f]{64}$/)) 
+        || (input.length === 67 && input[2] === ':' && input.split(':')[1].match(/^[\da-f]{64}$/))
+        || input.match(ADDRESS_REGEX)) return {
         type: 'account',
         value: {
             hex: input
