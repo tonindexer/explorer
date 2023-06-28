@@ -25,7 +25,7 @@ export const useMainStore = defineStore('tonexp', {
       totalQueryTransactions: 0 as number,
       totalQueryMessages: 0 as number,
       totalQueryBlocks: 0 as number,
-      totalQueryAccounts: 0 as number,
+      totalQueryAccounts: -1 as number,
       totalAccountNFTOwned: 0 as number,
       totalQueryNFTMinters: 0 as number,
       totalQueryJettonWallets: 0 as number,

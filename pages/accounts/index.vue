@@ -76,7 +76,7 @@ onMounted(() => routeChecker())
         <div v-if="isGeneral">
             <div class="uk-flex uk-flex-bottom uk-margin-bottom">
                 <h1 class="uk-margin-remove-vertical uk-margin-right">{{  $t('route.accounts') }}</h1>
-                <h2 class="uk-margin-remove uk-text-muted">{{ `${store.totalQueryAccounts}` }}</h2>
+                <h2 class="uk-margin-remove uk-text-muted">{{ `${store.totalQueryAccounts === -1 ? '...' : store.totalQueryAccounts}` }}</h2>
             </div>
             <div class="uk-flex uk-flex-right">
                 <div v-if="!isMobile()" class="uk-width-2-5">
