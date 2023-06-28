@@ -31,9 +31,7 @@ const setExtraFields = () => {
         if (props.keys[props.keys.length - 1] in store.accounts) {
             lastTX.value = BigInt(store.accounts[props.keys[props.keys.length - 1]].last_tx_lt)
         }
-    } else {
-        emptyTable.value = true
-    }
+    } else emptyTable.value = true
 }
 
 const updateValues = async (next: boolean = true) => {
@@ -76,7 +74,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <template v-if="emptyTable">
+    <template v-if="emptyTable && store.totalQueryAccounts === 0">
         <div class="uk-flex uk-margin-top">
             {{ $t('warning.nothing_found') }}
         </div>
