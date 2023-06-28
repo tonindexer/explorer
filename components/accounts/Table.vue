@@ -21,6 +21,7 @@ const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.
 
 const maxExploredPage = ref(0)
 const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+const emptyTable = ref(false)
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {
@@ -30,16 +31,20 @@ const setExtraFields = () => {
         if (props.keys[props.keys.length - 1] in store.accounts) {
             lastTX.value = BigInt(store.accounts[props.keys[props.keys.length - 1]].last_tx_lt)
         }
-    }   
+    } else {
+        emptyTable.value = true
+    }
 }
 
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
+    emptyTable.value = false
     if (props.keys.length === 0 || pageNum.value === 0)
         await store.updateAccounts(itemCount.value, null, props.contract)
     else {
         await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value, props.contract)
     }
+    if (props.keys.length === 0) emptyTable.value = true
 }
 
 watch(pageNum, async(to, from) => {
@@ -71,7 +76,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <template v-if="loading">
+    <template v-if="emptyTable">
+        <div class="uk-flex uk-margin-top">
+            {{ $t('warning.nothing_found') }}
+        </div>
+    </template>
+    <template v-else-if="loading">
         <div class="uk-flex uk-flex-center">
             <Loader />
         </div>
