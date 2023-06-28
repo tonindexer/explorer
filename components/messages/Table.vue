@@ -22,7 +22,7 @@ const maxExploredPage = ref(0)
 const messageDir = ((msgKey: MessageKey) : MessageDirection => 
     store.messages[msgKey].type === 'EXTERNAL_IN' ? 'EXT_IN' : 
         (store.messages[msgKey].type === 'EXTERNAL_OUT' ? 'EXT_OUT' :
-            (store.transactions[props.parent_tx ?? store.messages[msgKey].parent_tx_key]?.in_msg_hash === msgKey ? 'IN' : 'OUT')))
+            (store.transactions[props.parent_tx ?? store.messages[msgKey].src_tx_key ?? '']?.in_msg_hash === msgKey ? 'IN' : 'OUT')))
 
 const firstLT: NullableBigRef = ref(0n)
 const lastLT: NullableBigRef = ref(0n)

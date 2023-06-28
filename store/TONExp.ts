@@ -23,7 +23,7 @@ export const useMainStore = defineStore('tonexp', {
       exploredAccounts: [] as AccountKey[],
       // Total number of resutls left for the api queries
       totalQueryTransactions: 0 as number,
-      totalQueryMessages: 0 as number,
+      totalQueryMessages: -1 as number,
       totalQueryBlocks: 0 as number,
       totalQueryAccounts: -1 as number,
       totalAccountNFTOwned: 0 as number,
@@ -119,18 +119,26 @@ export const useMainStore = defineStore('tonexp', {
         this.accounts[accountKey] = mappedAccount
         return accountKey
       },
-      processMessage(message: MessageAPI, tr_key: TransactionKey | null, parseAccounts: boolean = true) {
+      processMessage(message: MessageAPI, tr_key: TransactionKey | null, tr_type: 'src' | 'dst' | null, parseAccounts: boolean = true) {
         const messageKey = message.hash
 
         // Don't override messages
         if (messageKey in this.messages) {
-          if (this.messages[messageKey].parent_tx_key === '' && tr_key) this.messages[messageKey].parent_tx_key = tr_key
+          if (tr_key) {
+            if (tr_type === 'dst' && (this.messages[messageKey].dst_tx_key === null || this.messages[messageKey].dst_tx_key?.includes('|'))) this.messages[messageKey].dst_tx_key = tr_key
+            if (tr_type === 'src' && (this.messages[messageKey].src_tx_key === null || this.messages[messageKey].src_tx_key?.includes('|'))) this.messages[messageKey].src_tx_key = tr_key
+          }
           return messageKey
         }
 
         const mappedMessage = <Message>{}
-        mappedMessage.parent_tx_key = tr_key ?? ''
 
+        mappedMessage.src_tx_key = (message.src_tx_lt && message.src_address) ?  `${message.src_address.hex}|${message.src_tx_lt}` : null
+        mappedMessage.dst_tx_key = (message.dst_tx_lt && message.dst_address) ?  `${message.dst_address.hex}|${message.dst_tx_lt}` : null
+
+        if (tr_type === 'src' && tr_key) mappedMessage.src_tx_key = tr_key
+        if (tr_type === 'dst' && tr_key) mappedMessage.dst_tx_key = tr_key
+        
         if (message.src_state) {
           if (parseAccounts) mappedMessage.src_state_key = this.processAccount(message.src_state)
           else mappedMessage.src_state_key = message.src_state.address.hex
@@ -166,7 +174,7 @@ export const useMainStore = defineStore('tonexp', {
           delete transaction.account
         }
         if (transaction.in_msg) {
-          this.processMessage(transaction.in_msg, transactionKey)
+          this.processMessage(transaction.in_msg, transactionKey, 'dst', parseAccount)
           transaction.in_msg.operation_name ? op_type = transaction.in_msg.operation_name :
             (transaction.in_msg.operation_id ? op_type = `Contract op=${opToHex(transaction.in_msg.operation_id)}` : op_type = 1)
           delete transaction.in_msg
@@ -177,7 +185,7 @@ export const useMainStore = defineStore('tonexp', {
               msg.operation_name ? ( (op_type ===0 || op_type === 1) ? op_type = msg.operation_name : op_type = 99) :
                 (msg.operation_id ? ( (op_type ===0 || op_type === 1) ? op_type = `Contract op=0x${opToHex(msg.operation_id)}` : op_type = 99) :
                   op_type = 2)
-              return this.processMessage(msg, transactionKey, parseAccount)
+              return this.processMessage(msg, transactionKey, 'src', parseAccount)
             }))
           delete transaction.out_msg
         }
@@ -366,7 +374,7 @@ export const useMainStore = defineStore('tonexp', {
           if (!seqOffset) this.exploredMessages = []
           if (parsed.results && parsed.results.length > 0)
             for (const msg of parsed.results) {
-              const key = this.processMessage(msg, null)
+              const key = this.processMessage(msg, null, null)
               this.exploredMessages.push(key)
             }
         } catch (error) {
@@ -447,9 +455,9 @@ export const useMainStore = defineStore('tonexp', {
         }
       },
       async fetchTransaction(hash: string) {
-        const fullReq: MockType = {
-          hash
-        }
+        let fullReq: MockType = {}
+        if (hash.includes('|')) fullReq = { address: hash.split('|')[0], created_lt: hash.split('|')[1]}
+        else fullReq = { hash }
         const query = getQueryString(fullReq, true);
         try {
           const { data } = await apiRequest(`/transactions?${query}`, 'GET')

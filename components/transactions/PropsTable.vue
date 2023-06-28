@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const { t } = useI18n()
 interface Props {
     trn: Transaction
 }
@@ -94,11 +93,16 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.prev_tx_hash`) }}
                     </template>
                     <template #value>
-                        <AtomsCopyableText :text="trn.prev_tx_hash">
-                            <NuxtLink :to="`/transactions?hash=${toBase64Web(trn.prev_tx_hash)}#overview`">
-                                {{ trn.prev_tx_hash }}
-                            </NuxtLink>
-                        </AtomsCopyableText> 
+                        <template v-if="trn.prev_tx_hash !== 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='">
+                            <AtomsCopyableText :text="trn.prev_tx_hash">
+                                <NuxtLink :to="`/transactions?hash=${toBase64Web(trn.prev_tx_hash)}#overview`">
+                                    {{ trn.prev_tx_hash }}
+                                </NuxtLink>
+                            </AtomsCopyableText> 
+                        </template>
+                        <template v-else>
+                            {{ $t('warning.first_tx') }}
+                        </template>
                     </template>
                 </AtomsPropLine>
             </tr>
@@ -108,7 +112,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.total_fees`) }}
                     </template>
                     <template #value>
-                        {{ trn.total_fees ? `${fullTON(trn.total_fees, false)}💎` : t('general.none') }}
+                        {{ trn.total_fees ? `${fullTON(trn.total_fees, false)}💎` : $t('general.none') }}
                     </template>
                 </AtomsPropLine>
             </tr>
@@ -119,7 +123,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <div :class="colorAmount(trn.delta)">
-                            {{ trn.delta ? `${fullTON(trn.delta, true)}💎` : t('general.none') }}
+                            {{ trn.delta ? `${fullTON(trn.delta, true)}💎` : $t('general.none') }}
                         </div>
                     </template>
                 </AtomsPropLine>

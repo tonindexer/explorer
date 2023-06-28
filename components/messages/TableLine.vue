@@ -9,7 +9,7 @@ const props = defineProps<Props>()
 
 const desc =  computed(() => {
     if (props.msg)
-        return (isMobile() && props.showLink ? '· ' : '') + ((props.dir === 'IN' || props.dir === 'OUT' ) ? `${props.msg.type}_`+ props.dir : props.msg.type) +
+        return ((props.dir === 'IN' || props.dir === 'OUT' ) ? `${props.msg.type}_`+ props.dir : props.msg.type) +
             (`${props.msg.bounce ? ' · BOUNCE' : ''}`) + (`${props.msg.bounced ? ' · BOUNCED' : ''}`)
 })
 
@@ -20,10 +20,6 @@ const showData = ref(false)
     <template v-if="msg">
         <div class="uk-flex uk-align-center uk-width-1-1 uk-flex-wrap" style="justify-content: space-between; margin:1rem 0">
             <div v-if="!isMobile()" class="uk-margin-left uk-flex uk-flex-middle">
-                <div class="uk-flex uk-margin-small-right" v-if="showLink">
-                    <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(msg.parent_tx_key) }, hash: '#overview'}" class="uk-text-primary" uk-icon="icon: link; ratio: 1.5">
-                    </NuxtLink>
-                </div>
                 <div class="uk-flex uk-text-large">
                     {{ msg.amount ? `${fullTON(msg.amount, false)}💎` : '0💎' }}
                 </div>
@@ -37,15 +33,11 @@ const showData = ref(false)
                     {{ msg.amount ? `${fullTON(msg.amount, false)}💎` : '0💎' }}
                 </div>
                 <div class="uk-flex uk-text-left">
-                    <div class="uk-flex" v-if="showLink">
-                        <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(msg.parent_tx_key) }, hash: '#overview'}" class="uk-text-primary" uk-icon="icon: link; ratio: 1.2">
-                        </NuxtLink>
-                    </div>
                     {{ desc }}
                 </div>
             </div>
             
-            <div v-if="!isMobile()" class="uk-flex" style="justify-content: space-between;">
+            <div v-if="!isMobile() && showLink" class="uk-flex" style="justify-content: space-between;">
                 <div class="uk-margin-remove uk-text-right uk-text-truncate" style="max-width: 60vw;">
                     <AtomsTableDateCell :date-time="msg.created_at"/>
                 </div>
@@ -59,10 +51,21 @@ const showData = ref(false)
                     </div>
                     <div v-if="msg.src_address" class="uk-margin-remove uk-text-right uk-flex">
                         <NuxtLink v-if="!(msg.src_address.hex in badAddresses)" :to="{path: 'accounts', query: { hex: msg.src_address.hex}, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.src_address.base64 }}</NuxtLink>
-                        <div class="uk-text-primary" v-if="msg.src_address.hex in badAddresses"> {{ badAddresses[msg.src_address.hex].name }} </div>
+                        <div class="uk-text-secondary" v-if="msg.src_address.hex in badAddresses"> {{ badAddresses[msg.src_address.hex].name }} </div>
                     </div>
                     <div v-else class="uk-margin-remove uk-text-right">
-                        <div class="uk-text-primary">{{ $t('general.empty') }}</div>
+                        <div class="uk-text-secondary">{{ $t('general.empty') }}</div>
+                    </div>
+                </div>
+                <div class="uk-flex" style="justify-content: space-between;">
+                    <div>   
+                        {{ $t('general.src_tx') }}
+                    </div>
+                    <div v-if="msg.src_tx_key" class="uk-margin-remove uk-text-right uk-flex">
+                        <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(msg.src_tx_key) }, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.src_tx_lt }}</NuxtLink>
+                    </div>
+                    <div v-else class="uk-margin-remove uk-text-right">
+                        <div class="uk-text-secondary">{{ $t('general.empty') }}</div>
                     </div>
                 </div>
                 <div class="uk-flex" style="justify-content: space-between;">
@@ -100,10 +103,21 @@ const showData = ref(false)
                     </div>
                     <div v-if="msg.dst_address" class="uk-margin-remove uk-text-right uk-flex">
                         <NuxtLink v-if="!(msg.dst_address.hex in badAddresses)" :to="{path: 'accounts', query: { hex: msg.dst_address.hex}, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.dst_address.base64 }}</NuxtLink>
-                        <div class="uk-text-primary" v-if="msg.dst_address.hex in badAddresses"> {{ badAddresses[msg.dst_address.hex].name }} </div>
+                        <div class="uk-text-secondary" v-if="msg.dst_address.hex in badAddresses"> {{ badAddresses[msg.dst_address.hex].name }} </div>
                     </div>
                     <div v-else class="uk-margin-remove uk-text-right">
-                        <div class="uk-text-primary">{{ $t('general.empty') }}</div>
+                        <div class="uk-text-secondary">{{ $t('general.empty') }}</div>
+                    </div>
+                </div>
+                <div class="uk-flex" style="justify-content: space-between;">
+                    <div>   
+                        {{ $t('general.dst_tx') }}
+                    </div>
+                    <div v-if="msg.dst_tx_key" class="uk-margin-remove uk-text-right uk-flex">
+                        <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(msg.dst_tx_key) }, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.dst_tx_lt }}</NuxtLink>
+                    </div>
+                    <div v-else class="uk-margin-remove uk-text-right">
+                        <div class="uk-text-secondary">{{ $t('general.empty') }}</div>
                     </div>
                 </div>
                 <div class="uk-flex" style="justify-content: space-between;">

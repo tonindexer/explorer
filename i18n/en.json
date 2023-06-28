@@ -64,6 +64,8 @@
         "type" : "Type",
         "from" : "Sender",
         "to" : "Recipient",
+        "src_tx" : "SRC Tx",
+        "dst_tx" : "DST Tx",
         "amount" : "Amount",
         "scanned" : "Scanned",
         "created" : "Created",
@@ -125,6 +127,7 @@
         "filter": "Filter"
     },
     "warning" : {
-        "nothing_found" : "Nothing found.."
+        "nothing_found" : "Nothing found..",
+        "first_tx": "None - This TX is first in the chain"
     }
 }

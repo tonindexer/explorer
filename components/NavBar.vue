@@ -77,15 +77,7 @@ watch(showMobileNav, () => {
             min-width: 20px;
             margin-right: 15px;
             line-height: normal;
-            &:not(.active) {
-                color: #eee;
-            }
-            &.active {
-                color: white;
-            }
-            &:hover {
-                color: white;
-            }
+            color: white;
         }
     }
 }

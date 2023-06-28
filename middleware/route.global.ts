@@ -19,7 +19,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
         store.updateMessages(10, null, null)
         return
     }
-    if ((to.fullPath === '/accounts' && !('contract' in from.query)) || (to.path === '/accounts' && 'contract' in to.query && 'hex' in from.query)) {
+    if ((to.fullPath === '/accounts' && !('contract' in from.query)) || (to.path === '/accounts' && 'contract' in to.query && from.path !== '/address')) {
         const sq = to.query.contract ? to.query.contract.toString() : null
         store.updateAccounts(20, null, sq)
         return

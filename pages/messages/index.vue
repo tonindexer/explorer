@@ -147,8 +147,10 @@ onMounted(() => routeChecker())
     </template>
     <template v-else>
         <div v-if="isGeneral">
-            <h1>{{  $t('route.messages') }} <h2 class="uk-display-inline uk-text-muted">{{ `${store.totalQueryMessages}` }}</h2> </h1>
-
+            <div class="uk-flex uk-flex-bottom uk-margin-bottom">
+                <h1 class="uk-margin-remove-vertical uk-margin-right">{{  $t('route.messages') }}</h1>
+                <h2 class="uk-margin-remove uk-text-muted">{{ `${store.totalQueryAccounts === -1 ? '...' : store.totalQueryMessages}` }}</h2>
+            </div>
             <div class="uk-flex" :class="{ 'uk-text-secondary' : filterFlag}">
                 <div :uk-icon="`icon: ${filterFlag ? 'chevron-down' : 'chevron-right'}; ratio: 1.2`" @click="filterFlag = !filterFlag" style="cursor: pointer;"></div>
                 <div @click="filterFlag = !filterFlag" style="cursor: pointer;">{{ $t('options.filter') }}</div>
@@ -258,7 +260,7 @@ onMounted(() => routeChecker())
                     </div>
                 </template>
             </div>
-            <LazyMessagesTable :filters="selectedOptions" :keys="store.exploredMessages" :update="true" :default-length="10" :hidden="false" :item-selector="true" :parent_tx="null" :show-link="false"
+            <LazyMessagesTable :filters="selectedOptions" :keys="store.exploredMessages" :update="true" :default-length="10" :hidden="false" :item-selector="true" :parent_tx="null" :show-link="true"
             />
         </div>
     </template>

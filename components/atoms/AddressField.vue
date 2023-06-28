@@ -9,12 +9,12 @@ defineProps<Props>()
 
 <template>
     <template v-if="addr === null">
-        <div class="uk-text-primary">
+        <div class="uk-text-secondary">
             {{ $t('general.empty') }}
         </div> 
     </template>
     <template v-else-if="addr.hex in badAddresses"> 
-        <div class="uk-text-primary">
+        <div class="uk-text-secondary">
             {{ badAddresses[addr.hex].name }}
         </div>
     </template>
