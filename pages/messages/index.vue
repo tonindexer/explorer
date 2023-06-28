@@ -147,7 +147,7 @@ onMounted(() => routeChecker())
     </template>
     <template v-else>
         <div v-if="isGeneral">
-            <h1>{{  $t('route.messages') }}</h1>
+            <h1>{{  $t('route.messages') }} <h2 class="uk-display-inline uk-text-muted">{{ `${store.totalQueryMessages}` }}</h2> </h1>
 
             <div class="uk-flex" :class="{ 'uk-text-secondary' : filterFlag}">
                 <div :uk-icon="`icon: ${filterFlag ? 'chevron-down' : 'chevron-right'}; ratio: 1.2`" @click="filterFlag = !filterFlag" style="cursor: pointer;"></div>

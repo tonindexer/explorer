@@ -50,7 +50,7 @@ onMounted(() => routeChecker(route.query))
     </template>
     <template v-else>
         <div v-if="isGeneral">
-            <h1>{{  $t('route.blocks') }}</h1>
+            <h1>{{  $t('route.blocks') }} <h2 class="uk-display-inline uk-text-muted">{{ `${store.totalQueryBlocks}` }}</h2></h1>
             <div class="uk-child-width-auto uk-text-right">
                 <label><input v-model="excludeEmpty" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_blocks') }}</label>
             </div>

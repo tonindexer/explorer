@@ -56,22 +56,22 @@ watch(() => props.hex, async() => await reloadInfo())
             <ul v-if="trKeys.length > 0" class="uk-child-width-expand uk-text-medium" :style="isMobile() ? 'margin-bottom: 0.3rem' : ''" uk-tab>
                 <li class="uk-margin-remove-left" v-if="trKeys.length > 0" :class="{'uk-active' : (route.hash === '#transactions' || route.hash === '#overview')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#transactions', query: route.query}">
-                        {{ $t('route.transactions') }}
+                        {{ $t('route.transactions') + ` (${store.totalQueryTransactions})` }}
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="jtKeys.length > 0" :class="{'uk-active' : (route.hash === '#jettons')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#jettons', query: route.query}">
-                        {{ $t('route.jettons') }}
+                        {{ $t('route.jettons') + ` (${store.totalQueryJettonWallets})`}}
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="ownerKeys.length > 0" :class="{'uk-active' : (route.hash === '#nfts')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#nfts', query: route.query}">
-                        {{ $t('route.nfts') }}
+                        {{ $t('route.nfts') + ` (${store.totalAccountNFTOwned})`}}
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="minterKeys.length > 0" :class="{'uk-active' : (route.hash === '#minter')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#minter', query: route.query}">
-                        {{ $t('ton.minter') }}
+                        {{ $t('ton.minter') + ` (${store.totalQueryNFTMinters})`}}
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="Object.keys(getMethods).length > 0" :class="{'uk-active' : (route.hash === '#get_methods')}" style="min-width: fit-content;">

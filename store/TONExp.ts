@@ -28,6 +28,7 @@ export const useMainStore = defineStore('tonexp', {
       totalQueryAccounts: 0 as number,
       totalAccountNFTOwned: 0 as number,
       totalQueryNFTMinters: 0 as number,
+      totalQueryJettonWallets: 0 as number,
       // Flag for NFT
       loadNextNFTFlag: true,
       // search results
@@ -310,7 +311,6 @@ export const useMainStore = defineStore('tonexp', {
             const { data } = await apiRequest(`/contract/interfaces`, 'GET')
             const parsed = parseJson<ContractInterfaceAPI>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            this.totalQueryTransactions = parsed.total
             for (const inter of parsed.results) {
               this.interfaces[inter.name] = inter
             }
@@ -527,7 +527,8 @@ export const useMainStore = defineStore('tonexp', {
               const { data } = await apiRequest(`/accounts?${query}`, 'GET')
               const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
                   (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-              if (parsed.results && parsed.results.length > 0) {
+            this.totalQueryJettonWallets = parsed.total
+            if (parsed.results && parsed.results.length > 0) {
                 const jt_key = this.processAccount(parsed.results[0])
                 this.accounts[hex].jetton_wallets.push(`${hex}|${jt_key}`)
               }

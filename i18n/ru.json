@@ -121,6 +121,7 @@
         "exclude_masterchain" : "Скрыть MasterChain",
         "deep_transactions" : "Транзакции шардов",
         "deep_messages" : "Сообщения шардов",
+        "deep_accounts" : "Аккаунты шардов",
         "filter": "Фильтры"
     },
     "warning" : {

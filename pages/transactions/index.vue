@@ -38,7 +38,7 @@ onMounted(() => routeChecker(route.query))
     </template>
     <template v-else>
         <div v-if="isGeneral">
-            <h1>{{  $t('route.transactions') }}</h1>
+            <h1>{{  $t('route.transactions') }} <h2 class="uk-display-inline uk-text-muted">{{ `${store.totalQueryTransactions}` }}</h2></h1>
             <div class="uk-child-width-auto uk-text-right">
                 <label><input v-model="excludeMC" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_masterchain') }}</label>
             </div>

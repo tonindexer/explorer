@@ -74,7 +74,7 @@ onMounted(() => routeChecker())
     </template>
     <template v-else>
         <div v-if="isGeneral">
-            <h1>{{  $t('route.accounts') }}</h1>
+            <h1>{{  $t('route.accounts') }} <h2 class="uk-display-inline uk-text-muted">{{ `${store.totalQueryAccounts}` }}</h2></h1>
             <div class="uk-flex uk-flex-right">
                 <div v-if="!isMobile()" class="uk-width-2-5">
                     <ModelSelect :options="options" v-model="selected" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
