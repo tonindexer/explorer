@@ -1,7 +1,6 @@
 <script setup lang="ts">
 interface Props {
     msg: Message | null
-    dir: MessageDirection
     showLink: boolean
 }
 
@@ -9,8 +8,7 @@ const props = defineProps<Props>()
 
 const desc =  computed(() => {
     if (props.msg)
-        return ((props.dir === 'IN' || props.dir === 'OUT' ) ? `${props.msg.type}_`+ props.dir : props.msg.type) +
-            (`${props.msg.bounce ? ' · BOUNCE' : ''}`) + (`${props.msg.bounced ? ' · BOUNCED' : ''}`)
+        return (props.msg.type) + (`${props.msg.bounce ? ' · BOUNCE' : ''}`) + (`${props.msg.bounced ? ' · BOUNCED' : ''}`)
 })
 
 const showData = ref(false)

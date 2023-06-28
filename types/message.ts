@@ -3,7 +3,7 @@ export {};
 declare global {
     
     type MessageType = "INTERNAL" | "EXTERNAL_IN" | "EXTERNAL_OUT"
-    type MessageDirection = 'IN' | 'OUT' | 'EXT_IN' | 'EXT_OUT'
+    
     type Message = {
 
         type: MessageType

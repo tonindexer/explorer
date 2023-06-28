@@ -260,7 +260,7 @@ onMounted(() => routeChecker())
                     </div>
                 </template>
             </div>
-            <LazyMessagesTable :filters="selectedOptions" :keys="store.exploredMessages" :update="true" :default-length="10" :hidden="false" :item-selector="true" :parent_tx="null" :show-link="true"
+            <LazyMessagesTable :filters="selectedOptions" :keys="store.exploredMessages" :update="true" :default-length="10" :hidden="false" :item-selector="true" :show-link="true"
             />
         </div>
     </template>

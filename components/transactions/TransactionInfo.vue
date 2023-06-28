@@ -70,9 +70,9 @@ watch(props, async() => await reloadInfo())
         </div>
         <div v-if="route.hash === '#messages' || route.hash === '#overview'" id="messages">
             <h3 v-if="inMessageKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.in_msg') + ` (${inMessageKeys.length})` }}</h3>
-            <MessagesTable :filters="{}" :show-link="true" :parent_tx="hash" :item-selector="false" :default-length="5" :update="false" :keys="inMessageKeys" :hidden="inMessageKeys.length === 0"/>
+            <MessagesTable :filters="{}" :show-link="true" :item-selector="false" :default-length="5" :update="false" :keys="inMessageKeys" :hidden="inMessageKeys.length === 0"/>
             <h3 v-if="outMessageKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.out_msg') + ` (${outMessageKeys.length})` }}</h3>
-            <MessagesTable :filters="{}" :show-link="true" :parent_tx="hash" :item-selector="false" :default-length="5" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
+            <MessagesTable :filters="{}" :show-link="true" :item-selector="false" :default-length="5" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
         </div>
         <div v-if="route.hash === '#accounts' && (loadedAccountKeys.length + unloadedAccountKeys.length > 0)" id="accounts">
             <h3 v-if="loadedAccountKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.loaded_accs') + ` (${loadedAccountKeys.length})` }}</h3>

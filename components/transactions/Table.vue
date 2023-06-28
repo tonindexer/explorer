@@ -102,7 +102,6 @@ onMounted(() => {
                             <MessagesTable 
                                 :filters="{}"
                                 :show-link="false"
-                                :parent_tx="trn" 
                                 :item-selector="false" 
                                 :default-length="5" 
                                 :update="false" 
