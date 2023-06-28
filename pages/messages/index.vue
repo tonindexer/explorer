@@ -149,7 +149,7 @@ onMounted(() => routeChecker())
         <div v-if="isGeneral">
             <div class="uk-flex uk-flex-bottom uk-margin-bottom">
                 <h1 class="uk-margin-remove-vertical uk-margin-right">{{  $t('route.messages') }}</h1>
-                <h2 class="uk-margin-remove uk-text-muted">{{ `${store.totalQueryAccounts === -1 ? '...' : store.totalQueryMessages}` }}</h2>
+                <h2 class="uk-margin-remove uk-text-muted">{{ `${store.totalQueryMessages === -1 ? '...' : store.totalQueryMessages}` }}</h2>
             </div>
             <div class="uk-flex" :class="{ 'uk-text-secondary' : filterFlag}">
                 <div :uk-icon="`icon: ${filterFlag ? 'chevron-down' : 'chevron-right'}; ratio: 1.2`" @click="filterFlag = !filterFlag" style="cursor: pointer;"></div>
