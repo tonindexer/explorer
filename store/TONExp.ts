@@ -307,7 +307,7 @@ export const useMainStore = defineStore('tonexp', {
         }
         if (Object.keys(this.interfaces).length === 0) {
           try {
-            const { data } = await apiRequest(`/contract/interfaces`, 'GET')
+            const { data } = await apiRequest(`/contracts/interfaces`, 'GET')
             const parsed = parseJson<ContractInterfaceAPI>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
             this.totalQueryTransactions = parsed.total
