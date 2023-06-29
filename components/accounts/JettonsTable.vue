@@ -51,7 +51,7 @@ onMounted(async() => {
                             </div>
                             <div class="uk-flex">
                                 <div class="uk-margin-remove uk-text-left uk-text-truncate" style="max-width: 85vw">
-                                    <NuxtLink :to="{ path: 'accounts', query: { hex: jt.wallet_address }, hash: '#overview'}" class="uk-text-truncate" style="max-width: 90vw;">
+                                    <NuxtLink :to="{ path: 'accounts', query: { hex: jt.wallet_address }, hash: '#overview'}" class="uk-text-truncate uk-text-primary" style="max-width: 90vw;">
                                         {{ jt.wallet_address }}
                                     </NuxtLink>
                                 </div>
@@ -60,12 +60,12 @@ onMounted(async() => {
                     </template>
                     <template v-else>
                         <td>
-                            <NuxtLink :to="{ path: 'accounts', query: { hex: jt.minter_address }, hash: '#overview'}">
+                            <NuxtLink :to="{ path: 'accounts', query: { hex: jt.minter_address }, hash: '#overview'}" class="uk-text-primary">
                                 {{ jt.name }}
                             </NuxtLink>
                         </td>
                         <td> 
-                            <NuxtLink :to="{ path: 'accounts', query: { hex: jt.wallet_address }, hash: '#overview'}">
+                            <NuxtLink :to="{ path: 'accounts', query: { hex: jt.wallet_address }, hash: '#overview'}" class="uk-text-primary">
                                 {{ truncString(jt.wallet_address, 10) }}
                             </NuxtLink>
                         </td>
@@ -78,12 +78,20 @@ onMounted(async() => {
         </tbody>
     </table>
     <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
-            <AtomsPageArrows    
-                :page="pageNum" 
-                :left-disabled="pageNum === 0" 
-                :right-disabled="(pageNum+1)*itemCount >= keys.length"
-                @increase="pageNum += 1"
-                @decrease="pageNum -= 1"
+        <div class="uk-flex uk-flex-middle" v-if="!isMobile()">
+            <AtomsSelector 
+                :item-count="itemCount"
+                :amount="store.totalQueryJettonWallets"
+                :options="[5, 10, 20, 50]"
+                @set-value="(e: any) => itemCount = e.value"
             />
         </div>
+        <AtomsPageArrows    
+            :page="pageNum" 
+            :left-disabled="pageNum === 0" 
+            :right-disabled="(pageNum+1)*itemCount >= keys.length"
+            @increase="pageNum += 1"
+            @decrease="pageNum -= 1"
+        />
+    </div>
 </template>

@@ -85,7 +85,7 @@ onMounted(async () => {
                     <img v-else src="@/assets/images/default.png" width="250" height="250" alt="">
                 </div>
                 <div class="uk-card-body uk-text-truncate uk-padding-small">
-                    <NuxtLink :to="`/accounts?hex=${nft.address}#overview`" :uk-tooltip=" nft.metadata?.name ? nft.metadata.name : 'No name'">
+                    <NuxtLink :to="`/accounts?hex=${nft.address}#overview`" :uk-tooltip=" nft.metadata?.name ? nft.metadata.name : 'No name'" class="uk-text-primary">
                         {{ nft.metadata?.name ? nft.metadata.name : "No name" }}
                     </NuxtLink>
                     <h4 class="uk-margin-remove-top uk-text-truncate" :uk-tooltip="nft.collection?.name ? nft.collection.name : 'No collection'"> {{ nft.collection?.name ? nft.collection.name : "No collection" }}</h4>
@@ -94,6 +94,14 @@ onMounted(async () => {
         </div>
     </div>
     <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-small-top uk-margin-remove-bottom" style="justify-content: flex-end;">
+        <div class="uk-flex uk-flex-middle" v-if="!isMobile()">
+            <AtomsSelector 
+                :item-count="itemCount"
+                :amount="minterFlag ? store.totalQueryNFTMinters : store.totalAccountNFTOwned"
+                :options="[12, 18, 24, 48]"
+                @set-value="(e: any) => itemCount = e.value"
+            />
+        </div>
         <AtomsPageArrows    
             :page="pageNum" 
             :left-disabled="pageNum === 0" 

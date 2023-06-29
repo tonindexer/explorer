@@ -30,11 +30,11 @@ const filterFields = ref({
 
 const store = useMainStore()
 
-const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}))
+const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}).sort((a, b) => a.text > b.text ? 1 : -1))
 const optionsMobile = computed(() : string[] => {
     const defualt = ['All']
     defualt.push(...Object.keys(store.interfaces))
-    return defualt
+    return defualt.sort()
 })
 
 const srcField = ref('')
@@ -194,7 +194,8 @@ onMounted(() => routeChecker())
                         <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
                             <AtomsSelector 
                                 :item-count="filterFields.src_contract_mobile"
-                                :name="null"
+                                :amount="null"
+                                :start-line="null"
                                 :options="optionsMobile"
                                 @set-value="(e: any) => filterFields.src_contract_mobile = e.value"
                             />
@@ -214,7 +215,8 @@ onMounted(() => routeChecker())
                         <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
                             <AtomsSelector 
                                 :item-count="filterFields.dst_contract_mobile"
-                                :name="null"
+                                :amount="null"
+                                :start-line="null"
                                 :options="optionsMobile"
                                 @set-value="(e: any) => filterFields.dst_contract_mobile = e.value"
                             />

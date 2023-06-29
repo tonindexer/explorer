@@ -16,11 +16,11 @@ const selected: Ref<SelectItem | {}> = ref({ value: '', text: ''})
 const selectedMobile = ref('All')
 const store = useMainStore()
 
-const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}))
+const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}).sort((a, b) => a.text > b.text ? 1 : -1))
 const optionsMobile = computed(() : string[] => {
     const defualt = ['All']
     defualt.push(...Object.keys(store.interfaces))
-    return defualt
+    return defualt.sort()
 })
 
 const selectedFilter = computed(() => isMobile() ? (selectedMobile.value !== 'All' ? selectedMobile.value : null ): ('value' in selected.value ? selected.value.value : null))
@@ -85,7 +85,8 @@ onMounted(() => routeChecker())
                 <div v-else-if="isMobile()" class="uk-width-4-5 uk-text-small" style="margin-right: 0.5rem;">
                     <AtomsSelector 
                         :item-count="selectedMobile"
-                        :name="null"
+                        :amount="null"
+                        :start-line="null"
                         :options="optionsMobile"
                         @set-value="(e: any) => selectedMobile = e.value"
                     />

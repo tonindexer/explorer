@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface Props {
-    name: string | null,
+    startLine?: string | null
+    amount: number | null
     itemCount: number | string,
     options: Array<number | string>
 }
@@ -9,8 +10,11 @@ defineEmits(['setValue'])
 </script>
 
 <template>
-    <p v-if="name" class="uk-margin-remove">{{ $t(name)}}</p>
+    <p v-if="startLine !== null" class="uk-margin-remove">{{ $t(startLine ?? 'general.show')}}</p>
     <select :value="itemCount" @change="$event => $emit('setValue', $event.target)" class="uk-select uk-margin-small-left" style="min-width: 70px">
         <option v-for="option in options">{{ option }}</option>
     </select>
+    <template v-if="amount">
+        <p class="uk-margin-remove-vertical uk-margin-small-left" style="white-space: nowrap;">{{ $t('general.items') + ' ' + amount + ' ·'}}</p>
+    </template>
 </template>

@@ -102,11 +102,11 @@ onMounted(() => setExtraFields())
                 </template>
             </tbody>
         </table>
-        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+        <div v-if="!hidden" class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
             <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
                 <AtomsSelector 
                     :item-count="itemCount"
-                    :name="'general.items'"
+                    :amount="store.totalQueryBlocks"
                     :options="[5, 10, 20, 50]"
                     @set-value="(e: any) => itemCount = e.value"
                 />

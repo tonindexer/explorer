@@ -88,7 +88,7 @@ onMounted(() => {
         <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
             <thead v-if="!isMobile()">
                 <tr>
-                    <th class="uk-width-1-3">{{ $t('ton.id')}}</th>
+                    <th class="uk-width-2-5">{{ $t('ton.id')}}</th>
                     <th class="uk-width-1-3">{{ $t('ton.contract')}}</th>
                     <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
                     <th class="uk-width-1-6 uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
@@ -100,14 +100,16 @@ onMounted(() => {
                 </template>
             </tbody>
         </table>
-        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+        <div v-if="!hidden" class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
             <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
-                <AtomsSelector 
-                    :item-count="itemCount"
-                    :name="'general.items'"
-                    :options="[5, 10, 20, 50]"
-                    @set-value="(e: any) => itemCount = e.value"
-                />
+                <ClientOnly>
+                    <AtomsSelector 
+                        :item-count="itemCount"
+                        :amount="store.totalQueryAccounts"
+                        :options="[5, 10, 20, 50]"
+                        @set-value="(e: any) => itemCount = e.value"
+                    />
+                </ClientOnly>
             </div>
             <AtomsPageArrows    
                 :page="pageNum" 

@@ -103,7 +103,7 @@ onMounted(() => {
                                 :filters="{}"
                                 :show-link="false"
                                 :item-selector="false" 
-                                :default-length="5" 
+                                :default-length="10" 
                                 :update="false" 
                                 :keys="[store.transactions[trn].in_msg_hash, ...store.transactions[trn].out_msg_keys]" 
                                 :hidden="[store.transactions[trn].in_msg_hash, ...store.transactions[trn].out_msg_keys].length === 0"
@@ -116,7 +116,7 @@ onMounted(() => {
             <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
                 <AtomsSelector 
                     :item-count="itemCount"
-                    :name="'general.items'"
+                    :amount="store.totalQueryTransactions"
                     :options="[5, 10, 20, 50]"
                     @set-value="(e: any) => itemCount = e.value"
                 />

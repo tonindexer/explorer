@@ -476,7 +476,7 @@ export const useMainStore = defineStore('tonexp', {
         return hash
       },
       async fetchBareAccounts(hex: string[]) {
-        hex = hex.filter(key => !(key in badAddresses))
+        // hex = hex.filter(key => !(key in badAddresses))
         if (hex.length === 0) return hex
         try {
           const fullReq: MockType = {

@@ -53,25 +53,37 @@ watch(() => props.hex, async() => await reloadInfo())
     <template v-else>
         <AccountsPropsTable v-if="account" :acc="account"/>
         <div v-if="account">
-            <ul v-if="trKeys.length > 0" class="uk-child-width-expand uk-text-medium" :style="isMobile() ? 'margin-bottom: 0.3rem' : ''" uk-tab>
+            <ul v-if="trKeys.length > 0" class="uk-child-width-expand uk-text-medium tab-styler" :style="isMobile() ? 'margin-bottom: 0.3rem' : ''" uk-tab>
                 <li class="uk-margin-remove-left" v-if="trKeys.length > 0" :class="{'uk-active' : (route.hash === '#transactions' || route.hash === '#overview')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#transactions', query: route.query}">
-                        {{ $t('route.transactions') + ` (${store.totalQueryTransactions})` }}
+                        {{ $t('route.transactions')}}
+                        <span>
+                            {{ store.totalQueryTransactions }}
+                        </span>
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="jtKeys.length > 0" :class="{'uk-active' : (route.hash === '#jettons')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#jettons', query: route.query}">
-                        {{ $t('route.jettons') + ` (${store.totalQueryJettonWallets})`}}
+                        {{ $t('route.jettons') }}
+                        <span>
+                            {{ store.totalQueryJettonWallets }}
+                        </span>
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="ownerKeys.length > 0" :class="{'uk-active' : (route.hash === '#nfts')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#nfts', query: route.query}">
-                        {{ $t('route.nfts') + ` (${store.totalAccountNFTOwned})`}}
+                        {{ $t('route.nfts') }}
+                        <span>
+                            {{ store.totalAccountNFTOwned }}
+                        </span>
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="minterKeys.length > 0" :class="{'uk-active' : (route.hash === '#minter')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#minter', query: route.query}">
-                        {{ $t('ton.minter') + ` (${store.totalQueryNFTMinters})`}}
+                        {{ $t('ton.minter') }}
+                        <span>
+                            {{ store.totalQueryNFTMinters }}
+                        </span>
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="Object.keys(getMethods).length > 0" :class="{'uk-active' : (route.hash === '#get_methods')}" style="min-width: fit-content;">
@@ -82,7 +94,7 @@ watch(() => props.hex, async() => await reloadInfo())
             </ul>
         </div>
         <div v-show="account && (route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
-            <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="false" :account="hex" />
+            <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :account="hex" />
         </div>
         <div v-if="account && route.hash === '#jettons'" id="jettons">
             <LazyAccountsJettonsTable :owner="hex" :keys="jtKeys" :default-length="10" />
