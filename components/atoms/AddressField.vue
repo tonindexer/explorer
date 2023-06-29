@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useMainStore } from '~/store/TONExp';
 interface Props {
     addr: Address | null
     break_word: boolean
 }
 defineProps<Props>()
 
+const store = useMainStore()
 </script>
 
 <template>
@@ -14,13 +16,13 @@ defineProps<Props>()
         </div> 
     </template>
     <template v-else-if="addr.hex in badAddresses"> 
-        <div class="uk-text-secondary">
+        <NuxtLink class="uk-text-primary" :to="{ path: 'accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
             {{ badAddresses[addr.hex].name }}
-        </div>
+        </NuxtLink>
     </template>
     <template v-else> 
         <NuxtLink class="uk-text-primary" :to="{ path: 'accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
-            {{ addr.base64 }}
+            {{ store.accounts[addr.hex]?.label?.name ?? addr.base64 }}
         </NuxtLink>
     </template>
 </template>

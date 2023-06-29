@@ -48,8 +48,7 @@ const showData = ref(false)
                         {{ $t('general.from') }}
                     </div>
                     <div v-if="msg.src_address" class="uk-margin-remove uk-text-right uk-flex">
-                        <NuxtLink v-if="!(msg.src_address.hex in badAddresses)" :to="{path: 'accounts', query: { hex: msg.src_address.hex}, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.src_address.base64 }}</NuxtLink>
-                        <div class="uk-text-secondary" v-if="msg.src_address.hex in badAddresses"> {{ badAddresses[msg.src_address.hex].name }} </div>
+                        <NuxtLink :to="{path: 'accounts', query: { hex: msg.src_address.hex}, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.src_address.hex in badAddresses ? badAddresses[msg.src_address.hex].name : msg.src_address.base64 }}</NuxtLink>
                     </div>
                     <div v-else class="uk-margin-remove uk-text-right">
                         <div class="uk-text-secondary">{{ $t('general.empty') }}</div>
@@ -100,8 +99,7 @@ const showData = ref(false)
                         {{ $t('general.to') }}
                     </div>
                     <div v-if="msg.dst_address" class="uk-margin-remove uk-text-right uk-flex">
-                        <NuxtLink v-if="!(msg.dst_address.hex in badAddresses)" :to="{path: 'accounts', query: { hex: msg.dst_address.hex}, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.dst_address.base64 }}</NuxtLink>
-                        <div class="uk-text-secondary" v-if="msg.dst_address.hex in badAddresses"> {{ badAddresses[msg.dst_address.hex].name }} </div>
+                        <NuxtLink :to="{path: 'accounts', query: { hex: msg.dst_address.hex}, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.dst_address.hex in badAddresses ? badAddresses[msg.dst_address.hex].name : ( msg.dst_address.base64) }}</NuxtLink>
                     </div>
                     <div v-else class="uk-margin-remove uk-text-right">
                         <div class="uk-text-secondary">{{ $t('general.empty') }}</div>

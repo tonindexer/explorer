@@ -22,9 +22,7 @@ defineEmits(['toggleMsg'])
                     {{ $t('route.account') }}
                 </div>
                 <div class="uk-margin-remove uk-text-right">
-
-                    <NuxtLink v-if="!(trn.address.hex in badAddresses)" :to="{path: 'accounts', query: { hex: trn.address.hex}, hash: '#overview'}" class="uk-text-primary"> {{ truncString(trn.address.base64, 7) }}</NuxtLink>
-                    <div v-if="trn.address.hex in badAddresses"> {{ badAddresses[trn.address.hex].name }} </div>
+                    <NuxtLink :to="{path: 'accounts', query: { hex: trn.address.hex}, hash: '#overview'}" class="uk-text-primary"> {{ trn.address.hex in badAddresses ? badAddresses[trn.address.hex].name : truncString(trn.address.base64, 7) }}</NuxtLink>
                 </div>
             </div>
             <div class="uk-flex" style="justify-content: space-between;">
