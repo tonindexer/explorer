@@ -89,8 +89,9 @@ onMounted(() => {
             <thead v-if="!isMobile()">
                 <tr>
                     <th class="uk-width-1-3">{{ $t('ton.id')}}</th>
+                    <th class="uk-width-1-3">{{ $t('ton.contract')}}</th>
                     <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
-                    <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
+                    <th class="uk-width-1-6 uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
                 </tr>
             </thead>
             <tbody>

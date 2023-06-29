@@ -5,6 +5,11 @@ interface Props {
 
 defineProps<Props>()
 
+const showWallets = ref(false)
+
+onMounted(() => {
+    showWallets.value = true
+})
 </script>
 
 <template>
@@ -38,9 +43,22 @@ defineProps<Props>()
         <td> 
             <AtomsAddressField :addr="acc.address" :break_word="true"/>
         </td>
+        <td v-if="showWallets">
+            <div class="uk-flex uk-align-center uk-flex-wrap uk-margin-remove">
+                <NuxtLink v-for="item of acc.types" :to="`/accounts?contract=${item}`" class="uk-text-primary uk-margin-small-right" uk-icon="icon: link" style="line-height: 1.5;">
+                    {{ item }}
+                </NuxtLink>
+            </div>
+        </td>
+        <td class="uk-flex uk-align-center uk-flex-wrap uk-margin-remove" v-else-if="!showWallets">
+            <div v-for="item of acc.types" class="uk-text-primary uk-margin-small-right">
+                {{ item }}
+            </div>
+        </td>
         <td class="uk-text-right uk-text-nowrap"> {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none')}}</td>
-        <td class="uk-padding-remove-right">
+        <td class="uk-padding-remove-left">
             <AtomsTableDateCell :date-time="acc.updated_at"/>
         </td>
     </tr>
+
 </template>
