@@ -26,9 +26,6 @@ export const useMainStore = defineStore('tonexp', {
       totalQueryMessages: -1 as number,
       totalQueryBlocks: 0 as number,
       totalQueryAccounts: -1 as number,
-      totalAccountNFTOwned: 0 as number,
-      totalQueryNFTMinters: 0 as number,
-      totalQueryJettonWallets: 0 as number,
       // Flag for NFT
       loadNextNFTFlag: true,
       // search results
@@ -77,8 +74,6 @@ export const useMainStore = defineStore('tonexp', {
           case 'trn': return loaded >= state.totalQueryTransactions;
           case 'block': return loaded >= state.totalQueryBlocks;
           case 'acc': return loaded >= state.totalQueryAccounts;
-          case 'mint': return loaded >= state.totalQueryNFTMinters;
-          case 'own': return loaded >= state.totalAccountNFTOwned;
           case 'msg': return loaded >= state.totalQueryMessages;
           default: return false;
         }
@@ -101,16 +96,21 @@ export const useMainStore = defineStore('tonexp', {
       },
       processAccount(account: AccountAPI) {
         const accountKey = account.address.hex
-        const mappedAccount = <Account>{}
-        mappedAccount.nft_keys = []
-        mappedAccount.minted_nfts = []
-        mappedAccount.jetton_wallets = []
-        mappedAccount.transaction_keys = []
 
         // Don't override account if the stored state matched given
         if (accountKey in this.accounts) {
           if (this.accounts[accountKey].block_seq_no > account.block_seq_no) return accountKey
         }
+
+        const mappedAccount = <Account>{}
+        mappedAccount.nft_keys = []
+        mappedAccount.minted_nfts = []
+        mappedAccount.jetton_wallets = []
+        mappedAccount.transaction_keys = []
+        mappedAccount.transaction_amount = 0
+        mappedAccount.jetton_amount = 0
+        mappedAccount.nft_amount = 0
+        mappedAccount.minted_amount = 0
 
         this.accountBases[account.address.base64] = accountKey
 
@@ -402,6 +402,7 @@ export const useMainStore = defineStore('tonexp', {
             this.exploredTransactions.push(trn)
           }
           if (account) {
+              this.accounts[account].transaction_amount = parsed.total
               this.accounts[account].transaction_keys = []
               this.accounts[account].transaction_keys.push(...this.exploredTransactions)
           }
@@ -536,10 +537,12 @@ export const useMainStore = defineStore('tonexp', {
               const { data } = await apiRequest(`/accounts?${query}`, 'GET')
               const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
                   (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            this.totalQueryJettonWallets = parsed.total
+            this.accounts[hex].jetton_amount = parsed.total
             if (parsed.results && parsed.results.length > 0) {
-                const jt_key = this.processAccount(parsed.results[0])
-                this.accounts[hex].jetton_wallets.push(`${hex}|${jt_key}`)
+                for (const jt of parsed.results) {
+                  const jt_key = this.processAccount(jt)
+                  this.accounts[hex].jetton_wallets.push(`${hex}|${jt_key}`)
+                }
               }
             } catch (error) {
               console.log(error)
@@ -593,7 +596,7 @@ export const useMainStore = defineStore('tonexp', {
           const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
 
-          minterFlag ? this.totalQueryNFTMinters = parsed.total : this.totalAccountNFTOwned = parsed.total
+          minterFlag ? this.accounts[account].minted_amount = parsed.total : this.accounts[account].nft_amount = parsed.total
           if (offset === 0) minterFlag ? this.accounts[account].minted_nfts = [] : this.accounts[account].nft_keys = []
 
           if (parsed.results && parsed.results.length > 0)

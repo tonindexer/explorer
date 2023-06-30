@@ -58,7 +58,7 @@ watch(() => props.hex, async() => await reloadInfo())
                     <NuxtLink :to="{ hash: '#transactions', query: route.query}">
                         {{ $t('route.transactions')}}
                         <span>
-                            {{ store.totalQueryTransactions }}
+                            {{ account.transaction_amount }}
                         </span>
                     </NuxtLink>
                 </li>
@@ -66,7 +66,7 @@ watch(() => props.hex, async() => await reloadInfo())
                     <NuxtLink :to="{ hash: '#jettons', query: route.query}">
                         {{ $t('route.jettons') }}
                         <span>
-                            {{ store.totalQueryJettonWallets }}
+                            {{ account.jetton_amount }}
                         </span>
                     </NuxtLink>
                 </li>
@@ -74,7 +74,7 @@ watch(() => props.hex, async() => await reloadInfo())
                     <NuxtLink :to="{ hash: '#nfts', query: route.query}">
                         {{ $t('route.nfts') }}
                         <span>
-                            {{ store.totalAccountNFTOwned }}
+                            {{ account.nft_amount }}
                         </span>
                     </NuxtLink>
                 </li>
@@ -82,7 +82,7 @@ watch(() => props.hex, async() => await reloadInfo())
                     <NuxtLink :to="{ hash: '#minter', query: route.query}">
                         {{ $t('ton.minter') }}
                         <span>
-                            {{ store.totalQueryNFTMinters }}
+                            {{ account.minted_amount }}
                         </span>
                     </NuxtLink>
                 </li>

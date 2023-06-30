@@ -78,6 +78,8 @@ declare global {
 
         get_method_hashes?: number[]
 
+        fake?: boolean
+
         types?: string[]
 
         owner_address?: Address
@@ -91,10 +93,16 @@ declare global {
         minted_nfts: NFTKey[]
         transaction_keys: TransactionKey[]
 
+        jetton_amount: number
+        nft_amount: number
+        minted_amount: number
+        transaction_amount: number
+
         updated_at: string
     }
 
-    interface AccountAPI extends Omit<Account, 'jetton_wallets' | 'nft_keys' | 'nft_items' | 'minted_nfts' | 'transaction_keys'> {}
+    interface AccountAPI extends Omit<Account, 'jetton_wallets' | 'nft_keys' | 'nft_items' | 
+        'minted_nfts' | 'transaction_keys' | 'jetton_amount' | 'nft_amount' | 'minted_amount' | 'transaction_amount'> {}
 
     type AccountAPIData = {
         total: number

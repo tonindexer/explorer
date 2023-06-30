@@ -79,6 +79,18 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
+            <tr v-if="acc.fake">
+                <AtomsPropLine>
+                    <template #name>
+                        <p class="uk-text-danger uk-margin-remove">
+                            {{ $t(`ton.fake`) }}
+                        </p>
+                    </template>
+                    <template #value>
+                        {{ acc.fake }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
             <tr v-if="acc.types && acc.types.length > 0">
                 <AtomsPropLine :wrap="true">
                     <template #name>

@@ -17,7 +17,10 @@ const loading = ref(true)
 
 const firstLT: NullableBigRef = ref(0n)
 const lastLT: NullableBigRef = ref(0n)
-const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), props.minterFlag ? 'mint' : 'own'))
+
+const lastPageFlag = computed(() => props.minterFlag ? 
+    itemCount.value * (pageNum.value+1) >= store.accounts[props.account].minted_amount : 
+    itemCount.value * (pageNum.value+1) >= store.accounts[props.account].nft_amount)
 
 const nftAccs = computed(() => props.keys.map(item => item.split('|')[1]))
 const nftList = computed(() => store.getNFTs(props.keys.slice(pageNum.value*itemCount.value, (pageNum.value + 1)*itemCount.value)))
@@ -83,6 +86,7 @@ onMounted(async () => {
                     <img v-if="nft.previews.length > 0" :src="nft.previews[1].url" width="500" height="500" alt="">
                     <img v-else-if="nft.metadata?.image" :src="nft.metadata.image" width="500" height="500" alt="">
                     <img v-else src="@/assets/images/default.png" width="250" height="250" alt="">
+                    <div v-if="store.accounts[nft.address]?.fake" class="uk-position-top-left uk-overlay uk-margin-small-top uk-margin-small-left uk-background-muted uk-text-danger uk-text-large uk-text-bold" style="padding: 0 5px">Fake</div>
                 </div>
                 <div class="uk-card-body uk-text-truncate uk-padding-small">
                     <NuxtLink :to="`/accounts?hex=${nft.address}#overview`" :uk-tooltip=" nft.metadata?.name ? nft.metadata.name : 'No name'" class="uk-text-primary">
@@ -97,7 +101,7 @@ onMounted(async () => {
         <div class="uk-flex uk-flex-middle" v-if="!isMobile()">
             <AtomsSelector 
                 :item-count="itemCount"
-                :amount="minterFlag ? store.totalQueryNFTMinters : store.totalAccountNFTOwned"
+                :amount="minterFlag ? store.accounts[account].minted_amount : store.accounts[account].nft_amount"
                 :options="[12, 18, 24, 48]"
                 @set-value="(e: any) => itemCount = e.value"
             />
