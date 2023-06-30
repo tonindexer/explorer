@@ -102,6 +102,8 @@
         "jettons" : "Jettons",
         "nfts" : "NFTs",
         "nft" : "NFT",
+        "nft_collection" : "NFT Коллекции",
+        "jetton_minter" : "Jetton минтеры",
         "search" : "Резульаты поиска",
         "results" : "Результаты",
         "about": "О проекте"
