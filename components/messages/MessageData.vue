@@ -54,14 +54,14 @@ const parseData = computed((): FirstLevel[] => {
     <table class="uk-table uk-table-middle uk-table-divider uk-margin-remove-top">
         <thead v-if="!isMobile()">
             <tr>
-                <th class="uk-table-shrink" style="max-width: 20%;">{{ $t('general.field')}}</th>
+                <th class="uk-width-1-5" style="max-width: 20%;">{{ $t('general.field')}}</th>
                 <th class="uk-table-expand" style="margin-right: 0.3rem;">{{ $t('general.value')}}</th>
             </tr>
         </thead>
         <tbody v-if="!isMobile()">
             <template v-for="section of parseData">
                 <tr v-if="!(section.object && typeof section.value === 'object')">
-                    <td>
+                    <td class="uk-width-1-5">
                         <div class="uk-margin-remove">
                             {{ section.title }}
                         </div>
@@ -77,7 +77,7 @@ const parseData = computed((): FirstLevel[] => {
                 </tr>
                 <template v-else v-for="second of section.value">
                     <tr>
-                        <td>
+                        <td class="uk-width-1-5">
                             <div class="uk-text-small uk-text-bold">
                                 {{ section.title }}
                             </div>

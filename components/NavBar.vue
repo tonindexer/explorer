@@ -22,7 +22,7 @@ watch(showMobileNav, () => {
                     <NuxtLink :to="'/accounts?contract=jetton_minter'" class="link" :class="{ 'active' : route.fullPath === '/accounts?contract=jetton_minter'}"> {{ $t('route.jetton_minter') }}</NuxtLink>
                 </div>
                 <div class="uk-flex uk-padding-remove" style="align-items: center;">
-                    <NuxtLink :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}"> {{ $t('route.about') }} </NuxtLink>
+                    <NuxtLink style="white-space: nowrap;" :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}"> {{ $t('route.about') }} </NuxtLink>
                     <AtomsLangSwitcher/>
                 </div>
             </template>

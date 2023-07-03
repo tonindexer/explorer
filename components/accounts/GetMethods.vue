@@ -67,7 +67,7 @@ const parseData = computed((): TableSection[] => {
     <table class="uk-table uk-table-middle uk-margin-remove-top">
         <thead v-if="!isMobile()">
             <tr>
-                <th class="uk-table-shrink" style="max-width: 20%;">{{ $t('general.field')}}</th>
+                <th class="uk-table-1-5" style="max-width: 20%;">{{ $t('general.field')}}</th>
                 <th class="uk-table-expand" style="margin-right: 0.3rem;">{{ $t('general.value')}}</th>
             </tr>
         </thead>
@@ -87,7 +87,7 @@ const parseData = computed((): TableSection[] => {
                     </tr>
                     <template v-for="value of method.recieves" v-if="method.recieves.length > 0">
                         <tr style="border-bottom: 1px dashed #666;">
-                            <td>
+                            <td class="uk-width-1-5">
                                 <div class="uk-text-small uk-text-bold">
                                     {{ $t('general.argument') }}
                                 </div>
@@ -96,13 +96,13 @@ const parseData = computed((): TableSection[] => {
                                 </div>
                             </td>
                             <td class="uk-flex">
-                                <p v-if="!(value.addr && value.value !== 'NONE') && !value.content" class="uk-text-truncate uk-margin-remove"  style="max-width: calc(100vw * 0.75 * 0.6)">
+                                <p v-if="!(value.addr && value.value !== 'NONE') && !value.content" class="uk-text-truncate uk-margin-remove"  style="max-width: calc(100vw * 0.75 * 0.75)">
                                     {{ value.value ? value.value : $t('general.empty') }}
                                 </p>
-                                <NuxtLink v-else-if="value.content" rel="external" aria-label="nft_link" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove"  style="max-width: calc(100vw * 0.75 * 0.6)">
+                                <NuxtLink v-else-if="value.content" rel="external" aria-label="nft_link" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove"  style="max-width: calc(100vw * 0.75 * 0.75)">
                                     {{ value.value }}
                                 </NuxtLink>
-                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="`/accounts?hex=${value.value}`" style="max-width: calc(100vw * 0.75 * 0.6)"> 
+                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="`/accounts?hex=${value.value}`" style="max-width: calc(100vw * 0.75 * 0.75)"> 
                                     {{ value.value }}
                                 </NuxtLink>
                             </td>
@@ -110,7 +110,7 @@ const parseData = computed((): TableSection[] => {
                     </template>
                     <template v-for="value of method.returns" v-if="method.returns.length > 0">
                         <tr style="border-bottom: 1px dashed #666;">
-                            <td>
+                            <td class="uk-width-1-5">
                                 <div class="uk-text-small uk-text-bold">
                                     {{ $t('general.return') }}
                                 </div>
@@ -119,13 +119,13 @@ const parseData = computed((): TableSection[] => {
                                 </div>
                             </td>
                             <td class="uk-flex">
-                                <p v-if="!(value.addr && value.value !== 'NONE') && !value.content" class="uk-text-truncate uk-margin-remove"  style="max-width: calc(100vw * 0.75 * 0.6)">
+                                <p v-if="!(value.addr && value.value !== 'NONE') && !value.content" class="uk-text-truncate uk-margin-remove"  style="max-width: calc(100vw * 0.75 * 0.75)">
                                     {{ value.value ? value.value : $t('general.empty') }}
                                 </p>
-                                <NuxtLink v-else-if="value.content" rel="external" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove"  style="max-width: calc(100vw * 0.75 * 0.6)">
+                                <NuxtLink v-else-if="value.content" rel="external" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove"  style="max-width: calc(100vw * 0.75 * 0.75)">
                                     {{ value.value }}
                                 </NuxtLink>
-                                <NuxtLink v-else-if="value.addr" class="uk-text-primary uk-text-truncate" :to="`/accounts?hex=${value.value}`" style="max-width: calc(100vw * 0.75 * 0.6)"> 
+                                <NuxtLink v-else-if="value.addr" class="uk-text-primary uk-text-truncate" :to="`/accounts?hex=${value.value}`" style="max-width: calc(100vw * 0.75 * 0.75)"> 
                                     {{ value.value }}
                                 </NuxtLink>
                             </td>
