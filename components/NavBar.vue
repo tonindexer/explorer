@@ -12,20 +12,14 @@ watch(showMobileNav, () => {
     <nav class="uk-background-primary header uk-position-fixed uk-width-1-1">
         <div class="uk-flex uk-margin-auto" style="justify-content: space-between;" :style="{ 'width' : isMobile() ? '90%' : '75%'}">
             <template v-if="!isMobile()">
-                <div class="uk-flex" style="align-items: center;">
+                <div class="uk-flex uk-flex-wrap" style="align-items: center;">
                     <NuxtLink aria-label="main_page" :to="'/'" uk-icon="icon: grid" class="white_svg link"></NuxtLink>
                     <NuxtLink :to="'/blocks'" class="link" :class="{ 'active' : route.path === '/blocks'}"> {{ $t('route.blocks') }}</NuxtLink>
                     <NuxtLink :to="'/transactions'" class="link" :class="{ 'active' : route.path === '/transactions'}"> {{ $t('route.transactions') }}</NuxtLink>
                     <NuxtLink :to="'/messages'" class="link" :class="{ 'active' : route.path === '/messages'}"> {{ $t('route.messages') }}</NuxtLink>
-                    <div class="uk-inline uk-padding-remove slider">
-                        <NuxtLink :to="'/accounts'" class="link parent" :class="{ 'active' : route.path === '/accounts'}"> {{ $t('route.accounts') }}</NuxtLink>
-                        <div uk-dropdown="animation: slide-top; animate-out: false; duration: 400; pos: bottom-left">
-                            <ul class="uk-nav uk-dropdown-nav uk-flex uk-flex-column" style="white-space:nowrap">
-                                <NuxtLink class="uk-text-primary" style="font-size: 1.1rem;" :to="'/accounts?contract=nft_collection'"> {{ $t('route.nft_collection') }}</NuxtLink>
-                                <NuxtLink class="uk-text-primary" style="font-size: 1.1rem;" :to="'/accounts?contract=jetton_minter'"> {{ $t('route.jetton_minter') }}</NuxtLink>
-                            </ul>
-                        </div>
-                    </div>
+                    <NuxtLink :to="'/accounts'" class="link"  :class="{ 'active' : route.path === '/accounts' && route.fullPath !== '/accounts?contract=nft_collection' && route.fullPath !== '/accounts?contract=jetton_minter'}" > {{ $t('route.accounts') }}</NuxtLink>
+                    <NuxtLink :to="'/accounts?contract=nft_collection'" class="link" :class="{ 'active' : route.fullPath === '/accounts?contract=nft_collection'}"> {{ $t('route.nft_collection') }}</NuxtLink>
+                    <NuxtLink :to="'/accounts?contract=jetton_minter'" class="link" :class="{ 'active' : route.fullPath === '/accounts?contract=jetton_minter'}"> {{ $t('route.jetton_minter') }}</NuxtLink>
                 </div>
                 <div class="uk-flex uk-padding-remove" style="align-items: center;">
                     <NuxtLink :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}"> {{ $t('route.about') }} </NuxtLink>
