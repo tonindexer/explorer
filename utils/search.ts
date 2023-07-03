@@ -71,3 +71,11 @@ export const addParse = (input: string) : AccSearch | null => {
     return null
 
 }
+
+export const asciiParse = (input: string) : LabelSearch | null => {
+    if (input && input.match(/^[ -~]+$/)) return {
+        type: 'label',
+        value: input
+    }
+    return null
+}

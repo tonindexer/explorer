@@ -26,9 +26,11 @@ export const useMainStore = defineStore('tonexp', {
       totalQueryMessages: -1 as number,
       totalQueryBlocks: 0 as number,
       totalQueryAccounts: -1 as number,
+      totalQuerySearch: 0 as number,
       // Flag for NFT
       loadNextNFTFlag: true,
       // search results
+      lastSearch: null as  BlockSearch | TxSearch | AccSearch | LabelSearch | null,
       searchResults: [] as Search,
       // Statistics.
       stats : {} as Statistics,
@@ -75,6 +77,7 @@ export const useMainStore = defineStore('tonexp', {
           case 'block': return loaded >= state.totalQueryBlocks;
           case 'acc': return loaded >= state.totalQueryAccounts;
           case 'msg': return loaded >= state.totalQueryMessages;
+          case 'src': return loaded >= state.totalQuerySearch;
           default: return false;
         }
       },
@@ -640,9 +643,41 @@ export const useMainStore = defineStore('tonexp', {
           console.log(err)
         }
       },
-      async search(req: BlockSearch | TxSearch | AccSearch): Promise<Search> {
-        this.searchResults = []
-        if (req.type == 'account') {
+      async search(req: BlockSearch | TxSearch | AccSearch | LabelSearch | null, limit : number = 20, useLastSearch: boolean = false, offset? : number): Promise<Search> {
+        if (!offset) this.searchResults = []
+
+        if (useLastSearch && this.lastSearch) req = this.lastSearch
+        this.lastSearch = req
+
+        if (!req) return this.searchResults
+
+        if (req.type == 'label') {
+
+          try {
+            const fullReq: MockType = {
+              name: req.value,
+              limit,
+              offset
+            }
+            const query = getQueryString(fullReq, true);
+              // get latest account state
+            const { data } = await apiRequest(`/labels?${query}`, 'GET')
+            const parsed = parseJson<SearchAPIData>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            this.totalQuerySearch = parsed.total
+            if (parsed.results && parsed.results.length > 0)
+              parsed.results.forEach((acc: SearchAPI) => {
+                this.searchResults.push({
+                  type: 'label',
+                  value: acc.address.hex,
+                  show: acc.name
+                })
+              })
+          } catch (err) {
+            return this.searchResults
+          }
+        } else if (req.type == 'account') {
+
           if (req.value.hex in this.accounts) { this.searchResults = [req]; return this.searchResults }
 
           if (req.value.hex in this.accountBases) {
@@ -665,6 +700,7 @@ export const useMainStore = defineStore('tonexp', {
           }
 
         } else if (req.type === 'block') {
+
           if (this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) { this.searchResults = [req]; return this.searchResults }
 
           const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no)
@@ -678,6 +714,7 @@ export const useMainStore = defineStore('tonexp', {
             show: this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
           }]
         } else if (req.type === 'transaction') {
+
           if (req.value.hash in this.transactions) { this.searchResults = [req]; return this.searchResults }
 
           if (req.value.hash in this.transactionHexes) {
