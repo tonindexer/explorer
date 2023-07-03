@@ -154,7 +154,7 @@ const showData = ref(false)
                     <div :uk-icon="`icon: ${showData ? 'close' : 'more'}`" style="cursor: pointer;" @click="showData = !showData"></div>
                 </div>
             </div>
-            <pre class="uk-width-1-1 uk-margin-remove-bottom" v-if="msg.data && showData" :style="{ 'max-width' : isMobile() ? '90vw' : '75vw'}">{{ JSON.stringify(msg.data, null, 4)}}</pre>
+            <MessagesMessageData class="uk-width-1-1 uk-margin-remove-bottom" v-if="msg.data && showData" :method="msg.data"/>
         </div>
     </template>
     

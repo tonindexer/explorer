@@ -71,6 +71,8 @@
         "scanned" : "Scanned",
         "created" : "Created",
         "page" : "Page",
+        "field" : "Field",
+        "value": "Value",
         "items": "items of",
         "show" : "Showing",
         "in_msg" : "Messages In",
@@ -84,7 +86,9 @@
         "incorrect-input": "Incorrect input..",
         "search" : "Search TON adresses, transactions, blocks...",
         "search_mobile" : "Search...",
-        "empty" : "Empty"
+        "empty" : "Empty",
+        "argument" : "Argument",
+        "return" : "Returns"
     },
     "route" : {
         "explorer" : "Main Page",

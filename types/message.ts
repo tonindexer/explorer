@@ -53,7 +53,7 @@ declare global {
         dst_contract?: ContractType
 
         operation_name?: string
-        data?: string
+        data?: object
         error?: string
 
         created_at: string

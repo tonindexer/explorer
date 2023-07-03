@@ -18,7 +18,7 @@ const trKeys = computed(() => account.value?.transaction_keys?.length > 0 ? acco
 const jtKeys = computed(() => account.value?.jetton_wallets?.length > 0 ? account.value.jetton_wallets : [] as JettonWalletKey[])
 const minterKeys = computed(() => account.value?.minted_nfts?.length > 0 ? account.value.minted_nfts : [] as NFTKey[])
 const ownerKeys = computed(() => account.value?.nft_keys?.length > 0 ? account.value.nft_keys : [] as NFTKey[])
-const getMethods = computed(() => account.value?.executed_get_methods && Object.keys(account.value.executed_get_methods).length > 0 ? account.value.executed_get_methods : {} as {[key: string] : GetMethod})
+const getMethods = computed(() => account.value?.executed_get_methods && Object.keys(account.value.executed_get_methods).length > 0 ? account.value.executed_get_methods : {} as {[key: string] : GetMethod[]})
 
 const reloadInfo = async() => {
     error.value = false
