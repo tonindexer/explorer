@@ -17,6 +17,14 @@ export const isNumeric = (value: any) : boolean => {
     return /^-?\d+$/.test(value)
 }
 
+export const isHex = (value: any) : boolean => {
+    return /^-?[\da-fA-F]+$/.test(value)
+}
+
+export const isValidName = (value: any) : boolean => {
+    return /^[_\da-zA-z]+$/.test(value)
+}
+
 export const mobileFieldProcess = (value: string | number | bigint, left: number = 20, right:  number = 0): string => {
     return isMobile() ? truncString(value.toString(), left, right) : value.toString()
 }

@@ -4,19 +4,21 @@ declare global {
     
     type AccountStatus = "ACTIVE" | "UNINIT" | "FROZEN" | "NONEXIST"
     type LabelCategory = "centralized_exchange" | "scam"
-    type ReturnFormat = Address | boolean | bigint | string | number
+    type ReturnFormat = boolean | bigint | string | number | {"URI" : string}
 
     type VmValue = {
         name: string
+        stack_type: string
         [key: string] : ReturnFormat
     }
     type GetMethod = {
-        [key: string] : {
             name: string,
-            arguments?: VmValue[] | ReturnFormat
-            return_values: VmValue[] | ReturnFormat
+            error?: string
+            arguments?: VmValue[]
+            receives?: ReturnFormat[]
+            return_values: VmValue[]
+            returns: ReturnFormat[]
         }
-    }
     type Address = {
         hex : string,
         base64 : string
@@ -78,12 +80,14 @@ declare global {
 
         get_method_hashes?: number[]
 
+        fake?: boolean
+
         types?: string[]
 
         owner_address?: Address
         minter_address?: Address
 
-        executed_get_methods?: { [key: string] : GetMethod }
+        executed_get_methods?: { [key: string] : GetMethod[] }
 
         jetton_wallets: JettonWalletKey[]
         nft_items: NFTContentData[]
@@ -91,10 +95,16 @@ declare global {
         minted_nfts: NFTKey[]
         transaction_keys: TransactionKey[]
 
+        jetton_amount: number
+        nft_amount: number
+        minted_amount: number
+        transaction_amount: number
+
         updated_at: string
     }
 
-    interface AccountAPI extends Omit<Account, 'jetton_wallets' | 'nft_keys' | 'nft_items' | 'minted_nfts' | 'transaction_keys'> {}
+    interface AccountAPI extends Omit<Account, 'jetton_wallets' | 'nft_keys' | 'nft_items' | 
+        'minted_nfts' | 'transaction_keys' | 'jetton_amount' | 'nft_amount' | 'minted_amount' | 'transaction_amount'> {}
 
     type AccountAPIData = {
         total: number

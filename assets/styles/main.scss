@@ -22,6 +22,22 @@ $hover-color: #f3f3ff;
     }
 }
 
+.tab-styler > li > a {
+  vertical-align: baseline;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  text-align: center;    
+  text-transform: capitalize;
+  width: -webkit-fill-available;
+  span {
+    font-size: 13px;
+    color: rgb(153, 153, 153);
+    display: inline-block;
+    vertical-align: bottom;
+  }
+}
+
 .arrow, .white_svg {
   * {
       color: white;
@@ -33,6 +49,16 @@ $hover-color: #f3f3ff;
 #__nuxt {
   overflow: hidden;
 }
+
+.white {
+  color: white;
+  stroke: white;
+  * {
+    color: white;
+    stroke: white;
+  }
+}
+
 .red {
   color: rgb(255, 152, 152);
   stroke: rgb(255, 152, 152);
@@ -53,4 +79,8 @@ $hover-color: #f3f3ff;
 
 .hover:hover {
   background-color: $hover-color;
+}
+
+.search {
+  width: auto !important;
 }

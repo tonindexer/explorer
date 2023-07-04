@@ -2,6 +2,9 @@
 import { useMainStore } from '~/store/TONExp';
 
 const store = useMainStore()
+const route = useRoute()
+
+const searchq = computed(() => route.query.search? route.query.search.toString() : null)
 
 </script>
 
@@ -11,6 +14,6 @@ const store = useMainStore()
     </div>
     <div v-else class="uk-flex uk-flex-column">
         <h1 class="uk-margin-remove-vertical">{{  $t('route.search') }}</h1>
-        <SearchTable :keys="store.searchResults" :update="false" :default-length="20" :hidden="store.searchResults.length === 0"/>
+        <LazySearchTable :keys="store.searchResults" :search="searchq" :default-length="20"/>
     </div>
 </template>

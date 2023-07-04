@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
 const store = useMainStore()
+const route = useRoute()
 
 type SearchStatus = 'EMPTY'| 'INCORRECT' | 'WAITING' | 'NOTHING' | 'FOUND'
 
@@ -15,7 +16,7 @@ const emptyEverything = () => {
     status.value = 'EMPTY'
 }
 
-const performSearch = async (query: BlockSearch | AccSearch | TxSearch) => {
+const performSearch = async (query: BlockSearch | AccSearch | TxSearch | LabelSearch) => {
     status.value = 'WAITING'
     searchRes.value = []
     // request to store
@@ -62,6 +63,10 @@ const parse = () => {
             performSearch(input)
             return
         }
+        input = asciiParse(search.value)
+        if (input) {
+            performSearch(input)
+        }
         // if nothing found
         status.value = 'INCORRECT'
         lastStatus.value = status.value
@@ -69,40 +74,54 @@ const parse = () => {
     }
 }
 
-const goToLink = (res: BlockSearch | AccSearch | TxSearch) => {
+const goToLink = (res: BlockSearch | AccSearch | TxSearch | LabelSearch) => {
     switch (res.type) {
         case 'account': navigateTo({path: '/accounts', query: { hex: res.value.hex}, hash: '#overview'}); break;
         case 'block': navigateTo({path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }, hash: '#overview'}); break;
         case 'transaction': navigateTo({path: '/transactions', query: { hash: toBase64Web(res.value.hash)}, hash: '#overview'}); break;
+        case 'label': navigateTo({path: '/accounts', query: { hex: res.value}, hash: '#overview'}); break;
         default:
     }
+    search.value = ''
 }
-watch (search, (to) => {
-    parse()
+
+watch (route, (to, from) => {
+    if (to.path !== from.path) emptyEverything()
 })
 
+watch (search, (to) => {
+    parse()
+    if (route.path === '/search') navigateTo(`/search?search=${search.value}`, {replace: true})
+})
+
+onMounted(async () => {
+    if (route.path === '/search' && route.query && route.query.search) search.value = route.query.search.toString()
+})
 </script>
 
 <template>
-        <form class="uk-search uk-search-default uk-width-1-1 uk-margin-small-bottom" id="overview" @focusout="emptyEverything" @submit.prevent.stop="navigateTo('/search');">
-            <a href="/search" uk-search-icon></a>
+        <form class="uk-search uk-search-default uk-width-1-1 uk-margin-small-bottom" id="overview" @focusout="emptyEverything" @submit.prevent.stop="navigateTo(`/search?search=${search}`);" >
+            <a :href="`/search?search=${search}`" uk-search-icon></a>
             <input v-model.trim="search" class="uk-search-input" type="search" :placeholder="$t('general.search' + (isMobile() ? '_mobile' : ''))" aria-label="Search" 
                 @focus="parse">
-            <table v-if="status !== 'EMPTY'" class="uk-table uk-position-absolute uk-position-bottom uk-width-1-1 uk-margin-remove-vertical uk-border" :class="{'uk-table-hover': status === 'FOUND'}" style="top: 100%; z-index: 100; background-color: white; border: 1px solid #39f">
+            <table v-if="status !== 'EMPTY' && route.path !== '/search'" class="uk-table uk-position-absolute uk-position-bottom uk-width-1-1 uk-margin-remove-vertical uk-border" style="top: 100%; z-index: 100; background-color: white; border: 1px solid #39f">
                 <tbody v-if="status === 'FOUND'">
-                    <tr style="cursor: pointer;">
-                        <td v-for="res in searchRes" class="uk-flex uk-flex-column" style="padding: 0.3rem 1rem" @mousedown="goToLink(res)">
-                            <h4 class="uk-margin-remove-vertical uk-text-ellipsis" v-if="res.type === 'account'">
+                    <tr v-for="res in searchRes.slice(0, 5)" class="uk-flex uk-flex-column hover">
+                        <td style="padding: 0.3rem 1rem" @mousedown="goToLink(res)"  :style="{ 'max-width' : isMobile() ? '85vw' : '70vw'}">
+                            <h4 class="uk-margin-remove-vertical uk-text-truncate" v-if="res.type === 'account'" style="cursor: pointer;">
                                 {{ mobileFieldProcess(res.show ?? res.value.hex) }}
                             </h4>
-                            <h4 class="uk-margin-remove-vertical uk-text-truncate" v-else-if="res.type === 'transaction'">
+                            <h4 class="uk-margin-remove-vertical uk-text-truncate" v-else-if="res.type === 'transaction'" style="cursor: pointer;">
                                 {{ mobileFieldProcess(res.show ?? res.value.hash) }}
                             </h4>
-                            <h4 class="uk-margin-remove-vertical uk-text-ellipsis" v-else-if="res.type === 'block'">
+                            <h4 class="uk-margin-remove-vertical uk-text-truncate" v-else-if="res.type === 'label'" style="cursor: pointer;">
+                                {{ mobileFieldProcess(res.show ?? res.value) }}
+                            </h4>
+                            <h4 class="uk-margin-remove-vertical uk-text-ellipsis" v-else-if="res.type === 'block'" style="cursor: pointer;">
                                 {{ mobileFieldProcess(res.show ?? store.blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no), 5, 15) }}
                             </h4>
                             <p class="uk-margin-remove-vertical">
-                                {{ $t(`route.${res.type}`) }}
+                                {{ $t(`route.${res.type === 'label' ? 'account' :res.type}`) }}
                             </p>
                         </td>
                     </tr>

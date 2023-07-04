@@ -46,7 +46,7 @@ const props = defineProps<Props>()
         <td>{{ chainTitle(block.workchain) }}</td>
         <td>{{ block.shard.toString() }}</td>
         <td v-if="linkBlock" >
-            <NuxtLink :to="{ path: 'blocks', query: { workchain: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }, hash: '#overview'}">
+            <NuxtLink :to="{ path: 'blocks', query: { workchain: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }, hash: '#overview'}" class="uk-text-primary">
                 {{ block.seq_no}}
             </NuxtLink>
         </td>

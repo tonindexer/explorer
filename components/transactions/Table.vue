@@ -20,7 +20,11 @@ const maxExploredPage = ref(0)
 const itemCount = ref(props.defaultLength)
 const firstLT: NullableBigRef = ref(0n)
 const lastLT: NullableBigRef = ref(0n)
-const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'trn'): false)
+const lastPageFlag = computed(() => props.update ? 
+    (props.account ? 
+        ((itemCount.value * (pageNum.value+1)) >= store.accounts[props.account ?? '']?.transaction_amount)
+        : store.nextPageFlag(itemCount.value * (pageNum.value+1), 'trn'))
+    : false)
 const toggleMsg = (key: TransactionKey) => store.transactionMsgFlag[key] = !store.transactionMsgFlag[key]
 
 const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
@@ -100,10 +104,10 @@ onMounted(() => {
                             v-if="!isMobile() && [store.transactions[trn].in_msg_hash, ...store.transactions[trn].out_msg_keys].length > 0 && store.transactionMsgFlag[trn]"
                             style="border-bottom: 2px solid #d0d0d0; border-top: 2px solid #d0d0d0;">
                             <MessagesTable 
+                                :filters="{}"
                                 :show-link="false"
-                                :parent_tx="trn" 
                                 :item-selector="false" 
-                                :default-length="5" 
+                                :default-length="10" 
                                 :update="false" 
                                 :keys="[store.transactions[trn].in_msg_hash, ...store.transactions[trn].out_msg_keys]" 
                                 :hidden="[store.transactions[trn].in_msg_hash, ...store.transactions[trn].out_msg_keys].length === 0"
@@ -116,7 +120,7 @@ onMounted(() => {
             <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
                 <AtomsSelector 
                     :item-count="itemCount"
-                    :name="'general.items'"
+                    :amount="account ? store.accounts[account].transaction_amount : store.totalQueryTransactions"
                     :options="[5, 10, 20, 50]"
                     @set-value="(e: any) => itemCount = e.value"
                 />

@@ -18,7 +18,7 @@ const trKeys = computed(() => account.value?.transaction_keys?.length > 0 ? acco
 const jtKeys = computed(() => account.value?.jetton_wallets?.length > 0 ? account.value.jetton_wallets : [] as JettonWalletKey[])
 const minterKeys = computed(() => account.value?.minted_nfts?.length > 0 ? account.value.minted_nfts : [] as NFTKey[])
 const ownerKeys = computed(() => account.value?.nft_keys?.length > 0 ? account.value.nft_keys : [] as NFTKey[])
-const getMethods = computed(() => account.value?.executed_get_methods && Object.keys(account.value.executed_get_methods).length > 0 ? account.value.executed_get_methods : {} as {[key: string] : GetMethod})
+const getMethods = computed(() => account.value?.executed_get_methods && Object.keys(account.value.executed_get_methods).length > 0 ? account.value.executed_get_methods : {} as {[key: string] : GetMethod[]})
 
 const reloadInfo = async() => {
     error.value = false
@@ -53,25 +53,37 @@ watch(() => props.hex, async() => await reloadInfo())
     <template v-else>
         <AccountsPropsTable v-if="account" :acc="account"/>
         <div v-if="account">
-            <ul v-if="trKeys.length > 0" class="uk-child-width-expand uk-text-medium" :style="isMobile() ? 'margin-bottom: 0.3rem' : ''" uk-tab>
+            <ul v-if="trKeys.length > 0" class="uk-child-width-expand uk-text-medium tab-styler" :style="isMobile() ? 'margin-bottom: 0.3rem' : ''" uk-tab>
                 <li class="uk-margin-remove-left" v-if="trKeys.length > 0" :class="{'uk-active' : (route.hash === '#transactions' || route.hash === '#overview')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#transactions', query: route.query}">
-                        {{ $t('route.transactions') }}
+                        {{ $t('route.transactions')}}
+                        <span>
+                            {{ account.transaction_amount }}
+                        </span>
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="jtKeys.length > 0" :class="{'uk-active' : (route.hash === '#jettons')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#jettons', query: route.query}">
                         {{ $t('route.jettons') }}
+                        <span>
+                            {{ account.jetton_amount }}
+                        </span>
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="ownerKeys.length > 0" :class="{'uk-active' : (route.hash === '#nfts')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#nfts', query: route.query}">
                         {{ $t('route.nfts') }}
+                        <span>
+                            {{ account.nft_amount }}
+                        </span>
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="minterKeys.length > 0" :class="{'uk-active' : (route.hash === '#minter')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#minter', query: route.query}">
                         {{ $t('ton.minter') }}
+                        <span>
+                            {{ account.minted_amount }}
+                        </span>
                     </NuxtLink>
                 </li>
                 <li class="uk-margin-remove-left" v-if="Object.keys(getMethods).length > 0" :class="{'uk-active' : (route.hash === '#get_methods')}" style="min-width: fit-content;">
@@ -82,7 +94,7 @@ watch(() => props.hex, async() => await reloadInfo())
             </ul>
         </div>
         <div v-show="account && (route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
-            <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="false" :account="hex" />
+            <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :account="hex" />
         </div>
         <div v-if="account && route.hash === '#jettons'" id="jettons">
             <LazyAccountsJettonsTable :owner="hex" :keys="jtKeys" :default-length="10" />

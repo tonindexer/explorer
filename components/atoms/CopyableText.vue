@@ -3,6 +3,8 @@ import { Clipboard } from 'v-clipboard'
 
 interface Props {
     text: string
+    customDeskWidth?: string
+    customMobileWidth?: string
 }
 
 const props = defineProps<Props>()
@@ -29,7 +31,7 @@ const itemProp = computed(() => {
 
 </script>
 <template>
-    <div class="uk-margin-remove uk-text-left uk-text-truncate" :style="`max-width: ${isMobile() ? 'calc(85vw - 20px)' : 'calc(75vw * 0.8 - 20px)'}`">
+    <div class="uk-margin-remove uk-text-left uk-text-truncate" :style="`max-width: ${isMobile() ? 'calc(' + (customMobileWidth ? customMobileWidth : '85vw') + ' - 20px)' : 'calc(' + (customDeskWidth ? customDeskWidth : '75vw * 0.8') + ' - 20px)'}`">
         <slot />
     </div>
     <button class="uk-display-inline" 
@@ -37,6 +39,7 @@ const itemProp = computed(() => {
         :uk-icon="itemProp.icon"
         :class="itemProp.class"
         style="min-width: 20px;"
+        v-if="text"
         >
     </button>
 </template>

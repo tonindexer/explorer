@@ -79,6 +79,18 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
+            <tr v-if="acc.fake">
+                <AtomsPropLine>
+                    <template #name>
+                        <p class="uk-text-danger uk-margin-remove">
+                            {{ $t(`ton.fake`) }}
+                        </p>
+                    </template>
+                    <template #value>
+                        {{ acc.fake }}
+                    </template>
+                </AtomsPropLine>
+            </tr>
             <tr v-if="acc.types && acc.types.length > 0">
                 <AtomsPropLine :wrap="true">
                     <template #name>
@@ -124,7 +136,8 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="`${acc.workchain}:${acc.shard}:${acc.block_seq_no}`">
-                            <NuxtLink :to="`/blocks?workchain=${acc.workchain}&shard=${acc.shard}&seq_no=${acc.block_seq_no}#overview`">{{ `${acc.workchain}:${acc.shard}:${acc.block_seq_no}` }}
+                            <NuxtLink :to="`/blocks?workchain=${acc.workchain}&shard=${acc.shard}&seq_no=${acc.block_seq_no}#overview`" class="uk-text-primary">
+                                {{ `${acc.workchain}:${acc.shard}:${acc.block_seq_no}` }}
                             </NuxtLink>
                     </AtomsCopyableText> 
                     </template>
@@ -137,7 +150,9 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="acc.last_tx_hash">
-                            <NuxtLink :to="`/transactions?hash=${toBase64Web(acc.last_tx_hash)}#overview`">{{ acc.last_tx_hash }}</NuxtLink>
+                            <NuxtLink :to="`/transactions?hash=${toBase64Web(acc.last_tx_hash)}#overview`" class="uk-text-primary">
+                                {{ acc.last_tx_hash }}
+                            </NuxtLink>
                         </AtomsCopyableText>
                     </template>
                 </AtomsPropLine>    

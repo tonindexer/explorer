@@ -1,8 +1,13 @@
 export { };
 
 declare global {
-    type SearchType = 'account' | 'transaction' | 'block'
+    type SearchType = 'account' | 'transaction' | 'block' | 'label'
 
+    type LabelSearch = {
+        type: 'label'
+        value: string,
+        show?: string
+    }
     type BlockSearch = {
         type: 'block'
         value: {
@@ -29,8 +34,18 @@ declare global {
         show?: string
     }
 
-    type Search = Array<BlockSearch | TxSearch | AccSearch>
+    type Search = Array<BlockSearch | TxSearch | AccSearch | LabelSearch>
 
+    type SearchAPI = {
+        address: Address
+        categories: LabelCategory[]
+        name: string
+    }
+
+    type SearchAPIData = {
+        total: number
+        results: SearchAPI[]
+    }
     type Statistics = {
         account_count : number,
         address_count : number,

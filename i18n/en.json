@@ -17,9 +17,13 @@
 
         "id": "ID",
         "address": "Address",
+        "src_address" : "Sender",
+        "dst_address" : "Recipient",
         "balance": "Balance",
         "type": "Type",
         "label": "Name",
+        "operation_id": "OP ID",
+        "operation_name": "OP Name",
         "status": "Status",
 
         "hash" : "Hash (base64)",
@@ -44,9 +48,12 @@
         "fwd_fee": "FWD Fee",
 
         "name": "Name",
+        "fake": "Fake",
         "minter": "Minter",
         "owner": "Owner",
         "contract" : "Contract",
+        "src_contract": "SRC Contract",
+        "dst_contract": "DST Contract",
         "wallet": "Wallet",
         "get_methods": "Get methods"
     },
@@ -56,13 +63,19 @@
         "none" : "None",
         "language": "Language",
         "type" : "Type",
+        "format": "Format",
         "from" : "Sender",
         "to" : "Recipient",
+        "src_tx" : "SRC Tx",
+        "dst_tx" : "DST Tx",
         "amount" : "Amount",
         "scanned" : "Scanned",
         "created" : "Created",
         "page" : "Page",
-        "items": "Items",
+        "field" : "Field",
+        "value": "Value",
+        "items": "items of",
+        "show" : "Showing",
         "in_msg" : "Messages In",
         "out_msg" : "Messages Out",
         "updated": "Updated",
@@ -74,7 +87,10 @@
         "incorrect-input": "Incorrect input..",
         "search" : "Search TON adresses, transactions, blocks...",
         "search_mobile" : "Search...",
-        "empty" : "Empty"
+        "empty" : "Empty",
+        "arguments" : "Arguments",
+        "returns" : "Returns",
+        "called" : "Called with"
     },
     "route" : {
         "explorer" : "Main Page",
@@ -92,6 +108,8 @@
         "jettons" : "Jettons",
         "nfts" : "NFTs",
         "nft" : "NFT",
+        "nft_collection" : "NFT Collections",
+        "jetton_minter" : "Jetton minters",
         "search" : "Search results",
         "results" : "Results",
         "about": "About"
@@ -114,6 +132,12 @@
         "exclude_blocks" : "Exclude empty blocks",
         "exclude_masterchain" : "Exclude MasterChain",
         "deep_transactions" : "Shard transactions",
-        "deep_messages" : "Shard messages"
+        "deep_messages" : "Shard messages",
+        "deep_accounts" : "Shard accounts",
+        "filter": "Filter"
+    },
+    "warning" : {
+        "nothing_found" : "Nothing found..",
+        "first_tx": "None - This TX is first in the chain"
     }
 }

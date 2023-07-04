@@ -17,9 +17,13 @@
 
         "id": "Идентификатор",
         "address": "Адрес",
+        "src_address" : "Отправитель",
+        "dst_address" : "Получатель",
         "balance": "Баланс",
         "type": "Тип",
         "label": "Имя",
+        "operation_id": "Номер OP",
+        "operation_name": "Имя OP",
         "status": "Статус",
 
         "hash" : "Хэш (base64)",
@@ -44,9 +48,12 @@
         "fwd_fee": "FWD Платеж",
 
         "name": "Название",
+        "fake": "Фейк",
         "minter": "Минтер",
         "owner": "Владелец",
         "contract" : "Контракт",
+        "src_contract": "SRC Контракт",
+        "dst_contract": "DST Контракт",
         "wallet": "Кошелек",
         "get_methods": "Get methods"
     },
@@ -56,13 +63,19 @@
         "none" : "Нет",
         "language": "Язык",
         "type" : "Тип",
+        "format": "Формат",
         "from" : "Отправил",
         "to" : "Принял",
+        "src_tx" : "SRC Транз",
+        "dst_tx" : "DST Транз",
         "amount" : "Кол-во",
         "scanned" : "Отслежено",
         "created" : "Создано",
         "page" : "Страница",
-        "items" : "Элементов",
+        "items" : "элементов из",
+        "field" : "Field",
+        "value": "Value",
+        "show" : "Показ",
         "in_msg" : "Входящие сообщения",
         "out_msg" : "Исходящие сообщения",
         "updated": "Обновлено",
@@ -74,7 +87,10 @@
         "incorrect-input": "Данные некорректны! Введите что-то другое..",
         "search" : "Поиск TON адресов, транзакций, блоков...",
         "search_mobile" : "Поисковый запрос...",
-        "empty" : "Пустой"
+        "empty" : "Пустой",
+        "arguments" : "Аргументы",
+        "returns" : "Вывод",
+        "called" : "Вызвано с аргументами"
     },
     "route" : {
         "explorer" : "Главная страница",
@@ -92,6 +108,8 @@
         "jettons" : "Jettons",
         "nfts" : "NFTs",
         "nft" : "NFT",
+        "nft_collection" : "NFT Коллекции",
+        "jetton_minter" : "Jetton минтеры",
         "search" : "Резульаты поиска",
         "results" : "Результаты",
         "about": "О проекте"
@@ -114,6 +132,12 @@
         "exclude_blocks" : "Скрыть пустые блоки",
         "exclude_masterchain" : "Скрыть MasterChain",
         "deep_transactions" : "Транзакции шардов",
-        "deep_messages" : "Сообщения шардов"
+        "deep_messages" : "Сообщения шардов",
+        "deep_accounts" : "Аккаунты шардов",
+        "filter": "Фильтры"
+    },
+    "warning" : {
+        "nothing_found" : "По запросу нет результатов..",
+        "first_tx": "Нет - Это первая транзакция в цепи"
     }
 }

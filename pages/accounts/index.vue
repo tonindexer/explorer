@@ -16,11 +16,11 @@ const selected: Ref<SelectItem | {}> = ref({ value: '', text: ''})
 const selectedMobile = ref('All')
 const store = useMainStore()
 
-const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}))
+const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}).sort((a, b) => a.text > b.text ? 1 : -1))
 const optionsMobile = computed(() : string[] => {
     const defualt = ['All']
     defualt.push(...Object.keys(store.interfaces))
-    return defualt
+    return defualt.sort()
 })
 
 const selectedFilter = computed(() => isMobile() ? (selectedMobile.value !== 'All' ? selectedMobile.value : null ): ('value' in selected.value ? selected.value.value : null))
@@ -74,7 +74,10 @@ onMounted(() => routeChecker())
     </template>
     <template v-else>
         <div v-if="isGeneral">
-            <h1>{{  $t('route.accounts') }}</h1>
+            <div class="uk-flex uk-flex-bottom uk-margin-bottom">
+                <h1 class="uk-margin-remove-vertical uk-margin-right">{{  $t('route.accounts') }}</h1>
+                <h2 class="uk-margin-remove uk-text-muted">{{ `${store.totalQueryAccounts === -1 ? '...' : store.totalQueryAccounts}` }}</h2>
+            </div>
             <div class="uk-flex uk-flex-right">
                 <div v-if="!isMobile()" class="uk-width-2-5">
                     <ModelSelect :options="options" v-model="selected" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
@@ -82,7 +85,8 @@ onMounted(() => routeChecker())
                 <div v-else-if="isMobile()" class="uk-width-4-5 uk-text-small" style="margin-right: 0.5rem;">
                     <AtomsSelector 
                         :item-count="selectedMobile"
-                        :name="null"
+                        :amount="null"
+                        :start-line="null"
                         :options="optionsMobile"
                         @set-value="(e: any) => selectedMobile = e.value"
                     />
@@ -103,7 +107,7 @@ onMounted(() => routeChecker())
                     {{ store.accounts[hex]?.address?.base64 ?? 'loading..' }}
                 </h2>
             </div>
-            <AccountsAccountInfo :hex="hex" @set-hex="(e) => navigateTo( e ? {path: 'accounts', query: {hex: e}, hash: '#overview'} : {path: 'accounts'})"/>
+            <AccountsAccountInfo :hex="hex" @set-hex="(e) => navigateTo( e ? {path: 'accounts', query: {hex: e}, hash: '#overview', replace: true} : {path: 'accounts', replace: true})"/>
         </div>
     </template>
 </template>

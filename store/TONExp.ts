@@ -23,14 +23,14 @@ export const useMainStore = defineStore('tonexp', {
       exploredAccounts: [] as AccountKey[],
       // Total number of resutls left for the api queries
       totalQueryTransactions: 0 as number,
-      totalQueryMessages: 0 as number,
+      totalQueryMessages: -1 as number,
       totalQueryBlocks: 0 as number,
-      totalQueryAccounts: 0 as number,
-      totalAccountNFTOwned: 0 as number,
-      totalQueryNFTMinters: 0 as number,
+      totalQueryAccounts: -1 as number,
+      totalQuerySearch: 0 as number,
       // Flag for NFT
       loadNextNFTFlag: true,
       // search results
+      lastSearch: null as  BlockSearch | TxSearch | AccSearch | LabelSearch | null,
       searchResults: [] as Search,
       // Statistics.
       stats : {} as Statistics,
@@ -76,9 +76,8 @@ export const useMainStore = defineStore('tonexp', {
           case 'trn': return loaded >= state.totalQueryTransactions;
           case 'block': return loaded >= state.totalQueryBlocks;
           case 'acc': return loaded >= state.totalQueryAccounts;
-          case 'mint': return loaded >= state.totalQueryNFTMinters;
-          case 'own': return loaded >= state.totalAccountNFTOwned;
           case 'msg': return loaded >= state.totalQueryMessages;
+          case 'src': return loaded >= state.totalQuerySearch;
           default: return false;
         }
       },
@@ -100,16 +99,21 @@ export const useMainStore = defineStore('tonexp', {
       },
       processAccount(account: AccountAPI) {
         const accountKey = account.address.hex
-        const mappedAccount = <Account>{}
-        mappedAccount.nft_keys = []
-        mappedAccount.minted_nfts = []
-        mappedAccount.jetton_wallets = []
-        mappedAccount.transaction_keys = []
 
         // Don't override account if the stored state matched given
         if (accountKey in this.accounts) {
           if (this.accounts[accountKey].block_seq_no > account.block_seq_no) return accountKey
         }
+
+        const mappedAccount = <Account>{}
+        mappedAccount.nft_keys = []
+        mappedAccount.minted_nfts = []
+        mappedAccount.jetton_wallets = []
+        mappedAccount.transaction_keys = []
+        mappedAccount.transaction_amount = 0
+        mappedAccount.jetton_amount = 0
+        mappedAccount.nft_amount = 0
+        mappedAccount.minted_amount = 0
 
         this.accountBases[account.address.base64] = accountKey
 
@@ -118,18 +122,27 @@ export const useMainStore = defineStore('tonexp', {
         this.accounts[accountKey] = mappedAccount
         return accountKey
       },
-      processMessage(message: MessageAPI, tr_key: TransactionKey | null, parseAccounts: boolean = true) {
+      processMessage(message: MessageAPI, tr_key: TransactionKey | null, tr_type: 'src' | 'dst' | null, parseAccounts: boolean = true) {
         const messageKey = message.hash
 
         // Don't override messages
         if (messageKey in this.messages) {
-          if (this.messages[messageKey].parent_tx_key === '' && tr_key) this.messages[messageKey].parent_tx_key = tr_key
+          if (tr_key) {
+            if (tr_type === 'dst' && (this.messages[messageKey].dst_tx_key === null || this.messages[messageKey].dst_tx_key?.includes('|'))) this.messages[messageKey].dst_tx_key = tr_key
+            if (tr_type === 'src' && (this.messages[messageKey].src_tx_key === null || this.messages[messageKey].src_tx_key?.includes('|'))) this.messages[messageKey].src_tx_key = tr_key
+          }
           return messageKey
         }
-
+        if (message.type === 'EXTERNAL_IN' && message.src_address) delete message.src_address
+        if (message.type === 'EXTERNAL_OUT' && message.dst_address) delete message.dst_address
         const mappedMessage = <Message>{}
-        mappedMessage.parent_tx_key = tr_key ?? ''
 
+        mappedMessage.src_tx_key = (message.src_tx_lt && message.src_address) ?  `${message.src_address.hex}|${message.src_tx_lt}` : null
+        mappedMessage.dst_tx_key = (message.dst_tx_lt && message.dst_address) ?  `${message.dst_address.hex}|${message.dst_tx_lt}` : null
+
+        if (tr_type === 'src' && tr_key) mappedMessage.src_tx_key = tr_key
+        if (tr_type === 'dst' && tr_key) mappedMessage.dst_tx_key = tr_key
+        
         if (message.src_state) {
           if (parseAccounts) mappedMessage.src_state_key = this.processAccount(message.src_state)
           else mappedMessage.src_state_key = message.src_state.address.hex
@@ -165,7 +178,7 @@ export const useMainStore = defineStore('tonexp', {
           delete transaction.account
         }
         if (transaction.in_msg) {
-          this.processMessage(transaction.in_msg, transactionKey)
+          this.processMessage(transaction.in_msg, transactionKey, 'dst', parseAccount)
           transaction.in_msg.operation_name ? op_type = transaction.in_msg.operation_name :
             (transaction.in_msg.operation_id ? op_type = `Contract op=${opToHex(transaction.in_msg.operation_id)}` : op_type = 1)
           delete transaction.in_msg
@@ -176,7 +189,7 @@ export const useMainStore = defineStore('tonexp', {
               msg.operation_name ? ( (op_type ===0 || op_type === 1) ? op_type = msg.operation_name : op_type = 99) :
                 (msg.operation_id ? ( (op_type ===0 || op_type === 1) ? op_type = `Contract op=0x${opToHex(msg.operation_id)}` : op_type = 99) :
                   op_type = 2)
-              return this.processMessage(msg, transactionKey, parseAccount)
+              return this.processMessage(msg, transactionKey, 'src', parseAccount)
             }))
           delete transaction.out_msg
         }
@@ -291,7 +304,7 @@ export const useMainStore = defineStore('tonexp', {
             break;
           }
           case '/messages': {
-            await this.updateMessages(10, null)
+            await this.updateMessages(10, null, null)
           }
           case '/accounts': {
             if (Object.entries(route.query).length === 0 || 'contract' in route.query) {
@@ -310,7 +323,6 @@ export const useMainStore = defineStore('tonexp', {
             const { data } = await apiRequest(`/contracts/interfaces`, 'GET')
             const parsed = parseJson<ContractInterfaceAPI>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            this.totalQueryTransactions = parsed.total
             for (const inter of parsed.results) {
               this.interfaces[inter.name] = inter
             }
@@ -348,10 +360,11 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async updateMessages(limit: number, seqOffset: bigint | null, order: "ASC" | "DESC" = "DESC") {
+      async updateMessages(limit: number, seqOffset: bigint | null, filters: MockType | null, order: "ASC" | "DESC" = "DESC") {
         const fullReq: MockType = {
           order,
-          limit
+          limit,
+          ...filters
         }
         if (seqOffset) fullReq.after = seqOffset
         if (!seqOffset) this.exploredMessages = []
@@ -363,10 +376,11 @@ export const useMainStore = defineStore('tonexp', {
           
           this.totalQueryMessages = parsed.total
           if (!seqOffset) this.exploredMessages = []
-          for (const msg of parsed.results) {
-            const key = this.processMessage(msg, null)
-            this.exploredMessages.push(key)
-          }
+          if (parsed.results && parsed.results.length > 0)
+            for (const msg of parsed.results) {
+              const key = this.processMessage(msg, null, null)
+              this.exploredMessages.push(key)
+            }
         } catch (error) {
           console.log(error)
         }
@@ -391,6 +405,7 @@ export const useMainStore = defineStore('tonexp', {
             this.exploredTransactions.push(trn)
           }
           if (account) {
+              this.accounts[account].transaction_amount = parsed.total
               this.accounts[account].transaction_keys = []
               this.accounts[account].transaction_keys.push(...this.exploredTransactions)
           }
@@ -445,9 +460,9 @@ export const useMainStore = defineStore('tonexp', {
         }
       },
       async fetchTransaction(hash: string) {
-        const fullReq: MockType = {
-          hash
-        }
+        let fullReq: MockType = {}
+        if (hash.includes('|')) fullReq = { address: hash.split('|')[0], created_lt: hash.split('|')[1]}
+        else fullReq = { hash }
         const query = getQueryString(fullReq, true);
         try {
           const { data } = await apiRequest(`/transactions?${query}`, 'GET')
@@ -465,7 +480,7 @@ export const useMainStore = defineStore('tonexp', {
         return hash
       },
       async fetchBareAccounts(hex: string[]) {
-        hex = hex.filter(key => !(key in badAddresses))
+        // hex = hex.filter(key => !(key in badAddresses))
         if (hex.length === 0) return hex
         try {
           const fullReq: MockType = {
@@ -525,9 +540,12 @@ export const useMainStore = defineStore('tonexp', {
               const { data } = await apiRequest(`/accounts?${query}`, 'GET')
               const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
                   (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-              if (parsed.results && parsed.results.length > 0) {
-                const jt_key = this.processAccount(parsed.results[0])
-                this.accounts[hex].jetton_wallets.push(`${hex}|${jt_key}`)
+            this.accounts[hex].jetton_amount = parsed.total
+            if (parsed.results && parsed.results.length > 0) {
+                for (const jt of parsed.results) {
+                  const jt_key = this.processAccount(jt)
+                  this.accounts[hex].jetton_wallets.push(`${hex}|${jt_key}`)
+                }
               }
             } catch (error) {
               console.log(error)
@@ -581,7 +599,7 @@ export const useMainStore = defineStore('tonexp', {
           const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
 
-          minterFlag ? this.totalQueryNFTMinters = parsed.total : this.totalAccountNFTOwned = parsed.total
+          minterFlag ? this.accounts[account].minted_amount = parsed.total : this.accounts[account].nft_amount = parsed.total
           if (offset === 0) minterFlag ? this.accounts[account].minted_nfts = [] : this.accounts[account].nft_keys = []
 
           if (parsed.results && parsed.results.length > 0)
@@ -625,9 +643,41 @@ export const useMainStore = defineStore('tonexp', {
           console.log(err)
         }
       },
-      async search(req: BlockSearch | TxSearch | AccSearch): Promise<Search> {
-        this.searchResults = []
-        if (req.type == 'account') {
+      async search(req: BlockSearch | TxSearch | AccSearch | LabelSearch | null, limit : number = 20, useLastSearch: boolean = false, offset? : number): Promise<Search> {
+        if (!offset) this.searchResults = []
+
+        if (useLastSearch && this.lastSearch) req = this.lastSearch
+        this.lastSearch = req
+
+        if (!req) return this.searchResults
+
+        if (req.type == 'label') {
+
+          try {
+            const fullReq: MockType = {
+              name: req.value,
+              limit,
+              offset
+            }
+            const query = getQueryString(fullReq, true);
+              // get latest account state
+            const { data } = await apiRequest(`/labels?${query}`, 'GET')
+            const parsed = parseJson<SearchAPIData>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            this.totalQuerySearch = parsed.total
+            if (parsed.results && parsed.results.length > 0)
+              parsed.results.forEach((acc: SearchAPI) => {
+                this.searchResults.push({
+                  type: 'label',
+                  value: acc.address.hex,
+                  show: acc.name
+                })
+              })
+          } catch (err) {
+            return this.searchResults
+          }
+        } else if (req.type == 'account') {
+
           if (req.value.hex in this.accounts) { this.searchResults = [req]; return this.searchResults }
 
           if (req.value.hex in this.accountBases) {
@@ -650,6 +700,7 @@ export const useMainStore = defineStore('tonexp', {
           }
 
         } else if (req.type === 'block') {
+
           if (this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) { this.searchResults = [req]; return this.searchResults }
 
           const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no)
@@ -663,6 +714,7 @@ export const useMainStore = defineStore('tonexp', {
             show: this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
           }]
         } else if (req.type === 'transaction') {
+
           if (req.value.hash in this.transactions) { this.searchResults = [req]; return this.searchResults }
 
           if (req.value.hash in this.transactionHexes) {

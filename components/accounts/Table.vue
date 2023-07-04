@@ -21,6 +21,7 @@ const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.
 
 const maxExploredPage = ref(0)
 const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+const emptyTable = ref(false)
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {
@@ -30,16 +31,18 @@ const setExtraFields = () => {
         if (props.keys[props.keys.length - 1] in store.accounts) {
             lastTX.value = BigInt(store.accounts[props.keys[props.keys.length - 1]].last_tx_lt)
         }
-    }   
+    } else emptyTable.value = true
 }
 
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
+    emptyTable.value = false
     if (props.keys.length === 0 || pageNum.value === 0)
         await store.updateAccounts(itemCount.value, null, props.contract)
     else {
         await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value, props.contract)
     }
+    if (props.keys.length === 0) emptyTable.value = true
 }
 
 watch(pageNum, async(to, from) => {
@@ -71,7 +74,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <template v-if="loading">
+    <template v-if="emptyTable && store.totalQueryAccounts === 0">
+        <div class="uk-flex uk-margin-top">
+            {{ $t('warning.nothing_found') }}
+        </div>
+    </template>
+    <template v-else-if="loading">
         <div class="uk-flex uk-flex-center">
             <Loader />
         </div>
@@ -80,9 +88,10 @@ onMounted(() => {
         <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
             <thead v-if="!isMobile()">
                 <tr>
-                    <th class="uk-width-1-3">{{ $t('ton.id')}}</th>
+                    <th class="uk-width-2-5">{{ $t('ton.id')}}</th>
+                    <th class="uk-width-1-3">{{ $t('ton.contract')}}</th>
                     <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
-                    <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
+                    <th class="uk-width-1-6 uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -91,14 +100,16 @@ onMounted(() => {
                 </template>
             </tbody>
         </table>
-        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+        <div v-if="!hidden" class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
             <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
-                <AtomsSelector 
-                    :item-count="itemCount"
-                    :name="'general.items'"
-                    :options="[5, 10, 20, 50]"
-                    @set-value="(e: any) => itemCount = e.value"
-                />
+                <ClientOnly>
+                    <AtomsSelector 
+                        :item-count="itemCount"
+                        :amount="store.totalQueryAccounts"
+                        :options="[5, 10, 20, 50]"
+                        @set-value="(e: any) => itemCount = e.value"
+                    />
+                </ClientOnly>
             </div>
             <AtomsPageArrows    
                 :page="pageNum" 

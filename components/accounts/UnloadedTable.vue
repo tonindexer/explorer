@@ -28,7 +28,7 @@ const itemCount = ref(props.defaultLength)
                 <template v-if="!(acc in badAddresses)">
                     <tr v-if="!isMobile()">
                         <td> 
-                            <NuxtLink :to="{ path: 'accounts', query: { hex: acc }, hash: '#overview'}">
+                            <NuxtLink :to="{ path: 'accounts', query: { hex: acc }, hash: '#overview'}" class="uk-text-primary">
                                 {{ truncString(acc, 15) }}
                             </NuxtLink>
                         </td>
@@ -37,7 +37,7 @@ const itemCount = ref(props.defaultLength)
                     </tr>
                     <tr v-else>
                         <td style="padding: 0.5rem 0;"> 
-                            <NuxtLink :to="{ path: 'accounts', query: { hex: acc }, hash: '#overview'}">
+                            <NuxtLink :to="{ path: 'accounts', query: { hex: acc }, hash: '#overview'}" class="uk-text-primary">
                                 {{ truncString(acc, 15) }}
                             </NuxtLink>
                         </td>
@@ -46,14 +46,19 @@ const itemCount = ref(props.defaultLength)
                 <template v-else-if="acc in badAddresses">
                     <tr v-if="!isMobile()">
                         <td style="text-wrap: nowrap;"> 
-                            {{ badAddresses[acc].name }}
+                            <NuxtLink :to="{ path: 'accounts', query: { hex: acc }, hash: '#overview'}" class="uk-text-primary">
+                                {{ badAddresses[acc].name }}
+                            </NuxtLink>
                         </td>
+                        
                         <td class="uk-text-right">Unloaded</td>
                         <td class="uk-text-right">-</td>
                     </tr>
                     <tr v-else>
                         <td style="text-wrap: nowrap; padding: 0.5rem 0;"> 
-                            {{ badAddresses[acc].name }}
+                            <NuxtLink :to="{ path: 'accounts', query: { hex: acc }, hash: '#overview'}" class="uk-text-primary">
+                                {{ badAddresses[acc].name }}
+                            </NuxtLink>
                         </td>
                     </tr>
                 </template>
