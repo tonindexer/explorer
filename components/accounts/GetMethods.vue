@@ -85,75 +85,32 @@ const parseData = computed((): TableSection[] => {
                         {{ method.name }}
                     </a>
                     <div class="uk-accordion-content">
-                        <h4 class="uk-margin-small-left uk-margin-remove-vertical" v-if="method.recieves.length > 0">
-                            {{ $t('general.arguments') }}
-                        </h4>
-                        <table class="uk-table uk-table-middle uk-table-divider uk-margin-remove-top" v-if="method.recieves.length > 0">
-                            <thead v-if="!isMobile()">
-                                <th class="uk-width-1-3">{{ $t('ton.name')}}</th>
-                                <th class="uk-width-1-3">{{ $t('general.type')}}</th>
-                                <th class="uk-width-1-3">{{ $t('general.format')}}</th>
-                            </thead>
-                            <tbody>
-                                <tr v-for="value of method.recieves">
-                                    <AtomsPropLine :third="value.format">
-                                        <template #name>
-                                            {{ value.key }}
-                                        </template>
-                                        <template #value>
-                                            {{ value.type }}
-                                        </template>
-                                    </AtomsPropLine>
-                                </tr>
-                            </tbody>
-                        </table>   
-
-                        <h4 class="uk-margin-small-left uk-margin-remove-vertical" v-if="method.returns.length > 0">
-                            {{ $t('general.returns') }}
-                        </h4>
-                        <table class="uk-table uk-table-middle uk-table-divider uk-margin-remove-top" v-if="method.returns.length > 0">
-                            <thead v-if="!isMobile()">
-                                <th class="uk-width-1-3">{{ $t('ton.name')}}</th>
-                                <th class="uk-width-1-3">{{ $t('general.type')}}</th>
-                                <th class="uk-width-1-3">{{ $t('general.format')}}</th>
-                            </thead>
-                            <tbody>
-                                <tr v-for="value of method.returns">
-                                    <AtomsPropLine :third="value.format">
-                                        <template #name>
-                                            {{ value.key }}
-                                        </template>
-                                        <template #value>
-                                            {{ value.type }}
-                                        </template>
-                                    </AtomsPropLine>
-                                </tr>
-                            </tbody>
-                        </table>
                         
                         <h4 class="uk-margin-small-left uk-margin-remove-vertical" v-if="method.recieves.length > 0">
                             {{ $t('general.called') }}
                         </h4>
                         <table class="uk-table uk-table-middle uk-table-divider uk-margin-remove-top" v-if="method.recieves.length > 0">
                             <thead v-if="!isMobile()">
-                                <th class="uk-width-1-5">{{ $t('ton.name')}}</th>
-                                <th class="uk-width-4-5">{{ $t('general.value')}}</th>
+                                <th class="uk-table-shrink">{{ $t('ton.name')}}</th>
+                                <th class="uk-width-1-6">{{ $t('general.type')}}</th>
+                                <th class="uk-width-1-6">{{ $t('general.format')}}</th>
+                                <th class="uk-table-expand">{{ $t('general.value')}}</th>
                             </thead>
                             <tbody>
                                 <tr v-for="value of method.recieves">
-                                    <AtomsPropLine>
+                                    <AtomsPropLine :third="value.type" :fourth="value.format">
                                         <template #name>
                                             {{ value.key }}
                                         </template>
                                         <template #value>
-                                            <AtomsCopyableText :text="value.value.toString()">
-                                                <p v-if="!(value.addr && value.value !== 'NONE') && !value.content" class="uk-text-truncate uk-margin-remove"  :style="isMobile() ? 'max-width: 90vw' : 'max-width: calc(100vw * 0.75 * 0.65)'">
+                                            <AtomsCopyableText :text="value.value ? value.value.toString() : ''" :custom-desk-width="'35vw'" :custom-mobile-width="'80vw'">
+                                                <p v-if="!(value.addr && value.value !== 'NONE') && !value.content" class="uk-text-truncate uk-margin-remove">
                                                     {{ value.value ? value.value : $t('general.empty') }}
                                                 </p>
-                                                <NuxtLink v-else-if="value.content" rel="external" aria-label="nft_link" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove"  :style="isMobile() ? 'max-width: 90vw' : 'max-width: calc(100vw * 0.75 * 0.7)'">
+                                                <NuxtLink v-else-if="value.content" rel="external" aria-label="nft_link" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove">
                                                     {{ value.value }}
                                                 </NuxtLink>
-                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="`/accounts?hex=${value.value}`" :style="isMobile() ? 'max-width: 90vw' : 'max-width: calc(100vw * 0.75 * 0.7)'"> 
+                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="`/accounts?hex=${value.value}`"> 
                                                     {{ value.value }}
                                                 </NuxtLink>
                                             </AtomsCopyableText>
@@ -168,24 +125,26 @@ const parseData = computed((): TableSection[] => {
                         </h4>
                         <table class="uk-table uk-table-middle uk-table-divider uk-margin-remove-top" v-if="method.returns.length > 0 && !method.error">
                             <thead v-if="!isMobile()">
-                                <th class="uk-width-1-5">{{ $t('ton.name')}}</th>
-                                <th class="uk-width-4-5">{{ $t('general.value')}}</th>
+                                <th class="uk-width-1-4">{{ $t('ton.name')}}</th>
+                                <th class="uk-width-1-6">{{ $t('general.type')}}</th>
+                                <th class="uk-width-1-6">{{ $t('general.format')}}</th>
+                                <th class="uk-table-expand">{{ $t('general.value')}}</th>
                             </thead>
                             <tbody>
                                 <tr v-for="value of method.returns">
-                                    <AtomsPropLine>
+                                    <AtomsPropLine :third="value.type" :fourth="value.format">
                                         <template #name>
                                             {{ value.key }}
                                         </template>
                                         <template #value>
-                                            <AtomsCopyableText :text="value.value ? value.value.toString() : ''">
-                                                <p v-if="!(value.addr && value.value !== 'NONE') && !value.content" class="uk-text-truncate uk-margin-remove"  :style="isMobile() ? 'max-width: 90vw' : 'max-width: calc(100vw * 0.75 * 0.65)'">
+                                            <AtomsCopyableText :text="value.value ? value.value.toString() : ''" :custom-desk-width="'35vw'" :custom-mobile-width="'80vw'">
+                                                <p v-if="!(value.addr && value.value !== 'NONE') && !value.content" class="uk-text-truncate uk-margin-remove">
                                                     {{ value.value ? value.value : $t('general.empty') }}
                                                 </p>
-                                                <NuxtLink v-else-if="value.content" rel="external" aria-label="nft_link" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove"  :style="isMobile() ? 'max-width: 90vw' : 'max-width: calc(100vw * 0.75 * 0.7)'">
+                                                <NuxtLink v-else-if="value.content" rel="external" aria-label="nft_link" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove">
                                                     {{ value.value }}
                                                 </NuxtLink>
-                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="`/accounts?hex=${value.value}`" :style="isMobile() ? 'max-width: 90vw' : 'max-width: calc(100vw * 0.75 * 0.7)'"> 
+                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="`/accounts?hex=${value.value}`"> 
                                                     {{ value.value }}
                                                 </NuxtLink>
                                             </AtomsCopyableText>
