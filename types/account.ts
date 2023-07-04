@@ -8,10 +8,12 @@ declare global {
 
     type VmValue = {
         name: string
+        stack_type: string
         [key: string] : ReturnFormat
     }
     type GetMethod = {
             name: string,
+            error?: string
             arguments?: VmValue[]
             receives?: ReturnFormat[]
             return_values: VmValue[]

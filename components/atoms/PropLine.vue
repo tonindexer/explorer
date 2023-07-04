@@ -2,6 +2,7 @@
 interface Props {
     wrap?: boolean
     bold?: boolean
+    third?: string
 }
 defineProps<Props>()
 </script>
@@ -14,15 +15,20 @@ defineProps<Props>()
             </p>
             <p class="uk-flex uk-margin-remove uk-text-left" :class="{'uk-flex-wrap' : wrap}">
                 <slot name="value"/>
+                <div class="uk-margin-small-left uk-margin-small-right" v-if="third">{{ '·' }}</div>
+                {{ third }}
             </p>
         </td>
     </template>
     <template v-else>
-        <td class="uk-width-1-5">
+        <td :class="third? 'uk-width-1-3' : 'uk-width-1-5'">
             <slot name="name"/>
         </td>
-        <td class="uk-flex uk-width-1-1" :class="{'uk-text-bold' : bold, 'uk-flex-wrap' : wrap}">
+        <td :class="{'uk-text-bold' : bold, 'uk-flex-wrap' : wrap, 'uk-width-1-3' : third, 'uk-width-1-1 uk-flex' : !third}">
             <slot name="value"/>
+        </td>
+        <td v-if="third" class="uk-width-1-3">
+            {{ third }}
         </td>
     </template>
 </template>

@@ -63,6 +63,7 @@
         "none" : "None",
         "language": "Language",
         "type" : "Type",
+        "format": "Format",
         "from" : "Sender",
         "to" : "Recipient",
         "src_tx" : "SRC Tx",
@@ -87,8 +88,9 @@
         "search" : "Search TON adresses, transactions, blocks...",
         "search_mobile" : "Search...",
         "empty" : "Empty",
-        "argument" : "Argument",
-        "return" : "Returns"
+        "arguments" : "Arguments",
+        "returns" : "Returns",
+        "called" : "Called with"
     },
     "route" : {
         "explorer" : "Main Page",

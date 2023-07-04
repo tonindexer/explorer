@@ -37,6 +37,7 @@ const itemProp = computed(() => {
         :uk-icon="itemProp.icon"
         :class="itemProp.class"
         style="min-width: 20px;"
+        v-if="text"
         >
     </button>
 </template>
