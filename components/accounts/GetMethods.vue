@@ -80,7 +80,7 @@ const parseData = computed((): TableSection[] => {
                 </NuxtLink>
             </h4>
             <ul uk-accordion="multiple: true">
-                <li v-for="method of section.methods" >
+                <li class="uk-padding-small uk-border-rounded" style="background-color: rgb(233, 243, 255);" v-for="method of section.methods" >
                     <a class="uk-accordion-title uk-text-truncate uk-text-default" href="#">
                         {{ method.name }}
                     </a>
