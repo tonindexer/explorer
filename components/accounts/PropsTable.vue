@@ -143,7 +143,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
-            <tr>
+            <tr v-if="acc.last_tx_hash">
                 <AtomsPropLine>
                     <template #name>
                         {{ $t(`ton.last_tx_hash`) }}

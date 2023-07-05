@@ -134,7 +134,8 @@
         "deep_transactions" : "Shard transactions",
         "deep_messages" : "Shard messages",
         "deep_accounts" : "Shard accounts",
-        "filter": "Filter"
+        "filter": "Filter",
+        "desc" : "Descending"
     },
     "warning" : {
         "nothing_found" : "Nothing found..",

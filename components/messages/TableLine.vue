@@ -41,6 +41,12 @@ const showData = ref(false)
                 </div>
             </div>
         </div>
+        <div v-if="msg.transfer_comment" class="uk-flex uk-align-center uk-width-1-1 uk-margin-remove-top uk-margin-small-bottom">
+            <p class="uk-margin-remove" style="line-height: 20px; word-break: break-all">
+                <img uk-icon="icon: comments" style="vertical-align: middle"/>
+                {{ msg.transfer_comment }}
+            </p>
+        </div>
         <div class="uk-flex uk-align-center uk-width-1-1 uk-margin-remove-top uk-flex-wrap" style="justify-content: space-between; margin-bottom: 1rem;">
             <div class="uk-flex uk-flex-column" :style=" isMobile()? 'width: 100%; margin-bottom: 1rem' :`min-width: 250px; width: 48%;`">
                 <div class="uk-flex" style="justify-content: space-between;">

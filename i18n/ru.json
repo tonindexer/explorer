@@ -134,7 +134,8 @@
         "deep_transactions" : "Транзакции шардов",
         "deep_messages" : "Сообщения шардов",
         "deep_accounts" : "Аккаунты шардов",
-        "filter": "Фильтры"
+        "filter": "Фильтры",
+        "desc" : "По убыванию"
     },
     "warning" : {
         "nothing_found" : "По запросу нет результатов..",

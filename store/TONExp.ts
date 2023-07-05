@@ -170,6 +170,8 @@ export const useMainStore = defineStore('tonexp', {
         this.transactionHexes[mappedTransaction.hex] = transactionKey
         mappedTransaction.out_msg_keys = []
         mappedTransaction.delta = 0n + BigInt(transaction.in_amount ?? 0n) - BigInt(transaction.out_amount ?? 0n)
+        mappedTransaction.msg_fees = null
+
         let op_type: OPKey = 0
 
         if (transaction.account) {
@@ -179,6 +181,9 @@ export const useMainStore = defineStore('tonexp', {
         }
         if (transaction.in_msg) {
           this.processMessage(transaction.in_msg, transactionKey, 'dst', parseAccount)
+          if (transaction.in_msg.fwd_fee) {
+            mappedTransaction.msg_fees = transaction.in_msg.fwd_fee
+          }
           transaction.in_msg.operation_name ? op_type = transaction.in_msg.operation_name :
             (transaction.in_msg.operation_id ? op_type = `Contract op=${opToHex(transaction.in_msg.operation_id)}` : op_type = 1)
           delete transaction.in_msg
@@ -186,6 +191,10 @@ export const useMainStore = defineStore('tonexp', {
         if (transaction.out_msg !== undefined) {
           if (transaction.out_msg?.length)
             mappedTransaction.out_msg_keys.push(...transaction.out_msg.map(msg => {
+              if (msg.fwd_fee) {
+                if (mappedTransaction.msg_fees) mappedTransaction.msg_fees += msg.fwd_fee
+                else mappedTransaction.msg_fees = msg.fwd_fee
+              }
               msg.operation_name ? ( (op_type ===0 || op_type === 1) ? op_type = msg.operation_name : op_type = 99) :
                 (msg.operation_id ? ( (op_type ===0 || op_type === 1) ? op_type = `Contract op=0x${opToHex(msg.operation_id)}` : op_type = 99) :
                   op_type = 2)
@@ -194,6 +203,7 @@ export const useMainStore = defineStore('tonexp', {
           delete transaction.out_msg
         }
 
+        mappedTransaction.full_fees = (transaction.total_fees ?? 0n) + (mappedTransaction.msg_fees ?? 0n)
         mappedTransaction.op_type = op_type
         Object.assign(mappedTransaction, transaction)
 

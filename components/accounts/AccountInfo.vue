@@ -94,7 +94,7 @@ watch(() => props.hex, async() => await reloadInfo())
             </ul>
         </div>
         <div v-show="account && (route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
-            <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :account="hex" />
+            <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :account="hex" :order="'DESC'"/>
         </div>
         <div v-if="account && route.hash === '#jettons'" id="jettons">
             <LazyAccountsJettonsTable :owner="hex" :keys="jtKeys" :default-length="10" />

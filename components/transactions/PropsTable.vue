@@ -112,7 +112,12 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.total_fees`) }}
                     </template>
                     <template #value>
-                        {{ trn.total_fees ? `${fullTON(trn.total_fees, false)}💎` : $t('general.none') }}
+                        {{ trn.full_fees ? (`${fullTON(trn.full_fees, false)}💎`
+                            + ' (' + 
+                                (trn.total_fees ? `${fullTON(trn.total_fees, false)}💎 Tx` : '') +
+                                (trn.total_fees && trn.msg_fees ? ' + ' : '')   +
+                                (trn.msg_fees ? `${fullTON(trn.msg_fees, false)}💎 Msg` : '')
+                            + ')') : $t('general.none') }}
                     </template>
                 </AtomsPropLine>
             </tr>
