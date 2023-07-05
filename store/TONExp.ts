@@ -137,8 +137,8 @@ export const useMainStore = defineStore('tonexp', {
         if (message.type === 'EXTERNAL_OUT' && message.dst_address) delete message.dst_address
         const mappedMessage = <Message>{}
 
-        mappedMessage.src_tx_key = (message.src_tx_lt && message.src_address) ?  `${message.src_address.hex}|${message.src_tx_lt}` : null
-        mappedMessage.dst_tx_key = (message.dst_tx_lt && message.dst_address) ?  `${message.dst_address.hex}|${message.dst_tx_lt}` : null
+        mappedMessage.src_tx_key = (message.src_tx_lt && message.src_address) ?  `${message.src_address.base64}|${message.src_tx_lt}` : null
+        mappedMessage.dst_tx_key = (message.dst_tx_lt && message.dst_address) ?  `${message.dst_address.base64}|${message.dst_tx_lt}` : null
 
         if (tr_type === 'src' && tr_key) mappedMessage.src_tx_key = tr_key
         if (tr_type === 'dst' && tr_key) mappedMessage.dst_tx_key = tr_key
