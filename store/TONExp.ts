@@ -35,7 +35,9 @@ export const useMainStore = defineStore('tonexp', {
       // Statistics.
       stats : {} as Statistics,
       // Interfaces
-      interfaces : {} as ContractInterfaceMap
+      interfaces : {} as ContractInterfaceMap,
+      // Graphs
+      messageGraphData : [] as GraphCell[]
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
@@ -366,6 +368,27 @@ export const useMainStore = defineStore('tonexp', {
             this.exploredBlocks.push(block)
             this.exploredBlocks.push(...this.blocks[block].shard_keys)
           }
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async getMessagesChart(metric: 'message_count' | 'message_amount_sum', interval: Interval, filters: MockType | null, reset: boolean = false, from?: string, to?: string) {
+        const fullReq: MockType = {
+          ...filters,
+          from : from ? from : (new Date(new Date().setHours(-168*7, 0, 0, 0)).toISOString().split('.')[0] +"Z"),
+          to,
+          interval,
+          metric
+        }
+        let newArr: GraphCell[] = reset ? [] : [...this.messageGraphData]
+        const query = getQueryString(fullReq, true)
+        try {
+          const { data } = await apiRequest(`/messages/aggregated/history?${query}`, 'GET')
+          const parsed = parseJson<MessageGraphAPI>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
+          if (parsed.sum_results) newArr = [...newArr, ...parsed.sum_results]
+          this.messageGraphData = this.removeDuplicates(newArr)
         } catch (error) {
           console.log(error)
         }
@@ -747,6 +770,12 @@ export const useMainStore = defineStore('tonexp', {
           }
         }
         return this.searchResults
-      }
+      },
+      removeDuplicates(arr: GraphCell[]) {
+        return arr.filter((obj, index) =>
+            arr.findIndex(
+            (item) => item.Timestamp === obj.Timestamp
+        ) === index)
+    }
     }
   })

@@ -2,6 +2,16 @@ export { };
 
 declare global {
     type SearchType = 'account' | 'transaction' | 'block' | 'label'
+    type Interval = '15m' | '1h' | '4h' | '8h' | '24h'
+    type GraphCell = {
+        Value: bigint | number
+        Timestamp: string
+    }
+
+    type MessageGraphAPI = {
+        count_results?: GraphCell[]
+        sum_results?: GraphCell[]
+    }
 
     type LabelSearch = {
         type: 'label'
