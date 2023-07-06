@@ -34,8 +34,9 @@ export const useMainStore = defineStore('tonexp', {
       searchResults: [] as Search,
       // Statistics.
       stats : {} as Statistics,
-      // Interfaces
-      interfaces : {} as ContractInterfaceMap
+      // Contracts
+      interfaces : {} as ContractInterfaceMap,
+      operations : {} as ContractOperationMap
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
@@ -340,7 +341,18 @@ export const useMainStore = defineStore('tonexp', {
             console.log(error)
           }
         }
-        
+        if (Object.keys(this.operations).length === 0) {
+          try {
+            const { data } = await apiRequest(`/contracts/operations`, 'GET')
+            const parsed = parseJson<ContractOperationAPI>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            for (const oper of parsed.results) {
+              this.operations[oper.operation_name] = oper
+            }
+          } catch (error) {
+            console.log(error)
+          }
+        }
       },
       async updateBlockValues(limit: number = 10, seqOffset: number | null, cutPage: number = 0, order: "ASC" | "DESC" = "DESC") {
         const fullReq: MockType = {

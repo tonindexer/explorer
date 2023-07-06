@@ -29,6 +29,7 @@ declare global {
         total: number
         results: ContractInterface[]
     }
+    
     type ContractOperation = {
         operation_name: string
         contract_name: ContractType
@@ -36,5 +37,12 @@ declare global {
         outgoing: boolean
         operation_id: number
         schema: Schema
+    }
+    type ContractOperationMap = {
+        [key: string] : ContractOperation
+    }
+    type ContractOperationAPI = {
+        total: number
+        results: ContractOperation[]
     }
 }
