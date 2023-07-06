@@ -25,7 +25,8 @@ const filterFields = ref({
     'dst_contract_desktop': { value: '', text: ''} as SelectItem | {},
     'dst_contract_mobile': 'All',
     'op_type': '',
-    'op_name': ''
+    'op_name_desktop':  { value: '', text: ''} as SelectItem | {},
+    'op_name_mobile': 'All',
 })
 
 const store = useMainStore()
@@ -37,22 +38,28 @@ const optionsMobile = computed(() : string[] => {
     return defualt.sort()
 })
 
+const opOptions = computed(() => Object.values(store.operations).map(item => { return { value: item.operation_name, text: item.operation_name}}).sort((a, b) => a.text > b.text ? 1 : -1))
+const opOptionsMobile = computed(() : string[] => {
+    const defualt = ['All']
+    defualt.push(...Object.keys(store.operations))
+    return defualt.sort()
+})
+
 const srcField = ref('')
 const dstField = ref('')
 const opID = ref('')
-const opName = ref('')
 
 const srcFieldCheck = computed(() => addParse(srcField.value) || srcField.value === '' ? true : false)
 const dstFieldCheck = computed(() => addParse(dstField.value) || dstField.value === '' ? true : false)
 const opIDCheck = computed(() => isNumeric(opID.value) || isHex(opID.value) || opID.value === '' ? true : false)
-const opNameCheck = computed(() => isValidName(opName.value) || opName.value === '' ? true : false)
 
-const setField = (value: string, type: 'src_address' |'dst_address' | 'op_name' | 'op_type', allowed: boolean) => {
+const setField = (value: string, type: 'src_address' |'dst_address' | 'op_type', allowed: boolean) => {
     if (allowed) filterFields.value[type] = value;
 }
 
 const selectedSRCContract = computed(() => isMobile() ? (filterFields.value.src_contract_mobile !== 'All' ? filterFields.value.src_contract_mobile : null ): ('value' in filterFields.value.src_contract_desktop ? filterFields.value.src_contract_desktop.value : null))
 const selectedDSTContract = computed(() => isMobile() ? (filterFields.value.dst_contract_mobile !== 'All' ? filterFields.value.dst_contract_mobile : null ): ('value' in filterFields.value.dst_contract_desktop ? filterFields.value.dst_contract_desktop.value : null))
+const selectedOPName = computed(() => isMobile() ? (filterFields.value.op_name_mobile !== 'All' ? filterFields.value.op_name_mobile : null ): ('value' in filterFields.value.op_name_desktop ? filterFields.value.op_name_desktop.value : null))
 
 const reset = (type: Filter | 'all') => {
     switch (type) {
@@ -65,7 +72,8 @@ const reset = (type: Filter | 'all') => {
                 'dst_contract_desktop': {} as SelectItem,
                 'dst_contract_mobile': 'All',
                 'op_type': '',
-                'op_name': ''
+                'op_name_desktop': {} as SelectItem,
+                'op_name_mobile': 'All',
             }
             break
         }
@@ -90,7 +98,11 @@ const reset = (type: Filter | 'all') => {
             break
         }
         case 'operation_id' : filterFields.value.op_type = ''; break;
-        case 'operation_name' : filterFields.value.op_name = ''; break;
+        case 'operation_name': {
+            filterFields.value.op_name_desktop = {}
+            filterFields.value.op_name_mobile = 'All'
+            break
+        }
     }
 }
 
@@ -101,7 +113,7 @@ const selectedOptions = computed(() => { return {
         'dst_address': filterFields.value.dst_address,
         'dst_contract': selectedDSTContract.value,
         'operation_id': filterFields.value.op_type,
-        'operation_name': filterFields.value.op_name
+        'operation_name': selectedOPName.value
     }})
 
 const setRoute = () => {
@@ -118,12 +130,12 @@ function routeChecker() {
         'dst_contract_desktop': (route.query.dst_contract && route.query.dst_contract.toString() in store.interfaces) ? { value: route.query.dst_contract, text: route.query.dst_contract} as SelectItem : {},
         'dst_contract_mobile': route.query.dst_contract?.toString() ?? 'All',
         'op_type': route.query.operation_id?.toString() ?? '',
-        'op_name': route.query.operation_name?.toString() ?? ''
+        'op_name_desktop': (route.query.operation_name && route.query.operation_name.toString() in store.operations) ? { value: route.query.operation_name, text: route.query.operation_name} as SelectItem : {},
+        'op_name_mobile': route.query.operation_name?.toString() ?? 'All'
     }
     srcField.value = filterFields.value.src_address
     dstField.value = filterFields.value.dst_address
     opID.value = filterFields.value.op_type
-    opName.value = filterFields.value.op_name
     isGeneral.value = true;
     return;
 }
@@ -238,18 +250,23 @@ onMounted(() => routeChecker())
                     </div>
                 </div>
                 <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-                    <div>   
+                    <div>
                         {{ $t('ton.operation_name') }}
                     </div>
-                    <div class="uk-flex uk-flex-right uk-flex-middle uk-width-1-2" style="gap: 0.5rem;">
-                        <input class="uk-input" :class="{ 'error' : !opNameCheck}"  v-model="opName" @keyup.enter="setField(opName, 'op_name', opNameCheck)">
-                        <div class="green" :class="{ 'uk-icon-button' : opNameCheck}" 
-                        v-if="opName && opName !== filterFields.op_name && opNameCheck" 
-                        uk-icon="icon: check; ratio: 1.2" style="min-width: 36px"
-                        @click="setField(opName, 'op_name', opNameCheck)"></div>
-                        <div class="red uk-icon-button" v-if="opName" uk-icon="icon: close; ratio: 1.2" style="min-width: 36px" @click="reset('operation_name')"></div>
+                    <div v-if="!isMobile()" class="uk-width-2-3">
+                        <ModelSelect :options="opOptions" v-model="filterFields.op_name_desktop" :placeholder="$t('ton.operation_name')" style="border-radius: 0;"></ModelSelect>
                     </div>
-                </div>
+                    <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
+                        <AtomsSelector 
+                            :item-count="filterFields.op_name_mobile"
+                            :amount="null"
+                            :start-line="null"
+                            :options="opOptionsMobile"
+                            @set-value="(e: any) => filterFields.op_name_mobile = e.value"
+                        />
+                    </div>
+                    <div class="red uk-icon-button" v-if="Object.keys(filterFields.op_name_desktop).length > 0" uk-icon="icon: close;ratio: 1.2" @click="reset('operation_name')"></div>
+                </div>  
             </div>
 
             <div class="uk-flex uk-flex-wrap" :style="isMobile() ? 'font-size: small' : ''">

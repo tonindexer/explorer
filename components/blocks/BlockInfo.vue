@@ -95,7 +95,7 @@ watch(props, async() => await reloadInfo())
             <div class="uk-child-width-auto uk-text-left uk-margin-small-top" v-if="block.shard_keys.length > 0">
                 <label><input v-model="deepTrKeys" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.deep_transactions') }}</label>
             </div>
-            <TransactionsTable :item-selector="false" :default-length="10" :update="false" :keys="trKeys" :hidden="trKeys.length === 0" :account="null"/>
+            <TransactionsTable :item-selector="false" :default-length="10" :update="false" :keys="trKeys" :hidden="trKeys.length === 0" :order="'DESC'" :account="null"/>
         </div>
         <div v-if="(route.hash === '#messages' )&& block?.shard_keys" id="messages">
             <div class="uk-child-width-auto uk-text-left uk-margin-small-top" v-if="block.shard_keys.length > 0">

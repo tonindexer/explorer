@@ -36,6 +36,7 @@ export const useMainStore = defineStore('tonexp', {
       stats : {} as Statistics,
       // Interfaces
       interfaces : {} as ContractInterfaceMap,
+      operations : {} as ContractOperationMap,
       // Graphs
       messageGraphData : [] as GraphCell[]
     }),
@@ -139,8 +140,8 @@ export const useMainStore = defineStore('tonexp', {
         if (message.type === 'EXTERNAL_OUT' && message.dst_address) delete message.dst_address
         const mappedMessage = <Message>{}
 
-        mappedMessage.src_tx_key = (message.src_tx_lt && message.src_address) ?  `${message.src_address.hex}|${message.src_tx_lt}` : null
-        mappedMessage.dst_tx_key = (message.dst_tx_lt && message.dst_address) ?  `${message.dst_address.hex}|${message.dst_tx_lt}` : null
+        mappedMessage.src_tx_key = (message.src_tx_lt && message.src_address) ?  `${message.src_address.base64}|${message.src_tx_lt}` : null
+        mappedMessage.dst_tx_key = (message.dst_tx_lt && message.dst_address) ?  `${message.dst_address.base64}|${message.dst_tx_lt}` : null
 
         if (tr_type === 'src' && tr_key) mappedMessage.src_tx_key = tr_key
         if (tr_type === 'dst' && tr_key) mappedMessage.dst_tx_key = tr_key
@@ -342,7 +343,18 @@ export const useMainStore = defineStore('tonexp', {
             console.log(error)
           }
         }
-        
+        if (Object.keys(this.operations).length === 0) {
+          try {
+            const { data } = await apiRequest(`/contracts/operations`, 'GET')
+            const parsed = parseJson<ContractOperationAPI>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            for (const oper of parsed.results) {
+              this.operations[oper.operation_name] = oper
+            }
+          } catch (error) {
+            console.log(error)
+          }
+        }
       },
       async updateBlockValues(limit: number = 10, seqOffset: number | null, cutPage: number = 0, order: "ASC" | "DESC" = "DESC") {
         const fullReq: MockType = {
