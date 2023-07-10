@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
 import { ModelSelect } from 'vue-search-select'
+import VueDatePicker from '@vuepic/vue-datepicker';
 
 const isGeneral = ref(true)
 const error = ref(false)
@@ -10,7 +11,7 @@ type SelectItem = {
     text: string
 }
 
-type Filter = 'src_address' | 'src_contract' | 'dst_address' | 'dst_contract' | 'operation_id' | 'operation_name'
+type Filter = 'src_address' | 'src_contract' | 'dst_address' | 'dst_contract' | 'operation_id' | 'operation_name' | 'from' | 'to'
 
 const route = useRoute()
 const router = useRouter()
@@ -26,7 +27,12 @@ const filterFields = ref({
     'dst_contract_mobile': 'All',
     'op_type': '',
     'op_name_desktop':  { value: '', text: ''} as SelectItem | {},
-    'op_name_mobile': 'All',
+    'op_name_mobile': 'All'
+})
+
+const filterInterval = ref({
+    from: null as number | null,
+    to: null as number | null,
 })
 
 const store = useMainStore()
@@ -61,6 +67,56 @@ const selectedSRCContract = computed(() => isMobile() ? (filterFields.value.src_
 const selectedDSTContract = computed(() => isMobile() ? (filterFields.value.dst_contract_mobile !== 'All' ? filterFields.value.dst_contract_mobile : null ): ('value' in filterFields.value.dst_contract_desktop ? filterFields.value.dst_contract_desktop.value : null))
 const selectedOPName = computed(() => isMobile() ? (filterFields.value.op_name_mobile !== 'All' ? filterFields.value.op_name_mobile : null ): ('value' in filterFields.value.op_name_desktop ? filterFields.value.op_name_desktop.value : null))
 
+const currInterval = computed((): PresetInterval => {
+    if (!filterInterval.value.to) {
+        if (filterInterval.value.from && filterInterval.value.from === new Date('15 Nov 2019').getTime()) return 'all'
+        return 'other'
+    } else if (filterInterval.value.from) {
+        if (filterInterval.value.to - filterInterval.value.from === 86400000 && filterInterval.value.to === store.lastAvailableTimestamp) return 'day'
+        else if (filterInterval.value.to - filterInterval.value.from === 86400000 * 7 && filterInterval.value.to === store.lastAvailableTimestamp) return 'week'
+        else if (filterInterval.value.to - filterInterval.value.from === 86400000 * 31 && filterInterval.value.to === store.lastAvailableTimestamp) return 'month'
+        else if (filterInterval.value.from === new Date('15 Nov 2019').getTime() && filterInterval.value.to === store.lastAvailableTimestamp) return 'all'
+        else return 'other'
+    } else return 'other'
+})
+
+const pickInterval = (interval : PresetInterval) => {
+    switch (interval) {
+        case 'day':
+            if (filterInterval.value.from && filterInterval.value.to && filterInterval.value.to - filterInterval.value.from === 86400000 && filterInterval.value.to === store.lastAvailableTimestamp) return
+            filterInterval.value = {
+                to : null,
+                from : store.lastAvailableTimestamp - 86400000
+            }
+            break
+        case 'week':
+            if (filterInterval.value.from && filterInterval.value.to && filterInterval.value.to - filterInterval.value.from === 86400000 * 7 && filterInterval.value.to === store.lastAvailableTimestamp) return
+            filterInterval.value = {
+                to : null,
+                from : store.lastAvailableTimestamp - 86400000 * 7
+            }
+
+            break
+        case 'month':
+            if (filterInterval.value.from && filterInterval.value.to && filterInterval.value.to - filterInterval.value.from === 86400000 * 31 && filterInterval.value.to === store.lastAvailableTimestamp) return
+            filterInterval.value = {
+                to : null,
+                from : store.lastAvailableTimestamp - 86400000 * 31
+            }
+
+            break
+        case 'all':
+            if (filterInterval.value.from && filterInterval.value.from === new Date('15 Nov 2019').getTime()) return
+            filterInterval.value = {
+                to : null,
+                from : new Date('15 Nov 2019').getTime()
+            }
+            break
+        default:
+    }
+    setRoute()
+}
+
 const reset = (type: Filter | 'all') => {
     switch (type) {
         case 'all' : {
@@ -73,7 +129,11 @@ const reset = (type: Filter | 'all') => {
                 'dst_contract_mobile': 'All',
                 'op_type': '',
                 'op_name_desktop': {} as SelectItem,
-                'op_name_mobile': 'All',
+                'op_name_mobile': 'All'
+            }
+            filterInterval.value = {
+                from: null,
+                to: null
             }
             break
         }
@@ -103,7 +163,16 @@ const reset = (type: Filter | 'all') => {
             filterFields.value.op_name_mobile = 'All'
             break
         }
+        case 'from' :  {
+            if (!(filterInterval.value.to && filterInterval.value.to <= store.startupTime - 86400000 * 31))
+                filterInterval.value.from = null;
+            else filterInterval.value.from = new Date('15 Nov 2019').getTime()
+            break;
+        }
+        case 'to' : filterInterval.value.to = null; break; 
     }
+
+    setRoute()
 }
 
 
@@ -113,11 +182,13 @@ const selectedOptions = computed(() => { return {
         'dst_address': filterFields.value.dst_address,
         'dst_contract': selectedDSTContract.value,
         'operation_id': filterFields.value.op_type,
-        'operation_name': selectedOPName.value
-    }})
+        'operation_name': selectedOPName.value,
+        'from': filterInterval.value.from ? msToISO(filterInterval.value.from) : msToISO(store.startupTime - 86400000 * 31),
+        'to': filterInterval.value.to ? msToISO(filterInterval.value.to) : null
+}})
 
 const setRoute = () => {
-    const queryString = getQueryString(selectedOptions.value, true)
+    const queryString = getQueryString({ ...selectedOptions.value, from: filterInterval.value.from ? msToISO(filterInterval.value.from) : null} , true)
     if (queryString || route.fullPath.split('?')[1] !== queryString) router.replace(`/messages?${queryString}`)
 }
 
@@ -133,6 +204,10 @@ function routeChecker() {
         'op_name_desktop': (route.query.operation_name && route.query.operation_name.toString() in store.operations) ? { value: route.query.operation_name, text: route.query.operation_name} as SelectItem : {},
         'op_name_mobile': route.query.operation_name?.toString() ?? 'All'
     }
+    filterInterval.value = {
+        'from' : route.query.from ? new Date(route.query.from.toString()).getTime() : null,
+        'to' : route.query.to ? new Date(route.query.to.toString()).getTime() : null
+    }
     srcField.value = filterFields.value.src_address
     dstField.value = filterFields.value.dst_address
     opID.value = filterFields.value.op_type
@@ -140,11 +215,8 @@ function routeChecker() {
     return;
 }
 
-watch(() => route.query, () => { 
-    routeChecker() 
-})
-
-watch(filterFields, () => {
+watch(filterFields, (from, to) => {
+    if (to === from || !from.dst_contract_desktop.hasOwnProperty('value')) return
     setRoute()
 }, {deep: true})
 
@@ -269,11 +341,40 @@ onMounted(() => routeChecker())
                 </div>  
             </div>
 
+            <div v-if="filterFlag" class="uk-flex uk-flex-middle uk-margin-small uk-margin-small-bottom">
+                <div class="uk-margin-remove" style="padding: 0.2rem 0.5rem 0.2rem 0; height: fit-content; white-space: nowrap;">
+                    {{ $t('ton.from') }}
+                </div>
+                <VueDatePicker @update:model-value="setRoute()" :min-date="new Date('15 Nov 2019')" :max-date="filterInterval.to ? new Date(filterInterval.to) : new Date()" :format="'yyyy-MM-dd HH:mm'" class="uk-width-1-5" v-model="filterInterval.from" :clearable="false"/>
+                <div class="uk-margin-remove" style="padding: 0.2rem 0.5rem; height: fit-content; white-space: nowrap;">
+                    {{ $t('ton.to') }}
+                </div>
+                <VueDatePicker @update:model-value="setRoute()" :min-date="filterInterval.from ? new Date(filterInterval.from) :new Date('15 Nov 2019')" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" class="uk-width-1-5 uk-margin-small-right" v-model="filterInterval.to" :clearable="false"/>
+                <button class="uk-margin-small-right uk-button" style="padding: 0.2rem 0.5rem; min-width: 120px; width: 10%; height: fit-content;" id="4h" @click="pickInterval('day')">
+                    last day
+                </button>
+                <button class="uk-margin-small-right uk-button" style="padding: 0.2rem 0.5rem; min-width: 120px; width: 10%; height: fit-content;" id="4h" @click="pickInterval('week')">
+                    last week
+                </button>
+                <button class="uk-margin-small-right uk-button" style="padding: 0.2rem 0.5rem; min-width: 120px; width: 10%; height: fit-content;" id="8h" @click="pickInterval('month')">
+                    last month
+                </button>
+                <button class="uk-button" style="padding: 0.2rem 0.5rem; min-width: 120px; width: 10%; height: fit-content;" id="24h" @click="pickInterval('all')">
+                    All
+                </button>
+            </div>
+
             <div class="uk-flex uk-flex-wrap" :style="isMobile() ? 'font-size: small' : ''">
                 <template v-for="(option, key) in selectedOptions">
-                    <div class="uk-flex uk-background-primary uk-margin-small-right uk-margin-small-top uk-border-rounded white" style="padding: 0.3rem 0.7rem ; text-wrap: nowrap" v-if="option">
+                    <div v-if="key !== 'from' && option" class="uk-flex uk-background-primary uk-margin-small-right uk-margin-small-top uk-border-rounded white" style="padding: 0.3rem 0.7rem ; text-wrap: nowrap">
                         <div style="max-width: 90%;">
-                            {{ $t(`ton.${key}`) + ': ' + truncString(option, 18, 0) }}
+                            {{ $t(`ton.${key}`) + ': ' + truncString(option, 19, 0) }}
+                        </div> 
+                        <button class="uk-margin-small-left" aria-label="reset_src_address" uk-icon="icon: close" @click="reset(key)"></button>
+                    </div>
+                    <div v-else-if="key === 'from' && filterInterval.from" class="uk-flex uk-background-primary uk-margin-small-right uk-margin-small-top uk-border-rounded white" style="padding: 0.3rem 0.7rem ; text-wrap: nowrap" v-if="option">
+                        <div style="max-width: 90%;">
+                            {{ $t(`ton.${key}`) + ': ' + truncString(option, 21, 0) }}
                         </div> 
                         <button class="uk-margin-small-left" aria-label="reset_src_address" uk-icon="icon: close" @click="reset(key)"></button>
                     </div>
@@ -281,7 +382,19 @@ onMounted(() => routeChecker())
             </div>
 
             <ClientOnly>
-                <ServerAreaGraph :filters="selectedOptions"/>
+                <ServerAreaGraph 
+                    :filters="selectedOptions"
+                    :from = "filterInterval.from ?? 0"
+                    :to = "filterInterval.to ?? 0"
+                    :curr-interval="currInterval"
+                    @set-range="(e) => {
+                        filterInterval = {
+                            from: e.from,
+                            to: e.to
+                        }
+                        setRoute()
+                    }"
+                />
             </ClientOnly>
             <LazyMessagesTable :filters="selectedOptions" :keys="store.exploredMessages" :update="true" :default-length="10" :hidden="false" :item-selector="true" :show-link="true"
             />

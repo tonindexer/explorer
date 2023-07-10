@@ -50,7 +50,7 @@ const showData = ref(false)
             <div class="uk-flex uk-flex-column" :style=" isMobile()? 'width: 100%; margin-bottom: 1rem' :`min-width: 250px; width: 48%;`">
                 <div class="uk-flex" style="justify-content: space-between;">
                     <div>   
-                        {{ $t('general.from') }}
+                        {{ $t('general.sender') }}
                     </div>
                     <div v-if="msg.src_address" class="uk-margin-remove uk-text-right uk-flex">
                         <NuxtLink :to="{path: 'accounts', query: { hex: msg.src_address.hex}, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.src_address.hex in badAddresses ? badAddresses[msg.src_address.hex].name : msg.src_address.base64 }}</NuxtLink>
@@ -101,7 +101,7 @@ const showData = ref(false)
             <div class="uk-flex uk-flex-column" :style=" isMobile()? 'width: 100%' :`min-width: 250px; width: 48%;`">
                 <div class="uk-flex" style="justify-content: space-between;">
                     <div>   
-                        {{ $t('general.to') }}
+                        {{ $t('general.receiver') }}
                     </div>
                     <div v-if="msg.dst_address" class="uk-margin-remove uk-text-right uk-flex">
                         <NuxtLink :to="{path: 'accounts', query: { hex: msg.dst_address.hex}, hash: '#overview'}" class="uk-text-primary uk-text-truncate" :style="isMobile()? 'max-width: 50vw;' : 'max-width: 25vw;'"> {{ msg.dst_address.hex in badAddresses ? badAddresses[msg.dst_address.hex].name : ( msg.dst_address.base64) }}</NuxtLink>

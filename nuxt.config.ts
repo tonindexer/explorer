@@ -5,6 +5,9 @@ export default defineNuxtConfig({
         tonUrl : 'https://anton.tools/api/v0/'
       }
     },
+    build: {
+      transpile: ['@vuepic/vue-datepicker']
+    },
     modules : [
       '@nuxtjs/i18n',
       '@pinia/nuxt',

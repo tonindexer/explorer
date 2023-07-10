@@ -4,6 +4,8 @@ $global-link-color: #666;
 $global-font-family: 'Fira Mono' , sans-serif;
 $hover-color: #f3f3ff;
 
+@import '@vuepic/vue-datepicker/dist/main.css';
+
 @import "uikit/src/scss/variables-theme.scss";
 @import "uikit/src/scss/mixins-theme.scss";
 
@@ -83,4 +85,8 @@ $hover-color: #f3f3ff;
 
 .search {
   width: auto !important;
+}
+
+.uk-button:disabled {
+  cursor: not-allowed !important;
 }

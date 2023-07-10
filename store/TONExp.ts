@@ -38,6 +38,8 @@ export const useMainStore = defineStore('tonexp', {
       interfaces : {} as ContractInterfaceMap,
       operations : {} as ContractOperationMap,
       // Graphs
+      lastAvailableTimestamp: 0 as number,
+      startupTime: new Date().getTime() as number,
       messageGraphData : [] as GraphCell[]
     }),
     getters: {
@@ -384,11 +386,9 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async getMessagesChart(metric: 'message_count' | 'message_amount_sum', interval: Interval, filters: MockType | null, reset: boolean = false, from?: string, to?: string) {
+      async getMessagesChart(metric: 'message_count' | 'message_amount_sum', interval: IntervalAPI, filters: MockType | null, reset: boolean = false, setEnd : boolean = false) {
         const fullReq: MockType = {
           ...filters,
-          from : from ? from : (new Date(new Date().setHours(-168*7, 0, 0, 0)).toISOString().split('.')[0] +"Z"),
-          to,
           interval,
           metric
         }
@@ -400,7 +400,8 @@ export const useMainStore = defineStore('tonexp', {
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
           if (parsed.sum_results) newArr = [...newArr, ...parsed.sum_results]
-          this.messageGraphData = this.removeDuplicates(newArr)
+          this.messageGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
+          if (setEnd) this.lastAvailableTimestamp = new Date(this.messageGraphData[this.messageGraphData.length - 1].Timestamp).getTime()
         } catch (error) {
           console.log(error)
         }
@@ -413,7 +414,7 @@ export const useMainStore = defineStore('tonexp', {
         }
         if (seqOffset) fullReq.after = seqOffset
         if (!seqOffset) this.exploredMessages = []
-        const query = getQueryString(fullReq, false)
+        const query = getQueryString(fullReq, true)
         try {
           const { data } = await apiRequest(`/messages?${query}`, 'GET')
           const parsed = parseJson<MessageAPIData>(data, (key, value, context) => (

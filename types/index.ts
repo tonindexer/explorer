@@ -2,7 +2,9 @@ export { };
 
 declare global {
     type SearchType = 'account' | 'transaction' | 'block' | 'label'
-    type Interval = '15m' | '1h' | '4h' | '8h' | '24h'
+    type IntervalAPI = '15m' | '1h' | '4h' | '8h' | '24h'
+    type PresetInterval = 'day' | 'week' | 'month' | 'all' | 'other'
+    
     type GraphCell = {
         Value: bigint | number
         Timestamp: string

@@ -8,7 +8,8 @@ export default <RouterConfig>{
         if (savedPosition) return savedPosition
 
         if (to.hash && from.hash) return false
-        
+        if (to.path === '/messages' && from.path === '/messages')
+
         return { top: 0, left: 0, behavior: 'smooth'}
     }
 }
