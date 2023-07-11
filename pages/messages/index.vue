@@ -67,19 +67,6 @@ const selectedSRCContract = computed(() => isMobile() ? (filterFields.value.src_
 const selectedDSTContract = computed(() => isMobile() ? (filterFields.value.dst_contract_mobile !== 'All' ? filterFields.value.dst_contract_mobile : null ): ('value' in filterFields.value.dst_contract_desktop ? filterFields.value.dst_contract_desktop.value : null))
 const selectedOPName = computed(() => isMobile() ? (filterFields.value.op_name_mobile !== 'All' ? filterFields.value.op_name_mobile : null ): ('value' in filterFields.value.op_name_desktop ? filterFields.value.op_name_desktop.value : null))
 
-const currInterval = computed((): PresetInterval => {
-    if (!filterInterval.value.to) {
-        if (filterInterval.value.from && filterInterval.value.from === new Date('15 Nov 2019').getTime()) return 'all'
-        return 'other'
-    } else if (filterInterval.value.from) {
-        if (filterInterval.value.to - filterInterval.value.from === 86400000 && filterInterval.value.to === store.lastAvailableTimestamp) return 'day'
-        else if (filterInterval.value.to - filterInterval.value.from === 86400000 * 7 && filterInterval.value.to === store.lastAvailableTimestamp) return 'week'
-        else if (filterInterval.value.to - filterInterval.value.from === 86400000 * 31 && filterInterval.value.to === store.lastAvailableTimestamp) return 'month'
-        else if (filterInterval.value.from === new Date('15 Nov 2019').getTime() && filterInterval.value.to === store.lastAvailableTimestamp) return 'all'
-        else return 'other'
-    } else return 'other'
-})
-
 const pickInterval = (interval : PresetInterval) => {
     switch (interval) {
         case 'day':
@@ -381,12 +368,11 @@ onMounted(() => routeChecker())
                 </template>
             </div>
 
-            <ClientOnly>
-                <ServerAreaGraph 
+            <ClientOnly v-if="!isMobile()">
+                <GraphAreaMessage 
                     :filters="selectedOptions"
                     :from = "filterInterval.from ?? 0"
                     :to = "filterInterval.to ?? 0"
-                    :curr-interval="currInterval"
                     @set-range="(e) => {
                         filterInterval = {
                             from: e.from,

@@ -6,10 +6,11 @@ type TableData = [
     number, bigint | number
 ]
 interface GraphData {
-    filters: MockType
-    from: number | null
-    to: number | null
-    currInterval: PresetInterval
+    excludeMC: boolean
+    interval: {
+        from: number | null
+        to: number | null
+    }
 }
 
 const store = useMainStore()
@@ -17,17 +18,20 @@ const props = defineProps<GraphData>()
 const emits = defineEmits(['setRange'])
 
 const graph = ref<VueApexChartsComponent | null>(null)
-const dataParser = computed(() : TableData[] => store.messageGraphData
+const dataParser = computed(() : TableData[] => store.transactionGraphData
     .map(item => [new Date(item.Timestamp).getTime(), item.Value]))
 
 const interrupter = ref(false)
 
-const chartType: Ref<'message_count' | 'message_amount_sum'> = ref('message_count')
 const series = computed(() => [{
-    name: chartType.value === 'message_count' ? 'messages' : 'volume',
+    name: 'volume',
     data: dataParser.value
 }])
 
+const requestTimes = computed(() => {  return {
+    'from': props.interval.from ? msToISO(props.interval.from) : msToISO(store.startupTime - 86400000 * 31),
+    'to': props.interval.to ? msToISO(props.interval.to) : null
+}})
 
 let chartOptions = {
     chart: {
@@ -73,7 +77,7 @@ const changeInterval = async (event: any) => {
 
     if (interrupter.value) return
 
-    if (props.from === event.w.globals.minX && props.to === event.w.globals.maxX) return
+    if (props.interval.from === event.w.globals.minX && props.interval.to === event.w.globals.maxX) return
 
     interrupter.value = true
 
@@ -84,7 +88,7 @@ const changeInterval = async (event: any) => {
 }
 
 const requestData = async (reset: boolean, setLast: boolean = false) => {
-    await store.getMessagesChart(chartType.value, selection.value, props.filters, reset, setLast)
+    await store.getTransactionsChart(selection.value, props.excludeMC, requestTimes.value.from, requestTimes.value.to, reset, setLast)
 }
 
 const pickGroup = async (timeline: IntervalAPI) => {
@@ -101,12 +105,12 @@ const pickGroup = async (timeline: IntervalAPI) => {
     interrupter.value = false
 }
 
-watch(() => props.filters, () => {
+watch(() => props.interval, () => {
 
     let zoom = 0
-    if (props.from && props.to) zoom = props.to - props.from
-    else if (props.from) zoom = (store.lastAvailableTimestamp ? store.lastAvailableTimestamp : new Date().getTime())  - props.from
-    else if (props.to) zoom = props.to - new Date('15 Nov 2019').getTime()
+    if (props.interval.from && props.interval.to) zoom = props.interval.to - props.interval.from
+    else if (props.interval.from) zoom = (store.lastAvailableTimestamp ? store.lastAvailableTimestamp : new Date().getTime())  - props.interval.from
+    else if (props.interval.to) zoom = props.interval.to - new Date('15 Nov 2019').getTime()
     else zoom = new Date().getTime() - new Date('15 Nov 2019').getTime()
 
     if (zoom <= 14400000 * 3) selection.value = '15m'
@@ -116,14 +120,14 @@ watch(() => props.filters, () => {
     else selection.value = '24h'
 
     requestData(true)
-})
+}, {deep: true})
 
-watch(chartType, () => {
+watch(() => props.excludeMC, () => {
     requestData(true)
 })
 
 onMounted(async () => {
-    await store.getMessagesChart('message_count', selection.value, props.filters, true, true)
+    await requestData(true, true)
 })
 </script>
 
@@ -134,13 +138,13 @@ onMounted(async () => {
                 <h5 class="uk-margin-remove" style="padding: 0.2rem 0.5rem; height: fit-content; white-space: nowrap;">
                     Group Interval
                 </h5>
-                <button class="uk-margin-small-right uk-width-1-6 uk-button" :disabled="from ? ((to ? to : store.lastAvailableTimestamp) - from > 86400000 * 14) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="15m" @click="pickGroup('15m')" :class="{'uk-background-primary white': selection==='15m'}">
+                <button class="uk-margin-small-right uk-width-1-6 uk-button" :disabled="interval.from ? ((interval.to ? interval.to : store.lastAvailableTimestamp) - interval.from > 86400000 * 14) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="15m" @click="pickGroup('15m')" :class="{'uk-background-primary white': selection==='15m'}">
                     15MIN
                 </button>
-                <button class="uk-margin-small-right uk-width-1-6 uk-button" :disabled="from ? ((to ? to : store.lastAvailableTimestamp) - from  > 86400000 * 31 * 2) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="1h" @click="pickGroup('1h')" :class="{'uk-background-primary white': selection==='1h'}">
+                <button class="uk-margin-small-right uk-width-1-6 uk-button" :disabled="interval.from ? ((interval.to ? interval.to : store.lastAvailableTimestamp) - interval.from  > 86400000 * 31 * 2) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="1h" @click="pickGroup('1h')" :class="{'uk-background-primary white': selection==='1h'}">
                     1H
                 </button>
-                <button class="uk-margin-small-right uk-width-1-6 uk-button" :disabled="from ? ((to ? to : store.lastAvailableTimestamp) - from  > 86400000 * 31 * 12) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="4h" @click="pickGroup('4h')" :class="{'uk-background-primary white': selection==='4h'}">
+                <button class="uk-margin-small-right uk-width-1-6 uk-button" :disabled="interval.from ? ((interval.to ? interval.to : store.lastAvailableTimestamp) - interval.from  > 86400000 * 31 * 12) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="4h" @click="pickGroup('4h')" :class="{'uk-background-primary white': selection==='4h'}">
                     4H
                 </button>
                 <button class="uk-margin-small-right uk-width-1-6 uk-button" style="padding: 0.2rem 0.5rem; height: fit-content;" id="8h" @click="pickGroup('8h')" :class="{'uk-background-primary white': selection==='8h'}">
@@ -149,18 +153,6 @@ onMounted(async () => {
                 <button class="uk-margin-small-right uk-width-1-6 uk-button" style="padding: 0.2rem 0.5rem; height: fit-content;" id="24h" @click="pickGroup('24h')" :class="{'uk-background-primary white': selection==='24h'}">
                     DAY
                 </button>
-            </div>
-            <div class="uk-flex uk-flex-middle uk-width-2-5 uk-margin-small-top">
-                <h5 class="uk-margin-remove" style="padding: 0.2rem 0.5rem; height: fit-content; white-space: nowrap;">
-                    Metric
-                </h5>
-                <AtomsSelector 
-                    :item-count="chartType"
-                    :amount="null"
-                    :start-line="null"
-                    :options="['message_count', 'message_amount_sum']"
-                    @set-value="(e: any) => chartType = e.value"
-                />
             </div>
         </div>
         <div class="uk-width-1-1">

@@ -40,7 +40,8 @@ export const useMainStore = defineStore('tonexp', {
       // Graphs
       lastAvailableTimestamp: 0 as number,
       startupTime: new Date().getTime() as number,
-      messageGraphData : [] as GraphCell[]
+      messageGraphData : [] as GraphCell[],
+      transactionGraphData: [] as GraphCell[]
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
@@ -276,7 +277,7 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
         try {
-          await this.updateTransactions(mobi ? 5 : 10, null, true)
+          await this.updateTransactions(mobi ? 5 : 10, null, { 'workchain' : 0 })
         } catch (error) {
           console.log(error)
         }
@@ -310,8 +311,8 @@ export const useMainStore = defineStore('tonexp', {
             break;
           }
           case '/transactions': {
-            if (Object.entries(route.query).length === 0) {
-              await this.updateTransactions(20, null)
+            if (!route.query.hash) {
+              await this.updateTransactions(20, null, null)
             } else {
               const hash = route.query.hash && toBase64Rfc(route.query.hash.toString())
               if (hash) await this.fetchTransaction(hash)
@@ -431,16 +432,16 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async updateTransactions(limit: number, seqOffset: bigint | null, excludeWC: boolean = false, account: AccountKey | null = null, order: "ASC" | "DESC" = "DESC") { 
+      async updateTransactions(limit: number, seqOffset: bigint | null, filters: MockType | null, account: AccountKey | null = null, order: "ASC" | "DESC" = "DESC") { 
         const fullReq: MockType = {
+          ...filters,
           order, 
           limit
         }
         if (seqOffset) fullReq.after = seqOffset
         if (!seqOffset) this.exploredTransactions = []
-        if (excludeWC) fullReq.workchain = 0
         if (account) fullReq.address = account
-        const query = getQueryString(fullReq, false)
+        const query = getQueryString(fullReq, true)
         try {
           const { data } = await apiRequest(`/transactions?${query}`, 'GET')
           const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
@@ -455,6 +456,28 @@ export const useMainStore = defineStore('tonexp', {
               this.accounts[account].transaction_keys = []
               this.accounts[account].transaction_keys.push(...this.exploredTransactions)
           }
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async getTransactionsChart(interval: IntervalAPI, excludeMC: boolean, from: string, to: string | null, reset: boolean = false, setEnd : boolean = false) {
+        const fullReq: MockType = {
+          interval,
+          from,
+          to,
+          metric : 'transaction_count'
+        }
+        if (excludeMC) fullReq.workchain = 0
+
+        let newArr: GraphCell[] = reset ? [] : [...this.transactionGraphData]
+        const query = getQueryString(fullReq, true)
+        try {
+          const { data } = await apiRequest(`/transactions/aggregated/history?${query}`, 'GET')
+          const parsed = parseJson<MessageGraphAPI>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
+          this.transactionGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
+          if (setEnd) this.lastAvailableTimestamp = new Date(this.transactionGraphData[this.transactionGraphData.length - 1].Timestamp).getTime()
         } catch (error) {
           console.log(error)
         }
@@ -570,7 +593,7 @@ export const useMainStore = defineStore('tonexp', {
           }
         // get first 10 transactions for account if they are empty
         if (this.accounts[hex]?.transaction_keys.length === 0)
-          await this.updateTransactions(10, null, false, hex)
+          await this.updateTransactions(10, null, null, hex)
         // get all jetton_wallet of account
         if (this.accounts[hex]?.jetton_wallets.length === 0) {
           try {

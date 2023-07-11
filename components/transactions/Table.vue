@@ -8,7 +8,7 @@ interface TransactionTable {
     itemSelector: boolean
     hidden: boolean
     account: AccountKey | null
-    excludeMC?: boolean
+    filters: MockType,
     order: "ASC" | "DESC"
 }
 
@@ -46,10 +46,10 @@ const updateValues = async (next: boolean = true) => {
     emptyTable.value = false
     setExtraFields()
     if (props.keys.length === 0 || pageNum.value === 0) {
-        await store.updateTransactions(itemCount.value, null, props.excludeMC, props.account, props.order)
+        await store.updateTransactions(itemCount.value, null, props.filters, props.account, props.order)
     }
     else {
-        await store.updateTransactions(itemCount.value, next ? lastLT.value : firstLT.value, props.excludeMC, props.account, props.order)
+        await store.updateTransactions(itemCount.value, next ? lastLT.value : firstLT.value, props.filters, props.account, props.order)
     }
     if (props.keys.length === 0) emptyTable.value = true
 
@@ -64,7 +64,7 @@ watch(pageNum, async(to, from) => {
     }
 }, {deep : true}) 
 
-watch(() => props.excludeMC, () => {
+watch(() => props.filters, () => {
     if (pageNum.value === 0) updateValues()
     else pageNum.value = 0
 })
