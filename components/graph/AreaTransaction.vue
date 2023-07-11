@@ -132,25 +132,25 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="uk-flex uk-flex-column uk-width-1-1 uk-margin-small-top">
+    <div class="uk-flex uk-flex-column uk-width-1-1 uk-margin-small">
         <div class="uk-flex uk-width-1-1 uk-flex-column" style="justify-content: space-between;">
             <div class="uk-flex uk-width-1-1 uk-flex-middle">
-                <h5 class="uk-margin-remove" style="padding: 0.2rem 0.5rem; height: fit-content; white-space: nowrap;">
+                <div class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
                     Group Interval
-                </h5>
-                <button class="uk-margin-small-right uk-width-1-6 uk-button" :disabled="interval.from ? ((interval.to ? interval.to : store.lastAvailableTimestamp) - interval.from > 86400000 * 14) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="15m" @click="pickGroup('15m')" :class="{'uk-background-primary white': selection==='15m'}">
+                </div>
+                <button class="uk-margin-small-left uk-width-1-6 uk-button" :disabled="interval.from ? ((interval.to ? interval.to : store.lastAvailableTimestamp) - interval.from > 86400000 * 14) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="15m" @click="pickGroup('15m')" :class="{'uk-background-primary white': selection==='15m'}">
                     15MIN
                 </button>
-                <button class="uk-margin-small-right uk-width-1-6 uk-button" :disabled="interval.from ? ((interval.to ? interval.to : store.lastAvailableTimestamp) - interval.from  > 86400000 * 31 * 2) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="1h" @click="pickGroup('1h')" :class="{'uk-background-primary white': selection==='1h'}">
+                <button class="uk-margin-small-left uk-width-1-6 uk-button" :disabled="interval.from ? ((interval.to ? interval.to : store.lastAvailableTimestamp) - interval.from  > 86400000 * 31 * 2) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="1h" @click="pickGroup('1h')" :class="{'uk-background-primary white': selection==='1h'}">
                     1H
                 </button>
-                <button class="uk-margin-small-right uk-width-1-6 uk-button" :disabled="interval.from ? ((interval.to ? interval.to : store.lastAvailableTimestamp) - interval.from  > 86400000 * 31 * 12) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="4h" @click="pickGroup('4h')" :class="{'uk-background-primary white': selection==='4h'}">
+                <button class="uk-margin-small-left uk-width-1-6 uk-button" :disabled="interval.from ? ((interval.to ? interval.to : store.lastAvailableTimestamp) - interval.from  > 86400000 * 31 * 12) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="4h" @click="pickGroup('4h')" :class="{'uk-background-primary white': selection==='4h'}">
                     4H
                 </button>
-                <button class="uk-margin-small-right uk-width-1-6 uk-button" style="padding: 0.2rem 0.5rem; height: fit-content;" id="8h" @click="pickGroup('8h')" :class="{'uk-background-primary white': selection==='8h'}">
+                <button class="uk-margin-small-left uk-width-1-6 uk-button" style="padding: 0.2rem 0.5rem; height: fit-content;" id="8h" @click="pickGroup('8h')" :class="{'uk-background-primary white': selection==='8h'}">
                     8H
                 </button>
-                <button class="uk-margin-small-right uk-width-1-6 uk-button" style="padding: 0.2rem 0.5rem; height: fit-content;" id="24h" @click="pickGroup('24h')" :class="{'uk-background-primary white': selection==='24h'}">
+                <button class="uk-margin-small-left uk-width-1-6 uk-button" style="padding: 0.2rem 0.5rem; height: fit-content;" id="24h" @click="pickGroup('24h')" :class="{'uk-background-primary white': selection==='24h'}">
                     DAY
                 </button>
             </div>

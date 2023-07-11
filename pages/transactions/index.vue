@@ -106,27 +106,31 @@ onMounted(() => routeChecker(route.query))
             <div class="uk-child-width-auto uk-text-right">
                 <label><input v-model="excludeMC" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_masterchain') }}</label>
             </div>
-            <div class="uk-flex uk-flex-middle uk-margin-small uk-margin-small-bottom">
-                <div class="uk-margin-remove" style="padding: 0.2rem 0.5rem 0.2rem 0; height: fit-content; white-space: nowrap;">
-                    {{ $t('ton.from') }}
-                </div>
-                <VueDatePicker @update:model-value="setRoute()" :min-date="new Date('15 Nov 2019')" :max-date="filterInterval.to ? new Date(filterInterval.to) : new Date()" :format="'yyyy-MM-dd HH:mm'" class="uk-width-1-5" v-model="filterInterval.from" :clearable="false"/>
-                <div class="uk-margin-remove" style="padding: 0.2rem 0.5rem; height: fit-content; white-space: nowrap;">
-                    {{ $t('ton.to') }}
-                </div>
-                <VueDatePicker @update:model-value="setRoute()" :min-date="filterInterval.from ? new Date(filterInterval.from) :new Date('15 Nov 2019')" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" class="uk-width-1-5 uk-margin-small-right" v-model="filterInterval.to" :clearable="false"/>
-                <button class="uk-margin-small-right uk-button" style="padding: 0.2rem 0.5rem; min-width: 120px; width: 10%; height: fit-content;" id="4h" @click="pickInterval('day')">
-                    last day
-                </button>
-                <button class="uk-margin-small-right uk-button" style="padding: 0.2rem 0.5rem; min-width: 120px; width: 10%; height: fit-content;" id="4h" @click="pickInterval('week')">
-                    last week
-                </button>
-                <button class="uk-margin-small-right uk-button" style="padding: 0.2rem 0.5rem; min-width: 120px; width: 10%; height: fit-content;" id="8h" @click="pickInterval('month')">
-                    last month
-                </button>
-                <button class="uk-button" style="padding: 0.2rem 0.5rem; min-width: 120px; width: 10%; height: fit-content;" id="24h" @click="pickInterval('all')">
-                    All
-                </button>
+            <div class="uk-child-width-1-1 uk-child-width-1-2@m uk-child-width-1-3@xl" uk-grid>
+                <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 0.4rem">
+                    <div class="uk-margin-remove-vertical uk-margin-small-left" style=" white-space: nowrap;">
+                        {{ $t('ton.from') }}
+                    </div>
+                    <VueDatePicker @update:model-value="setRoute()" :min-date="new Date('15 Nov 2019')" :max-date="filterInterval.to ? new Date(filterInterval.to) : new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="filterInterval.from" :clearable="false"/>
+                    <div class="uk-margin-remove" style="white-space: nowrap;">
+                        {{ $t('ton.to') }}
+                    </div>
+                    <VueDatePicker @update:model-value="setRoute()" :min-date="filterInterval.from ? new Date(filterInterval.from) :new Date('15 Nov 2019')" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="filterInterval.to" :clearable="false"/>
+                </div> 
+                <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 0.4rem">
+                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="4h" @click="pickInterval('day')">
+                        last day
+                    </button>
+                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="4h" @click="pickInterval('week')">
+                        last week
+                    </button>
+                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="8h" @click="pickInterval('month')">
+                        last month
+                    </button>
+                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="24h" @click="pickInterval('all')">
+                        All
+                    </button>
+                </div> 
             </div>
 
             <ClientOnly v-if="!isMobile()">
