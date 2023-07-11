@@ -41,7 +41,8 @@ export const useMainStore = defineStore('tonexp', {
       lastAvailableTimestamp: 0 as number,
       startupTime: new Date().getTime() as number,
       messageGraphData : [] as GraphCell[],
-      transactionGraphData: [] as GraphCell[]
+      transactionGraphData: [] as GraphCell[],
+      accountsGraphData: [] as GraphCell[]
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
@@ -326,7 +327,7 @@ export const useMainStore = defineStore('tonexp', {
             if (Object.entries(route.query).length === 0 || 'contract' in route.query) {
               const sq = route.query.contract ? route.query.contract.toString() : null
 
-              await this.updateAccounts(20, null, sq)
+              await this.updateAccounts(20, null, { interface : sq })
             }  else {
               const hex = route.query.hex && route.query.hex.toString()
               if (hex) await this.fetchAccount(hex)
@@ -387,26 +388,6 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async getMessagesChart(metric: 'message_count' | 'message_amount_sum', interval: IntervalAPI, filters: MockType | null, reset: boolean = false, setEnd : boolean = false) {
-        const fullReq: MockType = {
-          ...filters,
-          interval,
-          metric
-        }
-        let newArr: GraphCell[] = reset ? [] : [...this.messageGraphData]
-        const query = getQueryString(fullReq, true)
-        try {
-          const { data } = await apiRequest(`/messages/aggregated/history?${query}`, 'GET')
-          const parsed = parseJson<MessageGraphAPI>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
-          if (parsed.sum_results) newArr = [...newArr, ...parsed.sum_results]
-          this.messageGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
-          if (setEnd) this.lastAvailableTimestamp = new Date(this.messageGraphData[this.messageGraphData.length - 1].Timestamp).getTime()
-        } catch (error) {
-          console.log(error)
-        }
-      },
       async updateMessages(limit: number, seqOffset: bigint | null, filters: MockType | null, order: "ASC" | "DESC" = "DESC") {
         const fullReq: MockType = {
           order,
@@ -428,6 +409,26 @@ export const useMainStore = defineStore('tonexp', {
               const key = this.processMessage(msg, null, null)
               this.exploredMessages.push(key)
             }
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async getMessagesChart(metric: 'message_count' | 'message_amount_sum', interval: IntervalAPI, filters: MockType | null, reset: boolean = false, setEnd : boolean = false) {
+        const fullReq: MockType = {
+          ...filters,
+          interval,
+          metric
+        }
+        let newArr: GraphCell[] = reset ? [] : [...this.messageGraphData]
+        const query = getQueryString(fullReq, true)
+        try {
+          const { data } = await apiRequest(`/messages/aggregated/history?${query}`, 'GET')
+          const parsed = parseJson<GraphAPI>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
+          if (parsed.sum_results) newArr = [...newArr, ...parsed.sum_results]
+          this.messageGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
+          if (setEnd) this.lastAvailableTimestamp = new Date(this.messageGraphData[this.messageGraphData.length - 1].Timestamp).getTime()
         } catch (error) {
           console.log(error)
         }
@@ -473,7 +474,7 @@ export const useMainStore = defineStore('tonexp', {
         const query = getQueryString(fullReq, true)
         try {
           const { data } = await apiRequest(`/transactions/aggregated/history?${query}`, 'GET')
-          const parsed = parseJson<MessageGraphAPI>(data, (key, value, context) => (
+          const parsed = parseJson<GraphAPI>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
           this.transactionGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
@@ -482,14 +483,14 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async updateAccounts(limit: number, seqOffset: bigint | null, contract: string | null, order: "ASC" | "DESC" = "DESC") { 
+      async updateAccounts(limit: number, seqOffset: bigint | null, filters: MockType | null, order: "ASC" | "DESC" = "DESC") { 
         const fullReq: MockType = {
+          ...filters,
           order, 
           limit,
           latest : true
         }
         if (seqOffset) fullReq.after = seqOffset
-        if (contract) fullReq.interface = contract
         if (!seqOffset) this.exploredAccounts = []
 
         const query = getQueryString(fullReq, false)
@@ -503,6 +504,28 @@ export const useMainStore = defineStore('tonexp', {
             const acc = this.processAccount(parsed.results[key])
             this.exploredAccounts.push(acc)
           }
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      async getAccountsChart(interval: IntervalAPI, contract: string | null, from: string, to: string | null, reset: boolean = false, setEnd : boolean = false) {
+        const fullReq: MockType = {
+          interval,
+          from,
+          to,
+          metric : 'active_addresses'
+        }
+        if (contract) fullReq.interface = contract
+
+        let newArr: GraphCell[] = reset ? [] : [...this.accountsGraphData]
+        const query = getQueryString(fullReq, true)
+        try {
+          const { data } = await apiRequest(`/accounts/aggregated/history?${query}`, 'GET')
+          const parsed = parseJson<GraphAPI>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
+          this.accountsGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
+          if (setEnd) this.lastAvailableTimestamp = new Date(this.accountsGraphData[this.accountsGraphData.length - 1].Timestamp).getTime()
         } catch (error) {
           console.log(error)
         }
@@ -812,6 +835,6 @@ export const useMainStore = defineStore('tonexp', {
             arr.findIndex(
             (item) => item.Timestamp === obj.Timestamp
         ) === index)
-    }
+      }
     }
   })

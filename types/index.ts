@@ -14,7 +14,7 @@ declare global {
         Timestamp: string
     }
 
-    type MessageGraphAPI = {
+    type GraphAPI = {
         count_results?: GraphCell[]
         sum_results?: GraphCell[]
     }
