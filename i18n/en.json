@@ -55,7 +55,9 @@
         "src_contract": "SRC Contract",
         "dst_contract": "DST Contract",
         "wallet": "Wallet",
-        "get_methods": "Get methods"
+        "get_methods": "Get methods",
+        "from" : "From",
+        "to" : "To"
     },
     "general" : {
         "last_blocks": "Last blocks",
@@ -64,8 +66,9 @@
         "language": "Language",
         "type" : "Type",
         "format": "Format",
-        "from" : "Sender",
-        "to" : "Recipient",
+        "sender" : "Sender",
+        "receiver" : "Recipient",
+        "interval" : "Interval",
         "src_tx" : "SRC Tx",
         "dst_tx" : "DST Tx",
         "amount" : "Amount",

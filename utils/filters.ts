@@ -7,6 +7,8 @@ export const fullTON = (rawTON: bigint, delta: boolean = true) : string => {
     return (BigInt(rawTON) > 0n && delta ? '+' : '') + (Number(BigInt(rawTON) * 100n) / 100000000000).toString()
 }
 
+export const msToISO = (time: number | Date) : string => new Date(time).toISOString().split('.')[0] +"Z"
+
 export const isMobile = () => useDevice().isMobile
 
 export const opToHex = (op: number) => `0x${op.toString(16)}`

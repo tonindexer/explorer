@@ -1,7 +1,23 @@
 export { };
 
 declare global {
+    type TableData = [
+        number, bigint | number
+    ]
+    
     type SearchType = 'account' | 'transaction' | 'block' | 'label'
+    type IntervalAPI = '15m' | '1h' | '4h' | '8h' | '24h'
+    type PresetInterval = 'day' | 'week' | 'month' | 'all' | 'other'
+    
+    type GraphCell = {
+        Value: bigint | number
+        Timestamp: string
+    }
+
+    type GraphAPI = {
+        count_results?: GraphCell[]
+        sum_results?: GraphCell[]
+    }
 
     type LabelSearch = {
         type: 'label'

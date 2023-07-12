@@ -55,7 +55,9 @@
         "src_contract": "SRC Контракт",
         "dst_contract": "DST Контракт",
         "wallet": "Кошелек",
-        "get_methods": "Get methods"
+        "get_methods": "Get methods",
+        "from" : "От",
+        "to" : "До"
     },
     "general" : {
         "last_blocks": "Последние блоки",
@@ -64,8 +66,9 @@
         "language": "Язык",
         "type" : "Тип",
         "format": "Формат",
-        "from" : "Отправил",
-        "to" : "Принял",
+        "sender" : "Отправил",
+        "receiver" : "Принял",
+        "interval" : "Интервал",
         "src_tx" : "SRC Транз",
         "dst_tx" : "DST Транз",
         "amount" : "Кол-во",
@@ -73,7 +76,7 @@
         "created" : "Создано",
         "page" : "Страница",
         "items" : "элементов из",
-        "field" : "Field",
+        "field" : "Поле",
         "value": "Value",
         "show" : "Показ",
         "in_msg" : "Входящие сообщения",
