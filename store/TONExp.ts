@@ -428,7 +428,7 @@ export const useMainStore = defineStore('tonexp', {
           if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
           if (parsed.sum_results) newArr = [...newArr, ...parsed.sum_results]
           this.messageGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
-          if (setEnd) this.lastAvailableTimestamp = new Date(this.messageGraphData[this.messageGraphData.length - 1].Timestamp).getTime()
+          if (setEnd && newArr.length) this.lastAvailableTimestamp = new Date(this.messageGraphData[this.messageGraphData.length - 1].Timestamp).getTime()
         } catch (error) {
           console.log(error)
         }
@@ -478,7 +478,7 @@ export const useMainStore = defineStore('tonexp', {
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
           this.transactionGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
-          if (setEnd) this.lastAvailableTimestamp = new Date(this.transactionGraphData[this.transactionGraphData.length - 1].Timestamp).getTime()
+          if (setEnd && newArr.length) this.lastAvailableTimestamp = new Date(this.transactionGraphData[this.transactionGraphData.length - 1].Timestamp).getTime()
         } catch (error) {
           console.log(error)
         }
@@ -525,7 +525,7 @@ export const useMainStore = defineStore('tonexp', {
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
           this.accountsGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
-          if (setEnd) this.lastAvailableTimestamp = new Date(this.accountsGraphData[this.accountsGraphData.length - 1].Timestamp).getTime()
+          if (setEnd && newArr.length) this.lastAvailableTimestamp = new Date(this.accountsGraphData[this.accountsGraphData.length - 1].Timestamp).getTime()
         } catch (error) {
           console.log(error)
         }

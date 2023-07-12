@@ -68,6 +68,7 @@ const selectedDSTContract = computed(() => isMobile() ? (filterFields.value.dst_
 const selectedOPName = computed(() => isMobile() ? (filterFields.value.op_name_mobile !== 'All' ? filterFields.value.op_name_mobile : null ): ('value' in filterFields.value.op_name_desktop ? filterFields.value.op_name_desktop.value : null))
 
 const pickInterval = (interval : PresetInterval) => {
+    if (!store.lastAvailableTimestamp) store.lastAvailableTimestamp = new Date().getTime()
     switch (interval) {
         case 'day':
             if (filterInterval.value.from && filterInterval.value.to && filterInterval.value.to - filterInterval.value.from === 86400000 && filterInterval.value.to === store.lastAvailableTimestamp) return

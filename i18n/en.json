@@ -141,7 +141,7 @@
         "desc" : "Descending"
     },
     "warning" : {
-        "nothing_found" : "Nothing found..",
+        "nothing_found" : "Nothing found",
         "first_tx": "None - This TX is first in the chain"
     }
 }

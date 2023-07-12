@@ -33,7 +33,7 @@ const requestTimes = computed(() => {  return {
     'to': props.interval.to ? msToISO(props.interval.to) : null
 }})
 
-let chartOptions = {
+const chartOptions = {
     chart: {
         animations : {
             easing: 'linear',
@@ -71,6 +71,7 @@ let chartOptions = {
         }
     },
 }
+
 const selection: Ref<IntervalAPI> = ref('24h')
 
 const changeInterval = async (event: any) => {
@@ -155,8 +156,12 @@ onMounted(async () => {
                 </button>
             </div>
         </div>
-        <div class="uk-width-1-1">
+        <div class="uk-width-1-1" style="position: relative;">
             <VueApexCharts type="area" height="350" ref="graph" @zoomed="($event : any) => changeInterval($event)" :options="chartOptions" :series="series"></VueApexCharts>
+            <div v-if="series[0].data.length === 0" class="uk-position-center uk-text-center uk-overlay uk-text-bold">
+                {{ $t('warning.nothing_found') + ` ${$t('ton.from').toLowerCase()} ${requestTimes.from} ` + (requestTimes.to ?  ` ${$t('ton.to').toLowerCase()} ${requestTimes.to} ` : '') }}
+            </div>
+            
         </div>
     </div>
     

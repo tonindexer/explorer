@@ -162,8 +162,11 @@ onMounted(async () => {
                 />
             </div>
         </div>
-        <div class="uk-width-1-1">
+        <div class="uk-width-1-1" style="position: relative;">
             <VueApexCharts type="area" height="350" ref="graph" @zoomed="($event : any) => changeInterval($event)" :options="chartOptions" :series="series"></VueApexCharts>
+            <div v-if="series[0].data.length === 0" class="uk-position-center uk-text-center uk-overlay uk-text-bold">
+                {{ $t('warning.nothing_found') + ` ${$t('ton.from').toLowerCase()} ${filters.from} ` + (filters.to ?  ` ${$t('ton.to').toLowerCase()} ${filters.to} ` : '') }}
+            </div>
         </div>
     </div>
     

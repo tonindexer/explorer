@@ -33,6 +33,7 @@ const optionsMobile = computed(() : string[] => {
 
 
 const pickInterval = (interval : PresetInterval) => {
+    if (!store.lastAvailableTimestamp) store.lastAvailableTimestamp = new Date().getTime()
     switch (interval) {
         case 'day':
             if (filterInterval.value.from && filterInterval.value.to && filterInterval.value.to - filterInterval.value.from === 86400000 && filterInterval.value.to === store.lastAvailableTimestamp) return
