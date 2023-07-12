@@ -13,6 +13,8 @@ export const useMainStore = defineStore('tonexp', {
       // wallets and nfts
       jettonWallets: {} as JettonWalletMap,
       nftItems: {} as NFTMap,
+      jettonHolders: {} as JettonHolderMap,
+      nftHolders: {} as NFTHolderMap,
       // Arrays with keys to fetch the correct info from maps
       latestBlocks: [] as BlockKey[],
       latestTransactions: [] as TransactionKey[],
@@ -650,6 +652,37 @@ export const useMainStore = defineStore('tonexp', {
         // get 18 minted nft_item of account
         if (this.accounts[hex]?.minted_nfts.length === 0)
           await this.loadAccountNFTAddresses(hex, true, true, 18, null, 0)
+        // get top 10 holders of account if its nft_collection or jetton_minter
+        if (this.accounts[hex]?.types?.includes('nft_collection') || this.accounts[hex]?.types?.includes('jetton_minter')) {
+          try {
+            const fullReq: MockType = {
+              minter_address: hex,
+              limit: 10
+            }
+            const query = getQueryString(fullReq, true);
+            const { data } = await apiRequest(`/accounts/aggregated?${query}`, 'GET')
+            const parsed = parseJson<HoldersAPI>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            if (parsed.items && parsed.owned_items) {
+              this.nftHolders[hex] = {
+                items: parsed.items,
+                owned_items: parsed.owned_items,
+                owners_count: parsed.owners_count
+              }
+            }
+
+            if (parsed.wallets) {
+              this.jettonHolders[hex] = {
+                wallets: parsed.wallets,
+                total_supply: parsed.total_supply,
+                owned_balance: parsed.owned_balance
+              }
+            }
+
+          } catch (error) {
+            console.log(error)
+          }
+        }
         return hex
       },
       async loadAccountJettonWallets(account: AccountKey) {

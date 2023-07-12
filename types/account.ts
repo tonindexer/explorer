@@ -168,4 +168,45 @@ declare global {
     type NFTAPIData = {
         nft_items: NFTAPI[]
     }
+
+    // Top holders
+    type NFTOwnerCell = {
+        owner_address: Address
+        items_count: number
+    }
+
+    type NFTUniqueCell = {
+        item_address: Address
+        owners_count: number
+    }
+
+    type NFTHolder = {
+        items: number
+        owners_count: number
+        owned_items?: NFTOwnerCell[]
+        unique_owners?: NFTUniqueCell[]
+    }
+
+    type NFTHolderMap = {
+        [key: AccountKey] : NFTHolder
+    }
+
+    type JettonOwnerCell = {
+        wallet_address: Address
+        owner_address: Address
+        balance: bigint
+    }
+
+    type JettonHolder = {
+        wallets: number
+        total_supply: number
+        owned_balance: JettonOwnerCell[]
+    }
+
+    type JettonHolderMap = {
+        [key: AccountKey] : JettonHolder
+    }
+
+    interface HoldersAPI extends NFTHolder, JettonHolder {}
+
 }

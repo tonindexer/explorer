@@ -71,6 +71,14 @@ watch(() => props.hex, async() => await reloadInfo())
                         </span>
                     </NuxtLink>
                 </li>
+                <li class="uk-margin-remove-left" v-if="account.address.hex in store.jettonHolders" :class="{'uk-active' : (route.hash === '#jetton_holders')}" style="min-width: fit-content;">
+                    <NuxtLink :to="{ hash: '#jetton_holders', query: route.query}">
+                        {{ $t('ton.jetton_holders') }}
+                        <span>
+                            {{ store.jettonHolders[account.address.hex].wallets }}
+                        </span>
+                    </NuxtLink>
+                </li>
                 <li class="uk-margin-remove-left" v-if="ownerKeys.length > 0" :class="{'uk-active' : (route.hash === '#nfts')}" style="min-width: fit-content;">
                     <NuxtLink :to="{ hash: '#nfts', query: route.query}">
                         {{ $t('route.nfts') }}
@@ -84,6 +92,14 @@ watch(() => props.hex, async() => await reloadInfo())
                         {{ $t('ton.minter') }}
                         <span>
                             {{ account.minted_amount }}
+                        </span>
+                    </NuxtLink>
+                </li>
+                <li class="uk-margin-remove-left" v-if="account.address.hex in store.nftHolders" :class="{'uk-active' : (route.hash === '#nft_holders')}" style="min-width: fit-content;">
+                    <NuxtLink :to="{ hash: '#nft_holders', query: route.query}">
+                        {{ $t('ton.nft_holders') }}
+                        <span>
+                            {{ store.nftHolders[account.address.hex].owners_count }}
                         </span>
                     </NuxtLink>
                 </li>
@@ -106,6 +122,12 @@ watch(() => props.hex, async() => await reloadInfo())
         </div>
         <div v-if="account && route.hash === '#minter'" id="minter">
             <LazyAccountsNFTGrid :minter-flag="true" :keys="minterKeys" :default-length="18" :account="hex" />
+        </div>
+        <div v-if="account && route.hash === '#nft_holders' && account.address.hex in store.nftHolders" id="nft_holders">
+            <AccountsTopNFTHolders :keys="store.nftHolders[account.address.hex].owned_items ?? []" />
+        </div>
+        <div v-if="account && route.hash === '#jetton_holders' && account.address.hex in store.jettonHolders" id="jetton_holders">
+            <AccountsTopJettonHolders :keys="store.jettonHolders[account.address.hex].owned_balance ?? []" />
         </div>
         <div v-if="account && route.hash === '#get_methods'" id="get_methods">
             <AccountsGetMethods :methods="getMethods"/>
