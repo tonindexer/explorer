@@ -140,7 +140,7 @@ onMounted(() => routeChecker())
         </NuxtLink>
     </template>
     <template v-else>
-        <div v-if="isGeneral">
+        <div v-show="isGeneral">
             <div class="uk-flex uk-flex-bottom uk-margin-bottom">
                 <h1 class="uk-margin-remove-vertical uk-margin-right">{{  $t('route.accounts') }}</h1>
                 <h2 class="uk-margin-remove uk-text-muted">{{ `${store.totalQueryAccounts === -1 ? '...' : store.totalQueryAccounts}` }}</h2>
@@ -188,7 +188,7 @@ onMounted(() => routeChecker())
                 </div> 
             </div>
 
-            <ClientOnly v-if="!isMobile()">
+            <ClientOnly v-if="!isMobile() && isGeneral">
                 <GraphAreaAccount
                     :contract="selectedFilter.interface"
                     :interval="filterInterval"
@@ -204,7 +204,7 @@ onMounted(() => routeChecker())
 
             <LazyAccountsTable :keys="store.exploredAccounts" :update="true" :default-length="20" :item-selector="true" :hidden="false" :filters="selectedFilter"/>
         </div>
-        <div v-else-if="hex" class="uk-flex uk-flex-column">
+        <div v-if="hex" class="uk-flex uk-flex-column">
             <div class="uk-flex" :class="{'uk-flex-column' : isMobile()}">
                 <h1 v-if="!isMobile()" class="uk-margin-remove-vertical uk-text-left uk-margin-right">
                     {{ $t('route.account')}}

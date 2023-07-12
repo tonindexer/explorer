@@ -60,7 +60,7 @@ watch(itemCount, async() => {
 }, {deep : true})
 
 watch(() => props.filters, (to, from) => {
-    if (pageNum.value === 0 && from.contract !== '') updateValues()
+    if (pageNum.value === 0 && from.interface !== '') updateValues()
     else pageNum.value = 0
 }, { deep: true })
 

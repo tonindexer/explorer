@@ -757,6 +757,7 @@ export const useMainStore = defineStore('tonexp', {
             const parsed = parseJson<SearchAPIData>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
             this.totalQuerySearch = parsed.total
+            if (this.lastSearch?.value !== req.value) this.searchResults = []
             if (parsed.results && parsed.results.length > 0)
               parsed.results.forEach((acc: SearchAPI) => {
                 this.searchResults.push({
