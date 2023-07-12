@@ -13,6 +13,8 @@ const router = useRouter()
 const isGeneral = ref(true)
 const error = ref(false)
 const hex = computed(() => route.query.hex? route.query.hex.toString() : null)
+const contract = computed(() => route.query.contract? route.query.contract.toString() : null)
+
 const selected: Ref<SelectItem | {}> = ref({ value: '', text: ''})
 const selectedMobile = ref('All')
 const store = useMainStore()
@@ -68,7 +70,7 @@ const pickInterval = (interval : PresetInterval) => {
 }
 
 const selectedFilter = computed(() => { return {
-    interface: isMobile() ? (selectedMobile.value !== 'All' ? selectedMobile.value : null ): ('value' in selected.value ? selected.value.value : null),
+    interface: contract.value,
     'from': filterInterval.value.from ? msToISO(filterInterval.value.from) : msToISO(store.startupTime - 86400000 * 31),
     'to': filterInterval.value.to ? msToISO(filterInterval.value.to) : null
 }})
