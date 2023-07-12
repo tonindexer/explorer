@@ -82,7 +82,7 @@ const reset = () => {
 
 const setRoute = () => {
     let contract = null
-    if (selected.value.hasOwnProperty('value') && 'value' in selected.value && selected.value.value !== '')
+    if ('value' in selected.value && selected.value.value !== '')
         contract = selected['value'].value
     else if (selectedMobile.value !== 'All') contract = selectedMobile.value
 
@@ -117,6 +117,12 @@ function routeChecker() {
     isGeneral.value = true;
     return;
 }
+
+watch(hex, () => routeChecker())
+
+watch(contract, () => 
+    isMobile() ? (selectedMobile.value = route.query.contract?.toString() ?? 'All') :
+            selected.value = {value: route.query.contract, text: route.query.contract })
 
 watch(selected, (to, from) => {
     if (to !== from)

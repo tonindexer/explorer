@@ -95,7 +95,7 @@ watch(props, async() => await reloadInfo())
             <div class="uk-child-width-auto uk-text-left uk-margin-small-top" v-if="block.shard_keys.length > 0">
                 <label><input v-model="deepTrKeys" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.deep_transactions') }}</label>
             </div>
-            <TransactionsTable :item-selector="false" :default-length="10" :update="false" :keys="trKeys" :hidden="trKeys.length === 0" :order="'DESC'" :account="null"/>
+            <TransactionsTable :item-selector="false" :default-length="10" :update="false" :keys="trKeys" :hidden="trKeys.length === 0" :order="'DESC'" :account="null" :filters="{}"/>
         </div>
         <div v-if="(route.hash === '#messages' )&& block?.shard_keys" id="messages">
             <div class="uk-child-width-auto uk-text-left uk-margin-small-top" v-if="block.shard_keys.length > 0">
@@ -111,7 +111,7 @@ watch(props, async() => await reloadInfo())
                 <label><input v-model="deepTrKeys" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.deep_accounts') }}</label>
             </div>
             <h3 v-if="loadedAccountKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.loaded_accs') + ` (${loadedAccountKeys.length})` }}</h3>
-            <AccountsTable :default-length="10" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false" :contract="null"/>
+            <AccountsTable :default-length="10" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false" :filters="{ interface: null }"/>
             <h3 v-if="unloadedAccountKeys.length > 0" class="uk-margin-small-top uk-margin-small">{{ $t('general.unloaded_accs')+ ` (${unloadedAccountKeys.length})` }}</h3>
             <AccountsUnloadedTable :default-length="5" :keys="unloadedAccountKeys" :hidden="unloadedAccountKeys.length === 0"/>
         </div>
