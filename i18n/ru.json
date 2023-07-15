@@ -119,7 +119,9 @@
         "jetton_minter" : "Jetton минтеры",
         "search" : "Резульаты поиска",
         "results" : "Результаты",
-        "about": "О проекте"
+        "about": "О проекте",
+        "dashboard": "Dashboard",
+        "telemint": "Telemint"
     },
     "stats" : {
         "account_count": "Аккаунтов",

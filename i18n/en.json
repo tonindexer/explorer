@@ -119,7 +119,9 @@
         "jetton_minter" : "Jetton minters",
         "search" : "Search results",
         "results" : "Results",
-        "about": "About"
+        "about": "About",
+        "dashboard": "Dashboard",
+        "telemint": "Telemint"
     },
     "stats" : {
         "account_count": "Accounts",
