@@ -33,17 +33,19 @@ declare global {
     }
 
     interface ChartQueryAPIRequest extends BaseQueryAPIRequest {
-        metrics: string[] // form_data.metrics
-        orderby: Array<string | boolean>[] // ...form_data.metrics then append false and wrap into array
+        metrics: Array<Object | string> // form_data.metrics
+        orderby: Array<string | Object | boolean>[] // ...form_data.metrics then append false and wrap into array
         row_limit: number // form_data.row_limit
-        series_columns: string[] // form_data.groupby
+        post_processing: Object[]
+        series_columns: Array<ChartColumnObject | string> // form_data.groupby
+        filters?: Object[]
     }
 
     interface TableQueryAPIRequest extends BaseQueryAPIRequest {
         orderby: Array<string | boolean>[]
         row_limit: number // form_data.row_limit
         row_offset: number
-        series_columns: string[] // form_data.groupby
+        series_columns: Array<ChartColumnObject | string> // form_data.groupby
     }
 
     type BaseFormDataAPIRequest = {
@@ -57,8 +59,8 @@ declare global {
     }
 
     interface ChartFormDataAPIRequest extends BaseFormDataAPIRequest {
-        metrics: string[] // form_data.metrics
-        groupby: string[] // form_data.groupby
+        metrics: Array<Object | string> // form_data.metrics
+        groupby: Array<ChartColumnObject | string> // form_data.groupby
         row_limit: number // form_data.row_limit
         order_desc: boolean // form_data.order_desc
         truncate_metric: boolean // form_data.truncate_metric
@@ -176,8 +178,29 @@ declare global {
         result: {
             colnames: string[]
             data: {
-                [key: ChartAPIDataKey] : bigint | number
+                [key: ChartAPIDataKey] : number
             }[]
         }[]
+    }
+    type DashboardSeries = {
+        series: {
+            name: string
+            data: number[]
+        }[]
+        times: number[]
+    }
+
+    type StoredChartData = {
+        type: 'metric' | 'chart' | 'table'
+        slice_id: string
+        colnames: string[]
+        data: {
+            [key: ChartAPIDataKey] : number
+        }[]
+    }
+
+    type Series = {
+        name: string
+        data: number[]
     }
 }

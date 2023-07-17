@@ -10,7 +10,7 @@ interface GraphData {
         name: string
         data: number[]
     }[]
-    times: number[]
+    labels: number[]
     name: string
 }
 
@@ -22,7 +22,6 @@ const chartOptions = computed(() => { return{
     chart: {
         height: 350,
         type: 'bar',
-        stacked: true,
         zoom: {
             autoScaleYaxis: true
         },
@@ -38,23 +37,20 @@ const chartOptions = computed(() => { return{
         enabled: false
     },
     xaxis: {
-        type: 'datetime',
-        categories: props.times,
-        crosshairs: {
-            width: 0.1,
-        }
+        type: 'numeric',
+        max: 3000,
+        categories: props.labels
     },
     yaxis: {
+        max: 60,
         labels: {
             formatter: (val: any) => toCompact(Math.round(Number(val)))
         }
     },
     tooltip: {
+        followCursor: true,
         shared: true,
         intersect: false,
-        x: {
-            format: 'yyyy-MM-dd hh:mm'
-        },
     },
 }})
 </script>

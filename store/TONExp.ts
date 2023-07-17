@@ -46,8 +46,9 @@ export const useMainStore = defineStore('tonexp', {
       transactionGraphData: [] as GraphCell[],
       accountsGraphData: [] as GraphCell[],
       // dashboard
-      telemintDashboard: [] as DashboardAPICell[],
-      xd: [] as any,
+      chartNames: {} as { [key: string] : string },
+      chartXs: {} as { [key: string] : string },
+      telemintDashboard: [] as DashboardAPICell[]
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
@@ -870,288 +871,45 @@ export const useMainStore = defineStore('tonexp', {
       async loadDashboards(slug: dashboardName) {
         const { data } = await apiRequest(`/dashboard/${slug}/charts`, 'GET', {}, `https://superset.anton.tools/api/v1`)
         const parsed = parseJson<DashboardAPIData>(data, (key, value, context) => value)
+        parsed.result.forEach(item => {
+          this.chartXs[item.form_data.slice_id.toString()] = item.form_data.x_axis ?? 'timestamp' 
+          this.chartNames[item.form_data.slice_id.toString()] = item.slice_name 
+        })
         this.telemintDashboard = [...parsed.result]
       },
-      async fetchTelemintDashboard() {
+      async fetchChart(req: StoredMetricReq | StoredChartReq | StoredTableReq) {
         try {
-          const req: StoredRequests = [
-            {
-                "type": "metric",
-                "req": {
-                    "datasource": {
-                        "id": 28,
-                        "type": "table"
-                    },
-                    "queries": [
-                        {
-                            "columns": [],
-                            "metrics": [
-                                {
-                                    "aggregate": null,
-                                    "column": null,
-                                    "datasourceWarning": false,
-                                    "expressionType": "SQL",
-                                    "hasCustomLabel": false,
-                                    "label": "COUNT(DISTINCT trader_address)",
-                                    "optionName": "metric_j73ywkmtj1q_buzfvpqkare",
-                                    "sqlExpression": "COUNT(DISTINCT trader_address)"
-                                }
-                            ],
-                            "extras": {
-                                "having": "",
-                                "where": ""
-                            }
-                        }
-                    ],
-                    "form_data": {
-                        "slice_id": 24,
-                        "dashboards": [
-                            3
-                        ],
-                        "dashboardId": 2,
-                        "metric": {
-                            "aggregate": null,
-                            "column": null,
-                            "datasourceWarning": false,
-                            "expressionType": "SQL",
-                            "hasCustomLabel": false,
-                            "label": "COUNT(DISTINCT trader_address)",
-                            "optionName": "metric_j73ywkmtj1q_buzfvpqkare",
-                            "sqlExpression": "COUNT(DISTINCT trader_address)"
-                        }
-                    },
-                    "result_format": "json",
-                    "result_type": "full"
-                }
-            },
-            {
-                "type": "metric",
-                "req": {
-                    "datasource": {
-                        "id": 24,
-                        "type": "table"
-                    },
-                    "queries": [
-                        {
-                            "columns": [],
-                            "metrics": [
-                                {
-                                    "aggregate": "SUM",
-                                    "column": {
-                                        "advanced_data_type": null,
-                                        "certification_details": null,
-                                        "certified_by": null,
-                                        "column_name": "sale_price",
-                                        "description": null,
-                                        "expression": null,
-                                        "filterable": true,
-                                        "groupby": true,
-                                        "id": 191,
-                                        "is_certified": false,
-                                        "is_dttm": false,
-                                        "python_date_format": null,
-                                        "type": "DECIMAL",
-                                        "type_generic": 0,
-                                        "verbose_name": null,
-                                        "warning_markdown": null
-                                    },
-                                    "datasourceWarning": false,
-                                    "expressionType": "SIMPLE",
-                                    "hasCustomLabel": false,
-                                    "label": "SUM(sale_price)",
-                                    "optionName": "metric_6bpotipdhk8_0d1gzzygy34",
-                                    "sqlExpression": null
-                                }
-                            ],
-                            "extras": {
-                                "having": "",
-                                "where": "sale_type = 'initial_offering'"
-                            }
-                        }
-                    ],
-                    "form_data": {
-                        "slice_id": 54,
-                        "dashboards": [
-                            3
-                        ],
-                        "dashboardId": 2,
-                        "metric": {
-                            "aggregate": "SUM",
-                            "column": {
-                                "advanced_data_type": null,
-                                "certification_details": null,
-                                "certified_by": null,
-                                "column_name": "sale_price",
-                                "description": null,
-                                "expression": null,
-                                "filterable": true,
-                                "groupby": true,
-                                "id": 191,
-                                "is_certified": false,
-                                "is_dttm": false,
-                                "python_date_format": null,
-                                "type": "DECIMAL",
-                                "type_generic": 0,
-                                "verbose_name": null,
-                                "warning_markdown": null
-                            },
-                            "datasourceWarning": false,
-                            "expressionType": "SIMPLE",
-                            "hasCustomLabel": false,
-                            "label": "SUM(sale_price)",
-                            "optionName": "metric_6bpotipdhk8_0d1gzzygy34",
-                            "sqlExpression": null
-                        }
-                    },
-                    "result_format": "json",
-                    "result_type": "full"
-                }
-            },
-            {
-                "type": "metric",
-                "req": {
-                    "datasource": {
-                        "id": 24,
-                        "type": "table"
-                    },
-                    "queries": [
-                        {
-                            "columns": [],
-                            "metrics": [
-                                {
-                                    "aggregate": "SUM",
-                                    "column": {
-                                        "advanced_data_type": null,
-                                        "certification_details": null,
-                                        "certified_by": null,
-                                        "column_name": "sale_price",
-                                        "description": null,
-                                        "expression": null,
-                                        "filterable": true,
-                                        "groupby": true,
-                                        "id": 191,
-                                        "is_certified": false,
-                                        "is_dttm": false,
-                                        "python_date_format": null,
-                                        "type": "DECIMAL",
-                                        "type_generic": 0,
-                                        "verbose_name": null,
-                                        "warning_markdown": null
-                                    },
-                                    "datasourceWarning": false,
-                                    "expressionType": "SIMPLE",
-                                    "hasCustomLabel": false,
-                                    "label": "SUM(sale_price)",
-                                    "optionName": "metric_37hpghksw05_fuxsfflq24h",
-                                    "sqlExpression": null
-                                }
-                            ],
-                            "extras": {
-                                "having": "",
-                                "where": "sale_type = 'secondary_sale'"
-                            }
-                        }
-                    ],
-                    "form_data": {
-                        "slice_id": 55,
-                        "dashboards": [
-                            3
-                        ],
-                        "dashboardId": 2,
-                        "metric": {
-                            "aggregate": "SUM",
-                            "column": {
-                                "advanced_data_type": null,
-                                "certification_details": null,
-                                "certified_by": null,
-                                "column_name": "sale_price",
-                                "description": null,
-                                "expression": null,
-                                "filterable": true,
-                                "groupby": true,
-                                "id": 191,
-                                "is_certified": false,
-                                "is_dttm": false,
-                                "python_date_format": null,
-                                "type": "DECIMAL",
-                                "type_generic": 0,
-                                "verbose_name": null,
-                                "warning_markdown": null
-                            },
-                            "datasourceWarning": false,
-                            "expressionType": "SIMPLE",
-                            "hasCustomLabel": false,
-                            "label": "SUM(sale_price)",
-                            "optionName": "metric_37hpghksw05_fuxsfflq24h",
-                            "sqlExpression": null
-                        }
-                    },
-                    "result_format": "json",
-                    "result_type": "full"
-                }
-            },
-            {
-                "type": "metric",
-                "req": {
-                    "datasource": {
-                        "id": 24,
-                        "type": "table"
-                    },
-                    "queries": [
-                        {
-                            "columns": [],
-                            "metrics": [
-                                {
-                                    "aggregate": null,
-                                    "column": null,
-                                    "datasourceWarning": false,
-                                    "expressionType": "SQL",
-                                    "hasCustomLabel": false,
-                                    "label": "COUNT(DISTINCT buyer_address)",
-                                    "optionName": "metric_9e061csky7h_wfyh41b61za",
-                                    "sqlExpression": "COUNT(DISTINCT buyer_address)"
-                                }
-                            ],
-                            "extras": {
-                                "having": "",
-                                "where": "sale_type = 'initial_offering'"
-                            }
-                        }
-                    ],
-                    "form_data": {
-                        "slice_id": 56,
-                        "dashboards": [
-                            3
-                        ],
-                        "dashboardId": 2,
-                        "metric": {
-                            "aggregate": null,
-                            "column": null,
-                            "datasourceWarning": false,
-                            "expressionType": "SQL",
-                            "hasCustomLabel": false,
-                            "label": "COUNT(DISTINCT buyer_address)",
-                            "optionName": "metric_9e061csky7h_wfyh41b61za",
-                            "sqlExpression": "COUNT(DISTINCT buyer_address)"
-                        }
-                    },
-                    "result_format": "json",
-                    "result_type": "full"
-                }
+            if (req.req.form_data.slice_id in postProcessSetup && req.type === 'chart') req.req.queries[0].post_processing = postProcessSetup[req.req.form_data.slice_id]
+            if (req.type === 'chart' && req.req.queries[0].orderby[0].includes('max_bid')) req.req.queries[0].filters = [
+              {
+                "col": "updated_at",
+                "op": "TEMPORAL_RANGE",
+                "val": "No filter"
+              },
+              {
+                "col": "max_bid",
+                "op": ">",
+                "val": "0"
+              },
+              {
+                "col": "max_bid",
+                "op": "<",
+                "val": "3000"
+              }
+            ]
+            const { data } = await apiRequest(`/chart/data`, 'POST', {}, `https://superset.anton.tools/api/v1`, req.req)
+            const parsed = parseJson<ChartAPIData>(data, (key, value, context) => value);
+            const result: StoredChartData = {
+              slice_id: req.req.form_data.slice_id.toString(),
+              type: req.type,
+              colnames: parsed.result[0].colnames,
+              data: parsed.result[0].data
             }
-        ]
-          for (const item of req) {
-            const { data } = await apiRequest(`/chart/data`, 'POST', {}, `https://superset.anton.tools/api/v1`, item.req)
-            const parsed = parseJson<ChartAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            parsed.result.forEach(item => this.xd.push({
-              colnames: item.colnames,
-              data: item.data
-            }))
-          }
+            return result
         } catch (err) {
           console.log(err)
         }
+        return null
       },
       removeDuplicates(arr: GraphCell[]) {
         return arr.filter((obj, index) =>
