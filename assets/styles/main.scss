@@ -83,6 +83,10 @@ $hover-color: #f3f3ff;
   background-color: $hover-color;
 }
 
+.hover-text:hover {
+  text-decoration: underline !important;
+}
+
 .search {
   width: auto !important;
 }

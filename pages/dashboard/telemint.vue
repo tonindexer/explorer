@@ -22,6 +22,7 @@ onMounted(async() => {
 </script>
 
 <template>
+    <h1 class="uk-margin-remove-top">{{ $t('route.telemint')}}</h1>
     <div class="grid">
         <template v-for="req in parsedReqs.filter(item => item.type === 'chart').slice(0, 1)">
             <DashboardDbCell :request="req" :slice_id="req.req.form_data.slice_id.toString()"/>

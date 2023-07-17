@@ -11,7 +11,6 @@ interface GraphData {
         data: number[]
     }[]
     times: number[]
-    name: string
 }
 
 const props = defineProps<GraphData>()
@@ -60,10 +59,7 @@ const chartOptions = computed(() => { return{
 </script>
 
 <template>
-    <div class="uk-width-1-1 chart" :class="{ 'uk-padding-small' : !isMobile() }">
-        <div class="uk-text-default">
-            {{ name }}
-        </div>
+    <div class="uk-width-1-1">
         <VueApexCharts type="bar" height="350" ref="graph" :options="chartOptions" :series="series"></VueApexCharts>
     </div>
 </template>

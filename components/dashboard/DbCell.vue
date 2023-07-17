@@ -25,8 +25,10 @@ const store = useMainStore()
 const loading = ref(true)
 const error = ref(false)
 
-onMounted(async () => {
-
+const loadData = async () => {
+    error.value = false
+    loading.value = true 
+    
     const res = await store.fetchChart(props.request)
 
     if (res) {
@@ -51,34 +53,38 @@ onMounted(async () => {
     }
 
     loading.value = false
+}
+
+onMounted(() => {
+    loadData()
 })
 </script>
 
 <template>
-    <template v-if="error">
-        <div class="uk-text-danger" :class="request.type">
-            {{ 'Error while loading!' }}
+    <div class="uk-background-muted" :class="request.type + `${isMobile() ? '' : ' uk-padding-small'}`">
+        <div class="uk-text-default">
+            {{ store.chartNames[slice_id] }}
         </div>
-    </template>
-    <template v-else-if="loading">
-        <div class="uk-flex uk-flex-center" :class="request.type">
-            <Loader />
-        </div>
-    </template>
-    <template v-else-if="request.type === 'metric' && metricData">
-        <DashboardMetricCell :data="metricData.data" :name="metricData.name" :request_id="metricData.id"/>
-    </template>
-    <template v-else-if="request.type === 'chart'">
-        <ClientOnly v-if="type === 'datetime'">
-            <GraphBasicChart :series="data" :times="times" :name="store.chartNames[slice_id]"/>
-        </ClientOnly>
-        <ClientOnly v-else-if="type === 'numeric'">
-            <GraphNumericChart :series="data" :labels="times" :name="store.chartNames[slice_id]"/>
-        </ClientOnly>
-    </template>
-    <template>
-        <div class="table">
-            gg
-        </div>
-    </template>
+        <template v-if="error">
+            <div class="uk-text-danger hover-text" @click="loadData" :class="request.type + `${isMobile() ? '' : ' uk-padding-small'}`">
+                {{ 'Error while loading! Reload..' }}
+            </div>
+        </template>
+        <template v-else-if="loading">
+            <div class="uk-flex uk-flex-center" :class="request.type" :style="request.type === 'chart' ? 'height: 350px' : ''">
+                <Loader :ratio="2"/>
+            </div>
+        </template>
+        <template v-else-if="request.type === 'metric' && metricData">
+            <DashboardMetricCell :data="metricData.data" :name="metricData.name" :request_id="metricData.id"/>
+        </template>
+        <template v-else-if="request.type === 'chart'">
+            <ClientOnly v-if="type === 'datetime'">
+                <GraphBasicChart :series="data" :times="times"/>
+            </ClientOnly>
+            <ClientOnly v-else-if="type === 'numeric'">
+                <GraphNumericChart :series="data" :labels="times"/>
+            </ClientOnly>
+        </template>
+    </div>
 </template>

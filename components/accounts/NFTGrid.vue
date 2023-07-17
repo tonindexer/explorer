@@ -83,7 +83,7 @@ onMounted(async () => {
         <div v-for="nft in nftList">
             <div class="uk-card uk-card-default">
                 <div class="uk-card-media-top">
-                    <img v-if="nft.previews.length > 0" :src="nft.previews[1].url" width="500" height="500" alt="">
+                    <img v-if="nft.previews.length > 0" :src="nft.previews[2].url" width="500" height="500" alt="">
                     <img v-else-if="nft.metadata?.image" :src="nft.metadata.image" width="500" height="500" alt="">
                     <img v-else src="@/assets/images/default.png" width="250" height="250" alt="">
                     <div v-if="store.accounts[nft.address]?.fake" class="uk-position-top-left uk-overlay uk-margin-small-top uk-margin-small-left uk-background-muted uk-text-danger uk-text-large uk-text-bold" style="padding: 0 5px">Fake</div>
