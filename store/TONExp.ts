@@ -115,20 +115,24 @@ export const useMainStore = defineStore('tonexp', {
         }
 
         const mappedAccount = <Account>{}
-        mappedAccount.nft_keys = []
-        mappedAccount.minted_nfts = []
-        mappedAccount.jetton_wallets = []
-        mappedAccount.transaction_keys = []
-        mappedAccount.transaction_amount = 0
-        mappedAccount.jetton_amount = 0
-        mappedAccount.nft_amount = 0
-        mappedAccount.minted_amount = 0
+        if (!(accountKey in this.accounts)) {
+          mappedAccount.nft_keys = []
+          mappedAccount.minted_nfts = []
+          mappedAccount.jetton_wallets = []
+          mappedAccount.transaction_keys = []
+          mappedAccount.transaction_amount = 0
+          mappedAccount.jetton_amount = 0
+          mappedAccount.nft_amount = 0
+          mappedAccount.minted_amount = 0
 
-        this.accountBases[account.address.base64] = accountKey
-
+          this.accountBases[account.address.base64] = accountKey
+        }
         Object.assign(mappedAccount, account)
 
-        this.accounts[accountKey] = mappedAccount
+        if (accountKey in this.accounts)
+          this.accounts[accountKey] = { ...this.accounts[accountKey], ...mappedAccount}
+        else 
+          this.accounts[accountKey] = mappedAccount
         return accountKey
       },
       processMessage(message: MessageAPI, tr_key: TransactionKey | null, tr_type: 'src' | 'dst' | null, parseAccounts: boolean = true) {
@@ -664,6 +668,7 @@ export const useMainStore = defineStore('tonexp', {
             const parsed = parseJson<HoldersAPI>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
             if (parsed.items && parsed.owned_items) {
+              parsed.owned_items.forEach(item => { if (!item.owner_address) item.owner_address = this.accounts[hex].address})
               this.nftHolders[hex] = {
                 items: parsed.items,
                 owned_items: parsed.owned_items,
