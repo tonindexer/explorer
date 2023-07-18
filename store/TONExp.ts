@@ -48,7 +48,9 @@ export const useMainStore = defineStore('tonexp', {
       // dashboard
       chartNames: {} as { [key: string] : string },
       chartXs: {} as { [key: string] : string },
-      telemintDashboard: [] as DashboardAPICell[]
+      telemintDashboard: [] as DashboardAPICell[],
+      cexDashboard: [] as DashboardAPICell[],
+      bridgeDashboard: [] as DashboardAPICell[]
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
@@ -879,7 +881,9 @@ export const useMainStore = defineStore('tonexp', {
           this.chartXs[item.form_data.slice_id.toString()] = item.form_data.x_axis ?? 'timestamp' 
           this.chartNames[item.form_data.slice_id.toString()] = item.slice_name 
         })
-        this.telemintDashboard = [...parsed.result]
+        if (slug === 'telemint') this.telemintDashboard = [...parsed.result]
+        else if (slug === 'cex') this.cexDashboard = [...parsed.result]
+        else this.bridgeDashboard = [...parsed.result]
       },
       async fetchChart(req: StoredMetricReq | StoredChartReq | StoredTableReq) {
         try {

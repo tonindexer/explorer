@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import VueApexCharts, { VueApexChartsComponent } from 'vue3-apexcharts'
-
-type TableData = [
-    number, bigint | number
-]
+import { VueApexChartsComponent } from 'vue3-apexcharts'
 
 interface GraphData {
     series: {
@@ -60,6 +56,6 @@ const chartOptions = computed(() => { return{
 
 <template>
     <div class="uk-width-1-1">
-        <VueApexCharts type="bar" height="350" ref="graph" :options="chartOptions" :series="series"></VueApexCharts>
+        <apexchart type="bar" height="350" ref="graph" :options="chartOptions" :series="series"></apexchart>
     </div>
 </template>

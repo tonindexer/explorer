@@ -60,7 +60,7 @@ declare global {
 
     interface ChartFormDataAPIRequest extends BaseFormDataAPIRequest {
         metrics: Array<Object | string> // form_data.metrics
-        groupby: Array<ChartColumnObject | string> // form_data.groupby
+        groupby: Array<ChartColumnObject | string> | string // form_data.groupby
         row_limit: number // form_data.row_limit
         order_desc: boolean // form_data.order_desc
         truncate_metric: boolean // form_data.truncate_metric

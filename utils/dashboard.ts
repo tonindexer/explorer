@@ -108,7 +108,7 @@ export const parseDashboardData = (input: DashboardAPICell[], id: number) : Stor
                     columns: [...item.form_data.groupby],
                     order_desc: item.form_data.order_desc,
                     metrics: item.form_data.metrics ?? [],
-                    orderby: item.form_data.x_axis? ([[ item.form_data.x_axis, false ]]) : [],
+                    orderby: id === 3 ? (item.form_data.x_axis? ([[ item.form_data.x_axis, false ]]) : []) : item.form_data.metrics?.map(item => [item, false]) ?? [],
                     row_limit: item.form_data.row_limit,
                     series_columns: item.form_data.groupby,
                     post_processing: [],
@@ -197,6 +197,26 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
+    9: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [],
+                "aggregates": {
+                    "uniqExact(src_address)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
     10 : [
         {
             "operation": "pivot",
@@ -240,6 +260,122 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "options": {
                 "columns": {
                     "count": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    14: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "src_label"
+                ],
+                "aggregates": {
+                    "count": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "count": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    19: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [],
+                "aggregates": {
+                    "uniqExact(dst_address)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    22: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "dst_label"
+                ],
+                "aggregates": {
+                    "count": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "count": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    29: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "dst_label"
+                ],
+                "aggregates": {
+                    "SUM(deposit_amount)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "SUM(deposit_amount)": null
                 },
                 "level": 0,
                 "inplace": true
@@ -295,6 +431,38 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "options": {
                 "columns": {
                     "SUM(sale_price)": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    39 : [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "src_label"
+                ],
+                "aggregates": {
+                    "SUM(withdrawal_amount)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "SUM(withdrawal_amount)": null
                 },
                 "level": 0,
                 "inplace": true
@@ -362,6 +530,26 @@ export const postProcessSetup: { [key: string] : Object[]} = {
                 },
                 "level": 0,
                 "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    62 : [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "week"
+                ],
+                "columns": [],
+                "aggregates": {
+                    "argMax(total_balance, week)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
             }
         },
         {

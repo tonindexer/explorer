@@ -101,7 +101,9 @@
         "called" : "Called with",
         "charts" : "Charts",
         "top_traders": "TOP Traders",
-        "top_profit": "TOP Profit Traders"
+        "top_profit": "TOP Profit Traders",
+        "deposits": "Recent Large Deposits",
+        "withdrawals": "Recent Large Withdrawals"
     },
     "route" : {
         "explorer" : "Main Page",
@@ -125,7 +127,8 @@
         "results" : "Results",
         "about": "About",
         "dashboard": "Dashboard",
-        "telemint": "Telemint"
+        "telemint": "Telemint",
+        "cex" : "CEX Activity"
     },
     "stats" : {
         "account_count": "Accounts",

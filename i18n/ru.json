@@ -101,7 +101,9 @@
         "called" : "Вызвано с аргументами",
         "charts" : "Графики",
         "top_traders": "ТОП Трейдеры",
-        "top_profit": "MAX Прибыль Трейдеры"
+        "top_profit": "MAX Прибыль Трейдеры",
+        "deposits": "Крупные Депозиты",
+        "withdrawals": "Крупные Выводы Средств"
     },
     "route" : {
         "explorer" : "Главная страница",
@@ -125,7 +127,8 @@
         "results" : "Результаты",
         "about": "О проекте",
         "dashboard": "Dashboard",
-        "telemint": "Telemint"
+        "telemint": "Telemint",
+        "cex" : "CEX"
     },
     "stats" : {
         "account_count": "Аккаунтов",

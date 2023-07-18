@@ -5,7 +5,7 @@ const parsedRoute = computed<Array<string>>(() => {
     let output : string[];
     if (!route.fullPath.includes('/')) return []
     if (route.fullPath !== route.path && !('contract' in route.query) 
-        && !(route.path in {'/messages': true, '/search': true, '/dashboard/telemint': true})) {
+        && !(route.path in {'/messages': true, '/search': true, '/dashboard/telemint': true,  '/dashboard/cex': true})) {
         output = route.path.split('?')[0].slice(1,).split('/')
         output = output.slice(0, output.length)
         let type = output[output.length - 1]
