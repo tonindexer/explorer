@@ -72,6 +72,7 @@
         "format": "Формат",
         "sender" : "Отправил",
         "receiver" : "Принял",
+        "noone" : "Никто",
         "interval" : "Интервал",
         "src_tx" : "SRC Транз",
         "dst_tx" : "DST Транз",

@@ -73,6 +73,7 @@
         "sender" : "Sender",
         "receiver" : "Recipient",
         "interval" : "Interval",
+        "noone" : "Noone",
         "src_tx" : "SRC Tx",
         "dst_tx" : "DST Tx",
         "amount" : "Amount",

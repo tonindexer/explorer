@@ -672,7 +672,6 @@ export const useMainStore = defineStore('tonexp', {
             const parsed = parseJson<HoldersAPI>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
             if (parsed.items && parsed.owned_items) {
-              parsed.owned_items.forEach(item => { if (!item.owner_address) item.owner_address = this.accounts[hex].address})
               this.nftHolders[hex] = {
                 items: parsed.items,
                 owned_items: parsed.owned_items,
