@@ -23,8 +23,11 @@ const sortby: Ref<{ by : "trader_address" | "buy_volume" | "buy_count" | "sale_v
 })
 
 const data: Ref<TableLine[]> = ref([])
+const filter = ref('')
 
-const sortedData = computed(() => data.value.sort((a, b) => (a[sortby.value.by] > b[sortby.value.by]) ? (sortby.value.order_desc ? -1 : 1) : (sortby.value.order_desc ? 1 : -1)))
+const finalData = computed(() => data.value
+    .filter(item => filter.value ? Object.values(item).join(',').includes(filter.value) : true)
+    .sort((a, b) => (a[sortby.value.by] > b[sortby.value.by]) ? (sortby.value.order_desc ? -1 : 1) : (sortby.value.order_desc ? 1 : -1)))
 
 const setSort = (by: "trader_address" | "buy_volume" | "buy_count" | "sale_volume" | "sale_count") => {
     if (sortby.value.by === by) sortby.value.order_desc = !sortby.value.order_desc
@@ -32,18 +35,17 @@ const setSort = (by: "trader_address" | "buy_volume" | "buy_count" | "sale_volum
         by,
         order_desc: true
     }
-    loadAccounts()
 }
 
 const pageNum = ref(0)
 const itemCount = ref(10)
 const maxExploredPage = ref(0)
 const error = ref(false)
-const loading = computed(() => sortedData.value.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+const loading = computed(() => finalData.value.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
 
 const lastPageFlag = computed(() => itemCount.value * (pageNum.value+1) >= data.value.length)
 
-const topAccs = computed(() => sortedData.value.slice(pageNum.value*itemCount.value, (pageNum.value + 1)*itemCount.value).map(item => item.trader_address))
+const topAccs = computed(() => finalData.value.slice(pageNum.value*itemCount.value, (pageNum.value + 1)*itemCount.value).map(item => item.trader_address))
 
 const composeAddress = (item: string) => store.accounts[item]?.address ?? null
 
@@ -84,6 +86,8 @@ const loadData = async () => {
     }
 }
 
+watch(finalData, () => loadAccounts())
+
 onMounted(async () => {
     await loadData()
     await loadAccounts()
@@ -94,7 +98,11 @@ onMounted(async () => {
     <div v-if="loading" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <table v-else-if="!loading" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <div v-else-if="!loading" class="uk-align-right uk-flex uk-flex-middle uk-margin-small-bottom uk-width-1-3 uk-text-right">
+        <label class="uk-margin-right" for="profit_search">Search</label>
+        <input class="uk-input" v-model="filter" id="profit_search" type="text" placeholder="Anything..." aria-label="Search top profit traders">
+    </div>
+    <table v-if="!loading" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
         <thead v-if="!isMobile()">
             <th class="uk-width-1-3 hover-text" @click="setSort('trader_address')">
                 {{ 'TRADER_ADDRESS' + (sortby.by === 'trader_address' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
@@ -104,7 +112,7 @@ onMounted(async () => {
             </th>
         </thead>
         <tbody>
-            <tr v-for="tline of sortedData.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+            <tr v-for="tline of finalData.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                 <template v-if="isMobile()">
                     <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
                         <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
@@ -148,7 +156,7 @@ onMounted(async () => {
                 </template>
                 <template v-else>
                     <td>
-                        <AtomsAddressField v-if="tline.trader_address in store.accounts" :break_word="true" :addr="composeAddress(tline.trader_address)"/>
+                        <AtomsAddressField v-if="tline.trader_address in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader_address)"/>
                         <Loader :ratio="1" v-else />
                     </td>
                     <td class="uk-text-right" style="text-wrap: nowrap">
@@ -168,10 +176,10 @@ onMounted(async () => {
         </tbody>
     </table>
     <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
-        <div class="uk-flex uk-flex-middle" v-if="!isMobile() && data.length > 0">
+        <div class="uk-flex uk-flex-middle" v-if="!isMobile() && finalData.length > 0">
             <AtomsSelector 
                 :item-count="itemCount"
-                :amount="data.length"
+                :amount="finalData.length"
                 :options="[5, 10, 20, 50]"
                 @set-value="(e: any) => itemCount = e.value"
             />
