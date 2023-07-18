@@ -18,7 +18,7 @@ watch(showMobileNav, () => {
                     <NuxtLink :to="'/transactions'" class="link" :class="{ 'active' : route.path === '/transactions'}"> {{ $t('route.transactions') }}</NuxtLink>
                     <NuxtLink :to="'/messages'" class="link" :class="{ 'active' : route.path === '/messages'}"> {{ $t('route.messages') }}</NuxtLink>
                     <NuxtLink :to="'/accounts'" class="link"  :class="{ 'active' : route.path === '/accounts' }" > {{ $t('route.accounts') }}</NuxtLink>
-                    <NuxtLink :to="'/dashboard/telemint'" class="link"  :class="{ 'active' : route.path === '/dashboard/telemint' }" > {{ $t('route.telemint') }}</NuxtLink>
+                    <NuxtLink :to="'/dashboard/telemint#charts'" class="link"  :class="{ 'active' : route.path === '/dashboard/telemint' }" > {{ $t('route.telemint') }}</NuxtLink>
                 </div>
                 <div class="uk-flex uk-padding-remove" style="align-items: center;">
                     <NuxtLink style="white-space: nowrap;" :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}"> {{ $t('route.about') }} </NuxtLink>
@@ -55,7 +55,7 @@ watch(showMobileNav, () => {
                         <NuxtLink :to="'/messages'" class="link" :class="{ 'active' : route.path === '/messages'}" @click="showMobileNav = false"> {{ $t('route.messages') }}</NuxtLink>
                     </td></tr>
                     <tr><td>
-                        <NuxtLink :to="'/dashboard/telemint'" class="link" :class="{ 'active' : route.path === '/dashboard/telemint'}" @click="showMobileNav = false"> {{ $t('route.telemint') }}</NuxtLink>
+                        <NuxtLink :to="'/dashboard/telemint#charts'" class="link" :class="{ 'active' : route.path === '/dashboard/telemint'}" @click="showMobileNav = false"> {{ $t('route.telemint') }}</NuxtLink>
                     </td></tr>
                     <tr><td>
                         <NuxtLink :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}" @click="showMobileNav = false"> {{ $t('route.about') }} </NuxtLink>

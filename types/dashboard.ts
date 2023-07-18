@@ -42,10 +42,10 @@ declare global {
     }
 
     interface TableQueryAPIRequest extends BaseQueryAPIRequest {
-        orderby: Array<string | boolean>[]
+        orderby: Array<string | Object | boolean>[]
         row_limit: number // form_data.row_limit
         row_offset: number
-        series_columns: Array<ChartColumnObject | string> // form_data.groupby
+        series_columns?: Array<ChartColumnObject | string> // form_data.groupby
     }
 
     type BaseFormDataAPIRequest = {
@@ -151,6 +151,7 @@ declare global {
         truncate_metric?: boolean
         show_empty_columns?: boolean
         metrics?: Array<Object | string>
+        timeseries_limit_metric?: Object
         metric?: Object
         x_axis?: string
         [key: string]: any | undefined
@@ -195,7 +196,7 @@ declare global {
         slice_id: string
         colnames: string[]
         data: {
-            [key: ChartAPIDataKey] : number
+            [key: ChartAPIDataKey] : any
         }[]
     }
 

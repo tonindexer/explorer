@@ -98,7 +98,10 @@
         "empty" : "Empty",
         "arguments" : "Arguments",
         "returns" : "Returns",
-        "called" : "Called with"
+        "called" : "Called with",
+        "charts" : "Charts",
+        "top_traders": "TOP Traders",
+        "top_profit": "TOP Profit Traders"
     },
     "route" : {
         "explorer" : "Main Page",

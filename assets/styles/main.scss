@@ -84,6 +84,7 @@ $hover-color: #f3f3ff;
 }
 
 .hover-text:hover {
+  cursor: pointer;
   text-decoration: underline !important;
 }
 
