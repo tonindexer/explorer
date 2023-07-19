@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import VueApexCharts, { VueApexChartsComponent } from 'vue3-apexcharts'
-
-type TableData = [
-    number, bigint | number
-]
+import { Chart } from 'highcharts-vue'
 
 interface GraphData {
     series: {
@@ -15,47 +11,38 @@ interface GraphData {
 
 const props = defineProps<GraphData>()
 
-const graph = ref<VueApexChartsComponent | null>(null)
-
 const chartOptions = computed(() => { return{
     chart: {
-        height: 350,
-        type: 'bar',
-        zoom: {
-            autoScaleYaxis: true
+        type: 'column',
+        animation: false,
+        backgroundColor: '#f8f8f8',
+        zooming: {
+            type: 'x'
         },
-        animations: {
-            enabled: false,
-        },
-        redrawOnWindowResize: true,
     },
-    fill: {
-        opacity: 1
-    },
-    dataLabels: {
+    series: props.series,
+    title: '',
+    legend: {
         enabled: false
     },
-    xaxis: {
-        type: 'numeric',
-        max: 3000,
-        categories: props.labels
-    },
-    yaxis: {
-        max: 60,
-        labels: {
-            formatter: (val: any) => toCompact(Math.round(Number(val)))
-        }
+    xAxis: {
+        categories: props.labels,  
+        tickAmount: 6,  
+        crosshairs: {
+            width: 0.1,
+        },
     },
     tooltip: {
-        followCursor: true,
         shared: true,
-        intersect: false,
+    },
+    credits: {
+        enabled: false
     },
 }})
 </script>
 
 <template>
     <div class="uk-width-1-1">
-        <VueApexCharts type="bar" height="350" ref="graph" :options="chartOptions" :series="series"></VueApexCharts>
+        <Chart :options="chartOptions" ref="graph"/>
     </div>
 </template>

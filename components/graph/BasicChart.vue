@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VueApexChartsComponent } from 'vue3-apexcharts'
+import { Chart } from 'highcharts-vue'
 
 interface GraphData {
     series: {
@@ -11,51 +11,44 @@ interface GraphData {
 
 const props = defineProps<GraphData>()
 
-const graph = ref<VueApexChartsComponent | null>(null)
-
-const chartOptions = computed(() => { return{
+const chartOptions = computed(() => { return {
     chart: {
-        height: 350,
-        type: 'bar',
-        stacked: true,
-        zoom: {
-            autoScaleYaxis: true
+        type: props.series.length === 1 ? 'area' : 'column',
+        animation: false,
+        backgroundColor: '#f8f8f8',
+        zooming: {
+            type: 'x'
         },
-        animations: {
-            enabled: false,
-        },
-        redrawOnWindowResize: true,
     },
-    fill: {
-        opacity: 1
-    },
-    dataLabels: {
+    series: props.series,
+    title: '',
+    legend: {
         enabled: false
     },
-    xaxis: {
+    xAxis: {
         type: 'datetime',
-        categories: props.times,
+        categories: props.times,  
+        tickInterval: props.times.length / 6,  
         crosshairs: {
             width: 0.1,
-        }
-    },
-    yaxis: {
+        },
         labels: {
-            formatter: (val: any) => toCompact(Math.round(Number(val)))
-        }
+            // @ts-ignore
+            formatter: function() { return new Date(this.value).toLocaleDateString() }
+        },
     },
     tooltip: {
         shared: true,
-        intersect: false,
-        x: {
-            format: 'yyyy-MM-dd hh:mm'
-        },
+        xDateFormat: '%Y-%m-%d %H:%m',
+    },
+    credits: {
+        enabled: false
     },
 }})
 </script>
 
 <template>
     <div class="uk-width-1-1">
-        <apexchart type="bar" height="350" ref="graph" :options="chartOptions" :series="series"></apexchart>
+        <Chart :options="chartOptions" ref="graph"/>
     </div>
 </template>
