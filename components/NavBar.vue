@@ -20,6 +20,7 @@ watch(showMobileNav, () => {
                     <NuxtLink :to="'/accounts'" class="link"  :class="{ 'active' : route.path === '/accounts' }" > {{ $t('route.accounts') }}</NuxtLink>
                     <NuxtLink :to="'/dashboard/telemint#charts'" class="link"  :class="{ 'active' : route.path === '/dashboard/telemint' }" > {{ $t('route.telemint') }}</NuxtLink>
                     <NuxtLink :to="'/dashboard/cex#charts'" class="link"  :class="{ 'active' : route.path === '/dashboard/cex' }" > {{ $t('route.cex') }}</NuxtLink>
+                    <NuxtLink :to="'/dashboard/bridge'" class="link"  :class="{ 'active' : route.path === '/dashboard/bridge' }" > {{ $t('route.bridge') }}</NuxtLink>
                 </div>
                 <div class="uk-flex uk-padding-remove" style="align-items: center;">
                     <NuxtLink style="white-space: nowrap;" :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}"> {{ $t('route.about') }} </NuxtLink>
@@ -60,6 +61,9 @@ watch(showMobileNav, () => {
                     </td></tr>
                     <tr><td>
                         <NuxtLink :to="'/dashboard/cex#charts'" class="link" :class="{ 'active' : route.path === '/dashboard/cex'}" @click="showMobileNav = false"> {{ $t('route.cex') }}</NuxtLink>
+                    </td></tr>
+                    <tr><td>
+                        <NuxtLink :to="'/dashboard/bridge'" class="link" :class="{ 'active' : route.path === '/dashboard/bridge'}" @click="showMobileNav = false"> {{ $t('route.bridge') }}</NuxtLink>
                     </td></tr>
                     <tr><td>
                         <NuxtLink :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}" @click="showMobileNav = false"> {{ $t('route.about') }} </NuxtLink>

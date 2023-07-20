@@ -40,4 +40,14 @@
             </NuxtLink>
         </li>
     </ul>
+    <h5>
+        {{ $t('route.bridge') }}
+    </h5>
+    <ul>
+        <li>
+            <NuxtLink :to="'/dashboard/bridge'" class="uk-text-primary">
+                {{ $t('general.charts')}}
+            </NuxtLink>
+        </li>
+    </ul>
 </template>

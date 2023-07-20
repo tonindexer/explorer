@@ -487,6 +487,334 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
+    42: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "chain"
+                ],
+                "aggregates": {
+                    "SUM(amount)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "SUM(amount)": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    43: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "chain"
+                ],
+                "aggregates": {
+                    "count()": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "count()": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    44: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "chain"
+                ],
+                "aggregates": {
+                    "SUM(amount)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "SUM(amount)": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    45: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "chain"
+                ],
+                "aggregates": {
+                    "count": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "count": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    46: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "chain"
+                ],
+                "aggregates": {
+                    "uniqExact(src_address)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "uniqExact(src_address)": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    47: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "chain"
+                ],
+                "aggregates": {
+                    "uniqExact(dst_address)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "uniqExact(dst_address)": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    48: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "token"
+                ],
+                "aggregates": {
+                    "SUM(jetton_amount)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "SUM(jetton_amount)": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    49: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "token"
+                ],
+                "aggregates": {
+                    "count()": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "count()": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    50: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [],
+                "aggregates": {
+                    "uniqExact(sender)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    51: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [],
+                "aggregates": {
+                    "uniqExact(dst_address)": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
+    52: [
+        {
+            "operation": "pivot",
+            "options": {
+                "index": [
+                    "created_at"
+                ],
+                "columns": [
+                    "token"
+                ],
+                "aggregates": {
+                    "count()": {
+                        "operator": "mean"
+                    }
+                },
+                "drop_missing_columns": false
+            }
+        },
+        {
+            "operation": "rename",
+            "options": {
+                "columns": {
+                    "count()": null
+                },
+                "level": 0,
+                "inplace": true
+            }
+        },
+        {
+            "operation": "flatten"
+        }
+    ],
     57 : [
         {
             "operation": "pivot",

@@ -42,6 +42,9 @@ const interrupter = ref(false)
 const chartType: Ref<'message_count' | 'message_amount_sum'> = ref('message_count')
 
 const chartOptions = computed(() => { return {
+    accessibility: {
+        enabled: false
+    },
     chart: {
         type: 'area',
         zooming: {

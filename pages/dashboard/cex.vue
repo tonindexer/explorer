@@ -54,39 +54,10 @@ onMounted(async() => {
             </template>
         </div>
         <div v-else-if="route.hash === '#deposits'">
-            <DashboardTopCEXTable v-if="deposits" :slice_id="'53'" :request="deposits" :type="'deposit'"/>
+            <DashboardTopCEXTable v-if="deposits" :slice_id="'28'" :request="deposits" :type="'deposit'"/>
         </div>
         <div v-else-if="route.hash === '#withdrawals'">
-            <DashboardTopCEXTable v-if="withdrawals" :slice_id="'61'" :request="withdrawals" :type="'withdrawal'"/>
+            <DashboardTopCEXTable v-if="withdrawals" :slice_id="'15'" :request="withdrawals" :type="'withdrawal'"/>
         </div>
     </template>
 </template>
-
-<style lang="scss"> 
-.grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-}
-
-.small-grid {
-    display: grid;
-    gap: 1rem;
-    @media screen and (max-width: 1050px) {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    }
-    @media screen and (min-width: 1049px) {
-        grid-template: 1fr 1fr / 1fr 1fr;
-    }
-}
-
-.metric {
-    grid-column: span 1;
-    grid-row: span 1;
-}
-
-.chart {
-    grid-column: span 2;
-    grid-row: span 2;
-}
-</style>

@@ -12,6 +12,9 @@ interface GraphData {
 const props = defineProps<GraphData>()
 
 const chartOptions = computed(() => { return{
+    accessibility: {
+        enabled: false
+    },
     chart: {
         type: 'column',
         animation: false,

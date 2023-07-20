@@ -130,7 +130,8 @@
         "about": "About",
         "dashboard": "Dashboard",
         "telemint": "Telemint",
-        "cex" : "CEX"
+        "cex" : "CEX",
+        "bridge" : "Bridge"
     },
     "stats" : {
         "account_count": "Accounts",

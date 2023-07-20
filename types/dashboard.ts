@@ -1,7 +1,7 @@
 export {};
 
 declare global {
-    type dashboardName = 'cex' | 'telemint' | 'brigde'
+    type dashboardName = 'cex' | 'telemint' | 'bridge'
 
     type ChartColumnObject = {
         timeGrain?: string // form_data.time_grain_sqla

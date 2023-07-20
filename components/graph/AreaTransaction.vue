@@ -49,6 +49,9 @@ const requestTimes = computed(() => {  return {
 }})
 
 const chartOptions = computed(() => { return {
+    accessibility: {
+        enabled: false
+    },
     chart: {
         type: 'area',
         zooming: {
