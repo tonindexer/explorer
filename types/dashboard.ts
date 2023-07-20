@@ -150,6 +150,7 @@ declare global {
         time_grain_sqla: string
         truncate_metric?: boolean
         show_empty_columns?: boolean
+        order_by_cols?: string[]
         metrics?: Array<Object | string>
         timeseries_limit_metric?: Object
         metric?: Object

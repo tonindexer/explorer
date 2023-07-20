@@ -20,6 +20,8 @@ export const opToHex = (op: number) => `0x${op.toString(16)}`
 
 export const colorAmount = (ton : bigint) => BigInt(ton) > 0n ? 'green' : BigInt(ton) === 0n ? '' : 'red'
 
+export const CEXAddress = (input: string) => input[0] === 'f' ? ('-1:' + input.substring(2)) : input.substring(0, 1) + ':' + input.substring(2)
+
 export const isNumeric = (value: any) : boolean => {
     return /^-?\d+$/.test(value)
 }

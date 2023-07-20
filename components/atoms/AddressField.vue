@@ -18,12 +18,12 @@ const store = useMainStore()
     </template>
     <template v-else-if="addr.hex in badAddresses"> 
         <NuxtLink class="uk-text-primary" :to="{ path: '/accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
-            {{ showHex? addr.hex : badAddresses[addr.hex].name }}
+            {{ badAddresses[addr.hex].name }}
         </NuxtLink>
     </template>
     <template v-else> 
         <NuxtLink class="uk-text-primary" :to="{ path: '/accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
-            {{ showHex? addr.hex : store.accounts[addr.hex]?.label?.name ?? addr.base64 }}
+            {{ store.accounts[addr.hex]?.label?.name ?? (showHex? addr.hex : addr.base64) }}
         </NuxtLink>
     </template>
 </template>

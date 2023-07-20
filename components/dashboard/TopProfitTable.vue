@@ -39,9 +39,9 @@ const pageNum = ref(0)
 const itemCount = ref(10)
 const maxExploredPage = ref(0)
 const error = ref(false)
-const loading = computed(() => finalData.value.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+const loading = computed(() => data.value.length === 0 && finalData.value.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
 
-const lastPageFlag = computed(() => itemCount.value * (pageNum.value+1) >= data.value.length)
+const lastPageFlag = computed(() => itemCount.value * (pageNum.value+1) >= finalData.value.length)
 
 const topAccs = computed(() => finalData.value.slice(pageNum.value*itemCount.value, (pageNum.value + 1)*itemCount.value).map(item => item.trader))
 
@@ -85,19 +85,21 @@ watch(finalData, () => loadAccounts())
 
 onMounted(async () => {
     await loadData()
-    await loadAccounts()
 })
 </script>
 
 <template>
-    <div v-if="loading" class="uk-flex uk-flex-center">
+    <div v-if="loading && data.length === 0" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <div v-else-if="!loading" class="uk-align-right uk-flex uk-flex-middle uk-margin-small-bottom uk-width-1-3 uk-text-right">
+    <div v-if="!loading || data.length > 0" class="uk-align-right uk-flex uk-flex-middle uk-margin-small-bottom uk-width-1-3 uk-text-right">
         <label class="uk-margin-right" for="profit_search">Search</label>
         <input class="uk-input" v-model="filter" id="profit_search" type="text" placeholder="Anything..." aria-label="Search top profit traders">
     </div>
-    <table v-if="!loading" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <div v-if="!loading && finalData.length === 0" class="uk-flex uk-flex-center">
+        {{ $t('warning.nothing_found') }}
+    </div>
+    <table v-if="!loading && finalData.length > 0" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
         <thead v-if="!isMobile()">
             <th class="uk-width-1-2 hover-text" @click="setSort('trader')">
                 {{ 'TRADER_ADDRESS' + (sortby.by === 'trader' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}

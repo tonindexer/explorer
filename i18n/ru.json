@@ -19,6 +19,8 @@
         "address": "Адрес",
         "src_address" : "Отправитель",
         "dst_address" : "Получатель",
+        "src_label" : "SRC Имя",
+        "dst_label" : "DST Имя",
         "balance": "Баланс",
         "type": "Тип",
         "label": "Имя",

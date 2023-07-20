@@ -24,7 +24,7 @@ onMounted(async() => {
 </script>
 
 <template>
-    <h1 class="uk-margin-remove-top">{{ $t('route.telemint')}}</h1>
+    <h1 class="uk-margin-remove-top">{{ $t('route.cex')}}</h1>
     <template v-if="loading">
         <div class="uk-flex uk-flex-center">
             <Loader />
@@ -53,12 +53,12 @@ onMounted(async() => {
                 <DashboardDbCell :request="req" :slice_id="req.req.form_data.slice_id.toString()"/>
             </template>
         </div>
-        <!-- <div v-else-if="route.hash === '#top_traders'">
-            <DashboardTopTradersTable v-if="topTraders" :slice_id="'53'" :request="topTraders"/>
+        <div v-else-if="route.hash === '#deposits'">
+            <DashboardTopCEXTable v-if="deposits" :slice_id="'53'" :request="deposits" :type="'deposit'"/>
         </div>
-        <div v-else-if="route.hash === '#top_profit'">
-            <DashboardTopProfitTable v-if="topProfit" :slice_id="'61'" :request="topProfit"/>
-        </div> -->
+        <div v-else-if="route.hash === '#withdrawals'">
+            <DashboardTopCEXTable v-if="withdrawals" :slice_id="'61'" :request="withdrawals" :type="'withdrawal'"/>
+        </div>
     </template>
 </template>
 
