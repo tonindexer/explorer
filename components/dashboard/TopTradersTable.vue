@@ -109,7 +109,7 @@ onMounted(async () => {
             <th class="uk-width-1-3 hover-text" @click="setSort('trader_address')">
                 {{ 'TRADER_ADDRESS' + (sortby.by === 'trader_address' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
             </th>
-            <th v-for="header of (['buy_volume', 'buy_count', 'sale_volume', 'sale_count'] as const)" class="uk-width-1-6 hover-text uk-text-right" @click="setSort(header)">
+            <th v-for="header of (['buy_volume', 'buy_count', 'sale_volume', 'sale_count'] as const)" class="uk-width-1-6 hover-text uk-text-right" @click="setSort(header)" style="white-space: nowrap;">
                 {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
             </th>
         </thead>
