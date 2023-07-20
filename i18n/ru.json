@@ -131,7 +131,7 @@
         "dashboard": "Dashboard",
         "telemint": "Telemint",
         "cex" : "CEX",
-        "bridge" : "Bridge"
+        "bridge" : "Bridges"
     },
     "stats" : {
         "account_count": "Аккаунтов",
