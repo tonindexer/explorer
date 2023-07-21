@@ -10,7 +10,7 @@ declare global {
     type PresetInterval = 'day' | 'week' | 'month' | 'all' | 'other'
     
     type GraphCell = {
-        Value: bigint | number
+        Value: number
         Timestamp: string
     }
 

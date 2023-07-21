@@ -10,7 +10,7 @@ const props = defineProps<NFTHoldersTable>()
 const store = useMainStore()
 
 onMounted(() => {
-    store.fetchBareAccounts(props.keys.map(item => item.owner_address.hex))
+    store.fetchBareAccounts(props.keys.filter(item => item.owner_address).map(item => item.owner_address.hex))
 })
 
 </script>
@@ -29,10 +29,13 @@ onMounted(() => {
             <template v-for="acc in keys">
                 <tr v-if="isMobile()">
                     <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 0;">
-                        <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
+                        <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem" v-if="acc.owner_address">
                             <NuxtLink :to="{ path: 'accounts', query: { hex: toBase64Web(acc.owner_address.hex) }, hash: '#overview'}" class="uk-text-primary">
                                 <div uk-icon="icon: link"></div>{{ truncString(acc.owner_address.base64, 25,0) }}
                             </NuxtLink>
+                        </div>
+                        <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem" v-if="!acc.owner_address">
+                            {{ $t('general.noone') }}
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;">
                             <div>   
@@ -46,7 +49,7 @@ onMounted(() => {
                             <div>   
                                 {{ $t('ton.balance') }}
                             </div>
-                            <div v-if="acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
+                            <div v-if="acc.owner_address && acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
                                 {{ store.accounts[acc.owner_address.hex].balance ? `${fullTON(store.accounts[acc.owner_address.hex].balance, false)}💎` : $t('general.none')}}
                             </div>
                             <div v-else>
@@ -58,32 +61,35 @@ onMounted(() => {
                             <div>   
                                 {{ $t('ton.updated_at') }}
                             </div>
-                            <div v-if="acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                            <div v-if="acc.owner_address && acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
                                 <AtomsTableDateMobileCell :date-time="store.accounts[acc.owner_address.hex].updated_at"/>
                             </div>
-                            <div v-else>
+                            <div class="uk-text-right" v-else>
                                 -
                             </div>
                         </div>
                     </td>
                 </tr>
                 <tr v-else>
-                    <td> 
+                    <td v-if="acc.owner_address"> 
                         <AtomsAddressField :addr="acc.owner_address" :break_word="true"/>
+                    </td>
+                    <td v-else>
+                        {{ $t('general.noone') }}
                     </td>
                     <td>
                         {{ acc.items_count }}
                     </td>
                     <td class="uk-text-right uk-text-nowrap"> 
-                        <div v-if="acc.owner_address.hex in store.accounts">
+                        <div v-if="acc.owner_address && acc.owner_address.hex in store.accounts">
                             {{ store.accounts[acc.owner_address.hex].balance ? `${fullTON(store.accounts[acc.owner_address.hex].balance, false)}💎` : $t('general.none')}}
                         </div>
                         <div v-else>
                             -
                         </div>
                     </td>
-                    <td class="uk-padding-remove-left">
-                        <div v-if="acc.owner_address.hex in store.accounts">
+                    <td class="uk-padding-remove-left uk-text-right">
+                        <div v-if="acc.owner_address && acc.owner_address.hex in store.accounts">
                             <AtomsTableDateCell :date-time="store.accounts[acc.owner_address.hex].updated_at"/>
                         </div>
                         <div v-else>

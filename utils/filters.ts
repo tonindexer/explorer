@@ -9,11 +9,18 @@ export const fullTON = (rawTON: bigint, delta: boolean = true) : string => {
 
 export const msToISO = (time: number | Date) : string => new Date(time).toISOString().split('.')[0] +"Z"
 
+export const toCompact = (input: number | bigint) : string => {
+    let formatter = Intl.NumberFormat('en', { notation: 'compact' });
+    return formatter.format(input)
+}
+
 export const isMobile = () => useDevice().isMobile
 
 export const opToHex = (op: number) => `0x${op.toString(16)}`
 
 export const colorAmount = (ton : bigint) => BigInt(ton) > 0n ? 'green' : BigInt(ton) === 0n ? '' : 'red'
+
+export const CEXAddress = (input: string) => input[0] === 'f' ? ('-1:' + input.substring(2)) : input.substring(0, 1) + ':' + input.substring(2)
 
 export const isNumeric = (value: any) : boolean => {
     return /^-?\d+$/.test(value)

@@ -44,7 +44,13 @@ export const useMainStore = defineStore('tonexp', {
       startupTime: new Date().getTime() as number,
       messageGraphData : [] as GraphCell[],
       transactionGraphData: [] as GraphCell[],
-      accountsGraphData: [] as GraphCell[]
+      accountsGraphData: [] as GraphCell[],
+      // dashboard
+      chartNames: {} as { [key: string] : string },
+      chartXs: {} as { [key: string] : string },
+      telemintDashboard: [] as DashboardAPICell[],
+      cexDashboard: [] as DashboardAPICell[],
+      bridgeDashboard: [] as DashboardAPICell[]
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
@@ -668,7 +674,6 @@ export const useMainStore = defineStore('tonexp', {
             const parsed = parseJson<HoldersAPI>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
             if (parsed.items && parsed.owned_items) {
-              parsed.owned_items.forEach(item => { if (!item.owner_address) item.owner_address = this.accounts[hex].address})
               this.nftHolders[hex] = {
                 items: parsed.items,
                 owned_items: parsed.owned_items,
@@ -868,6 +873,51 @@ export const useMainStore = defineStore('tonexp', {
           }
         }
         return this.searchResults
+      },
+      async loadDashboards(slug: dashboardName) {
+        const { data } = await apiRequest(`/dashboard/${slug}/charts`, 'GET', {}, `https://superset.anton.tools/api/v1`)
+        const parsed = parseJson<DashboardAPIData>(data, (key, value, context) => value)
+        parsed.result.forEach(item => {
+          this.chartXs[item.form_data.slice_id.toString()] = item.form_data.x_axis ?? 'timestamp' 
+          this.chartNames[item.form_data.slice_id.toString()] = item.slice_name 
+        })
+        if (slug === 'telemint') this.telemintDashboard = [...parsed.result]
+        else if (slug === 'cex') this.cexDashboard = [...parsed.result]
+        else this.bridgeDashboard = [...parsed.result]
+      },
+      async fetchChart(req: StoredMetricReq | StoredChartReq | StoredTableReq) {
+        try {
+            if (req.req.form_data.slice_id in postProcessSetup && req.type === 'chart') req.req.queries[0].post_processing = postProcessSetup[req.req.form_data.slice_id]
+            if (req.type === 'chart' && req.req.queries[0].orderby[0].includes('max_bid')) req.req.queries[0].filters = [
+              {
+                "col": "updated_at",
+                "op": "TEMPORAL_RANGE",
+                "val": "No filter"
+              },
+              {
+                "col": "max_bid",
+                "op": ">",
+                "val": "0"
+              },
+              {
+                "col": "max_bid",
+                "op": "<",
+                "val": "3000"
+              }
+            ]
+            const { data } = await apiRequest(`/chart/data`, 'POST', {}, `https://superset.anton.tools/api/v1`, req.req)
+            const parsed = parseJson<ChartAPIData>(data, (key, value, context) => value);
+            const result: StoredChartData = {
+              slice_id: req.req.form_data.slice_id.toString(),
+              type: req.type,
+              colnames: parsed.result[0].colnames,
+              data: parsed.result[0].data
+            }
+            return result
+        } catch (err) {
+          console.log(err)
+        }
+        return null
       },
       removeDuplicates(arr: GraphCell[]) {
         return arr.filter((obj, index) =>

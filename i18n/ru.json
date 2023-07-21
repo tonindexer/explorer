@@ -19,6 +19,8 @@
         "address": "Адрес",
         "src_address" : "Отправитель",
         "dst_address" : "Получатель",
+        "src_label" : "SRC Имя",
+        "dst_label" : "DST Имя",
         "balance": "Баланс",
         "type": "Тип",
         "label": "Имя",
@@ -72,6 +74,7 @@
         "format": "Формат",
         "sender" : "Отправил",
         "receiver" : "Принял",
+        "noone" : "Никто",
         "interval" : "Интервал",
         "src_tx" : "SRC Транз",
         "dst_tx" : "DST Транз",
@@ -97,7 +100,12 @@
         "empty" : "Пустой",
         "arguments" : "Аргументы",
         "returns" : "Вывод",
-        "called" : "Вызвано с аргументами"
+        "called" : "Вызвано с аргументами",
+        "charts" : "Графики",
+        "top_traders": "ТОП Трейдеры",
+        "top_profit": "MAX Прибыль Трейдеры",
+        "deposits": "Крупные Депозиты",
+        "withdrawals": "Крупные Выводы Средств"
     },
     "route" : {
         "explorer" : "Главная страница",
@@ -119,7 +127,11 @@
         "jetton_minter" : "Jetton минтеры",
         "search" : "Резульаты поиска",
         "results" : "Результаты",
-        "about": "О проекте"
+        "about": "О проекте",
+        "dashboard": "Dashboard",
+        "telemint": "Telemint",
+        "cex" : "CEX",
+        "bridge" : "Bridges"
     },
     "stats" : {
         "account_count": "Аккаунтов",

@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import VueApexCharts, { VueApexChartsComponent } from 'vue3-apexcharts'
+import { Chart } from 'highcharts-vue'
+
 import { useMainStore } from '~/store/TONExp';
 
-type TableData = [
-    number, bigint | number
-]
+interface Graph {
+    series: {
+        name: string
+        data: number[]
+    }[]
+    times: number[]
+}
+
 interface GraphData {
     excludeMC: boolean
     interval: {
@@ -17,78 +23,92 @@ const store = useMainStore()
 const props = defineProps<GraphData>()
 const emits = defineEmits(['setRange'])
 
-const graph = ref<VueApexChartsComponent | null>(null)
-const dataParser = computed(() : TableData[] => store.transactionGraphData
-    .map(item => [new Date(item.Timestamp).getTime(), item.Value]))
+const graph = ref<Chart | null>(null)
+
+const dataParser = computed(() : Graph => {
+    const output : Graph = {
+        series: [{
+            name: 'volume',
+            data: []
+        }],
+        times: []
+    }
+    store.transactionGraphData.forEach(item => {
+        output.series[0].data.push(item.Value)
+        output.times.push(new Date(item.Timestamp).getTime())
+    })
+
+    return output
+})
 
 const interrupter = ref(false)
-
-const series = computed(() => [{
-    name: 'volume',
-    data: dataParser.value
-}])
 
 const requestTimes = computed(() => {  return {
     'from': props.interval.from ? msToISO(props.interval.from) : msToISO(store.startupTime - 86400000 * 31),
     'to': props.interval.to ? msToISO(props.interval.to) : null
 }})
 
-let chartOptions = {
-    chart: {
-        animations : {
-            easing: 'linear',
-        },
-        id: 'area-datetime',
-        type: 'area',
-        height: 350,
-        zoom: {
-            autoScaleYaxis: true
-        },
-        redrawOnWindowResize: true,
-        toolbar: {
-            show: false
-        }
-    },
-    dataLabels: {
+const chartOptions = computed(() => { return {
+    accessibility: {
         enabled: false
     },
-    xaxis: {
+    chart: {
+        type: 'area',
+        zooming: {
+            type: 'x'
+        },
+        animation: false,
+        events: {
+            selection: function (event: any) {
+                if (interrupter.value) return
+                let left = 0
+                let right = 0 as number | null
+                if (event.xAxis) {
+                    if (props.interval.from === dataParser.value.times[Math.ceil(event.xAxis[0].min)] && props.interval.to === dataParser.value.times[Math.ceil(event.xAxis[0].max)]) return
+                    
+                    left = dataParser.value.times[Math.ceil(event.xAxis[0].min)]
+                    right = dataParser.value.times[Math.ceil(event.xAxis[0].max)]
+                }
+                else {
+                    left = store.lastAvailableTimestamp - 86400000 * 31
+                    right = null
+                }
+
+                interrupter.value = true
+
+                emits('setRange', { from: left, to: right})
+
+                interrupter.value = false
+            }
+        }
+    },
+    series: dataParser.value.series,
+    title: '',
+    legend: {
+        enabled: false
+    },
+    xAxis: {
         type: 'datetime',
-        tickAmount: 6,
+        categories: dataParser.value.times,
+        tickInterval: Math.round((dataParser.value.times.length) / 5), 
+        labels: {
+            // @ts-ignore
+            formatter: function() { return selection.value === '24h'? msToISO(this.value).slice(0, -10) : msToISO(this.value).slice(0, -4).replace('T', " ") }
+        },
     },
     tooltip: {
-        x: {
-            format: 'yyyy-MM-dd hh:mm'
-        }
+        xDateFormat: '%Y-%m-%d %H:%m',
     },
-    fill: {
-        type: 'gradient',
-        gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.7,
-        opacityTo: 0.9,
-        stops: [0, 100]
-        }
+    credits: {
+        enabled: false
     },
-}
+}})
+
 const selection: Ref<IntervalAPI> = ref('24h')
-
-const changeInterval = async (event: any) => {
-
-    if (interrupter.value) return
-
-    if (props.interval.from === event.w.globals.minX && props.interval.to === event.w.globals.maxX) return
-
-    interrupter.value = true
-
-    emits('setRange', { from: event.w.globals.minX, to: event.w.globals.maxX})
-
-    interrupter.value = false
-
-}
 
 const requestData = async (reset: boolean, setLast: boolean = false) => {
     await store.getTransactionsChart(selection.value, props.excludeMC, requestTimes.value.from, requestTimes.value.to, reset, setLast)
+    graph.value?.chart.xAxis[0].setExtremes(0, dataParser.value.times.length - 1)
 }
 
 const pickGroup = async (timeline: IntervalAPI) => {
@@ -105,8 +125,7 @@ const pickGroup = async (timeline: IntervalAPI) => {
     interrupter.value = false
 }
 
-watch(() => props.interval, () => {
-
+const setInterval = (setLast: boolean = false) => {
     let zoom = 0
     if (props.interval.from && props.interval.to) zoom = props.interval.to - props.interval.from
     else if (props.interval.from) zoom = (store.lastAvailableTimestamp ? store.lastAvailableTimestamp : new Date().getTime())  - props.interval.from
@@ -119,7 +138,11 @@ watch(() => props.interval, () => {
     else if (zoom <= 86400000 * 20) selection.value = '8h'
     else selection.value = '24h'
 
-    requestData(true)
+    requestData(true, setLast)
+}
+
+watch(() => props.interval, () => {
+    setInterval()
 }, {deep: true})
 
 watch(() => props.excludeMC, () => {
@@ -127,7 +150,7 @@ watch(() => props.excludeMC, () => {
 })
 
 onMounted(async () => {
-    await requestData(true, true)
+    setInterval(true)
 })
 </script>
 
@@ -156,8 +179,8 @@ onMounted(async () => {
             </div>
         </div>
         <div class="uk-width-1-1" style="position: relative;">
-            <VueApexCharts type="area" height="350" ref="graph" @zoomed="($event : any) => changeInterval($event)" :options="chartOptions" :series="series"></VueApexCharts>
-            <div v-if="series[0].data.length === 0" class="uk-position-center uk-text-center uk-overlay uk-text-bold">
+            <Chart :options="chartOptions" ref="graph"/>
+            <div v-if="dataParser.series[0].data.length === 0" class="uk-position-center uk-text-center uk-overlay uk-text-bold">
                 {{ $t('warning.nothing_found') + ` ${$t('ton.from').toLowerCase()} ${requestTimes.from} ` + (requestTimes.to ?  ` ${$t('ton.to').toLowerCase()} ${requestTimes.to} ` : '') }}
             </div>
         </div>

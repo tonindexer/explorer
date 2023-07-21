@@ -19,6 +19,8 @@
         "address": "Address",
         "src_address" : "Sender",
         "dst_address" : "Recipient",
+        "src_label" : "SRC Name",
+        "dst_label" : "DST Name",
         "balance": "Balance",
         "type": "Type",
         "label": "Name",
@@ -73,6 +75,7 @@
         "sender" : "Sender",
         "receiver" : "Recipient",
         "interval" : "Interval",
+        "noone" : "Noone",
         "src_tx" : "SRC Tx",
         "dst_tx" : "DST Tx",
         "amount" : "Amount",
@@ -97,7 +100,12 @@
         "empty" : "Empty",
         "arguments" : "Arguments",
         "returns" : "Returns",
-        "called" : "Called with"
+        "called" : "Called with",
+        "charts" : "Charts",
+        "top_traders": "TOP Traders",
+        "top_profit": "TOP Profit Traders",
+        "deposits": "Recent Large Deposits",
+        "withdrawals": "Recent Large Withdrawals"
     },
     "route" : {
         "explorer" : "Main Page",
@@ -119,7 +127,11 @@
         "jetton_minter" : "Jetton minters",
         "search" : "Search results",
         "results" : "Results",
-        "about": "About"
+        "about": "About",
+        "dashboard": "Dashboard",
+        "telemint": "Telemint",
+        "cex" : "CEX",
+        "bridge" : "Bridges"
     },
     "stats" : {
         "account_count": "Accounts",
