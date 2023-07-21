@@ -589,6 +589,7 @@ export const useMainStore = defineStore('tonexp', {
         try {
           const fullReq: MockType = {
             address: hex,
+            limit: 100,
             latest: true
           }
           const query = getQueryArrayString(fullReq, true);

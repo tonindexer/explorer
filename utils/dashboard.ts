@@ -58,7 +58,8 @@ export const parseDashboardData = (input: DashboardAPICell[], id: number) : Stor
                     order_desc: item.form_data.order_desc,
                     orderby: item.form_data.timeseries_limit_metric? ([[ item.form_data.timeseries_limit_metric, false ]]) : 
                         item.form_data.order_by_cols ? (
-                            item.form_data.order_by_cols.includes('week') ? [['week', false]] : [['created_at', false]]
+                            item.form_data.order_by_cols.includes('week') ? [['week', false]] : 
+                                (item.form_data.order_by_cols .includes('created_at') ? [['created_at', false]] : [])
                         ) : [],
                     row_limit: item.form_data.row_limit,
                     row_offset: 0,
@@ -182,6 +183,7 @@ export const parseChart = (input: StoredChartData, timecol: string) : { data: {[
     for (const item of input.colnames) {
         if (!(item === timecol)) output.data[item] = { name: item, data: []}
     }
+    input.data = input.data.sort((a, b) => a[timecol] - b[timecol])
     for (const item of input.data) {
         for (const key in item) {
             if (key === timecol) output.times.push(item[key])
