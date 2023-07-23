@@ -38,23 +38,6 @@ declare global {
         jetton_balance?: bigint
     }
 
-    type JettonWallet = {
-        jetton_balance: string
-        wallet_address: string
-        minter_address: string
-        name: string
-        symbol: string
-    }
-
-    type JettonWalletKey = `${string}|${string}`
-    type NFTKey = `${string}|${string}`
-
-    type JettonWalletMap = {
-        [key: JettonWalletKey] : JettonWallet
-    }
-    type NFTMap = {
-        [key: NFTKey] : NFTAPI
-    }
     interface Account extends NFTContentData, FTWalletData {
 
         address: Address
@@ -89,10 +72,11 @@ declare global {
 
         executed_get_methods?: { [key: string] : GetMethod[] }
 
-        jetton_wallets: JettonWalletKey[]
-        nft_items: NFTContentData[]
-        nft_keys: NFTKey[]
-        minted_nfts: NFTKey[]
+        // nft_items: NFTContentData[]
+        // nft_keys: NFTKey[]
+        jetton_wallets: AccountKey[]
+        minted_nfts: AccountKey[]
+        owned_nfts: AccountKey[]
         transaction_keys: TransactionKey[]
 
         jetton_amount: number
@@ -103,7 +87,7 @@ declare global {
         updated_at: string
     }
 
-    interface AccountAPI extends Omit<Account, 'jetton_wallets' | 'nft_keys' | 'nft_items' | 
+    interface AccountAPI extends Omit<Account, 'jetton_wallets' | 
         'minted_nfts' | 'transaction_keys' | 'jetton_amount' | 'nft_amount' | 'minted_amount' | 'transaction_amount'> {}
 
     type AccountAPIData = {
@@ -115,58 +99,42 @@ declare global {
     type AccountMap = {
         [key: AccountKey] : Account
     }
-
-    // tonapi
-    type AddressAPI = {
-        address: string
-        name?: string
-        is_scam: boolean
-        icon?: string
-    }
-    type JettonAPI = {
-        address: string
+    // v1 metadata
+    type MetadataAPI = {
         name: string
-        symbol: string
+        attributes?: {
+            trait_type: string
+            value: string
+        }[]
+        description: string
         decimals: number
-        image: string
-        verification:  'whitelist' | 'blacklist' | 'none'
-    }
-    type JettonAPIFull = {
-        balance: string
-        wallet_address: AddressAPI
-        jetton: JettonAPI
-    }
-    type JettonAPIData = {
-        balances: JettonAPIFull[]
+        symbol?: string
+        server_error?:string
+        image_url?: string
+        address: Address
+        last_tx_lt: number
+        updated_at: string
     }
 
-    type NFTMeta = {
-        image?: string
-        description?: string
-        marketplace?: string
-        external_url?: string
-        name?: string
+    type MetadataAPIData = {
+        results: MetadataAPI[] | null
     }
-    type NFTCollection = {
-        address: string
-        name: string
+
+    type MetadataMap = {
+        [key: AccountKey] : {
+            description: string
+            decimals: number
+            name: string
+            image_url: string
+            symbol: string
+        }
     }
-    type NFTPreview = {
-        resolution: `${number}:${number}`
-        url: string
-    }
-    type NFTAPI = {
-        address: string
-        index: bigint
-        owner: AccountAPI
-        collection: NFTCollection
-        verified: boolean
-        metadata: NFTMeta
-        previews: NFTPreview[]
-        approved_by: ('getgems' | 'tonkeeper')[]
-    }
-    type NFTAPIData = {
-        nft_items: NFTAPI[]
+
+    type MetadataRelations = {
+        [key: AccountKey] : {
+            owner: Address
+            minter: Address
+        }
     }
 
     // Top holders

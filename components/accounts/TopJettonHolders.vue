@@ -3,12 +3,16 @@ import { useMainStore } from '~/store/TONExp';
 
 interface JettonHoldersTable {
     keys: JettonOwnerCell[]
+    minter: AccountKey
 }
 
 const props = defineProps<JettonHoldersTable>()
 
 const store = useMainStore()
 
+const minterMeta = computed(() => props.minter in store.metadata ? 
+    { decimals: store.metadata[props.minter].decimals, symbol: store.metadata[props.minter].symbol} : 
+    { decimals: 9, symbol: "💎"})
 onMounted(() => {
     store.fetchBareAccounts(props.keys.map(item => item.owner_address.hex))
 })
@@ -30,7 +34,7 @@ onMounted(() => {
                 <tr v-if="isMobile()">
                     <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 0;">
                         <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
-                            {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none')}}
+                            {{ `${formatTons(Number(acc.balance ?? 0), minterMeta.decimals)} ${minterMeta.symbol}` }}
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;">
                             <div>   
@@ -75,7 +79,7 @@ onMounted(() => {
                     </td>
                     <td class="uk-text-right uk-text-nowrap"> 
                         <div>
-                            {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none')}}
+                            {{ `${formatTons(Number(acc.balance ?? 0), minterMeta.decimals)} ${minterMeta.symbol}` }}
                         </div>
                     </td>
                     <td class="uk-padding-remove-left">

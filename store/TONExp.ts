@@ -11,10 +11,10 @@ export const useMainStore = defineStore('tonexp', {
       accounts: {} as AccountMap,
       accountBases: {} as { [key: string] : AccountKey},
       // wallets and nfts
-      jettonWallets: {} as JettonWalletMap,
-      nftItems: {} as NFTMap,
       jettonHolders: {} as JettonHolderMap,
       nftHolders: {} as NFTHolderMap,
+      metadata: {} as MetadataMap,
+      metaRelations: {} as MetadataRelations,
       // Arrays with keys to fetch the correct info from maps
       latestBlocks: [] as BlockKey[],
       latestTransactions: [] as TransactionKey[],
@@ -84,8 +84,16 @@ export const useMainStore = defineStore('tonexp', {
         }
         return [...new Set(output)]
       },
-      getWallets: (state) => (jt_keys: JettonWalletKey[]) => jt_keys.filter(key => key in state.jettonWallets).map(key => state.jettonWallets[key]),
-      getNFTs: (state) => (nft_keys: NFTKey[]) => nft_keys.filter(key => key in state.nftItems).map(key => state.nftItems[key]),
+      getMetaItems: (state) => (keys: AccountKey[]) => {
+        const output = {} as MetadataMap
+        keys.filter(key => key in state.metadata).forEach(key => output[key] = state.metadata[key])
+        return output
+      },
+      getMetaRelations: (state) => (keys: AccountKey[]) => {
+        const output = {} as MetadataRelations
+        keys.filter(key => key in state.metaRelations).forEach(key => output[key] = state.metaRelations[key])
+        return output
+      },
       nextPageFlag: (state) => (loaded: number, type: string) => {
         switch (type) {
           case 'trn': return loaded >= state.totalQueryTransactions;
@@ -122,7 +130,7 @@ export const useMainStore = defineStore('tonexp', {
 
         const mappedAccount = <Account>{}
         if (!(accountKey in this.accounts)) {
-          mappedAccount.nft_keys = []
+          mappedAccount.owned_nfts = []
           mappedAccount.minted_nfts = []
           mappedAccount.jetton_wallets = []
           mappedAccount.transaction_keys = []
@@ -627,42 +635,22 @@ export const useMainStore = defineStore('tonexp', {
           } catch (error) {
             console.log(error)
           }
+        // request meta for jetton minters and nft collections
+        if (this.accounts[hex].types?.includes('jetton_minter') || this.accounts[hex].types?.includes('nft_collection'))
+          await this.requestMetaBulk([hex])
         // get first 10 transactions for account if they are empty
         if (this.accounts[hex]?.transaction_keys.length === 0)
           await this.updateTransactions(10, null, null, hex)
-        // get all jetton_wallet of account
+        // get one jetton_wallet of account
         if (this.accounts[hex]?.jetton_wallets.length === 0) {
-          try {
-            const req: MockType = {
-              limit: 1,
-              owner_address: hex,
-              latest: true,
-              order: "DESC",
-              interface: "jetton_wallet"
-            }
-            const query = getQueryString(req, true);
-            // get latest account state
-              const { data } = await apiRequest(`/accounts?${query}`, 'GET')
-              const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
-                  (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            this.accounts[hex].jetton_amount = parsed.total
-            if (parsed.results && parsed.results.length > 0) {
-                for (const jt of parsed.results) {
-                  const jt_key = this.processAccount(jt)
-                  this.accounts[hex].jetton_wallets.push(`${hex}|${jt_key}`)
-                }
-              }
-            } catch (error) {
-              console.log(error)
-            }
+          await this.loadAccountJettons(hex, false, 1, null)  
         }
         // get 18 nft_item of account
-        if (this.accounts[hex]?.nft_keys.length === 0)
-          // await this.loadAccountNFTs(hex, 18)
-          await this.loadAccountNFTAddresses(hex, true, false, 18, null, 0)
+        if (this.accounts[hex]?.owned_nfts.length === 0)
+          await this.loadAccountNFTs(hex, true, false, 18, null)
         // get 18 minted nft_item of account
         if (this.accounts[hex]?.minted_nfts.length === 0)
-          await this.loadAccountNFTAddresses(hex, true, true, 18, null, 0)
+          await this.loadAccountNFTs(hex, true, true, 18, null)
         // get top 10 holders of account if its nft_collection or jetton_minter
         if (this.accounts[hex]?.types?.includes('nft_collection') || this.accounts[hex]?.types?.includes('jetton_minter')) {
           try {
@@ -696,28 +684,46 @@ export const useMainStore = defineStore('tonexp', {
         }
         return hex
       },
-      async loadAccountJettonWallets(account: AccountKey) {
+      async loadAccountJettons(account: AccountKey, preload: boolean, limit: number = 18, seqOffset: bigint | null) {
         try {
-          const { data } = await apiRequest(`accounts/${account}/jettons`, 'GET', {}, `https://tonapi.io/v2/`)
-          const parsed = parseJson<JettonAPIData>(data, (key, value, context) => (
-            (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          this.accounts[account].jetton_wallets = []
-          for (const jetton of parsed.balances) {
-            const jt_key: JettonWalletKey = `${account}|${jetton.wallet_address.address}`
-            this.accounts[account].jetton_wallets.push(jt_key)
-            this.jettonWallets[jt_key] = {
-              jetton_balance: formatTons(Number(jetton.balance), jetton.jetton.decimals),
-              minter_address: jetton.jetton.address,
-              wallet_address: jetton.wallet_address.address,
-              name: jetton.jetton.name ?? "Unnamed",
-              symbol: jetton.jetton.symbol
-            }
+          const req: MockType = {
+            limit,
+            latest: true,
+            order: "DESC",
+            interface: "jetton_wallet",
+            owner_address: account
           }
-        } catch (error) {
-          console.log(error)
+
+          if (seqOffset) req.after = seqOffset
+
+          const query = getQueryString(req, true);
+          // get latest account state
+          const { data } = await apiRequest(`/accounts?${query}`, 'GET')
+          const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+
+          this.accounts[account].jetton_amount = parsed.total
+          if (!seqOffset) this.accounts[account].jetton_wallets = []
+
+          if (parsed.results && parsed.results.length > 0) {
+            const metaReq = [] as AccountKey[]
+            parsed.results.forEach((acc: AccountAPI) => {
+              const acc_key = this.processAccount(acc)
+
+              const minter = acc.minter_address
+              if (minter) metaReq.push(minter.hex)
+              metaReq.push(acc.address.hex)
+              
+              if (minter && !(acc_key in this.metaRelations)) this.metaRelations[acc_key] = {owner: this.accounts[account].address, minter} 
+              this.accounts[account].jetton_wallets.push(acc_key)
+            })
+            if (preload) await this.requestMetaBulk(metaReq)
+          }
+        } catch (err) {
+          console.log(err)
         }
       },
-      async loadAccountNFTAddresses(account: AccountKey, preload: boolean, minterFlag: boolean, limit: number = 18, seqOffset: bigint | null, offset: number = 0) {
+      async loadAccountNFTs(account: AccountKey, preload: boolean, minterFlag: boolean, limit: number = 18, seqOffset: bigint | null) {
         try {
           const req: MockType = {
             limit,
@@ -736,48 +742,60 @@ export const useMainStore = defineStore('tonexp', {
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
 
           minterFlag ? this.accounts[account].minted_amount = parsed.total : this.accounts[account].nft_amount = parsed.total
-          if (offset === 0) minterFlag ? this.accounts[account].minted_nfts = [] : this.accounts[account].nft_keys = []
+          if (!seqOffset) minterFlag ? this.accounts[account].minted_nfts = [] : this.accounts[account].owned_nfts = []
 
-          if (parsed.results && parsed.results.length > 0)
+          if (parsed.results && parsed.results.length > 0) {
+            const metaReq = [] as AccountKey[]
             parsed.results.forEach((acc: AccountAPI) => {
               const acc_key = this.processAccount(acc)
-              const nft_Key: NFTKey = `${account}|${acc_key}`
-              minterFlag ? this.accounts[account].minted_nfts.push(nft_Key) : this.accounts[account].nft_keys.push(nft_Key)
+
+              const minter = acc.minter_address
+              if (minter) metaReq.push(minter.hex)
+              metaReq.push(acc.address.hex)
+              
+              if (minter && !(acc_key in this.metaRelations)) this.metaRelations[acc_key] = {owner: this.accounts[account].address, minter} 
+              minterFlag ? this.accounts[account].minted_nfts.push(acc_key) : this.accounts[account].owned_nfts.push(acc_key)
             })
+            if (preload) await this.requestMetaBulk(metaReq)
+          }
         } catch (err) {
           console.log(err)
         }
-
-        if (!preload) await this.requestNFTBulk(account, minterFlag, limit, offset)
-
       },
-      async requestNFTBulk(account: AccountKey, minterFlag: boolean, limit: number = 18, offset: number = 0) {
-        const requestNFTs: string[] = []
-        if (account in this.accounts) {
-          if (minterFlag) {
-            this.accounts[account].minted_nfts.slice(offset, offset + limit).map(item => item.split('|')[1]).forEach(
-              (key) => { if (!(`${account}|${key}` in this.nftItems)) requestNFTs.push(key) })
-            } else {
-              this.accounts[account].nft_keys.slice(offset, offset + limit).map(item => item.split('|')[1]).forEach(
-                (key) => { if (!(`${account}|${key}` in this.nftItems)) requestNFTs.push(key) })
-            }
-        }
-        if (requestNFTs.length === 0) return
+      async requestMetaBulk(hex: AccountKey[]) {
+        if (hex.length === 0) return hex
         try {
-          const req = {
-            account_ids: requestNFTs
+          const fullReq: MockType = {
+            address: [...new Set(hex)]
           }
-          const { data } = await apiRequest(`/nfts/_bulk`, 'POST', {}, `https://tonapi.io/v2/`, req)
-          const parsed = parseJson<NFTAPIData>(data, (key, value, context) => (
-            (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          
-          for (const nft of parsed.nft_items) {
-            const nft_Key: NFTKey = `${account}|${nft.address}`
-            this.nftItems[nft_Key] = nft
+          const query = getQueryArrayString(fullReq, true);
+          // get latest account state
+            const { data } = await apiRequest(`/metadata?${query}`, 'GET', {}, `https://anton.tools/api/v1/`)
+            const parsed = parseJson<MetadataAPIData>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            if (parsed.results && parsed.results.length > 0)
+              parsed.results.forEach((meta: MetadataAPI) => {
+                this.metadata[meta.address.hex] = {
+                  name: meta.name ?? 'No name',
+                  symbol: meta.symbol ?? meta.name ?? '',
+                  image_url: meta.server_error ? "" : (meta.image_url ?? ''),
+                  decimals: meta.decimals ?? 9,
+                  description: meta.description ?? 'No description'
+                }
+              })
+              hex.filter(item => !(item in this.metadata)).forEach(item => {
+                this.metadata[item] = {
+                  name: "Not found",
+                  symbol:'',
+                  image_url: "",
+                  decimals: 9,
+                  description: "Not found"
+                }
+              })
+          } catch (error) {
+            console.log(error)
           }
-        } catch (err) {
-          console.log(err)
-        }
+        return hex
       },
       async search(req: BlockSearch | TxSearch | AccSearch | LabelSearch | null, limit : number = 20, useLastSearch: boolean = false, offset? : number): Promise<Search> {
         if (!offset) this.searchResults = []

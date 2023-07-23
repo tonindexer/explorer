@@ -15,9 +15,9 @@ const route = useRoute()
 
 const account = computed(() => store.accounts[props.hex] ?? null)
 const trKeys = computed(() => account.value?.transaction_keys?.length > 0 ? account.value.transaction_keys : [] as TransactionKey[])
-const jtKeys = computed(() => account.value?.jetton_wallets?.length > 0 ? account.value.jetton_wallets : [] as JettonWalletKey[])
-const minterKeys = computed(() => account.value?.minted_nfts?.length > 0 ? account.value.minted_nfts : [] as NFTKey[])
-const ownerKeys = computed(() => account.value?.nft_keys?.length > 0 ? account.value.nft_keys : [] as NFTKey[])
+const jtKeys = computed(() => account.value?.jetton_wallets?.length > 0 ? account.value.jetton_wallets : [] as AccountKey[])
+const minterKeys = computed(() => account.value?.minted_nfts?.length > 0 ? account.value.minted_nfts : [] as AccountKey[])
+const ownerKeys = computed(() => account.value?.owned_nfts?.length > 0 ? account.value.owned_nfts : [] as AccountKey[])
 const getMethods = computed(() => account.value?.executed_get_methods && Object.keys(account.value.executed_get_methods).length > 0 ? account.value.executed_get_methods : {} as {[key: string] : GetMethod[]})
 const trDesc = ref(true)
 
@@ -127,7 +127,7 @@ watch(() => props.hex, async() => await reloadInfo())
             <AccountsTopNFTHolders :keys="store.nftHolders[account.address.hex].owned_items ?? []" />
         </div>
         <div v-if="account && route.hash === '#jetton_holders' && account.address.hex in store.jettonHolders" id="jetton_holders">
-            <AccountsTopJettonHolders :keys="store.jettonHolders[account.address.hex].owned_balance ?? []" />
+            <AccountsTopJettonHolders :minter="hex" :keys="store.jettonHolders[account.address.hex].owned_balance ?? []" />
         </div>
         <div v-if="account && route.hash === '#get_methods'" id="get_methods">
             <AccountsGetMethods :methods="getMethods"/>

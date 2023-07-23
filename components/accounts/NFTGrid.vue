@@ -2,7 +2,7 @@
 import { useMainStore } from '~/store/TONExp';
 
 interface NFTGrid {
-    keys: NFTKey[]
+    keys: AccountKey[]
     account: AccountKey
     minterFlag: boolean
     defaultLength: number
@@ -13,7 +13,6 @@ const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
 const maxExploredPage = ref(0)
-const loading = ref(true)
 
 const firstLT: NullableBigRef = ref(0n)
 const lastLT: NullableBigRef = ref(0n)
@@ -22,25 +21,26 @@ const lastPageFlag = computed(() => props.minterFlag ?
     itemCount.value * (pageNum.value+1) >= store.accounts[props.account].minted_amount : 
     itemCount.value * (pageNum.value+1) >= store.accounts[props.account].nft_amount)
 
-const nftAccs = computed(() => props.keys.map(item => item.split('|')[1]))
-const nftList = computed(() => store.getNFTs(props.keys.slice(pageNum.value*itemCount.value, (pageNum.value + 1)*itemCount.value)))
+const nftMap = computed(() => store.getMetaItems(props.keys.slice(pageNum.value*itemCount.value, (pageNum.value + 1)*itemCount.value)))
+const nftRelationsMap = computed(() => store.getMetaRelations(props.keys.slice(pageNum.value*itemCount.value, (pageNum.value + 1)*itemCount.value)))
+const loading = computed(() => props.keys.length === 0 && Object.keys(nftMap.value).length === 0)
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {
-        if (nftAccs.value[0] in store.accounts) {
-            firstLT.value = BigInt(store.accounts[nftAccs.value[0]].last_tx_lt)
+        if (props.keys[0] in store.accounts) {
+            firstLT.value = BigInt(store.accounts[props.keys[0]].last_tx_lt)
         }
-        if (nftAccs.value[nftAccs.value.length - 1] in store.accounts) {
-            lastLT.value = BigInt(store.accounts[nftAccs.value[nftAccs.value.length - 1]].last_tx_lt)
+        if (props.keys[props.keys.length - 1] in store.accounts) {
+            lastLT.value = BigInt(store.accounts[props.keys[props.keys.length - 1]].last_tx_lt)
         }
     }
 }
 
 const updateValues = async (next: boolean = true) => {
     if (props.keys.length === 0 || pageNum.value === 0)
-        await store.loadAccountNFTAddresses(props.account, false, props.minterFlag, itemCount.value, null)
+        await store.loadAccountNFTs(props.account, true, props.minterFlag, itemCount.value, null)
     else {
-        await store.loadAccountNFTAddresses(props.account, false, props.minterFlag, itemCount.value, next ? lastLT.value : firstLT.value, itemCount.value * (pageNum.value))
+        await store.loadAccountNFTs(props.account, true, props.minterFlag, itemCount.value, next ? lastLT.value : firstLT.value)
     }
     setExtraFields()
 }
@@ -62,15 +62,12 @@ watch(props, () => {
 })
 
 onMounted(async () => {
-    if (props.keys.length === 0 || props.keys.length === nftList.value.length) {
-        await store.loadAccountNFTAddresses(props.account, false, props.minterFlag, 18, null)
+    if (props.keys.length === 0) {
+        await store.loadAccountNFTs(props.account, true, props.minterFlag, 18, null)
 
-    } else if (props.keys.length > 0 && nftList.value.length !== props.keys.length) {
-        loading.value = true
-        await store.requestNFTBulk(props.account, props.minterFlag, 18, 0)
-        loading.value = false
+    } else if (props.keys.length > 0 && Object.keys(nftMap.value).length !== props.keys.length) {
+        await store.loadAccountNFTs(props.account, true, props.minterFlag, 18, null)
     }
-    if (nftList.value.length > 0) loading.value = false
     setExtraFields()
 })
 </script>
@@ -80,19 +77,20 @@ onMounted(async () => {
         <Loader :ratio="2"/>
     </div>
     <div v-else-if="!loading" class="uk-child-width-1-2 uk-child-width-1-3@m uk-child-width-1-4@l uk-child-width-1-6@xl" uk-grid>
-        <div v-for="nft in nftList">
+        <div v-for="nft, key in nftMap">
             <div class="uk-card uk-card-default">
                 <div class="uk-card-media-top">
-                    <img v-if="nft.previews.length > 0" :src="nft.previews[2].url" width="500" height="500" alt="">
-                    <img v-else-if="nft.metadata?.image" :src="nft.metadata.image" width="500" height="500" alt="">
+                    <img v-if="nft.image_url" :src="nft.image_url" width="500" height="500" alt="">
                     <img v-else src="@/assets/images/default.png" width="250" height="250" alt="">
-                    <div v-if="store.accounts[nft.address]?.fake" class="uk-position-top-left uk-overlay uk-margin-small-top uk-margin-small-left uk-background-muted uk-text-danger uk-text-large uk-text-bold" style="padding: 0 5px">Fake</div>
+                    <div v-if="store.accounts[key]?.fake" class="uk-position-top-left uk-overlay uk-margin-small-top uk-margin-small-left uk-background-muted uk-text-danger uk-text-large uk-text-bold" style="padding: 0 5px">Fake</div>
                 </div>
                 <div class="uk-card-body uk-text-truncate uk-padding-small">
-                    <NuxtLink :to="`/accounts?hex=${nft.address}#overview`" :uk-tooltip=" nft.metadata?.name ? nft.metadata.name : 'No name'" class="uk-text-primary">
-                        {{ nft.metadata?.name ? nft.metadata.name : "No name" }}
+                    <NuxtLink :to="`/accounts?hex=${key}#overview`" :uk-tooltip=" nft.name ? nft.name : 'No name'" class="uk-text-primary">
+                        {{ nft.name ? nft.name : "No name" }}
                     </NuxtLink>
-                    <h4 class="uk-margin-remove-top uk-text-truncate" :uk-tooltip="nft.collection?.name ? nft.collection.name : 'No collection'"> {{ nft.collection?.name ? nft.collection.name : "No collection" }}</h4>
+                    <h4 class="uk-margin-remove-top uk-text-truncate" :uk-tooltip="store.metadata[nftRelationsMap[key].minter.hex]?.name ? store.metadata[nftRelationsMap[key].minter.hex].name : 'No collection'"> 
+                        {{ store.metadata[nftRelationsMap[key].minter.hex]?.name ? store.metadata[nftRelationsMap[key].minter.hex].name : 'No collection' }}
+                    </h4>
                 </div>
             </div>
         </div>
