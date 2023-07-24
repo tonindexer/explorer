@@ -46,16 +46,16 @@ const chartOptions = computed(() => { return {
                 // node click
                 if (!point.from && !point.to) {
                     if (point.id !== 'This account')
-                        navigateTo({path: '/accounts', query: { hex: store.sankeyAddressMap[point.id] }, hash: '#overview'})
+                        navigateTo({path: '/accounts', query: { hex: store.sankeyAddressMap[point.id] }, hash: '#money_flow'})
                     else {
-                        navigateTo({path: '/accounts', query: { hex: props.hex }, hash: '#overview', replace: true})
+                        navigateTo({path: '/accounts', query: { hex: props.hex }, hash: '#money_flow', replace: true})
                     }
                 // connection click
                 } else {
                     if (point.to === 'This account') {
-                        navigateTo({path: '/accounts', query: { hex: store.sankeyAddressMap[point.from] }, hash: '#overview'})
+                        navigateTo({path: '/accounts', query: { hex: store.sankeyAddressMap[point.from] }, hash: '#money_flow'})
                     } else {
-                        navigateTo({path: '/accounts', query: { hex: store.sankeyAddressMap[point.to] }, hash: '#overview'})
+                        navigateTo({path: '/accounts', query: { hex: store.sankeyAddressMap[point.to] }, hash: '#money_flow'})
 
                     }
                 }
