@@ -48,6 +48,9 @@ export const useMainStore = defineStore('tonexp', {
       // dashboard
       chartNames: {} as { [key: string] : string },
       chartXs: {} as { [key: string] : string },
+      sankeyAddressMap: {} as { [key: string] : string },
+      sankeyAmount: {} as { [key: string] : { sentTotal: number, sentTop: number, receivedTotal: number, receivedTop: number, data: SankeyData }},
+      sankeyCount: {} as { [key: string] : { sentTotal: number, sentTop: number, receivedTotal: number, receivedTop: number, data: SankeyData }},
       telemintDashboard: [] as DashboardAPICell[],
       cexDashboard: [] as DashboardAPICell[],
       bridgeDashboard: [] as DashboardAPICell[]
@@ -635,6 +638,113 @@ export const useMainStore = defineStore('tonexp', {
           } catch (error) {
             console.log(error)
           }
+        // request aggregated messages for sankey diagram
+        if (!(hex in this.sankeyCount)) {
+          let loadAmountFlag = false
+          // count request
+          try {
+            const fullReq: MockType = {
+              address: hex,
+              order_by: 'count',
+              limit: 20
+            }
+            const query = getQueryString(fullReq, true);
+            // get aggregated message data for account
+              const { data } = await apiRequest(`/messages/aggregated?${query}`, 'GET')
+              const parsed = parseJson<SankeyAPI>(data, (key, value, context) => value);
+              if (parsed) {
+                let receivedCount = [] as SankeyCell[]
+                let receivedAmount = [] as SankeyCell[]
+                if (parsed.received_count> 0) {
+                  parsed.received_from_address.filter(item => item.sender).forEach(item => {
+                    if (!(truncString(item.sender.base64) in this.sankeyAddressMap)) this.sankeyAddressMap[truncString(item.sender.base64, 5, 4)] = item.sender.hex
+                    receivedCount.push([ truncString(item.sender.base64, 5, 4), "This account", item.count])
+                    receivedAmount.push([ truncString(item.sender.base64, 5, 4), "This account", Number(shortTON(item.amount))])
+                  })
+                }
+                let sentCount = [] as SankeyCell[]
+                let sentAmount = [] as SankeyCell[]
+                if (parsed.sent_count> 0) {
+                  parsed.sent_to_address.filter(item => item.receiver).forEach(item => {
+                    if (!(truncString(item.receiver.base64) in this.sankeyAddressMap)) this.sankeyAddressMap[truncString(item.receiver.base64, 5, 5)] = item.receiver.hex
+                    sentCount.push([ "This account", truncString(item.receiver.base64, 5), item.count])
+                    sentAmount.push([ "This account", truncString(item.receiver.base64, 5), Number(shortTON(item.amount))])
+                  })
+                }
+                receivedCount = receivedCount.sort((a, b) => b[2] - a[2]).slice(0, 10)
+                sentCount = sentCount.sort((a, b) => b[2] - a[2]).slice(0, 10)
+                // if (receivedCount.length === 10) receivedCount.push([ "Other", "This account", parsed.received_count - receivedCount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0)] )
+                // if (sentCount.length === 10) sentCount.push([  "This account", "Others", parsed.sent_count - sentCount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0)])
+
+                this.sankeyCount[hex] = {
+                  data: [...receivedCount,...sentCount],
+                  sentTotal: parsed.sent_count,
+                  sentTop: sentCount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0),
+                  receivedTotal: parsed.received_count,
+                  receivedTop: receivedCount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0)
+                } 
+
+
+                receivedAmount = receivedAmount.sort((a, b) => b[2] - a[2]).slice(0, 10)
+                sentAmount = sentAmount.sort((a, b) => b[2] - a[2]).slice(0, 10)
+                // if (receivedAmount.length === 10) receivedAmount.push([ "Other", "This account", parsed.received_count - receivedCount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0)] )
+                // if (sentAmount.length === 10) sentAmount.push([  "This account", "Others", parsed.sent_count - sentCount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0)])
+
+                this.sankeyAmount[hex] = { 
+                  data : [...receivedAmount, ...sentAmount],
+                  sentTotal: Number(fullTON(parsed.sent_ton_amount)),
+                  sentTop: sentAmount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0),
+                  receivedTotal: Number(fullTON(parsed.received_ton_amount)),
+                  receivedTop: receivedAmount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0)
+                }
+
+              } else return null
+            } catch (error) {
+              console.log(error)
+            }
+          if (loadAmountFlag) {
+            try {
+              const fullReq: MockType = {
+                address: hex,
+                order_by: 'amount',
+                limit: 20
+              }
+              const query = getQueryString(fullReq, true);
+              // get aggregated message data for account
+              const { data } = await apiRequest(`/messages/aggregated?${query}`, 'GET')
+              const parsed = parseJson<SankeyAPI>(data, (key, value, context) => value);
+              if (parsed) {
+                let receivedAmount = [] as SankeyCell[]
+                if (parsed.received_count> 0) {
+                  parsed.received_from_address.filter(item => item.sender).forEach(item => {
+                    receivedAmount.push([ truncString(item.sender.base64, 5, 4), "This account", Number(shortTON(item.amount))])
+                  })
+                }
+                let sentAmount = [] as SankeyCell[]
+                if (parsed.sent_count> 0) {
+                  parsed.sent_to_address.filter(item => item.receiver).forEach(item => {
+                    sentAmount.push([ "This account", truncString(item.receiver.base64, 5), Number(shortTON(item.amount))])
+                  })
+                }
+
+                receivedAmount = receivedAmount.sort((a, b) => b[2] - a[2]).slice(0, 10)
+                sentAmount = sentAmount.sort((a, b) => b[2] - a[2]).slice(0, 10)
+
+                this.sankeyAmount[hex] = { 
+                  data : [...receivedAmount, ...sentAmount],
+                  sentTotal: Number(fullTON(parsed.sent_ton_amount)),
+                  sentTop: sentAmount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0),
+                  receivedTotal: Number(fullTON(parsed.received_ton_amount)),
+                  receivedTop: receivedAmount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0),
+                  
+                }
+
+              } else return null
+            } catch (error) {
+              console.log(error)
+            }
+          }
+        }
         // request meta for jetton minters and nft collections
         if (this.accounts[hex].types?.includes('jetton_minter') || this.accounts[hex].types?.includes('nft_collection'))
           await this.requestMetaBulk([hex])

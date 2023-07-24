@@ -131,7 +131,8 @@
         "dashboard": "Dashboard",
         "telemint": "Telemint",
         "cex" : "CEX",
-        "bridge" : "Bridges"
+        "bridge" : "Bridges",
+        "money_flow": "Money flow"
     },
     "stats" : {
         "account_count": "Accounts",
@@ -154,7 +155,9 @@
         "deep_messages" : "Shard messages",
         "deep_accounts" : "Shard accounts",
         "filter": "Filter",
-        "desc" : "Descending"
+        "desc" : "Descending",
+        "count" : "Message count",
+        "amount" : "TON Amount"
     },
     "warning" : {
         "nothing_found" : "Nothing found",

@@ -20,6 +20,7 @@ const minterKeys = computed(() => account.value?.minted_nfts?.length > 0 ? accou
 const ownerKeys = computed(() => account.value?.owned_nfts?.length > 0 ? account.value.owned_nfts : [] as AccountKey[])
 const getMethods = computed(() => account.value?.executed_get_methods && Object.keys(account.value.executed_get_methods).length > 0 ? account.value.executed_get_methods : {} as {[key: string] : GetMethod[]})
 const trDesc = ref(true)
+const sankeyType = ref("count")
 
 const reloadInfo = async() => {
     error.value = false
@@ -108,6 +109,11 @@ watch(() => props.hex, async() => await reloadInfo())
                         {{ $t('ton.get_methods') }}
                     </NuxtLink>
                 </li>
+                <li class="uk-margin-remove-left" v-if="hex in store.sankeyCount" :class="{'uk-active' : (route.hash === '#money_flow')}" style="min-width: fit-content;">
+                    <NuxtLink :to="{ hash: '#money_flow', query: route.query}">
+                        {{ $t('general.money_flow') }}
+                    </NuxtLink>
+                </li>
             </ul>
         </div>
         <div v-show="account && (route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
@@ -131,6 +137,15 @@ watch(() => props.hex, async() => await reloadInfo())
         </div>
         <div v-if="account && route.hash === '#get_methods'" id="get_methods">
             <AccountsGetMethods :methods="getMethods"/>
+        </div>
+        <div v-if="account && route.hash === '#money_flow'" id="money_flow">
+            <div class="uk-form-controls">
+                <label><input class="uk-radio" type="radio" v-model="sankeyType" value="count" name="radio1"> {{ $t('options.count') }} </label><br>
+                <label><input class="uk-radio" type="radio" v-model="sankeyType" value="amount" name="radio1"> {{ $t('options.amount') }} </label>
+            </div>
+            <ClientOnly>
+                <GraphSankey :hex="hex" :count="sankeyType === 'count'"></GraphSankey>
+            </ClientOnly>
         </div>
     </template>
 </template>

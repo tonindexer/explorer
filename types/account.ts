@@ -177,4 +177,25 @@ declare global {
 
     interface HoldersAPI extends NFTHolder, JettonHolder {}
 
+    // Sankey
+    type SankeyCell = [ string, string, number ] // from, to, size
+
+    type SankeyData = SankeyCell[]
+
+    type SankeyAPI = {
+        received_count: number
+        received_ton_amount: bigint
+        sent_count: number
+        sent_ton_amount: bigint
+        received_from_address: {
+            sender: Address
+            amount: bigint
+            count: number
+        }[]
+        sent_to_address: {
+            receiver: Address
+            amount: bigint
+            count: number
+        }[]
+    }
 }
