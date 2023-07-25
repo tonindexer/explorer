@@ -141,6 +141,7 @@ export const useMainStore = defineStore('tonexp', {
           mappedAccount.jetton_amount = 0
           mappedAccount.nft_amount = 0
           mappedAccount.minted_amount = 0
+          mappedAccount.loaded = false
 
           this.accountBases[account.address.base64] = accountKey
         }
@@ -745,6 +746,7 @@ export const useMainStore = defineStore('tonexp', {
             }
           }
         }
+        if (this.accounts[hex]?.loaded) return hex
         // request meta for jetton minters and nft collections
         if (this.accounts[hex].types?.includes('jetton_minter') || this.accounts[hex].types?.includes('nft_collection'))
           await this.requestMetaBulk([hex])
@@ -763,36 +765,42 @@ export const useMainStore = defineStore('tonexp', {
           await this.loadAccountNFTs(hex, true, true, 18, null)
         // get top 10 holders of account if its nft_collection or jetton_minter
         if (this.accounts[hex]?.types?.includes('nft_collection') || this.accounts[hex]?.types?.includes('jetton_minter')) {
-          try {
-            const fullReq: MockType = {
-              minter_address: hex,
-              limit: 10
-            }
-            const query = getQueryString(fullReq, true);
-            const { data } = await apiRequest(`/accounts/aggregated?${query}`, 'GET')
-            const parsed = parseJson<HoldersAPI>(data, (key, value, context) => (
-                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            if (parsed.items && parsed.owned_items) {
-              this.nftHolders[hex] = {
-                items: parsed.items,
-                owned_items: parsed.owned_items,
-                owners_count: parsed.owners_count
-              }
-            }
-
-            if (parsed.wallets) {
-              this.jettonHolders[hex] = {
-                wallets: parsed.wallets,
-                total_supply: parsed.total_supply,
-                owned_balance: parsed.owned_balance
-              }
-            }
-
-          } catch (error) {
-            console.log(error)
-          }
+          await this.loadTopHolders(hex, 10)
         }
+
+        this.accounts[hex].loaded = true
+
         return hex
+      },
+      async loadTopHolders(hex: string, limit: number) {
+        try {
+          const fullReq: MockType = {
+            minter_address: hex,
+            limit
+          }
+          const query = getQueryString(fullReq, true);
+          const { data } = await apiRequest(`/accounts/aggregated?${query}`, 'GET')
+          const parsed = parseJson<HoldersAPI>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          if (parsed.items && parsed.owned_items) {
+            this.nftHolders[hex] = {
+              items: parsed.items,
+              owned_items: parsed.owned_items,
+              owners_count: parsed.owners_count
+            }
+          }
+
+          if (parsed.wallets) {
+            this.jettonHolders[hex] = {
+              wallets: parsed.wallets,
+              total_supply: parsed.total_supply,
+              owned_balance: parsed.owned_balance
+            }
+          }
+
+        } catch (error) {
+          console.log(error)
+        }
       },
       async loadAccountJettons(account: AccountKey, preload: boolean, limit: number = 18, seqOffset: bigint | null) {
         try {
@@ -886,7 +894,7 @@ export const useMainStore = defineStore('tonexp', {
             if (parsed.results && parsed.results.length > 0)
               parsed.results.forEach((meta: MetadataAPI) => {
                 this.metadata[meta.address.hex] = {
-                  name: meta.name ?? 'No name',
+                  name: meta.name ?? truncString(meta.address.base64, 5),
                   symbol: meta.symbol ?? meta.name ?? '',
                   image_url: meta.server_error ? "" : (meta.image_url ?? ''),
                   decimals: meta.decimals ?? 9,

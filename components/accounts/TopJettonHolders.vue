@@ -4,22 +4,41 @@ import { useMainStore } from '~/store/TONExp';
 interface JettonHoldersTable {
     keys: JettonOwnerCell[]
     minter: AccountKey
+    defaultLength: number
 }
 
 const props = defineProps<JettonHoldersTable>()
 
 const store = useMainStore()
 
+const itemCount = ref(props.defaultLength)
+
 const minterMeta = computed(() => props.minter in store.metadata ? 
     { decimals: store.metadata[props.minter].decimals, symbol: store.metadata[props.minter].symbol} : 
     { decimals: 9, symbol: "💎"})
+
 onMounted(() => {
     store.fetchBareAccounts(props.keys.map(item => item.owner_address.hex))
 })
 
+watch(itemCount, async() => {
+    await store.loadTopHolders(props.minter, itemCount.value)
+    store.fetchBareAccounts(props.keys.map(item => item.owner_address.hex))
+}, {deep : true})
+
 </script>
 
 <template>
+    <div v-if="keys.length >= 10" class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+        <div class="uk-flex uk-flex-middle">
+            <AtomsSelector 
+                :item-count="itemCount"
+                :amount="null"
+                :options="[10, 25, 50, 100]"
+                @set-value="(e: any) => itemCount = e.value"
+            />
+        </div>
+    </div>
     <table class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
         <thead v-if="!isMobile()">
             <tr>

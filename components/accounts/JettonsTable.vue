@@ -37,9 +37,9 @@ const setExtraFields = () => {
 
 const updateValues = async (next: boolean = true) => {
     if (props.keys.length === 0 || pageNum.value === 0)
-        await store.loadAccountJettons(props.owner, false, itemCount.value, null)
+        await store.loadAccountJettons(props.owner, true, itemCount.value, null)
     else {
-        await store.loadAccountJettons(props.owner, false, itemCount.value, next ? lastLT.value : firstLT.value)
+        await store.loadAccountJettons(props.owner, true, itemCount.value, next ? lastLT.value : firstLT.value)
     }
     setExtraFields()
 }

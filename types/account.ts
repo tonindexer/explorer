@@ -85,6 +85,8 @@ declare global {
         transaction_amount: number
 
         updated_at: string
+
+        loaded: boolean
     }
 
     interface AccountAPI extends Omit<Account, 'jetton_wallets' | 

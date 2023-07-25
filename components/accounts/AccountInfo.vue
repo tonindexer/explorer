@@ -130,10 +130,10 @@ watch(() => props.hex, async() => await reloadInfo())
             <LazyAccountsNFTGrid :minter-flag="true" :keys="minterKeys" :default-length="18" :account="hex" />
         </div>
         <div v-if="account && route.hash === '#nft_holders' && account.address.hex in store.nftHolders" id="nft_holders">
-            <AccountsTopNFTHolders :keys="store.nftHolders[account.address.hex].owned_items ?? []" />
+            <AccountsTopNFTHolders :keys="store.nftHolders[account.address.hex].owned_items ?? []" :minter="hex" :default-length="10" />
         </div>
         <div v-if="account && route.hash === '#jetton_holders' && account.address.hex in store.jettonHolders" id="jetton_holders">
-            <AccountsTopJettonHolders :minter="hex" :keys="store.jettonHolders[account.address.hex].owned_balance ?? []" />
+            <AccountsTopJettonHolders :minter="hex" :keys="store.jettonHolders[account.address.hex].owned_balance ?? []" :default-length="10" />
         </div>
         <div v-if="account && route.hash === '#get_methods'" id="get_methods">
             <AccountsGetMethods :methods="getMethods"/>
