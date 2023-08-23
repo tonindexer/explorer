@@ -7,6 +7,7 @@ interface Graph {
     series: {
         name: string
         data: number[]
+        fillColor: Object
     }[]
     times: number[]
 }
@@ -29,7 +30,19 @@ const dataParser = computed(() : Graph => {
     const output : Graph = {
         series: [{
             name: 'volume',
-            data: []
+            data: [],
+            fillColor : {
+                linearGradient : {
+                    x1: 0,
+                    y1: 0,
+                    x2: 0,
+                    y2: 1   
+                },
+                stops : [
+                    [0, 'rgba(44, 175, 254, .7)'],
+                    [1, 'rgba(44, 175, 254, 0)'],
+                ]
+            }
         }],
         times: []
     }
@@ -53,7 +66,7 @@ const chartOptions = computed(() => { return {
         enabled: false
     },
     chart: {
-        type: 'area',
+        type: 'areaspline',
         zooming: {
             type: 'x'
         },
@@ -102,6 +115,14 @@ const chartOptions = computed(() => { return {
     credits: {
         enabled: false
     },
+    plotOptions: {
+        areaspline: {
+            lineWidth: 3,
+            marker: {
+                enabled: false
+            },
+        },
+    }
 }})
 
 const selection: Ref<IntervalAPI> = ref('24h')
