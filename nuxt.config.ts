@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
     runtimeConfig : {
       public : {
-        tonUrl : 'https://anton.stormtrade.dev//api/v0/'
+        tonUrl : 'https://anton.tools/api/v0/'
       }
     },
     build: {
