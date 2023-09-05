@@ -16,7 +16,7 @@ const loading = computed(() => Object.keys(store.stats).length === 0)
             <template v-for="(value, key) in store.stats">
                 <hr style="margin: 0.7rem 0">
                 <div class="uk-text-medium uk-flex" 
-                    style="justify-content: space-between;">
+                    style="justify-content: space-between; padding: 0 12px;">
                     <div>
                         {{ $t(`stats.${key}`) }}
                     </div>

@@ -37,7 +37,7 @@ const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '
             <div v-if="!isMobile()" class="uk-width-1-3 uk-text-center" style="font-size: 1.1rem;">
               {{ chainTitle(block.workchain) }}
             </div>
-            <div :class="isMobile()? 'uk-width-2-3' : 'uk-width-1-3 uk-text-center'" style="align-self: center; font-size: 1.1rem;">
+            <div :class="isMobile()? 'uk-width-2-3' : 'uk-width-1-3 uk-text-center'" style="align-self: center; font-size: 1.1rem; padding-left: 12px;">
               <NuxtLink :to="{ path: 'blocks', query: { workchain: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }, hash: '#overview'}" class="uk-text-primary">
                 {{ isMobile() ? `${block.workchain}:${block.shard.toString().slice(0,3)}:${block.seq_no}` : block.seq_no }}
               </NuxtLink>
