@@ -11,7 +11,7 @@ defineEmits(['toggleMsg'])
 
 <template>
     <tr v-if="isMobile()">
-        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 0;">
+        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem;">
             <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
                     <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(trn.hash) }, hash: '#overview'}" class="uk-text-primary">
                         <div uk-icon="icon: link"></div>{{ truncString(trn.hash, 25,0) }}
@@ -69,7 +69,7 @@ defineEmits(['toggleMsg'])
             <AtomsAddressField :addr="trn.address" :break_word="true"/>
         </td>
         <td class="uk-text-right uk-text-nowrap" :class="colorAmount(trn.delta)"> {{ trn.delta ? `${shortTON(trn.delta)}💎` : $t('general.none')}}</td>
-        <td class="uk-padding-remove-right">
+        <td>
             <AtomsTableDateCell :date-time="trn.created_at"/>
         </td>    
     </tr>

@@ -10,7 +10,7 @@ const props = defineProps<Props>()
 
 <template>
     <tr v-if="isMobile()">
-        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 0;">
+        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem;">
             <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
                 <NuxtLink :to="{ path: 'blocks', query: { workchain: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }, hash: '#overview'}" class="uk-text-primary">
                     <div uk-icon="icon: link"></div>{{ truncString(`${block.workchain}:${block.shard}:${block.seq_no}`, 10, 15) }}
@@ -54,7 +54,7 @@ const props = defineProps<Props>()
             {{ block.seq_no}}
         </td>
         <td>{{ block.transaction_keys.length }}</td>
-        <td class="uk-padding-remove-right">    
+        <td>    
             <AtomsTableDateCell :date-time="block.scanned_at"/>
         </td>
     </tr>

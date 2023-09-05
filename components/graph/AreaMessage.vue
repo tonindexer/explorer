@@ -191,7 +191,7 @@ onMounted(async () => {
                     DAY
                 </button>
             </div>
-            <div class="uk-flex uk-flex-middle uk-width-2-5 uk-margin-small-top">
+            <div class="uk-flex uk-flex-middle uk-margin-small-top" style="width: fit-content;">
                 <div class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
                     Metric
                 </div>

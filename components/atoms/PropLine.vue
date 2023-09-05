@@ -10,7 +10,7 @@ defineProps<Props>()
 
 <template>
     <template v-if="isMobile()">
-        <td class="uk-flex uk-flex-column uk-align-center uk-margin-remove-vertical" style="padding: 0.5rem 0;">
+        <td class="uk-flex uk-flex-column uk-align-center uk-margin-remove-vertical" style="padding: 0.5rem;">
             <p class="uk-margin-remove-bottom uk-text-small uk-text-left uk-text-bold" :class="{'uk-flex' : third || fourth}">
                 <slot name="name"/>
                 <div class="uk-margin-small-left uk-margin-small-right" v-if="third">{{ '·' }}</div>

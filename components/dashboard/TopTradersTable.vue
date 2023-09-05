@@ -97,9 +97,9 @@ onMounted(async () => {
     <div v-if="loading && data.length === 0" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <div v-if="!loading || data.length > 0" class="uk-align-right uk-flex uk-flex-middle uk-margin-small-bottom uk-width-1-3 uk-text-right">
+    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right" :class="{'uk-width-1-3' : !isMobile()}" style="justify-content: flex-end; padding-left: 12px;">
         <label class="uk-margin-right" for="profit_search">Search</label>
-        <input class="uk-input" v-model="filter" id="profit_search" type="text" placeholder="Anything..." aria-label="Search top profit traders">
+        <input class="uk-input uk-background-primary" v-model="filter" id="profit_search" type="text" placeholder="Anything..." aria-label="Search top profit traders">
     </div>
     <div v-if="!loading && finalData.length === 0" class="uk-flex uk-flex-center">
         {{ $t('warning.nothing_found') }}
@@ -177,7 +177,7 @@ onMounted(async () => {
             </tr>
         </tbody>
     </table>
-    <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+    <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
         <div class="uk-flex uk-flex-middle" v-if="!isMobile() && finalData.length > 0">
             <AtomsSelector 
                 :item-count="itemCount"

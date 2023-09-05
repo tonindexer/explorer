@@ -103,66 +103,69 @@ onMounted(() => routeChecker(route.query))
     </template>
     <template v-else>
         <div v-if="isGeneral">
-            <h1>{{  $t('route.transactions') }} <h2 class="uk-display-inline uk-text-muted">{{ `${store.totalQueryTransactions}` }}</h2></h1>
-            <div class="uk-child-width-auto uk-text-right">
-                <label><input v-model="excludeMC" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_masterchain') }}</label>
-            </div>
-            <div class="uk-child-width-1-1 uk-child-width-1-2@m uk-child-width-1-3@xl" uk-grid>
-                <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 0.4rem">
-                    <div class="uk-margin-remove-vertical uk-margin-small-left" style=" white-space: nowrap;">
-                        {{ $t('ton.from') }}
+            <AtomsHeaderCount>
+                <template #title>
+                    {{  $t('route.transactions') }}
+                </template>
+                <template #value>
+                    {{ `${store.totalQueryTransactions}` }}
+                </template>
+            </AtomsHeaderCount>
+            <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'" :client-body="true">
+                <template #top>
+                    <div class="uk-child-width-auto uk-text-right">
+                        <label><input v-model="excludeMC" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_masterchain') }}</label>
                     </div>
-                    <VueDatePicker @update:model-value="setRoute()" :min-date="new Date('15 Nov 2019')" :max-date="filterInterval.to ? new Date(filterInterval.to) : new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="filterInterval.from" :clearable="false"/>
-                    <div class="uk-margin-remove" style="white-space: nowrap;">
-                        {{ $t('ton.to') }}
+                    <div class="uk-child-width-1-1 uk-child-width-1-2@m uk-child-width-1-3@xl" uk-grid>
+                        <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 0.4rem">
+                            <div class="uk-margin-remove-vertical uk-margin-small-left" style=" white-space: nowrap;">
+                                {{ $t('ton.from') }}
+                            </div>
+                            <VueDatePicker @update:model-value="setRoute()" :min-date="new Date('15 Nov 2019')" :max-date="filterInterval.to ? new Date(filterInterval.to) : new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="filterInterval.from" :clearable="false"/>
+                            <div class="uk-margin-remove" style="white-space: nowrap;">
+                                {{ $t('ton.to') }}
+                            </div>
+                            <VueDatePicker @update:model-value="setRoute()" :min-date="filterInterval.from ? new Date(filterInterval.from) :new Date('15 Nov 2019')" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="filterInterval.to" :clearable="false"/>
+                        </div> 
+                        <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 0.4rem">
+                            <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="4h" @click="pickInterval('day')">
+                                last day
+                            </button>
+                            <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="4h" @click="pickInterval('week')">
+                                last week
+                            </button>
+                            <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="8h" @click="pickInterval('month')">
+                                last month
+                            </button>
+                            <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="24h" @click="pickInterval('all')">
+                                All
+                            </button>
+                        </div> 
                     </div>
-                    <VueDatePicker @update:model-value="setRoute()" :min-date="filterInterval.from ? new Date(filterInterval.from) :new Date('15 Nov 2019')" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="filterInterval.to" :clearable="false"/>
-                </div> 
-                <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 0.4rem">
-                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="4h" @click="pickInterval('day')">
-                        last day
-                    </button>
-                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="4h" @click="pickInterval('week')">
-                        last week
-                    </button>
-                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="8h" @click="pickInterval('month')">
-                        last month
-                    </button>
-                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="24h" @click="pickInterval('all')">
-                        All
-                    </button>
-                </div> 
-            </div>
+                </template>
+                <template #body>
+                    <GraphAreaTransaction 
+                        :exclude-m-c="excludeMC"
+                        :interval="filterInterval"
+                        @set-range="(e) => {
+                            filterInterval = {
+                                from: e.from,
+                                to: e.to
+                            }
+                            setRoute()
+                        }"
+                    />
+                </template>
+            </AtomsTile>
+            
+            <AtomsTile :body="true" :tile-style="'margin-top: 32px; padding-bottom: 12px'">
+                <template #body>
+                    <LazyTransactionsTable :keys="store.exploredTransactions" :update="true" :default-length="20" :item-selector="true" :hidden="false" :filters="filters" :order="'DESC'" :account="null"/>
+                </template>
+            </AtomsTile>
 
-            <ClientOnly v-if="!isMobile()">
-                <GraphAreaTransaction 
-                    :exclude-m-c="excludeMC"
-                    :interval="filterInterval"
-                    @set-range="(e) => {
-                        filterInterval = {
-                            from: e.from,
-                            to: e.to
-                        }
-                        setRoute()
-                    }"
-                />
-            </ClientOnly>
-
-            <LazyTransactionsTable :keys="store.exploredTransactions" :update="true" :default-length="20" :item-selector="true" :hidden="false" :filters="filters" :order="'DESC'" :account="null"/>
         </div>
         <div v-else-if="hash" class="uk-flex uk-flex-column">
-            <div class="uk-flex" :class="{'uk-flex-column' : isMobile()}">
-                <h1 v-if="!isMobile()" class="uk-margin-remove-vertical uk-text-left uk-margin-right">
-                    {{ $t('route.transaction')}}
-                </h1>
-                <h3 v-if="isMobile()" class="uk-margin-remove uk-text-left">
-                    {{ $t('route.transaction')}}
-                </h3>
-                <h2 class="uk-margin-remove-vertical uk-text-primary uk-text-bold uk-text-truncate" style="line-height: 1.35;" :style="isMobile() ? '' : 'align-self: flex-end;'">
-                    {{ hash }}
-                </h2>
-            </div>
-
             <TransactionsTransactionInfo :hash="hash" @set-hash="(e) => hash = e"/>
         </div>
     </template>

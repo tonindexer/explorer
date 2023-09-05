@@ -14,7 +14,7 @@ onMounted(() => {
 
 <template>
     <tr v-if="isMobile()">
-        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 0;">
+        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem;">
             <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
                 <NuxtLink :to="{ path: 'accounts', query: { hex: toBase64Web(acc.address.hex) }, hash: '#overview'}" class="uk-text-primary">
                     <div uk-icon="icon: link"></div>{{ truncString(acc.address.base64, 25,0) }}

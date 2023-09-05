@@ -219,173 +219,185 @@ onMounted(() => routeChecker())
     </template>
     <template v-else>
         <div v-if="isGeneral">
-            <div class="uk-flex uk-flex-bottom uk-margin-bottom">
-                <h1 class="uk-margin-remove-vertical uk-margin-right">{{  $t('route.messages') }}</h1>
-                <h2 class="uk-margin-remove uk-text-muted">{{ `${store.totalQueryMessages === -1 ? '...' : store.totalQueryMessages}` }}</h2>
-            </div>
-            <div class="uk-flex" :class="{ 'uk-text-secondary' : filterFlag}">
-                <div :uk-icon="`icon: ${filterFlag ? 'chevron-down' : 'chevron-right'}; ratio: 1.2`" @click="filterFlag = !filterFlag" style="cursor: pointer;"></div>
-                <div @click="filterFlag = !filterFlag" style="cursor: pointer;">{{ $t('options.filter') }}</div>
-            </div>
+            <AtomsHeaderCount>
+                <template #title>
+                    {{  $t('route.messages') }}
+                </template>
+                <template #value>
+                    {{ `${store.totalQueryMessages === -1 ? '...' : store.totalQueryMessages}` }}
+                </template>
+            </AtomsHeaderCount>
+            <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'" :client-body="true">
+                <template #top>
+                    <div class="uk-flex" :class="{ 'uk-text-secondary' : filterFlag}">
+                        <div :uk-icon="`icon: ${filterFlag ? 'chevron-down' : 'chevron-right'}; ratio: 1.2`" @click="filterFlag = !filterFlag" style="cursor: pointer;"></div>
+                        <div @click="filterFlag = !filterFlag" style="cursor: pointer;">{{ $t('options.filter') }}</div>
+                    </div>
 
-            <div v-if="filterFlag" class="uk-child-width-1-1 uk-child-width-1-2@m uk-child-width-1-3@xl" uk-grid>
-                <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-                    <div>   
-                        {{ $t('ton.src_address') }}
-                    </div>
-                    <div class=" uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
-                        <input class="uk-input" :class="{ 'error' : !srcFieldCheck}"  v-model="srcField" @keyup.enter="setField(srcField, 'src_address', srcFieldCheck)">
-                        <div class="green" :class="{ 'uk-icon-button' : srcFieldCheck}" 
-                            v-if="srcField && srcField !== filterFields.src_address && srcFieldCheck" 
-                            uk-icon="icon: check; ratio: 1.2" style="min-width: 36px"
-                            @click="setField(srcField, 'src_address', srcFieldCheck)"></div>
-                        <div class="red uk-icon-button" v-if="srcField" uk-icon="icon: close; ratio: 1.2" style="min-width: 36px" @click="reset('src_address')"></div>
-                    </div>
-                </div>
-                <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-                    <div>   
-                        {{ $t('ton.dst_address') }}
-                    </div>
-                    <div class="uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
-                        <input class="uk-input" :class="{ 'error' : !dstFieldCheck}"  v-model="dstField" @keyup.enter="setField(dstField, 'dst_address', dstFieldCheck)">
-                        <div class="green" :class="{ 'uk-icon-button' : dstFieldCheck}" 
-                        v-if="dstField && dstField !== filterFields.dst_address && dstFieldCheck" 
-                        uk-icon="icon: check; ratio: 1.2" style="min-width: 36px"
-                        @click="setField(dstField, 'dst_address', dstFieldCheck)"></div>
-                        <div class="red uk-icon-button" v-if="dstField" uk-icon="icon: close; ratio: 1.2" style="min-width: 36px" @click="reset('dst_address')"></div>
-                    </div>
-                </div>
-                <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-                    <div>
-                        {{ $t('ton.src_contract') }}
-                    </div>
-                    <div class="uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
-                        <div v-if="!isMobile()" class="uk-width-2-3">
-                            <ModelSelect :options="options" v-model="filterFields.src_contract_desktop" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
+                    <div v-if="filterFlag" class="uk-child-width-1-1 uk-child-width-1-2@m uk-child-width-1-3@xl" uk-grid>
+                        <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
+                            <div>   
+                                {{ $t('ton.src_address') }}
+                            </div>
+                            <div class=" uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
+                                <input class="uk-input uk-background-primary" :class="{ 'error' : !srcFieldCheck}"  v-model="srcField" @keyup.enter="setField(srcField, 'src_address', srcFieldCheck)">
+                                <div class="green" :class="{ 'uk-icon-button' : srcFieldCheck}" 
+                                    v-if="srcField && srcField !== filterFields.src_address && srcFieldCheck" 
+                                    uk-icon="icon: check; ratio: 1.2" style="min-width: 36px"
+                                    @click="setField(srcField, 'src_address', srcFieldCheck)"></div>
+                                <div class="red uk-icon-button" v-if="srcField" uk-icon="icon: close; ratio: 1.2" style="min-width: 36px" @click="reset('src_address')"></div>
+                            </div>
                         </div>
-                        <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
-                            <AtomsSelector 
-                                :item-count="filterFields.src_contract_mobile"
-                                :amount="null"
-                                :start-line="null"
-                                :options="optionsMobile"
-                                @set-value="(e: any) => filterFields.src_contract_mobile = e.value"
-                            />
+                        <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
+                            <div>   
+                                {{ $t('ton.dst_address') }}
+                            </div>
+                            <div class="uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
+                                <input class="uk-input uk-background-primary" :class="{ 'error' : !dstFieldCheck}"  v-model="dstField" @keyup.enter="setField(dstField, 'dst_address', dstFieldCheck)">
+                                <div class="green" :class="{ 'uk-icon-button' : dstFieldCheck}" 
+                                v-if="dstField && dstField !== filterFields.dst_address && dstFieldCheck" 
+                                uk-icon="icon: check; ratio: 1.2" style="min-width: 36px"
+                                @click="setField(dstField, 'dst_address', dstFieldCheck)"></div>
+                                <div class="red uk-icon-button" v-if="dstField" uk-icon="icon: close; ratio: 1.2" style="min-width: 36px" @click="reset('dst_address')"></div>
+                            </div>
                         </div>
-                        <div class="red uk-icon-button" v-if="Object.keys(filterFields.src_contract_desktop).length > 0" uk-icon="icon: close;ratio: 1.2" @click="reset('src_contract')"></div>
-                    </div>
-                </div>
-                <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-                    <div>
-                        {{ $t('ton.dst_contract') }}
-                    </div>
-                    <div class="uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
+                        <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
+                            <div>
+                                {{ $t('ton.src_contract') }}
+                            </div>
+                            <div class="uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
+                                <div v-if="!isMobile()" class="uk-width-2-3">
+                                    <ModelSelect :options="options" v-model="filterFields.src_contract_desktop" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
+                                </div>
+                                <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
+                                    <AtomsSelector 
+                                        :item-count="filterFields.src_contract_mobile"
+                                        :amount="null"
+                                        :start-line="null"
+                                        :options="optionsMobile"
+                                        @set-value="(e: any) => filterFields.src_contract_mobile = e.value"
+                                    />
+                                </div>
+                                <div class="red uk-icon-button" v-if="Object.keys(filterFields.src_contract_desktop).length > 0" uk-icon="icon: close;ratio: 1.2" @click="reset('src_contract')"></div>
+                            </div>
+                        </div>
+                        <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
+                            <div>
+                                {{ $t('ton.dst_contract') }}
+                            </div>
+                            <div class="uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
 
-                        <div v-if="!isMobile()" class="uk-width-2-3">
-                            <ModelSelect :options="options" v-model="filterFields.dst_contract_desktop" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
+                                <div v-if="!isMobile()" class="uk-width-2-3">
+                                    <ModelSelect :options="options" v-model="filterFields.dst_contract_desktop" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
+                                </div>
+                                <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
+                                    <AtomsSelector 
+                                        :item-count="filterFields.dst_contract_mobile"
+                                        :amount="null"
+                                        :start-line="null"
+                                        :options="optionsMobile"
+                                        @set-value="(e: any) => filterFields.dst_contract_mobile = e.value"
+                                    />
+                                </div>
+                                <div class="red uk-icon-button" v-if="Object.keys(filterFields.dst_contract_desktop).length > 0" uk-icon="icon: close;ratio: 1.2" @click="reset('dst_contract')"></div>
+                            </div>
                         </div>
-                        <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
-                            <AtomsSelector 
-                                :item-count="filterFields.dst_contract_mobile"
-                                :amount="null"
-                                :start-line="null"
-                                :options="optionsMobile"
-                                @set-value="(e: any) => filterFields.dst_contract_mobile = e.value"
-                            />
+                        <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
+                            <div>   
+                                {{ $t('ton.operation_id') }}
+                            </div>
+                            <div class="uk-flex uk-flex-right uk-flex-middle uk-width-1-2" style="gap: 0.5rem;">
+                                <input class="uk-input uk-background-primary" :class="{ 'error' : !opIDCheck}"  v-model="opID" @keyup.enter="setField(opID, 'op_type', opIDCheck)">
+                                <div class="green" :class="{ 'uk-icon-button' : opIDCheck}" 
+                                v-if="opID && opID !== filterFields.op_type && opIDCheck" 
+                                uk-icon="icon: check; ratio: 1.2" style="min-width: 36px"
+                                @click="setField(opID, 'op_type', opIDCheck)"></div>
+                                <div class="red uk-icon-button" v-if="opID" uk-icon="icon: close; ratio: 1.2" style="min-width: 36px" @click="reset('operation_id')"></div>
+                            </div>
                         </div>
-                        <div class="red uk-icon-button" v-if="Object.keys(filterFields.dst_contract_desktop).length > 0" uk-icon="icon: close;ratio: 1.2" @click="reset('dst_contract')"></div>
-                    </div>
-                </div>
-                <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-                    <div>   
-                        {{ $t('ton.operation_id') }}
-                    </div>
-                    <div class="uk-flex uk-flex-right uk-flex-middle uk-width-1-2" style="gap: 0.5rem;">
-                        <input class="uk-input" :class="{ 'error' : !opIDCheck}"  v-model="opID" @keyup.enter="setField(opID, 'op_type', opIDCheck)">
-                        <div class="green" :class="{ 'uk-icon-button' : opIDCheck}" 
-                        v-if="opID && opID !== filterFields.op_type && opIDCheck" 
-                        uk-icon="icon: check; ratio: 1.2" style="min-width: 36px"
-                        @click="setField(opID, 'op_type', opIDCheck)"></div>
-                        <div class="red uk-icon-button" v-if="opID" uk-icon="icon: close; ratio: 1.2" style="min-width: 36px" @click="reset('operation_id')"></div>
-                    </div>
-                </div>
-                <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-                    <div>
-                        {{ $t('ton.operation_name') }}
-                    </div>
-                    <div v-if="!isMobile()" class="uk-width-2-3">
-                        <ModelSelect :options="opOptions" v-model="filterFields.op_name_desktop" :placeholder="$t('ton.operation_name')" style="border-radius: 0;"></ModelSelect>
-                    </div>
-                    <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
-                        <AtomsSelector 
-                            :item-count="filterFields.op_name_mobile"
-                            :amount="null"
-                            :start-line="null"
-                            :options="opOptionsMobile"
-                            @set-value="(e: any) => filterFields.op_name_mobile = e.value"
-                        />
-                    </div>
-                    <div class="red uk-icon-button" v-if="Object.keys(filterFields.op_name_desktop).length > 0" uk-icon="icon: close;ratio: 1.2" @click="reset('operation_name')"></div>
-                </div>
-                <div class="uk-flex uk-flex-middle uk-margin-small" style="justify-content: space-between;">
-                    <div class="uk-margin-remove" style="padding: 0.2rem 0.5rem 0.2rem 0; height: fit-content; white-space: nowrap;">
-                        {{ $t('ton.from') }}
-                    </div>
-                    <VueDatePicker @update:model-value="setRoute()" :min-date="new Date('15 Nov 2019')" :max-date="filterInterval.to ? new Date(filterInterval.to) : new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="filterInterval.from" :clearable="false"/>
-                    <div class="uk-margin-remove" style="padding: 0.2rem 0.5rem; height: fit-content; white-space: nowrap;">
-                        {{ $t('ton.to') }}
-                    </div>
-                    <VueDatePicker @update:model-value="setRoute()" :min-date="filterInterval.from ? new Date(filterInterval.from) :new Date('15 Nov 2019')" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="filterInterval.to" :clearable="false"/>
-                </div> 
-                <div class="uk-flex uk-flex-middle uk-margin-small" style="justify-content: space-between; gap: 0.4rem">
-                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap;" id="4h" @click="pickInterval('day')">
-                        last day
-                    </button>
-                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="4h" @click="pickInterval('week')">
-                        last week
-                    </button>
-                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="8h" @click="pickInterval('month')">
-                        last month
-                    </button>
-                    <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="24h" @click="pickInterval('all')">
-                        All
-                    </button>
-                </div>   
-            </div>
-
-            <div class="uk-flex uk-flex-wrap" :style="isMobile() ? 'font-size: small' : ''">
-                <template v-for="(option, key) in selectedOptions">
-                    <div v-if="key !== 'from' && option" class="uk-flex uk-background-primary uk-margin-small-right uk-margin-small-top uk-border-rounded white" style="padding: 0.3rem 0.7rem ; text-wrap: nowrap">
-                        <div style="max-width: 90%;">
-                            {{ $t(`ton.${key}`) + ': ' + truncString(option, 19, 0) }}
+                        <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
+                            <div>
+                                {{ $t('ton.operation_name') }}
+                            </div>
+                            <div v-if="!isMobile()" class="uk-width-2-3">
+                                <ModelSelect :options="opOptions" v-model="filterFields.op_name_desktop" :placeholder="$t('ton.operation_name')" style="border-radius: 0;"></ModelSelect>
+                            </div>
+                            <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
+                                <AtomsSelector 
+                                    :item-count="filterFields.op_name_mobile"
+                                    :amount="null"
+                                    :start-line="null"
+                                    :options="opOptionsMobile"
+                                    @set-value="(e: any) => filterFields.op_name_mobile = e.value"
+                                />
+                            </div>
+                            <div class="red uk-icon-button" v-if="Object.keys(filterFields.op_name_desktop).length > 0" uk-icon="icon: close;ratio: 1.2" @click="reset('operation_name')"></div>
+                        </div>
+                        <div class="uk-flex uk-flex-middle uk-margin-small" style="justify-content: space-between;">
+                            <div class="uk-margin-remove" style="padding: 0.2rem 0.5rem 0.2rem 0; height: fit-content; white-space: nowrap;">
+                                {{ $t('ton.from') }}
+                            </div>
+                            <VueDatePicker @update:model-value="setRoute()" :min-date="new Date('15 Nov 2019')" :max-date="filterInterval.to ? new Date(filterInterval.to) : new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="filterInterval.from" :clearable="false"/>
+                            <div class="uk-margin-remove" style="padding: 0.2rem 0.5rem; height: fit-content; white-space: nowrap;">
+                                {{ $t('ton.to') }}
+                            </div>
+                            <VueDatePicker @update:model-value="setRoute()" :min-date="filterInterval.from ? new Date(filterInterval.from) :new Date('15 Nov 2019')" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="filterInterval.to" :clearable="false"/>
                         </div> 
-                        <button class="uk-margin-small-left" aria-label="reset_src_address" uk-icon="icon: close" @click="reset(key)"></button>
+                        <div class="uk-flex uk-flex-middle uk-margin-small" style="justify-content: space-between; gap: 0.4rem">
+                            <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap;" id="4h" @click="pickInterval('day')">
+                                last day
+                            </button>
+                            <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="4h" @click="pickInterval('week')">
+                                last week
+                            </button>
+                            <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="8h" @click="pickInterval('month')">
+                                last month
+                            </button>
+                            <button class="uk-button uk-width-1-4 uk-padding-remove" style="text-wrap: nowrap" id="24h" @click="pickInterval('all')">
+                                All
+                            </button>
+                        </div>   
                     </div>
-                    <div v-else-if="key === 'from' && filterInterval.from" class="uk-flex uk-background-primary uk-margin-small-right uk-margin-small-top uk-border-rounded white" style="padding: 0.3rem 0.7rem ; text-wrap: nowrap" v-if="option">
-                        <div style="max-width: 90%;">
-                            {{ $t(`ton.${key}`) + ': ' + truncString(option, 21, 0) }}
-                        </div> 
-                        <button class="uk-margin-small-left" aria-label="reset_src_address" uk-icon="icon: close" @click="reset(key)"></button>
+
+                    <div class="uk-flex uk-flex-wrap" :style="isMobile() ? 'font-size: small' : ''">
+                        <template v-for="(option, key) in selectedOptions">
+                            <div v-if="key !== 'from' && option" class="uk-flex uk-background-primary uk-margin-small-right uk-margin-small-top uk-border-rounded white" style="padding: 0.3rem 0.7rem ; text-wrap: nowrap">
+                                <div style="max-width: 90%;">
+                                    {{ $t(`ton.${key}`) + ': ' + truncString(option, 19, 0) }}
+                                </div> 
+                                <button class="uk-margin-small-left" aria-label="reset_src_address" uk-icon="icon: close" @click="reset(key)"></button>
+                            </div>
+                            <div v-else-if="key === 'from' && filterInterval.from" class="uk-flex uk-background-primary uk-margin-small-right uk-margin-small-top uk-border-rounded white" style="padding: 0.3rem 0.7rem ; text-wrap: nowrap" v-if="option">
+                                <div style="max-width: 90%;">
+                                    {{ $t(`ton.${key}`) + ': ' + truncString(option, 21, 0) }}
+                                </div> 
+                                <button class="uk-margin-small-left" aria-label="reset_src_address" uk-icon="icon: close" @click="reset(key)"></button>
+                            </div>
+                        </template>
                     </div>
                 </template>
-            </div>
-
-            <ClientOnly v-if="!isMobile()">
-                <GraphAreaMessage 
-                    :filters="selectedOptions"
-                    :from = "filterInterval.from ?? 0"
-                    :to = "filterInterval.to ?? 0"
-                    @set-range="(e) => {
-                        filterInterval = {
-                            from: e.from,
-                            to: e.to
-                        }
-                        setRoute()
-                    }"
-                />
-            </ClientOnly>
-            <LazyMessagesTable :filters="selectedOptions" :keys="store.exploredMessages" :update="true" :default-length="10" :hidden="false" :item-selector="true" :show-link="true"
-            />
+                <template #body>
+                    <GraphAreaMessage 
+                        :filters="selectedOptions"
+                        :from = "filterInterval.from ?? 0"
+                        :to = "filterInterval.to ?? 0"
+                        @set-range="(e) => {
+                            filterInterval = {
+                                from: e.from,
+                                to: e.to
+                            }
+                            setRoute()
+                        }"
+                    />
+                </template>
+            </AtomsTile>
+            
+            <AtomsTile :body="true" :tile-style="'margin-top: 32px; padding-bottom: 12px'">
+                <template #body>
+                    <LazyMessagesTable :filters="selectedOptions" :keys="store.exploredMessages" :update="true" :default-length="10" :hidden="false" :item-selector="true" :show-link="true"
+                    />
+                </template>
+            </AtomsTile>
         </div>
     </template>
 </template>

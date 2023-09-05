@@ -1,8 +1,18 @@
-@import url('https://fonts.googleapis.com/css?family=Fira Mono');
-
-$global-link-color: #666;
-$global-font-family: 'Fira Mono' , sans-serif;
+$global-link-color: #B2B2B2;
+$global-emphasis-color: #0057FF;
+$global-font-family: 'Roboto Mono', sans-serif;
 $hover-color: #f3f3ff;
+
+$global-background: #F7F8FC;
+$global-primary-background: #fff;
+$global-muted-color: rgba(0,0,0,.5);
+$text-primary-color: #000;
+
+@font-face {
+  font-family: "HelveticaNeueCyr";
+  src: local("HelveticaNeueCyr"),
+  url('@/assets/fonts/HelveticaNeueCyr.ttf') format("truetype");
+}
 
 @import '@vuepic/vue-datepicker/dist/main.css';
 

@@ -18,7 +18,7 @@ const chartOptions = computed(() => { return{
     chart: {
         type: 'column',
         animation: false,
-        backgroundColor: '#f8f8f8',
+        backgroundColor: '#ffffff',
         zooming: {
             type: 'x'
         },

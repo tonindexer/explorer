@@ -105,7 +105,8 @@
         "top_traders": "TOP Traders",
         "top_profit": "TOP Profit Traders",
         "deposits": "Recent Large Deposits",
-        "withdrawals": "Recent Large Withdrawals"
+        "withdrawals": "Recent Large Withdrawals",
+        "money_flow": "Money flow"
     },
     "route" : {
         "explorer" : "Main Page",
@@ -131,8 +132,7 @@
         "dashboard": "Dashboard",
         "telemint": "Telemint",
         "cex" : "CEX",
-        "bridge" : "Bridges",
-        "money_flow": "Money flow"
+        "bridge" : "Bridges"
     },
     "stats" : {
         "account_count": "Accounts",

@@ -22,17 +22,20 @@ onMounted(async() => {
 </script>
 
 <template>
-    <h1 class="uk-margin-remove-top">{{ $t('route.bridge')}}</h1>
     <template v-if="loading">
         <div class="uk-flex uk-flex-center">
             <Loader />
         </div>
     </template>
     <template v-else>
-        <div class="grid">
-            <template v-for="req in parsedReqs.filter(item => item.type === 'chart')">
-                <DashboardDbCell :request="req" :slice_id="req.req.form_data.slice_id.toString()"/>
+        <AtomsTile :body="true" :tile-style="'margin-top: 32px; padding: 12px'">
+            <template #body>
+                <div class="grid">
+                    <template v-for="req in parsedReqs.filter(item => item.type === 'chart')">
+                        <DashboardDbCell :request="req" :slice_id="req.req.form_data.slice_id.toString()"/>
+                    </template>
+                </div>
             </template>
-        </div>
+        </AtomsTile>
     </template>
 </template>

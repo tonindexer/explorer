@@ -16,7 +16,7 @@ const showData = ref(false)
 
 <template>
     <template v-if="msg">
-        <div class="uk-flex uk-align-center uk-width-1-1 uk-flex-wrap" style="justify-content: space-between; margin:1rem 0">
+        <div class="uk-flex uk-align-center uk-width-1-1 uk-flex-wrap" style="justify-content: space-between; margin:1rem">
             <div v-if="!isMobile()" class="uk-margin-left uk-flex uk-flex-middle">
                 <div class="uk-flex uk-text-large">
                     {{ msg.amount ? `${fullTON(msg.amount, false)}💎` : '0💎' }}

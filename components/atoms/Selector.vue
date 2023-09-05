@@ -11,7 +11,7 @@ defineEmits(['setValue'])
 
 <template>
     <p v-if="startLine !== null" class="uk-margin-remove">{{ $t(startLine ?? 'general.show')}}</p>
-    <select :value="itemCount" @change="$event => $emit('setValue', $event.target)" class="uk-select uk-margin-small-left" style="min-width: 70px">
+    <select :value="itemCount" @change="$event => $emit('setValue', $event.target)" class="uk-select uk-background-primary uk-margin-small-left" style="min-width: 70px">
         <option v-for="option in options">{{ option }}</option>
     </select>
     <template v-if="amount && isNumeric(itemCount)">

@@ -118,7 +118,7 @@ onMounted(async () => {
     <div v-if="loading && data.length === 0" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom" style="justify-content: space-between; gap: 0.4rem; max-width: 600px;">
+    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom" style="justify-content: space-between; gap: 0.4rem; max-width: 600px; padding: 0 12px">
         <div class="uk-margin-remove-vertical" style=" white-space: nowrap;">
             {{ $t('ton.from') }}
         </div>
@@ -128,9 +128,9 @@ onMounted(async () => {
         </div>
         <VueDatePicker :min-date="interval.from ? new Date(interval.from) : new Date(firstDate)" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="interval.to"/>
     </div> 
-    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right" :class="{'uk-width-1-3' : !isMobile()}">
+    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right" :class="{'uk-width-1-3' : !isMobile()}" style="padding: 0 12px">
         <label class="uk-margin-right" for="cex_search">Search</label>
-        <input class="uk-input" v-model="filter" id="cex_search" type="text" placeholder="Anything..." aria-label="Search top CEX">
+        <input class="uk-input uk-background-primary" v-model="filter" id="cex_search" type="text" placeholder="Anything..." aria-label="Search top CEX">
     </div>
     <div v-if="!loading && finalData.length === 0" class="uk-flex uk-flex-center">
         {{ $t('warning.nothing_found') }}
@@ -215,7 +215,7 @@ onMounted(async () => {
                     <td class="uk-text-right" style="text-wrap: nowrap">
                         {{ type === 'deposit' ? ((tline.deposit_amount ?? 0).toFixed(2) + '💎') : ((tline.withdrawal_amount ?? 0).toFixed(2) + '💎') }}
                     </td>
-                    <td class="uk-padding-remove-right">
+                    <td>
                         <AtomsTableDateCell :date-time="tline.created_at"/>
                     </td> 
                 </template>

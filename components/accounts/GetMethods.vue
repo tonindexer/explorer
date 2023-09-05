@@ -74,7 +74,7 @@ const parseData = computed((): TableSection[] => {
 <template>
     <div class="uk-flex uk-flex-column">
         <template v-for="section of parseData">
-            <h4 class="uk-flex uk-margin-remove-bottom uk-margin-small-top">
+            <h4 class="uk-flex uk-margin-remove-vertical">
                 <NuxtLink :to="`/accounts?contract=${section.title}`" class="uk-text-bold uk-text-primary" uk-icon="icon:link" style="line-height: 1.5;">
                     {{ section.title }}
                 </NuxtLink>

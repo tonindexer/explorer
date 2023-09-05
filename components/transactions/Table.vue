@@ -64,7 +64,9 @@ watch(pageNum, async(to, from) => {
     }
 }, {deep : true}) 
 
-watch(() => props.filters, () => {
+watch(() => props.filters, (from, to) => {
+    if (Object.keys(from).every((key) =>  String(from[key]) === String(to[key] ?? ''))
+        && Object.keys(to).every((key) =>  String(to[key]) === String(from[key] ?? ''))) return
     if (pageNum.value === 0) updateValues()
     else pageNum.value = 0
 })
@@ -131,7 +133,7 @@ onMounted(() => {
                 </template>
             </tbody>
         </table>
-        <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end;">
+        <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end; padding-right: 12px;">
             <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile() && !hidden">
                 <AtomsSelector 
                     :item-count="itemCount"

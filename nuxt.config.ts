@@ -12,7 +12,8 @@ export default defineNuxtConfig({
       '@nuxtjs/i18n',
       '@pinia/nuxt',
       '@fedorae/nuxt-uikit',
-      '@nuxtjs/device'
+      '@nuxtjs/device',
+      '@nuxtjs/google-fonts'
     ],
     device: {
       refreshOnResize: true
@@ -22,6 +23,13 @@ export default defineNuxtConfig({
         'defineStore', 
         ['defineStore', 'definePiniaStore'],
       ],
+    },
+    googleFonts: {
+      families: {
+        'Roboto Mono' : true,
+        Inter: [400, 700],
+        'Fira Mono': true
+      }
     },
     i18n: {
       strategy: 'no_prefix',

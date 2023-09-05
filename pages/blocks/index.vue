@@ -50,30 +50,26 @@ onMounted(() => routeChecker(route.query))
     </template>
     <template v-else>
         <div v-if="isGeneral">
-            <h1>{{  $t('route.blocks') }} <h2 class="uk-display-inline uk-text-muted">{{ `${store.totalQueryBlocks}` }}</h2></h1>
-            <div class="uk-child-width-auto uk-text-right">
-                <label><input v-model="excludeEmpty" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_blocks') }}</label>
-            </div>
-            <LazyBlocksTable :keys="filteredKeys" :update="true" :default-length="10" :item-selector="true" :hidden="false" :line-link="true" :exclude-empty="excludeEmpty"/>
+            <AtomsHeaderCount>
+                <template #title>
+                    {{  $t('route.blocks') }}
+                </template>
+                <template #value>
+                    {{ `${store.totalQueryBlocks}` }}
+                </template>
+            </AtomsHeaderCount>
+            <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'">
+                <template #top>
+                    <div class="uk-flex uk-flex-right">
+                        <label><input v-model="excludeEmpty" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_blocks') }}</label>
+                    </div>
+                </template>
+                <template #body>
+                    <LazyBlocksTable :keys="filteredKeys" :update="true" :default-length="10" :item-selector="true" :hidden="false" :line-link="true" :exclude-empty="excludeEmpty"/>
+                </template>
+            </AtomsTile>
         </div>
-        <div v-else-if="(workchain || workchain === 0)&& shard && seq_no" class="uk-flex uk-flex-column">
-            <div class="uk-flex uk-flex-bottom">
-                <div class="uk-flex" :class="{'uk-flex-column' : isMobile()}">
-                    <h1 v-if="!isMobile()" class="uk-margin-remove-vertical uk-text-left uk-margin-right">
-                        {{ $t('route.block')}}
-                    </h1>
-                    <h3 v-if="isMobile()" class="uk-margin-remove uk-text-left">
-                        {{ $t('route.block')}}
-                    </h3>
-                    <h2 class="uk-margin-remove-vertical uk-text-primary uk-text-bold uk-flex" style="line-height: 1.35;" :style="isMobile() ? '' : 'align-self: flex-end;'">
-                        <AtomsCopyableText :text="`${workchain}:${shard.toString()}:${seq_no}`">
-                            <p class="uk-margin-remove">
-                                {{ `${workchain}:${shard.toString().slice(0,3)}:${seq_no}` }}
-                            </p>
-                        </AtomsCopyableText>
-                    </h2>
-                </div>
-            </div>
+        <div v-else-if="(workchain || workchain === 0) && shard && seq_no" class="uk-flex uk-flex-column">
             <BlocksBlockInfo :shard="shard" :seq_no="seq_no" :workchain="workchain"/>
         </div>
     </template>

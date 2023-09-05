@@ -83,17 +83,17 @@ onMounted(() => {
             <Loader />
         </div>
     </template>
-    <template v-else>
-        <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-vertical">
+    <template v-else-if="!hidden">
+        <table class="uk-table uk-table-divider uk-table-middle uk-margin-remove-vertical">
             <tbody>
                 <tr v-for="msg in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                    <td :colspan="isMobile() ? 5 : 6" class="uk-padding-remove">
+                    <td :colspan="isMobile() ? 5 : 6" class="uk-padding-remove-vertical">
                         <MessagesTableLine :msg="store.messages[msg]" :show-link="showLink"/>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <div v-if="!hidden" class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end;">
+        <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end; padding-right: 12px;">
             <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
                 <AtomsSelector 
                     :item-count="itemCount"

@@ -84,8 +84,8 @@ onMounted(() => {
             <Loader />
         </div>
     </template>
-    <template v-else>
-        <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <template v-else-if="!hidden">
+        <table class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
             <thead v-if="!isMobile()">
                 <tr>
                     <th class="uk-width-2-5">{{ $t('ton.id')}}</th>
@@ -100,7 +100,7 @@ onMounted(() => {
                 </template>
             </tbody>
         </table>
-        <div v-if="!hidden" class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+        <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
             <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
                 <ClientOnly>
                     <AtomsSelector 

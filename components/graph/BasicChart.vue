@@ -18,7 +18,7 @@ const chartOptions = computed(() => { return {
     chart: {
         type: props.series.length === 1 ? 'area' : 'column',
         animation: false,
-        backgroundColor: '#f8f8f8',
+        backgroundColor: '#ffffff',
         zooming: {
             type: 'x'
         },
