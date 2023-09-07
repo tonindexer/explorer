@@ -108,9 +108,9 @@ watch(props, async() => await reloadInfo())
                         <label><input v-model="deepTrKeys" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.deep_messages') }}</label>
                     </div>
                     <h3 v-if="inMessageKeys.length > 0" class="uk-margin-remove-bottom uk-text-primary uk-margin-small-left">{{ $t('general.in_msg') + ` (${inMessageKeys.length})` }}</h3>
-                    <MessagesTable :filters="{}" :show-link="true" :item-selector="false" :default-length="10" :update="false" :keys="inMessageKeys" :hidden="inMessageKeys.length === 0"/>
+                    <MessagesTable :show-link="true" :item-selector="false" :default-length="10" :update="false" :keys="inMessageKeys" :hidden="inMessageKeys.length === 0"/>
                     <h3 v-if="outMessageKeys.length > 0" class="uk-margin-remove-bottom uk-text-primary uk-margin-small-left">{{ $t('general.out_msg')+ ` (${outMessageKeys.length})` }}</h3>
-                    <MessagesTable :filters="{}" :show-link="true" :item-selector="false" :default-length="10" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
+                    <MessagesTable :show-link="true" :item-selector="false" :default-length="10" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
                 </div>
                 <div v-if="(route.hash === '#accounts' )&& loadedAccountKeys.length + unloadedAccountKeys.length > 0" id="accounts">
                     <div class="uk-child-width-auto uk-text-left uk-margin-remove-top uk-margin-small-left" v-if="block.shard_keys.length > 0">

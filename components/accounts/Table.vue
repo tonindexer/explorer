@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
+import { ModelSelect } from 'vue-search-select'
+const route = useRoute()
+const router = useRouter()
 
 interface AccountTable {
     keys: AccountKey[]
@@ -7,7 +10,11 @@ interface AccountTable {
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
-    filters: MockType
+}
+
+type SelectItem = {
+    value: string,
+    text: string
 }
 
 const props = defineProps<AccountTable>()
@@ -23,6 +30,22 @@ const maxExploredPage = ref(0)
 const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
 const emptyTable = ref(false)
 
+const selected: Ref<SelectItem | {}> = ref({ value: '', text: ''})
+const selectedMobile = ref('All')
+const contract = computed(() => route.query.contract? route.query.contract.toString() : null)
+
+const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}).sort((a, b) => a.text > b.text ? 1 : -1))
+const optionsMobile = computed(() : string[] => {
+    const defualt = ['All']
+    defualt.push(...Object.keys(store.interfaces))
+    return defualt.sort()
+})
+
+const reset = () => { 
+    selected.value = {};
+    selectedMobile.value = 'All' 
+}
+
 const setExtraFields = () => {
     if (props.keys.length > 0) {
         if (props.keys[0] in store.accounts) {
@@ -34,16 +57,51 @@ const setExtraFields = () => {
     } else emptyTable.value = true
 }
 
+
+const setRoute = () => {
+    if (route.path !== '/accounts') return
+    let contract = null
+    if ('value' in selected.value && selected.value.value !== '')
+        contract = selected['value'].value
+    else if (selectedMobile.value !== 'All') contract = selectedMobile.value
+
+    if (!('hex' in route.query)) {
+        const queryString = getQueryString({ contract } , true)
+        if (queryString || route.fullPath.split('?')[1] !== queryString) router.replace(`/accounts?${queryString}`)
+    }
+
+}
+
+const routeChecker = () => {
+    if (route.path !== '/accounts') return
+    if ('contract' in route.query && route.query.contract !== '') {
+        isMobile() ? (selectedMobile.value = route.query.contract?.toString() ?? 'All') :
+            selected.value = {value: route.query.contract, text: route.query.contract }
+    } else {
+        selectedMobile.value = 'All'
+        selected.value = {}
+    }
+}
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     emptyTable.value = false
     if (props.keys.length === 0 || pageNum.value === 0)
-        await store.updateAccounts(itemCount.value, null, props.filters)
+        await store.updateAccounts(itemCount.value, null, {interface: contract.value})
     else {
-        await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value, props.filters)
+        await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value, {contract: contract.value})
     }
     if (props.keys.length === 0) emptyTable.value = true
 }
+
+watch(contract, () => 
+    isMobile() ? (selectedMobile.value = route.query.contract?.toString() ?? 'All') :
+            selected.value = {value: route.query.contract, text: route.query.contract })
+
+watch(selected, (to, from) => {
+    if (to !== from)
+        setRoute()
+})
+watch(selectedMobile, () => setRoute())
 
 watch(pageNum, async(to, from) => {
     if (props.update) {
@@ -59,8 +117,8 @@ watch(itemCount, async() => {
     else pageNum.value = 0
 }, {deep : true})
 
-watch(() => props.filters, (to, from) => {
-    if (pageNum.value === 0 && from.interface !== '') updateValues()
+watch(() => contract, (to, from) => {
+    if (pageNum.value === 0 && from.value !== '') updateValues()
     else pageNum.value = 0
 }, { deep: true })
 
@@ -70,10 +128,26 @@ watch(loading, (to) => {
 onMounted(() => {
     maxExploredPage.value = 0
     setExtraFields()
+    routeChecker()
 })
 </script>
 
 <template>
+    <div v-if="route.path === '/accounts'" class="uk-flex uk-flex-right" style="padding: 12px;">
+        <div v-if="!isMobile()" class="uk-width-2-5">
+            <ModelSelect :options="options" v-model="selected" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
+        </div>
+        <div v-else-if="isMobile()" class="uk-width-4-5 uk-text-small" style="margin-right: 0.5rem;">
+            <AtomsSelector 
+                :item-count="selectedMobile"
+                :amount="null"
+                :start-line="null"
+                :options="optionsMobile"
+                @set-value="(e: any) => selectedMobile = e.value"
+            />
+        </div>
+        <a v-if="Object.keys(selected).length > 0 && contract" uk-icon="icon: close" @click="reset" style="align-self: center; margin-left: 0.5rem;"></a>
+    </div>
     <template v-if="emptyTable && store.totalQueryAccounts === 0">
         <div class="uk-flex uk-margin-top">
             {{ $t('warning.nothing_found') }}

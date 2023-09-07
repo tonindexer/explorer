@@ -63,7 +63,7 @@ $text-primary-color: #000;
 }
 
 .white {
-  color: white;
+  color: white !important;
   stroke: white;
   * {
     color: white;
@@ -102,8 +102,19 @@ $text-primary-color: #000;
   width: auto !important;
 }
 
+.uk-button {
+  border-radius: 30px;
+  text-transform: none !important;
+  padding: 4px 16px !important;
+  background-color: #F5F5F5;
+  &.selected {
+    background-color: #000;
+  }
+}
+
 .uk-button:disabled {
   cursor: not-allowed !important;
+  color: white
 }
 
 

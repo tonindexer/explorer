@@ -16,13 +16,13 @@ defineEmits(['increase', 'decrease'])
         <div uk-icon="icon: arrow-left" 
             class="arrow uk-button bg uk-border-rounded uk-margin-small-left"
             :class="{'disabled' : leftDisabled}"
-            style="padding:0 0.6rem; min-width: 20px"
+            style="padding:0 0.6rem; min-width: 20px; border-radius: 4px;"
             @click.prevent="$emit('decrease')">
         </div>
         <div uk-icon="icon: arrow-right" 
             class="arrow uk-button bg uk-border-rounded uk-margin-small-left" 
             :class="{'disabled' : rightDisabled}"
-            style="padding:0 0.6rem; min-width: 20px"
+            style="padding:0 0.6rem; min-width: 20px; border-radius: 4px;"
             @click.prevent="$emit('increase')">
         </div>
     </div>

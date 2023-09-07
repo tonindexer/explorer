@@ -2,14 +2,10 @@
 import { useMainStore } from '~/store/TONExp';
 const store = useMainStore()
 
-const excludeMC = ref(true)
 </script>
 
 <template>
-  <div class="uk-child-width-auto uk-text-right" style="padding-right: 12px;">
-        <label><input v-model="excludeMC" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_masterchain') }}</label>
-    </div>
-    <div class="uk-flex uk-flex-column">
-      <LazyTransactionsTable :keys="store.exploredTransactions" :update="true" :default-length="isMobile() ? 5 : 10" :item-selector="true" :hidden="false" :filters="{'workchain' : excludeMC ? 0 : null}" :account="null" :order="'DESC'"/>
-    </div>
+  <div class="uk-flex uk-flex-column">
+    <LazyTransactionsTable :keys="store.exploredTransactions" :update="true" :default-length="isMobile() ? 5 : 10" :item-selector="true" :hidden="false" :account="null" :order="'DESC'"/>
+  </div>
 </template>

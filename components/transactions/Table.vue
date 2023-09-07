@@ -8,7 +8,6 @@ interface TransactionTable {
     itemSelector: boolean
     hidden: boolean
     account: AccountKey | null
-    filters: MockType,
     order: "ASC" | "DESC"
 }
 
@@ -18,6 +17,7 @@ const store = useMainStore()
 const pageNum = ref(0)
 const maxExploredPage = ref(0)
 
+const excludeMC = ref(false)
 const itemCount = ref(props.defaultLength)
 const firstLT: NullableBigRef = ref(0n)
 const lastLT: NullableBigRef = ref(0n)
@@ -46,10 +46,10 @@ const updateValues = async (next: boolean = true) => {
     emptyTable.value = false
     setExtraFields()
     if (props.keys.length === 0 || pageNum.value === 0) {
-        await store.updateTransactions(itemCount.value, null, props.filters, props.account, props.order)
+        await store.updateTransactions(itemCount.value, null, excludeMC.value, props.account, props.order)
     }
     else {
-        await store.updateTransactions(itemCount.value, next ? lastLT.value : firstLT.value, props.filters, props.account, props.order)
+        await store.updateTransactions(itemCount.value, next ? lastLT.value : firstLT.value, excludeMC.value, props.account, props.order)
     }
     if (props.keys.length === 0) emptyTable.value = true
 
@@ -64,9 +64,7 @@ watch(pageNum, async(to, from) => {
     }
 }, {deep : true}) 
 
-watch(() => props.filters, (from, to) => {
-    if (Object.keys(from).every((key) =>  String(from[key]) === String(to[key] ?? ''))
-        && Object.keys(to).every((key) =>  String(to[key]) === String(from[key] ?? ''))) return
+watch(excludeMC, () => {
     if (pageNum.value === 0) updateValues()
     else pageNum.value = 0
 })
@@ -103,6 +101,9 @@ onMounted(() => {
         </div>
     </template>
     <template v-else>
+        <div class="uk-child-width-auto uk-text-right" style="margin-right: 12px;">
+            <label><input v-model="excludeMC" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_masterchain') }}</label>
+        </div>
         <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-vertical">
             <thead v-if="!isMobile()">
                 <tr>

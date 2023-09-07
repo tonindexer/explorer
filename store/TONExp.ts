@@ -305,7 +305,7 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
         try {
-          await this.updateTransactions(mobi ? 5 : 10, null, { 'workchain' : 0 })
+          await this.updateTransactions(mobi ? 5 : 10, null, true)
         } catch (error) {
           console.log(error)
         }
@@ -460,15 +460,15 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async updateTransactions(limit: number, seqOffset: bigint | null, filters: MockType | null, account: AccountKey | null = null, order: "ASC" | "DESC" = "DESC") { 
+      async updateTransactions(limit: number, seqOffset: bigint | null, excludeMC: boolean | null, account: AccountKey | null = null, order: "ASC" | "DESC" = "DESC") { 
         const fullReq: MockType = {
-          ...filters,
           order, 
           limit
         }
         if (seqOffset) fullReq.after = seqOffset
         if (!seqOffset) this.exploredTransactions = []
         if (account) fullReq.address = account
+        if (excludeMC) fullReq.workchain = 0
         const query = getQueryString(fullReq, true)
         try {
           const { data } = await apiRequest(`/transactions?${query}`, 'GET')

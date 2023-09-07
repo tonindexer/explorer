@@ -11,15 +11,27 @@ interface Graph {
     times: number[]
 }
 
-interface GraphData {
-    filters: MockType
-    from: number | null
-    to: number | null
-}
-
+const route = useRoute()
 const store = useMainStore()
-const props = defineProps<GraphData>()
-const emits = defineEmits(['setRange'])
+
+const filter = computed(() => { return {
+    'src_address': route.query.src_address?.toString() ?? null,
+    'src_contract': route.query.src_contract?.toString() ?? null,
+    'dst_address': route.query.dst_address?.toString() ?? null,
+    'dst_contract': route.query.dst_contract?.toString() ?? null,
+    'operation_id': route.query.operation_id?.toString() ?? '',
+    'operation_name': route.query.operation_name?.toString() ?? null
+}})
+
+const filterInterval = ref({
+    from: store.startupTime - 86400000 * 31 * 6 as number,
+    to: store.startupTime as number,
+})
+
+const limits = computed(() => { return {
+    from: new Date('15 Nov 2019').getTime(),
+    to: store.lastAvailableTimestamp ? store.lastAvailableTimestamp : store.startupTime
+}})
 
 const graph = ref<Chart | null>(null)
 const dataParser = computed(() : Graph => {
@@ -35,7 +47,7 @@ const dataParser = computed(() : Graph => {
                     y2: 1   
                 },
                 stops : [
-                    [0, 'rgba(44, 175, 254, .7)'],
+                    [0, 'rgba(174, 190, 253, 1)'],
                     [1, 'rgba(44, 175, 254, 0)'],
                 ]
             }
@@ -54,6 +66,11 @@ const interrupter = ref(false)
 
 const chartType: Ref<'message_count' | 'message_amount_sum'> = ref('message_count')
 
+const requestTimes = computed(() => {  return {
+    'from': msToISO(filterInterval.value.from),
+    'to': msToISO(filterInterval.value.to)
+}})
+
 const chartOptions = computed(() => { return {
     accessibility: {
         enabled: false
@@ -63,6 +80,9 @@ const chartOptions = computed(() => { return {
         zooming: {
             type: 'x'
         },
+        style: {
+            'font-family' : 'Roboto Mono'
+        },
         animation: false,
         events: {
             selection: function (event: any) {
@@ -70,19 +90,26 @@ const chartOptions = computed(() => { return {
                 let left = 0
                 let right = 0 as number | null
                 if (event.xAxis) {
-                    if (props.from === dataParser.value.times[Math.ceil(event.xAxis[0].min)] && props.to === dataParser.value.times[Math.ceil(event.xAxis[0].max)]) return
+                    if (filterInterval.value.from === dataParser.value.times[Math.ceil(event.xAxis[0].min) >= 0 ? Math.ceil(event.xAxis[0].min) : 0] && filterInterval.value.to === dataParser.value.times[Math.ceil(event.xAxis[0].max) <= dataParser.value.times.length - 1 ? Math.ceil(event.xAxis[0].max) : dataParser.value.times.length - 1]) return
                     
-                    left = dataParser.value.times[Math.ceil(event.xAxis[0].min)]
-                    right = dataParser.value.times[Math.ceil(event.xAxis[0].max)]
+                    left = dataParser.value.times[Math.ceil(event.xAxis[0].min) >= 0 ? Math.ceil(event.xAxis[0].min) : 0]
+                    right = dataParser.value.times[Math.ceil(event.xAxis[0].max) <= dataParser.value.times.length - 1 ? Math.ceil(event.xAxis[0].max) : dataParser.value.times.length - 1]
                 }
                 else {
-                    left = store.lastAvailableTimestamp - 86400000 * 31
-                    right = null
+                    left = limits.value.to - 86400000 * 31 * 6
+                    right = limits.value.to
                 }
 
                 interrupter.value = true
+                filterInterval.value = {
+                    from: left,
+                    to: right
+                }
 
-                emits('setRange', { from: left, to: right})
+                slideValues.value = {
+                    minValue: left,
+                    maxValue: right
+                }
 
                 interrupter.value = false
             }
@@ -93,14 +120,28 @@ const chartOptions = computed(() => { return {
     legend: {
         enabled: false
     },
+    yAxis: {
+        title : {
+            text: undefined
+        },
+        labels : {
+            style : {
+                'color': '#999'
+            }
+        }
+    },
     xAxis: {
         type: 'datetime',
         categories: dataParser.value.times,
-        tickInterval: Math.round((dataParser.value.times.length) / 5), 
+        tickInterval: Math.round((dataParser.value.times.length) / 3),
+        lineColor: 'white',
         labels: {
             // @ts-ignore
-            formatter: function() { return selection.value === '24h'? msToISO(this.value).slice(0, -10) : msToISO(this.value).slice(0, -4).replace('T', " ") }
-        },
+            formatter: function() { return new Date(this.value).toLocaleDateString("en-US",  selection.value === '24h'?  { year: 'numeric', month: 'short', day: 'numeric' } : { month: 'short', day: 'numeric' }) },
+            style : {
+                'color': '#999'
+            }
+        }
     },
     tooltip: {
         xDateFormat: '%Y-%m-%d %H:%m',
@@ -110,19 +151,51 @@ const chartOptions = computed(() => { return {
     },
     plotOptions: {
         areaspline: {
-            lineWidth: 3,
+            color: 'rgb(118, 146, 253)',
+            lineWidth: 2,
             marker: {
                 enabled: false
             },
-        },
-    },
+            states : {
+                hover : {
+                    lineWidthPlus: 0
+                }
+            }
+        }
+    }
 }})
+
+const dayMinCaption = computed(() => {
+    return new Date(slideValues.value.minValue).toDateString()
+})
+
+const dayMaxCaption = computed(() => {
+    return new Date(slideValues.value.maxValue).toDateString()
+})
 
 const selection: Ref<IntervalAPI> = ref('24h')
 
 const requestData = async (reset: boolean, setLast: boolean = false) => {
-    await store.getMessagesChart(chartType.value, selection.value, props.filters, reset, setLast)
+    await store.getMessagesChart(chartType.value, selection.value, { ...filter.value, ...requestTimes.value }, reset, setLast)
     graph.value?.chart.xAxis[0].setExtremes(0, dataParser.value.times.length - 1)
+}
+
+
+const slideValues = ref({
+    minValue: limits.value.to - 86400000 * 31 * 6,
+    maxValue: limits.value.to
+} as any)
+
+const UpdateValues = (value: any) => {
+    slideValues.value = {...value}
+}
+
+const sliderEndEvent = () => {
+    filterInterval.value = {
+        from: slideValues.value.minValue,
+        to: slideValues.value.maxValue
+    }
+    setInterval()
 }
 
 const pickGroup = async (timeline: IntervalAPI) => {
@@ -141,9 +214,9 @@ const pickGroup = async (timeline: IntervalAPI) => {
 
 const setInterval = (setLast: boolean = false) => {
     let zoom = 0
-    if (props.from && props.to) zoom = props.to - props.from
-    else if (props.from) zoom = (store.lastAvailableTimestamp ? store.lastAvailableTimestamp : new Date().getTime())  - props.from
-    else if (props.to) zoom = props.to - new Date('15 Nov 2019').getTime()
+    if (filterInterval.value.from && filterInterval.value.to) zoom = filterInterval.value.to - filterInterval.value.from
+    else if (filterInterval.value.from) zoom = (store.lastAvailableTimestamp ? store.lastAvailableTimestamp : new Date().getTime())  - filterInterval.value.from
+    else if (filterInterval.value.to) zoom = filterInterval.value.to - new Date('15 Nov 2019').getTime()
     else zoom = new Date().getTime() - new Date('15 Nov 2019').getTime()
 
     if (zoom <= 14400000 * 3) selection.value = '15m'
@@ -155,9 +228,13 @@ const setInterval = (setLast: boolean = false) => {
     requestData(true, setLast)
 }
 
-watch(() => props.filters, () => {
+watch(filterInterval, () => {
     setInterval()
-})
+}, {deep: true})
+
+watch(filter, () => {
+    requestData(true)
+}, { deep: true })
 
 watch(chartType, () => {
     requestData(true)
@@ -169,49 +246,74 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="uk-flex uk-flex-column uk-width-1-1 uk-margin-small-top">
-        <div class="uk-flex uk-width-1-1 uk-flex-column" style="justify-content: space-between;">
-            <div class="uk-flex uk-width-1-1 uk-flex-middle">
-                <div class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
-                    Group Interval
-                </div>
-                <button class="uk-margin-small-left uk-width-1-6 uk-button" :disabled="from ? ((to ? to : store.lastAvailableTimestamp) - from > 86400000 * 14) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="15m" @click="pickGroup('15m')" :class="{'uk-background-primary white': selection==='15m'}">
-                    15MIN
+    <div class="uk-flex uk-flex-column uk-width-1-1 uk-margin-small">
+        <div style="justify-content: space-between; width: fit-content; font-size: 12px; border-radius: 30px; background-color: #F5F5F5;">
+            <div class="uk-flex uk-flex-middle uk-margin-remove-top" style="justify-content: space-between;">
+                <button class="uk-button category" id="8h" @click="chartType = 'message_amount_sum'" :class="{'selected white': chartType === 'message_amount_sum'}">
+                    Amount
                 </button>
-                <button class="uk-margin-small-left uk-width-1-6 uk-button" :disabled="from ? ((to ? to : store.lastAvailableTimestamp) - from  > 86400000 * 31 * 2) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="1h" @click="pickGroup('1h')" :class="{'uk-background-primary white': selection==='1h'}">
-                    1H
+                <button class="uk-button category" id="24h" @click="chartType = 'message_count'" :class="{'selected white': chartType === 'message_count'}">
+                    Count
                 </button>
-                <button class="uk-margin-small-left uk-width-1-6 uk-button" :disabled="from ? ((to ? to : store.lastAvailableTimestamp) - from  > 86400000 * 31 * 12) : false" style="padding: 0.2rem 0.5rem; height: fit-content;" id="4h" @click="pickGroup('4h')" :class="{'uk-background-primary white': selection==='4h'}">
-                    4H
-                </button>
-                <button class="uk-margin-small-left uk-width-1-6 uk-button" style="padding: 0.2rem 0.5rem; height: fit-content;" id="8h" @click="pickGroup('8h')" :class="{'uk-background-primary white': selection==='8h'}">
-                    8H
-                </button>
-                <button class="uk-margin-small-left uk-width-1-6 uk-button" style="padding: 0.2rem 0.5rem; height: fit-content;" id="24h" @click="pickGroup('24h')" :class="{'uk-background-primary white': selection==='24h'}">
-                    DAY
-                </button>
-            </div>
-            <div class="uk-flex uk-flex-middle uk-margin-small-top" style="width: fit-content;">
-                <div class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
-                    Metric
-                </div>
-                <AtomsSelector 
-                    :item-count="chartType"
-                    :amount="null"
-                    :start-line="null"
-                    :options="['message_count', 'message_amount_sum']"
-                    @set-value="(e: any) => chartType = e.value"
-                />
             </div>
         </div>
-        <div class="uk-width-1-1" style="position: relative;">
+        <div class="uk-width-1-1" style="position: relative; margin-top: 32px;">
             <ClientOnly fallback="Loading graph...">
                 <Chart :options="chartOptions" ref="graph"/>
                 <div v-if="dataParser.series[0].data.length === 0" class="uk-position-center uk-text-center uk-overlay uk-text-bold">
-                    {{ $t('warning.nothing_found') + ` ${$t('ton.from').toLowerCase()} ${filters.from} ` + (filters.to ?  ` ${$t('ton.to').toLowerCase()} ${filters.to} ` : '') }}
+                    {{ $t('warning.nothing_found') + ` ${$t('ton.from').toLowerCase()} ${requestTimes.from} ` + (requestTimes.to ?  ` ${$t('ton.to').toLowerCase()} ${requestTimes.to} ` : '') }}
                 </div>
             </ClientOnly>
         </div>
+        <div style="justify-content: space-between; font-size: 12px;" uk-grid :style="isMobile() ? 'flex-direction: column-reverse' : ''">
+            <div class="uk-flex uk-flex-middle uk-margin-remove-top" :class="isMobile() ? 'uk-width-expand' : 'uk-width-auto'" style="justify-content: space-between;">
+                <div v-if="!isMobile()" class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
+                    Group Interval
+                </div>
+                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from > 86400000 * 14) : false" id="15m" @click="pickGroup('15m')" :class="{'selected white': selection==='15m'}">
+                    15min
+                </button>
+                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from  > 86400000 * 31 * 2) : false" id="1h" @click="pickGroup('1h')" :class="{'selected white': selection==='1h'}">
+                    1h
+                </button>
+                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from  > 86400000 * 31 * 12) : false" id="4h" @click="pickGroup('4h')" :class="{'selected white': selection==='4h'}">
+                    4h
+                </button>
+                <button class="uk-margin-small-left uk-button" id="8h" @click="pickGroup('8h')" :class="{'selected white': selection==='8h'}">
+                    8h
+                </button>
+                <button class="uk-margin-small-left uk-button" id="24h" @click="pickGroup('24h')" :class="{'selected white': selection==='24h'}">
+                    Day
+                </button>
+            </div>
+            <div :class="isMobile() ? 'uk-width-1-1' : 'uk-width-expand'" @mouseup="sliderEndEvent" @touchend="sliderEndEvent" style="padding-right: 16px;">
+                <AtomsMultiRangeSlider
+                    :baseClassName="'multi-range-slider'"
+                    :min="limits.from"
+                    :max="limits.to"
+                    :ruler="false"
+                    :label="false"
+                    :min-caption="dayMinCaption"
+                    :max-caption="dayMaxCaption"
+                    :minValue="slideValues.minValue"
+                    :maxValue="slideValues.maxValue"
+                    @input="UpdateValues"
+                />
+            </div>
+        </div>
     </div>
-    
 </template>
+
+<style scoped lang="scss">
+.uk-button {
+    padding: 4px 16px;
+    line-height: 16px;
+    font-size: 12px;
+    &.category {
+        color: black;
+        padding: 10px 24px;
+        line-height: 24px;
+        font-size: 16px;
+    }
+}
+</style>

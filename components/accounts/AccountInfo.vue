@@ -124,7 +124,7 @@ watch(() => props.hex, async() => await reloadInfo())
             <template #body>
                 <div v-show="(route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
                     <label class="uk-align-right uk-margin-right uk-margin-remove-bottom"><input v-model="trDesc" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.desc') }}</label>
-                    <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :filters="{}" :account="hex" :order="trDesc ? 'DESC' : 'ASC'"/>
+                    <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :account="hex" :order="trDesc ? 'DESC' : 'ASC'"/>
                 </div>
                 <div v-if="route.hash === '#jettons'" id="jettons">
                     <LazyAccountsJettonsTable :owner="hex" :keys="jtKeys" :default-length="10" />
