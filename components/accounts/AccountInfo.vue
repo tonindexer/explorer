@@ -58,7 +58,7 @@ watch(() => props.hex, async() => await reloadInfo())
                 <AccountsPropsTable :acc="account"/>
             </template>
         </AtomsTile>
-        <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'" :client-body="true" >
+        <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
             <template #top>
                 <ul v-if="trKeys.length > 0" class="uk-child-width-expand uk-text-medium tab-styler" :style="isMobile() ? 'margin-bottom: 0.3rem' : ''" uk-tab>
                     <li class="uk-margin-remove-left" v-if="trKeys.length > 0" :class="{'uk-active' : (route.hash === '#transactions' || route.hash === '#overview')}" style="min-width: fit-content;">

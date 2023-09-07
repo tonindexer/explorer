@@ -88,6 +88,8 @@ onBeforeMount(() => Sankey(Highcharts))
         </div>
     </div>
     <div class="uk-width-1-1">
-        <Chart :options="chartOptions" ref="graph"/>
+        <ClientOnly fallback="Loading graph...">
+            <Chart :options="chartOptions" ref="graph"/>
+        </ClientOnly>
     </div>
 </template>

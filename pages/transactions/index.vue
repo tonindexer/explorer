@@ -111,7 +111,7 @@ onMounted(() => routeChecker(route.query))
                     {{ `${store.totalQueryTransactions}` }}
                 </template>
             </AtomsHeaderCount>
-            <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'" :client-body="true">
+            <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'">
                 <template #top>
                     <div class="uk-child-width-auto uk-text-right">
                         <label><input v-model="excludeMC" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_masterchain') }}</label>

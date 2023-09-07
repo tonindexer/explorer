@@ -8,6 +8,7 @@ export const useMainStore = defineStore('tonexp', {
       transactions: {} as TransactionMap,
       transactionMsgFlag: {} as { [key: TransactionKey] : boolean },
       transactionHexes: {} as { [key: string] : TransactionKey},
+      transactionComboKeys: {} as { [key: string] : TransactionKey},
       accounts: {} as AccountMap,
       accountBases: {} as { [key: string] : AccountKey},
       // wallets and nfts
@@ -240,6 +241,8 @@ export const useMainStore = defineStore('tonexp', {
 
         this.transactions[transactionKey] = mappedTransaction
         this.transactionMsgFlag[transactionKey] = false
+        this.transactionComboKeys[`${mappedTransaction.address.base64}|${mappedTransaction.created_lt.toString()}`] = transactionKey
+
         return transactionKey
       },
       processBlock(block: BlockAPI) {
@@ -577,7 +580,7 @@ export const useMainStore = defineStore('tonexp', {
       },
       async fetchTransaction(hash: string) {
         let fullReq: MockType = {}
-        if (hash.includes('|')) fullReq = { address: hash.split('|')[0], created_lt: hash.split('|')[1]}
+        if (hash.includes('|')) fullReq = { address: toBase64Web(hash.split('|')[0]), created_lt: hash.split('|')[1]}
         else fullReq = { hash }
         const query = getQueryString(fullReq, true);
         try {

@@ -198,11 +198,12 @@ onMounted(() => {
             </div>
         </div>
         <div class="uk-width-1-1" style="position: relative;">
-            <Chart :options="chartOptions" ref="graph"/>
-            <div v-if="dataParser.series[0].data.length === 0" class="uk-position-center uk-text-center uk-overlay uk-text-bold">
-                {{ $t('warning.nothing_found') + ` ${$t('ton.from').toLowerCase()} ${requestTimes.from} ` + (requestTimes.to ?  ` ${$t('ton.to').toLowerCase()} ${requestTimes.to} ` : '') }}
-            </div>
-            
+            <ClientOnly fallback="Loading graph...">
+                <Chart :options="chartOptions" ref="graph"/>
+                <div v-if="dataParser.series[0].data.length === 0" class="uk-position-center uk-text-center uk-overlay uk-text-bold">
+                    {{ $t('warning.nothing_found') + ` ${$t('ton.from').toLowerCase()} ${requestTimes.from} ` + (requestTimes.to ?  ` ${$t('ton.to').toLowerCase()} ${requestTimes.to} ` : '') }}
+                </div>
+            </ClientOnly>            
         </div>
     </div>
     

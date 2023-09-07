@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useMainStore } from '~/store/TONExp';
+
 const route = useRoute()
+const store = useMainStore()
 
 const routeType = computed(() => {
     if (!route.fullPath.includes('/')) return null
@@ -8,8 +11,19 @@ const routeType = computed(() => {
 })
 
 const showRoute = computed(() => {
-    if (route.path === '/transactions' && route.query?.hash) return toBase64Rfc(route.query.hash.toString())
-    if (route.path === '/accounts' && route.query?.hex) return route.query.hex.toString()
+    if (route.path === '/transactions' && route.query?.hash) {
+        const hash = toBase64Web(route.query.hash.toString())
+        if (hash in store.transactions) return hash
+        else if (hash in store.transactionHexes) return store.transactionHexes[hash]
+        else if (hash in store.transactionComboKeys) return store.transactionComboKeys[hash]
+        return hash
+    }
+    if (route.path === '/accounts' && route.query?.hex) {
+        const hex = route.query.hex.toString()
+        if (hex in store.accounts) return store.accounts[hex].address.base64
+        else if (hex in store.accountBases) return hex
+        return hex
+    }
     if (route.path === '/blocks') {
         const wc = (route.query?.workchain || route.query?.workchain === '0') && isNumeric(route.query.workchain) ? Number(route.query.workchain) : null
         const sh = route.query.shard  && isNumeric(route.query.shard) ? BigInt(route.query.shard.toString()) : null

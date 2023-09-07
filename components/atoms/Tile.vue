@@ -5,7 +5,6 @@ interface Props {
     tileStyle?: string
     topStyle?: string
     bodyStyle?: string
-    clientBody?: boolean
 }
 
 defineProps<Props>()
@@ -17,15 +16,7 @@ defineProps<Props>()
             <slot name="top" />
         </div>
         <div v-if="body" :style="bodyStyle">
-            <template v-if="clientBody">
-                <ClientOnly>
-                    <slot name="body" />
-
-                </ClientOnly>
-            </template>
-            <template v-else>
-                <slot name="body" />
-            </template>
+            <slot name="body" />
         </div>
     </div>
 </template>

@@ -151,7 +151,7 @@ onMounted(() => routeChecker())
                 </template>
             </AtomsHeaderCount>
 
-            <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'" :client-body="true">
+            <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'">
                 <template #top>
                     <div class="uk-flex uk-flex-right">
                         <div v-if="!isMobile()" class="uk-width-2-5">

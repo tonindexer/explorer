@@ -227,7 +227,7 @@ onMounted(() => routeChecker())
                     {{ `${store.totalQueryMessages === -1 ? '...' : store.totalQueryMessages}` }}
                 </template>
             </AtomsHeaderCount>
-            <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'" :client-body="true">
+            <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'">
                 <template #top>
                     <div class="uk-flex" :class="{ 'uk-text-secondary' : filterFlag}">
                         <div :uk-icon="`icon: ${filterFlag ? 'chevron-down' : 'chevron-right'}; ratio: 1.2`" @click="filterFlag = !filterFlag" style="cursor: pointer;"></div>
