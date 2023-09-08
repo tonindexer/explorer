@@ -58,9 +58,9 @@ watch(props, async() => await reloadInfo())
                 <TransactionsPropsTable :trn="transaction"/>
             </template>
         </AtomsTile>
-        <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
+        <AtomsTile v-if="[...inMessageKeys, ...outMessageKeys].length > 0" :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
             <template #top>
-                <ul v-if="[...inMessageKeys, ...outMessageKeys].length > 0" class="uk-child-width-expand uk-text-medium tab-styler" uk-tab>
+                <ul class="uk-child-width-expand uk-text-medium tab-styler" uk-tab>
                     <li class="uk-margin-remove-left" v-if="[...inMessageKeys, ...outMessageKeys].length > 0" :class="{'uk-active' : (route.hash === '#messages' || route.hash === '#overview')}" style="min-width: fit-content;">
                         <NuxtLink :to="{ hash: '#messages', query: route.query}">
                             {{ $t('route.messages') }}

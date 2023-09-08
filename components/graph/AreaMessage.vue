@@ -247,7 +247,7 @@ onMounted(async () => {
 
 <template>
     <div class="uk-flex uk-flex-column uk-width-1-1 uk-margin-small">
-        <div style="justify-content: space-between; width: fit-content; font-size: 12px; border-radius: 30px; background-color: #F5F5F5;">
+        <div class="category-wrapper">
             <div class="uk-flex uk-flex-middle uk-margin-remove-top" style="justify-content: space-between;">
                 <button class="uk-button category" id="8h" @click="chartType = 'message_amount_sum'" :class="{'selected white': chartType === 'message_amount_sum'}">
                     Amount
@@ -265,8 +265,8 @@ onMounted(async () => {
                 </div>
             </ClientOnly>
         </div>
-        <div style="justify-content: space-between; font-size: 12px;" uk-grid :style="isMobile() ? 'flex-direction: column-reverse' : ''">
-            <div class="uk-flex uk-flex-middle uk-margin-remove-top" :class="isMobile() ? 'uk-width-expand' : 'uk-width-auto'" style="justify-content: space-between;">
+        <div style="justify-content: space-between;" uk-grid :style="isMobile() ? 'flex-direction: column-reverse' : ''">
+            <div class="interval-group uk-flex uk-flex-middle uk-margin-remove-top" :class="isMobile() ? 'uk-width-expand' : 'uk-width-auto'" style="justify-content: space-between;">
                 <div v-if="!isMobile()" class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
                     Group Interval
                 </div>
@@ -303,17 +303,3 @@ onMounted(async () => {
         </div>
     </div>
 </template>
-
-<style scoped lang="scss">
-.uk-button {
-    padding: 4px 16px;
-    line-height: 16px;
-    font-size: 12px;
-    &.category {
-        color: black;
-        padding: 10px 24px;
-        line-height: 24px;
-        font-size: 16px;
-    }
-}
-</style>

@@ -241,7 +241,7 @@ onMounted(() => {
             </ClientOnly>
         </div>
         <div style="justify-content: space-between; font-size: 12px;" uk-grid :style="isMobile() ? 'flex-direction: column-reverse' : ''">
-            <div class="uk-flex uk-flex-middle uk-margin-remove-top" :class="isMobile() ? 'uk-width-expand' : 'uk-width-auto'" style="justify-content: space-between;">
+            <div class="interval-group uk-flex uk-flex-middle uk-margin-remove-top" :class="isMobile() ? 'uk-width-expand' : 'uk-width-auto'" style="justify-content: space-between;">
                 <div v-if="!isMobile()" class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
                     Group Interval
                 </div>
@@ -278,11 +278,3 @@ onMounted(() => {
         </div>
     </div>
 </template>
-
-<style scoped lang="scss">
-.uk-button {
-    padding: 4px 16px;
-    line-height: 16px;
-    font-size: 12px;
-}
-</style>

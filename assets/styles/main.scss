@@ -107,16 +107,32 @@ $text-primary-color: #000;
   text-transform: none !important;
   padding: 4px 16px !important;
   background-color: #F5F5F5;
+  color: black;
   &.selected {
     background-color: #000;
   }
+  &.category {
+    color: black;
+    padding: 4px 24px !important;
+    line-height: 24px;
+    font-size: 16px;
+  }
 }
 
+.uk-margin-small-left {
+  margin-left: 8px !important;
+}
 .uk-button:disabled {
   cursor: not-allowed !important;
   color: white
 }
 
+.category-wrapper {
+  justify-content: space-between; 
+  width: fit-content;
+  border-radius: 30px; 
+  background-color: #F5F5F5;
+}
 
 .grid {
   display: grid;
@@ -143,4 +159,26 @@ $text-primary-color: #000;
 .chart {
   grid-column: span 2;
   grid-row: span 2;
+}
+
+@media screen and (min-width: 1200px) {
+  .interval-group {
+      font-size: 16px;
+      .uk-button {
+          padding: 16px 24px;
+          line-height: 24px;
+          font-size: 16px;
+      }
+  }
+}
+
+@media screen and (max-width: 1199px) {
+  .interval-group {
+      font-size: 12px;
+      .uk-button {
+          padding: 4px 16px;
+          line-height: 16px;
+          font-size: 12px;
+      }
+  }
 }

@@ -4,7 +4,7 @@
             <h1 class="uk-margin-remove-vertical uk-text-primary">Anton</h1>
         </template>
         <template #body>
-            <p class="uk-margin-remove-bottom">Written in Go, Anton is an open source <a href="https://ton.org">The Open Network</a> blockchain indexer available under the <a href="https://github.com/tonindexer/anton/blob/master/LICENSE">Apache Licence 2.0</a>.
+            <p class="uk-text-muted uk-margin-remove-bottom">Written in Go, Anton is an open source <a href="https://ton.org">The Open Network</a> blockchain indexer available under the <a href="https://github.com/tonindexer/anton/blob/master/LICENSE">Apache Licence 2.0</a>.
             Anton is designed to provide a scalable and flexible solution for developers to access and analyze blockchain data.</p>
         </template>
     </AtomsTile>
@@ -14,11 +14,11 @@
             <h1 id="overview" class="uk-margin-remove-vertical uk-text-primary">Overview</h1>
         </template>
         <template #body>
-            <p>Our project is building an indexer for the TON blockchain that gathers and analyzes data from contracts and tokens, providing insights into the network&#39;s activity. 
+            <p class="uk-text-muted">Our project is building an indexer for the TON blockchain that gathers and analyzes data from contracts and tokens, providing insights into the network&#39;s activity. 
             Our goal is to help developers and users understand how the blockchain is being used, as well as make it possible for developers to add their own contracts with their own message schemas to our explorer.</p>
-            <p>If you want to hack it, go to <a href="https://github.com/tonindexer/anton">GitHub</a>.</p>
-            <p>If you want to use it, go to <a href="https://anton.tools/api/v0/swagger">Swagger API documentation</a> and <a href="https://github.com/tonindexer/anton/blob/main/docs/API.md">API query examples</a>.</p>
-            <p class="uk-margin-remove-bottom">If you want to look at the data, go to <a href="https://superset.anton.tools">Apache Superset</a>.</p>
+            <p class="uk-text-muted">If you want to hack it, go to <a href="https://github.com/tonindexer/anton">GitHub</a>.</p>
+            <p class="uk-text-muted">If you want to use it, go to <a href="https://anton.tools/api/v0/swagger">Swagger API documentation</a> and <a href="https://github.com/tonindexer/anton/blob/main/docs/API.md">API query examples</a>.</p>
+            <p class="uk-text-muted uk-margin-remove-bottom">If you want to look at the data, go to <a href="https://superset.anton.tools">Apache Superset</a>.</p>
         </template>
     </AtomsTile>
 
@@ -27,8 +27,8 @@
             <h1 id="how-does-it-work-" class="uk-margin-remove-vertical uk-text-primary">How does it work?</h1>
         </template>
         <template #body>
-            <p>Before you start, take a look at the <a href="https://ton.org/docs/learn/overviews/ton-blockchain">official docs</a>.</p>
-            <p>Consider an arbitrary contract.
+            <p class="uk-text-muted">Before you start, take a look at the <a href="https://ton.org/docs/learn/overviews/ton-blockchain">official docs</a>.</p>
+            <p class="uk-text-muted">Consider an arbitrary contract.
             It has a state that is updated with any transaction on the contract&#39;s account.
             Each state has the contract code and data.
             The contract data can be complex, but developers typically provide <a href="https://ton.org/docs/develop/func/functions#specifiers">get-methods</a> in the contract, which can be executed to retrieve the necessary data.
@@ -44,7 +44,7 @@
             For get-methods without arguments in the contract interface, Anton emulates these methods and saves the returned values to the database.
             When a message is sent to a known contract interface, Anton attempts to match the message to a known schema by comparing the parsed operation ID.
             If the message is successfully parsed using the identified schema, Anton also stores the parsed data.</p>
-            <p class="uk-margin-remove-bottom">To explore contract interfaces known to this project, visit the <a href="https://github.com/tonindexer/anton/tree/main/abi/known">abi/known</a> directory.
+            <p class="uk-text-muted uk-margin-remove-bottom">To explore contract interfaces known to this project, visit the <a href="https://github.com/tonindexer/anton/tree/main/abi/known">abi/known</a> directory.
             This will provide you with an understanding of the various contract interfaces already supported and serve as examples for adding your own.</p>
         </template>
     </AtomsTile>
