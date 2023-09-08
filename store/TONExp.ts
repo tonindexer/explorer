@@ -621,7 +621,7 @@ export const useMainStore = defineStore('tonexp', {
           }
         return hex
       },
-      async fetchAccount(hex: string) {
+      async fetchAccount(hex: string, preload: boolean = false) {
         this.loadNextNFTFlag = false
         if (hex in this.accountBases) hex = this.accountBases[hex]
         if (!(hex in this.accounts))
@@ -642,6 +642,7 @@ export const useMainStore = defineStore('tonexp', {
           } catch (error) {
             console.log(error)
           }
+        if (this.accounts[hex]?.loaded || preload) return hex
         // request aggregated messages for sankey diagram
         if (!(hex in this.sankeyCount)) {
           let loadAmountFlag = false
@@ -745,7 +746,6 @@ export const useMainStore = defineStore('tonexp', {
             }
           }
         }
-        if (this.accounts[hex]?.loaded) return hex
         // request meta for jetton minters and nft collections
         if (this.accounts[hex].types?.includes('jetton_minter') || this.accounts[hex].types?.includes('nft_collection'))
           await this.requestMetaBulk([hex])
@@ -961,7 +961,7 @@ export const useMainStore = defineStore('tonexp', {
               show: req.value.hex
             }]
           } else {
-            const key = await this.fetchAccount(req.value.hex)
+            const key = await this.fetchAccount(req.value.hex, true)
             if (key) this.searchResults = [{
               type: 'account',
               value: {
