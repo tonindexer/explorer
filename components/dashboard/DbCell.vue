@@ -62,7 +62,7 @@ onMounted(() => {
 
 <template>
     <div :class="request.type + `${isMobile() ? '' : ' uk-padding-small'}`">
-        <div class="uk-text-default uk-margin-small-bottom uk-margin-small-left">
+        <div class="uk-text-primary uk-margin-small-bottom uk-margin-small-left">
             {{ store.chartNames[slice_id] }}
         </div>
         <template v-if="error">

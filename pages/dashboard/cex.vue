@@ -6,13 +6,21 @@ const loading = ref(true)
 const error = ref(false)
 
 const route = useRoute()
+const router = useRouter()
 
 const parsedReqs: Ref<StoredRequests> = ref([])
 const deposits = computed(() => parsedReqs.value.length ? parsedReqs.value.filter(item => item.type === 'table' && item.req.form_data.slice_id == 28)[0] as StoredTableReq : null)
 const withdrawals = computed(() => parsedReqs.value.length ? parsedReqs.value.filter(item => item.type === 'table' && item.req.form_data.slice_id == 15)[0] as StoredTableReq : null)
 
+const routes = [ 'charts', 'deposits', 'withdrawals' ]
+
+const selectedRoute = ref('charts')
+
+watch(selectedRoute,() => router.replace({ hash: '#' + selectedRoute.value, query: route.query}))
+
 onMounted(async() => {
     try {
+        if (route.hash) selectedRoute.value = route.hash.slice(1,)
         if (store.cexDashboard.length === 0) await store.loadDashboards('cex')
         parsedReqs.value = parseDashboardData(store.cexDashboard, 2)
     } catch {
@@ -30,25 +38,18 @@ onMounted(async() => {
         </div>
     </template>
     <template v-else>
-        <AtomsTile :top="true" :body="true" :top-style="'padding-bottom: 0'" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
+        <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
             <template #top>
-                <ul class="uk-child-width-expand uk-text-medium tab-styler" :style="isMobile() ? 'margin-bottom: 0.3rem' : ''" uk-tab>
-                    <li class="uk-margin-remove-left" :class="{'uk-active' : (route.hash === '#charts')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#charts', query: route.query}">
-                            {{ $t('general.charts')}}
+                <select v-if="isMobile()" :value="selectedRoute" aria-label="Select" @change="($event: any) => selectedRoute = $event.target.value" class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary">
+                    <option v-for="option in routes" :value="option">{{ $t(`general.${option}`) }}</option>
+                </select>
+                <div v-if="!isMobile()" class="category-wrapper">
+                    <div class="uk-flex uk-flex-middle uk-margin-remove-top">
+                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item}`, query: route.query}" :class="{'selected white': (route.hash === `#${item}`)}">
+                            {{ $t(`general.${item}`) }}
                         </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" :class="{'uk-active' : (route.hash === '#deposits')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#deposits', query: route.query}">
-                            {{ $t('general.deposits')}}
-                        </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" :class="{'uk-active' : (route.hash === '#withdrawals')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#withdrawals', query: route.query}">
-                            {{ $t('general.withdrawals')}}
-                        </NuxtLink>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </template>
             <template #body>
                 <div class="grid" v-if="route.hash === '#charts'">

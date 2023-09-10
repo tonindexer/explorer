@@ -135,13 +135,13 @@ onMounted(async () => {
     <div v-if="!loading && finalData.length === 0" class="uk-flex uk-flex-center">
         {{ $t('warning.nothing_found') }}
     </div>
-    <table v-if="!loading  && finalData.length > 0" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <table v-if="!loading  && finalData.length > 0" class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <thead v-if="!isMobile()">
             <th class="uk-width-1-4">
-                {{ 'SRC_ADDRESS' }}
+                {{ 'src_address' }}
             </th>
             <th class="uk-width-1-4">
-                {{ 'DST_ADDRESS' }}
+                {{ 'dst_address' }}
             </th>
             <template v-if="type === 'deposit'">
                 <th v-for="header of (['deposit_amount', 'created_at'] as const)" class="uk-width-1-4 hover-text uk-text-right" @click="setSort(header)" style="white-space: nowrap;">

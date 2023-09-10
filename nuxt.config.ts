@@ -5,6 +5,10 @@ export default defineNuxtConfig({
         tonUrl : 'https://anton.tools/api/v0/'
       }
     },
+    routeRules: {
+      // Homepage pre-rendered at build time
+      '/': { prerender: true },
+    },
     build: {
       transpile: ['@vuepic/vue-datepicker']
     },

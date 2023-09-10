@@ -28,12 +28,27 @@ const chartOptions = computed(() => { return{
     legend: {
         enabled: false
     },
+    yAxis: {
+        title : {
+            text: undefined
+        },
+        labels : {
+            style : {
+                'color': '#999'
+            }
+        }
+    },
     xAxis: {
         categories: props.labels,  
-        tickAmount: 6,  
+        tickAmount: props.labels.length / 6,  
         crosshairs: {
             width: 0.1,
         },
+        labels : {
+            style : {
+                'color': '#999'
+            }
+        }
     },
     tooltip: {
         shared: true,

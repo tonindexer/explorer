@@ -13,7 +13,7 @@ const props = defineProps<MetricData>()
 
 <template>
     <div class="uk-padding-small">
-        <div class="uk-text-large">
+        <div class="uk-text-large uk-text-primary">
             {{ toCompact(data.value) }}
         </div>
     </div>

@@ -132,8 +132,8 @@
         "about": "О проекте",
         "dashboard": "Dashboard",
         "telemint": "Telemint",
-        "cex" : "CEX",
-        "bridge" : "Bridges"
+        "cex" : "TON СЕХ Активы",
+        "bridge" : "TON Bridge Активы"
     },
     "stats" : {
         "account_count": "Аккаунтов",

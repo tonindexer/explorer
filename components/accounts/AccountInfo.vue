@@ -97,23 +97,23 @@ watch(() => props.hex, async() => await reloadInfo())
                 <div v-if="route.hash === '#jettons'" id="jettons">
                     <LazyAccountsJettonsTable :owner="hex" :keys="jtKeys" :default-length="10" />
                 </div>
-                <div v-if="route.hash === '#nfts'" id="nfts" style="padding: 0 12px;">
+                <div v-if="route.hash === '#nfts'" id="nfts" style="padding: 0 16px;">
                     <LazyAccountsNFTGrid :minter-flag="false" :keys="ownerKeys" :default-length="18" :account="hex" />
                 </div>
-                <div v-if="route.hash === '#minter'" id="minter" style="padding: 0 12px;">
+                <div v-if="route.hash === '#minter'" id="minter" style="padding: 0 16px;">
                     <LazyAccountsNFTGrid :minter-flag="true" :keys="minterKeys" :default-length="18" :account="hex" />
                 </div>
-                <div v-if="route.hash === '#nft_holders' && account.address.hex in store.nftHolders" id="nft_holders" style="padding: 0 12px;">
+                <div v-if="route.hash === '#nft_holders' && account.address.hex in store.nftHolders" id="nft_holders" style="padding: 0 16px;">
                     <AccountsTopNFTHolders :keys="store.nftHolders[account.address.hex].owned_items ?? []" :minter="hex" :default-length="10" />
                 </div>
                 <div v-if="route.hash === '#jetton_holders' && account.address.hex in store.jettonHolders" id="jetton_holders">
                     <AccountsTopJettonHolders :minter="hex" :keys="store.jettonHolders[account.address.hex].owned_balance ?? []" :default-length="10" />
                 </div>
-                <div v-if="route.hash === '#get_methods'" id="get_methods" style="padding: 0 12px">
+                <div v-if="route.hash === '#get_methods'" id="get_methods" style="padding: 0 16px">
                     <AccountsGetMethods :methods="getMethods"/>
                 </div>
-                <div v-if="route.hash === '#money_flow'" id="money_flow" style="padding: 0 12px">
-                    <div class="uk-form-controls">
+                <div v-if="route.hash === '#money_flow'" id="money_flow" style="padding: 0 16px">
+                    <div class="uk-form-controls uk-text-primary">
                         <label><input class="uk-radio" type="radio" v-model="sankeyType" value="count" name="radio1"> {{ $t('options.count') }} </label><br>
                         <label><input class="uk-radio" type="radio" v-model="sankeyType" value="amount" name="radio1"> {{ $t('options.amount') }} </label>
                     </div>

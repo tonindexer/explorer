@@ -75,7 +75,7 @@ onMounted(async () => {
     <div v-if="loading" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <table v-else-if="!loading" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <table v-else-if="!loading" class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <thead v-if="!isMobile()">
             <tr>
                 <th class="uk-width-1-4">{{ $t('ton.name')}}</th>

@@ -39,7 +39,7 @@ watch(itemCount, async() => {
             />
         </div>
     </div>
-    <table class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <table class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <thead v-if="!isMobile()">
             <tr>
                 <th class="uk-width-1-3">{{ $t('ton.id')}}</th>

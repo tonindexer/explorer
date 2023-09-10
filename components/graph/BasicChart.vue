@@ -28,16 +28,30 @@ const chartOptions = computed(() => { return {
     legend: {
         enabled: false
     },
+    yAxis: {
+        title : {
+            text: undefined
+        },
+        labels : {
+            style : {
+                'color': '#999'
+            }
+        }
+    },
     xAxis: {
         type: 'datetime',
         categories: props.times,  
-        tickInterval: props.times.length / 6,  
+        tickInterval: props.times.length / 6,
+        lineColor: 'white',
         crosshairs: {
             width: 0.1,
         },
         labels: {
             // @ts-ignore
-            formatter: function() { return new Date(this.value).toLocaleDateString() }
+            formatter: function() { return new Date(this.value).toLocaleDateString("en-US", { month: 'short', day: 'numeric' }) },
+            style : {
+                'color': '#999'
+            }
         },
     },
     tooltip: {

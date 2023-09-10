@@ -80,13 +80,13 @@ const parseData = computed((): TableSection[] => {
                 </NuxtLink>
             </h4>
             <ul uk-accordion="multiple: true">
-                <li class="uk-padding-small uk-border-rounded" style="background-color: rgb(233, 243, 255);" v-for="method of section.methods" >
-                    <a class="uk-accordion-title uk-text-truncate uk-text-default" href="#">
+                <li class="uk-padding-small uk-border-rounded uk-background-muted" v-for="method of section.methods" >
+                    <a class="uk-accordion-title uk-text-truncate uk-text-primary" href="#">
                         {{ method.name }}
                     </a>
                     <div class="uk-accordion-content">
                         
-                        <h4 class="uk-margin-small-left uk-margin-remove-vertical" v-if="method.recieves.length > 0">
+                        <h4 class="uk-margin-small-left uk-margin-remove-vertical uk-text-primary" v-if="method.recieves.length > 0">
                             {{ $t('general.called') }}
                         </h4>
                         <table class="uk-table uk-table-middle uk-table-divider uk-margin-remove-top" v-if="method.recieves.length > 0">
@@ -120,7 +120,7 @@ const parseData = computed((): TableSection[] => {
                             </tbody>
                         </table>
 
-                        <h4 class="uk-margin-small-left uk-margin-remove-vertical" v-if="method.returns.length > 0">
+                        <h4 class="uk-margin-small-left uk-margin-remove-vertical uk-text-primary" v-if="method.returns.length > 0">
                             {{ $t('general.returns') }}
                         </h4>
                         <table class="uk-table uk-table-middle uk-table-divider uk-margin-remove-top" v-if="method.returns.length > 0 && !method.error">

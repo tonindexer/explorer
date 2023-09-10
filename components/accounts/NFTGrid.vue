@@ -78,10 +78,10 @@ onMounted(async () => {
     </div>
     <div v-else-if="!loading" class="uk-child-width-1-2 uk-child-width-1-3@m uk-child-width-1-4@l uk-child-width-1-6@xl" uk-grid>
         <div v-for="nft, key in nftMap">
-            <div class="uk-card uk-card-default">
+            <div class="uk-card">
                 <div class="uk-card-media-top">
-                    <img v-if="nft.image_url" :src="nft.image_url" width="500" height="500" alt="">
-                    <img v-else src="@/assets/images/default.png" width="250" height="250" alt="">
+                    <img style="border-radius: 8px;" v-if="nft.image_url" :src="nft.image_url" width="500" height="500" alt="">
+                    <img style="border-radius: 8px;" v-else src="@/assets/images/default.png" width="250" height="250" alt="">
                     <div v-if="store.accounts[key]?.fake" class="uk-position-top-left uk-overlay uk-margin-small-top uk-margin-small-left uk-background-muted uk-text-danger uk-text-large uk-text-bold" style="padding: 0 5px">Fake</div>
                 </div>
                 <div class="uk-card-body uk-text-truncate uk-padding-small">

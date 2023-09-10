@@ -132,8 +132,8 @@
         "about": "About",
         "dashboard": "Dashboard",
         "telemint": "Telemint",
-        "cex" : "CEX",
-        "bridge" : "Bridges"
+        "cex" : "TON CEX Activity",
+        "bridge" : "TON Bridge Activity"
     },
     "stats" : {
         "account_count": "Accounts",

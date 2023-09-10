@@ -77,14 +77,14 @@ onBeforeMount(() => Sankey(Highcharts))
 </script>
 
 <template>
-    <div class="uk-flex uk-width-1-1 uk-margin-small-top" style="justify-content: space-between;" v-if="data">
+    <div class="uk-flex uk-width-1-1 uk-margin-small-top uk-text-primary" style="justify-content: space-between;" v-if="data">
         <div class="uk-flex uk-flex-column">
-            <div style="white-space: nowrap;"> {{  "Recieved Total: " + data.receivedTotal + (count ? '' : ' 💎') }} </div>
-            <div v-if="Math.floor(data.receivedTotal) !== Math.floor(data.receivedTop) " style="white-space: nowrap;"> {{ "Top10: " + data.receivedTop + (count ? '' : ' 💎') }} </div>
+            <div class="uk-flex uk-text-primary" :class="{'diamond' : !count}" style="white-space: nowrap; padding: 3px;"> {{  "Recieved Total: " + data.receivedTotal }} </div>
+            <div v-if="Math.floor(data.receivedTotal) !== Math.floor(data.receivedTop) " class="uk-flex uk-text-primary" :class="{'diamond' : !count}" style="white-space: nowrap; padding: 3px;"> {{ "Top10: " + Math.round(data.receivedTop) }} </div>
         </div>
         <div class="uk-flex uk-flex-column">
-            <div style="white-space: nowrap;"> {{ "Sent Total: " + data.sentTotal + (count ? '' : ' 💎') }} </div>
-            <div v-if="Math.floor(data.sentTotal) !== Math.floor(data.sentTop) " style="white-space: nowrap;"> {{ "Top10: " + data.sentTop + (count ? '' : ' 💎') }} </div>
+            <div class="uk-flex uk-flex-right uk-text-primary" :class="{'diamond' : !count}" style="white-space: nowrap; padding: 3px;"> {{ "Sent Total: " + Math.round(data.sentTotal) }} </div>
+            <div v-if="Math.floor(data.sentTotal) !== Math.floor(data.sentTop)" class="uk-flex uk-flex-right uk-text-primary" :class="{'diamond' : !count}" style="white-space: nowrap; padding: 3px;"> {{ "Top10: " + Math.round(data.sentTop) }} </div>
         </div>
     </div>
     <div class="uk-width-1-1">
