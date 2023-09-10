@@ -588,14 +588,6 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.17.19.tgz#8cfaf2ff603e9aabb910e9c0558c26cf32744061"
   integrity sha512-lAhycmKnVOuRYNtRtatQR1LPQf2oYCkRGkSFnseDAKPl8lu5SOsK/e1sXe5a0Pc5kHIHe6P2I/ilntNv2xf3cA==
 
-"@fedorae/nuxt-uikit@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@fedorae/nuxt-uikit/-/nuxt-uikit-3.0.2.tgz#4b63a20c3eddc99254bcd82838bc642d648eb5c3"
-  integrity sha512-cDCZmXm4yAfZSttat3vH1zyJ1YYucM+ooUx6bNiVbIxaWXC+f1BCcT9hVL89HOZZsC+CRc+w5R3yA/Dh3yFKHw==
-  dependencies:
-    "@nuxt/kit" "^3.4.3"
-    uikit "^3.16.17"
-
 "@gar/promisify@^1.0.1", "@gar/promisify@^1.1.3":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.3.tgz#555193ab2e3bb3b6adc3d551c9c030d9e860daf6"
@@ -826,7 +818,7 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.2.tgz#5749f04df13bda4c863338d8dabaf370f45ef7c7"
   integrity sha512-GBzP8zOc7CGWyFQS6dv1lQz8VVpz5C2yRszbXufwG/9zhStTIH50EtD87NmWbTMwXDvZLNg8GIpb1UFdH93JCA==
 
-"@nuxt/kit@3.5.2", "@nuxt/kit@^3.3.3", "@nuxt/kit@^3.4.1", "@nuxt/kit@^3.4.3", "@nuxt/kit@^3.5.0":
+"@nuxt/kit@3.5.2", "@nuxt/kit@^3.3.3", "@nuxt/kit@^3.4.1", "@nuxt/kit@^3.5.0":
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.5.2.tgz#ebcb1ee9cd66934f9845b04460201a81c9340ea2"
   integrity sha512-DwmJFJbzbg5T/Qcf5ruiHBfWuLIasTakIeifKS+pqS+VhZDoUW0O7jHm6jESQ5reAbde+L+IH6bXN/y07ivkRA==
@@ -5640,10 +5632,10 @@ ufo@^1.3.0:
   resolved "https://registry.yarnpkg.com/ufo/-/ufo-1.3.0.tgz#c92f8ac209daff607c57bbd75029e190930a0019"
   integrity sha512-bRn3CsoojyNStCZe0BG0Mt4Nr/4KF+rhFlnNXybgqt5pXHNFRlqinSoQaTrGyzE4X8aHplSb+TorH+COin9Yxw==
 
-uikit@^3.16.17:
-  version "3.16.19"
-  resolved "https://registry.yarnpkg.com/uikit/-/uikit-3.16.19.tgz#2b1120f32807d5a3fe92837f6a032cf5a46e1bca"
-  integrity sha512-o3q00RX95tpPJrmfghdPJ9xC5FMgLABaqCw2iGXBK55ovqkvtRx4/1FycfaTQuB6Y26RAN/kFpWSEigcBIa3kg==
+uikit@^3.16.26:
+  version "3.16.26"
+  resolved "https://registry.yarnpkg.com/uikit/-/uikit-3.16.26.tgz#90c2cde94626546c42d0b7c8f1bedafeedb909b6"
+  integrity sha512-5NCaHqgYIzTVDMxix9tUb4pJn478GdIxEodWuWy/eMf3mi7EWZPyVQxPEos71H0hrr7xC6i0TK6tjOSfF7gkOA==
 
 ultrahtml@^1.2.0:
   version "1.2.0"

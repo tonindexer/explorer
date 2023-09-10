@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     modules : [
       '@nuxtjs/i18n',
       '@pinia/nuxt',
-      '@fedorae/nuxt-uikit',
+      // '@fedorae/nuxt-uikit',
       '@nuxtjs/device',
       '@nuxtjs/google-fonts'
     ],
