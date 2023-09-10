@@ -112,7 +112,7 @@ export const useMainStore = defineStore('tonexp', {
           default: return false;
         }
       },
-      isLoading: (state) => (module: 'search') => {
+      isLoaded: (state) => (module: 'search') => {
         return state.isLoading[module]
       },
     },
