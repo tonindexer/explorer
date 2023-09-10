@@ -44,6 +44,7 @@ const reloadInfo = async() => {
         const res = await store.fetchAccount(props.hex)
         if (props.hex != res) emits('setHex', res)
     }
+    if (route.hash) selectedRoute.value = route.hash === '#overview' ? 'transactions' : route.hash.slice(1,)
     loading.value = false
     if (!account.value) {
         error.value = true

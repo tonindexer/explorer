@@ -31,6 +31,8 @@ const reloadInfo = async() => {
         await store.fetchBlock(props.workchain, props.shard, props.seq_no)
     }
     await store.fetchBareAccounts(unloadedAccountKeys.value)
+    if (route.hash) selectedRoute.value = route.hash === '#overview' ? 'transactions' : route.hash.slice(1,)
+
     loading.value = false
     if (!block.value) {
         error.value = true

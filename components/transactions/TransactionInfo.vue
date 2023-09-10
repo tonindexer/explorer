@@ -28,6 +28,7 @@ const reloadInfo = async() => {
     }
     if (unloadedAccountKeys.value.length > 0)
         await store.fetchBareAccounts(unloadedAccountKeys.value)
+    if (route.hash) selectedRoute.value = route.hash === '#overview' ? 'messages' : route.hash.slice(1,)
     loading.value = false
     if (!transaction.value) {
         error.value = true
@@ -38,7 +39,7 @@ const reloadInfo = async() => {
 const routes = computed(() => {
     const output: { route: string, t: string }[] = []
     if (inMessageKeys.value.length + outMessageKeys.value.length > 0) output.push({ route: 'messages', t: 'route.messages'})
-    if (loadedAccountKeys.value.length + unloadedAccountKeys.value.length  > 0) output.push({ route: 'messages', t: 'route.messages'})
+    if (loadedAccountKeys.value.length + unloadedAccountKeys.value.length  > 0) output.push({ route: 'accounts', t: 'route.accounts'})
     return output
 })
 
