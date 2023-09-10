@@ -66,6 +66,7 @@ const parse = () => {
         input = asciiParse(search.value)
         if (input) {
             performSearch(input)
+            return
         }
         // if nothing found
         status.value = 'INCORRECT'

@@ -43,7 +43,7 @@ const dataParser = computed(() : Graph => {
         times: []
     }
     store.messageGraphData.forEach(item => {
-        output.series[0].data.push(item.Value)
+        output.series[0].data.push(chartType.value === 'message_amount_sum' ? Math.round(item.Value / 1000000000) : item.Value)
         output.times.push(new Date(item.Timestamp).getTime())
     })
 
