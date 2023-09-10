@@ -54,7 +54,11 @@ export const useMainStore = defineStore('tonexp', {
       sankeyCount: {} as { [key: string] : { sentTotal: number, sentTop: number, receivedTotal: number, receivedTop: number, data: SankeyData }},
       telemintDashboard: [] as DashboardAPICell[],
       cexDashboard: [] as DashboardAPICell[],
-      bridgeDashboard: [] as DashboardAPICell[]
+      bridgeDashboard: [] as DashboardAPICell[],
+      // Loader varibles
+      isLoading: {
+        search: false
+      }
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
@@ -107,6 +111,9 @@ export const useMainStore = defineStore('tonexp', {
           case 'src': return loaded >= state.totalQuerySearch;
           default: return false;
         }
+      },
+      isLoading: (state) => (module: 'search') => {
+        return state.isLoading[module]
       },
     },
     actions: {
@@ -918,6 +925,8 @@ export const useMainStore = defineStore('tonexp', {
         return hex
       },
       async search(req: BlockSearch | TxSearch | AccSearch | LabelSearch | null, limit : number = 20, useLastSearch: boolean = false, offset? : number): Promise<Search> {
+        this.isLoading.search = true
+
         if (!offset) this.searchResults = []
 
         if (useLastSearch && this.lastSearch) req = this.lastSearch
@@ -950,6 +959,8 @@ export const useMainStore = defineStore('tonexp', {
               })
           } catch (err) {
             return this.searchResults
+          } finally {
+            this.isLoading.search = false
           }
         } else if (req.type == 'account') {
 
@@ -1011,6 +1022,9 @@ export const useMainStore = defineStore('tonexp', {
             }]
           }
         }
+
+        this.isLoading.search = false
+
         return this.searchResults
       },
       async loadDashboards(slug: dashboardName) {

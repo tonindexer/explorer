@@ -53,7 +53,7 @@ watch(itemCount, async() => {
 </script>
 
 <template>
-    <table v-if="keys.length > 0" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-vertical">
+    <table v-if="keys.length > 0" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <thead>
             <th>
                 {{ $t('route.results')}}

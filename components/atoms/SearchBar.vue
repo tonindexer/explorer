@@ -20,6 +20,7 @@ const performSearch = async (query: BlockSearch | AccSearch | TxSearch | LabelSe
     status.value = 'WAITING'
     searchRes.value = []
     // request to store
+    console.log(1)
     const res = await store.search(query)
     // check if empty
     if (res.length === 0) {
@@ -37,7 +38,7 @@ const performSearch = async (query: BlockSearch | AccSearch | TxSearch | LabelSe
 
 }
 
-const parse = () => {
+const parse = async () => {
     if (search.value === '') status.value = 'EMPTY'
     if (search.value === lastSearch.value) {
         status.value = lastStatus.value
@@ -49,23 +50,24 @@ const parse = () => {
         // parcing
         input = blockParse(search.value)
         if (input) {
-            performSearch(input)
+            await performSearch(input)
             return
         }
         input = trnParse(search.value)
         if (input) {
             input.value.hash = toBase64Rfc(input.value.hash)
-            performSearch(input)
+            await performSearch(input)
             return
         }
         input = addParse(search.value)
         if (input) {
-            performSearch(input)
+            await performSearch(input)
             return
         }
         input = asciiParse(search.value)
         if (input) {
-            performSearch(input)
+            await performSearch(input)
+            return
         }
         // if nothing found
         status.value = 'INCORRECT'
