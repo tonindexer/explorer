@@ -331,7 +331,7 @@ export const useMainStore = defineStore('tonexp', {
           } 
           case '/blocks': {
             if (Object.entries(route.query).length === 0) {
-              await this.updateBlockValues(10, null)
+              await this.updateBlockValues(null, 10, null)
             } else {
               const wc = route.query.workchain && isNumeric(route.query.workchain) ? Number(route.query.workchain) : null
               const sh = route.query.shard  && isNumeric(route.query.shard) ? BigInt(route.query.shard.toString()) : null
@@ -389,13 +389,14 @@ export const useMainStore = defineStore('tonexp', {
           }
         }
       },
-      async updateBlockValues(limit: number = 10, seqOffset: number | null, cutPage: number = 0, order: "ASC" | "DESC" = "DESC") {
+      async updateBlockValues(workchain: 'main' | 'base' | null,limit: number = 10, seqOffset: number | null, cutPage: number = 0, order: "ASC" | "DESC" = "DESC") {
         const fullReq: MockType = {
-          workchain: -1,
           with_transactions: true,
           order,
           limit
         }
+        if (workchain) fullReq.workchain = workchain === 'base' ? '0' : '-1'
+
         if (seqOffset) {
           fullReq.after = seqOffset
           this.exploredBlocks = this.exploredBlocks.slice(0, limit*cutPage)
@@ -411,7 +412,7 @@ export const useMainStore = defineStore('tonexp', {
           for (const key in parsed.results) {
             const block = this.processBlock(parsed.results[key])
             this.exploredBlocks.push(block)
-            this.exploredBlocks.push(...this.blocks[block].shard_keys)
+            if (workchain !== 'main') this.exploredBlocks.push(...this.blocks[block].shard_keys)
           }
         } catch (error) {
           console.log(error)

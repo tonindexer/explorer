@@ -12,6 +12,7 @@ const loading = ref(true)
 const store = useMainStore()
 const props = defineProps<Props>()
 const route = useRoute()
+const router = useRouter()
 const deepTrKeys = ref(false)
 
 
@@ -36,8 +37,25 @@ const reloadInfo = async() => {
         return;
     }
 }
+
+const routes = computed(() => {
+    const output: { route: string, t: string }[] = []
+    if (trKeys.value.length > 0) output.push({ route: 'transactions', t: 'route.transactions'})
+    if (inMessageKeys.value.length + outMessageKeys.value.length > 0) output.push({ route: 'messages', t: 'route.messages'})
+    if (loadedAccountKeys.value.length + unloadedAccountKeys.value.length  > 0) output.push({ route: 'accounts', t: 'route.accounts'})
+    if (block.value.shard_keys?.length > 0) output.push({ route: 'shards', t: 'ton.shards'})
+    return output
+})
+
+const selectedRoute = ref('transactions')
+
 onMounted(async() => {
     await reloadInfo()
+})
+
+watch(selectedRoute,() => {
+    console.log(route.query)
+    router.replace({ hash: '#' + selectedRoute.value, query: route.query})
 })
 watch(props, async() => await reloadInfo())
 </script>
@@ -59,42 +77,21 @@ watch(props, async() => await reloadInfo())
                 <BlocksPropsTable :block="block"/>
             </template>
         </AtomsTile>
-        <AtomsTile :top="true" :body="true" :top-style="'padding-bottom: 0'" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
+        <AtomsTile v-if="routes.length > 0" :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
             <template #top>
-                <ul v-if="block?.transaction_keys.length" class="uk-child-width-expand uk-text-medium tab-styler" uk-tab>
-                    <li class="uk-margin-remove-left" :class="{'uk-active' : (route.hash === '#transactions' || route.hash === '#overview')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#transactions', query: route.query}" >
-                            {{ $t('route.transactions') }}
-                            <span>
-                                {{ trKeys.length }}
-                            </span>
+                <select v-if="isMobile()" :value="selectedRoute" aria-label="Select" @change="($event: any) => selectedRoute = $event.target.value" class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary">
+                    <option v-for="option in routes" :value="option.route">{{ $t(option.t) }}</option>
+                </select>
+                <div v-if="!isMobile()" class="category-wrapper">
+                    <div class="uk-flex uk-flex-middle uk-margin-remove-top">
+                        <NuxtLink v-if="trKeys.length > 0" class="category" :to="{ hash: '#transactions', query: route.query}" :class="{'selected white': (route.hash === '#transactions' || route.hash === '#overview')}">
+                            {{ $t('route.transactions')}}
                         </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" v-if="inMessageKeys.length + outMessageKeys.length > 0" :class="{'uk-active' : (route.hash === '#messages')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#messages', query: route.query}">
-                            {{ $t('route.messages') }}
-                            <span>
-                                {{ inMessageKeys.length + outMessageKeys.length }}
-                            </span>
+                        <NuxtLink v-for="item in routes.slice(1,)" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{'selected white': (route.hash === `#${item.route}`)}">
+                            {{ $t(item.t)}}
                         </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" v-if="loadedAccountKeys.length + unloadedAccountKeys.length > 0" :class="{'uk-active' : (route.hash === '#accounts')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#accounts', query: route.query}">
-                            {{ $t('route.accounts') }}
-                            <span>
-                                {{ loadedAccountKeys.length + unloadedAccountKeys.length }}
-                            </span>
-                        </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" v-if="block.shard_keys.length > 0" :class="{'uk-active' : (route.hash === '#shards')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#shards', query: route.query}">
-                            {{ $t('ton.shards') }}
-                            <span>
-                                {{ block.shard_keys.length }}
-                            </span>
-                        </NuxtLink>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </template>
             <template #body>
                 <div v-if="(route.hash === '#transactions' || route.hash === '#overview')&& block?.transaction_keys.length" id="transactions">
@@ -117,12 +114,12 @@ watch(props, async() => await reloadInfo())
                         <label><input v-model="deepTrKeys" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.deep_accounts') }}</label>
                     </div>
                     <h3 v-if="loadedAccountKeys.length > 0" class="uk-margin-remove-bottom uk-text-primary uk-margin-small-left">{{ $t('general.loaded_accs') + ` (${loadedAccountKeys.length})` }}</h3>
-                    <AccountsTable :default-length="10" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false" :filters="{ interface: null }"/>
+                    <AccountsTable :default-length="10" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false"/>
                     <h3 v-if="unloadedAccountKeys.length > 0" class="uk-margin-remove-bottom uk-text-primary uk-margin-small-left">{{ $t('general.unloaded_accs')+ ` (${unloadedAccountKeys.length})` }}</h3>
                     <AccountsUnloadedTable :default-length="5" :keys="unloadedAccountKeys" :hidden="unloadedAccountKeys.length === 0"/>
                 </div>
                 <div v-if="(route.hash === '#shards' )&& block.shard_keys.length > 0" id="shards">
-                    <BlocksTable :item-selector="true" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block.shard_keys.length === 0" :line-link="false" :exclude-empty="false"/>
+                    <BlocksTable :item-selector="true" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block.shard_keys.length === 0" :line-link="false"/>
                 </div>
             </template>
         </AtomsTile>

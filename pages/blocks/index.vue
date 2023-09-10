@@ -25,7 +25,7 @@ function routeChecker(newQuery: LocationQuery) {
         return;
     }
 
-    if (!workchain.value && !shard.value && !seq_no.value) {
+    if (shard.value === null && seq_no.value === null) {
         isGeneral.value = true;
         error.value = false;
         isLoading.value = false;
@@ -38,7 +38,9 @@ function routeChecker(newQuery: LocationQuery) {
 
 const filteredKeys = computed(() => store.getBlockKeys(store.exploredBlocks, excludeEmpty.value))
 
-watch(() => route.query, (newQuery) => routeChecker(newQuery))
+watch(() => route.query, (newQuery) => {
+    routeChecker(newQuery)
+})
 onMounted(() => routeChecker(route.query))
 </script>
 
@@ -58,14 +60,9 @@ onMounted(() => routeChecker(route.query))
                     {{ `${store.totalQueryBlocks}` }}
                 </template>
             </AtomsHeaderCount>
-            <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'">
-                <template #top>
-                    <div class="uk-flex uk-flex-right">
-                        <label><input v-model="excludeEmpty" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.exclude_blocks') }}</label>
-                    </div>
-                </template>
+            <AtomsTile :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'">
                 <template #body>
-                    <LazyBlocksTable :keys="filteredKeys" :update="true" :default-length="10" :item-selector="true" :hidden="false" :line-link="true" :exclude-empty="excludeEmpty"/>
+                    <LazyBlocksTable :keys="filteredKeys" :update="true" :default-length="10" :item-selector="true" :hidden="false" :line-link="true"/>
                 </template>
             </AtomsTile>
         </div>

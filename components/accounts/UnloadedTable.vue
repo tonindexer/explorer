@@ -65,7 +65,7 @@ const itemCount = ref(props.defaultLength)
             </template>
         </tbody>
     </table>
-    <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle" style="justify-content: flex-end;">
+    <div v-if="!hidden" class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle" style="justify-content: flex-end;">
             <AtomsPageArrows    
                 :page="pageNum" 
                 :left-disabled="pageNum === 0" 
