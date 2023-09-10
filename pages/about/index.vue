@@ -36,7 +36,7 @@
             Therefore, you can attempt to match accounts found in the network to these standards by checking the presence of the get-methods.
             Contract standards also specify <a href="https://ton.org/docs/learn/overviews/tl-b-language#constructors">TL-B constructor tags</a> (or operation ids) for each acceptable message to contract, defined as the first 32 bits of the parsed message payload cell.
             So you if you know standard of a given contract, you can determine the type of message to it (for example, NFT item transfer) by parsing the first 32 bits of message body.</p>
-            <p>Anton allows you to define the contract interface in just one JSON schema.
+            <p class="uk-text-muted">Anton allows you to define the contract interface in just one JSON schema.
             Format of every schema is described in detail in <a href="https://github.com/tonindexer/anton/blob/main/abi/README.md">abi/README.md</a>.
             Every schema comprises contract get-methods, as well as incoming and outgoing message schemas for the contract.
             Once contract interfaces are defined and stored in the database, Anton begins scanning new blocks on the network.

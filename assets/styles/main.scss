@@ -157,7 +157,7 @@ $text-primary-color: #000;
   margin-right: 6px;
 }
 
-.uk-button {
+.uk-button, .category {
   border-radius: 30px;
   text-transform: none !important;
   padding: 4px 16px !important;
@@ -166,18 +166,12 @@ $text-primary-color: #000;
   &.selected {
     background-color: #000;
   }
-  &.category {
-    color: black;
-    padding: 4px 24px !important;
-    line-height: 24px;
-    font-size: 16px;
-  }
 }
 
 .uk-table-striped > tr:nth-of-type(odd), .uk-table-striped tbody tr:nth-of-type(odd) {
   border-top: none;
   border-bottom: none;
-  background-color: white;
+  background-color: transparent;
 }
 
 .uk-radio:checked, .uk-checkbox:checked, .uk-checkbox:indeterminate {
@@ -190,7 +184,7 @@ $text-primary-color: #000;
 .uk-table > thead {
   border-bottom: 1px solid #ccc;
   tr {
-    background-color: white !important;
+    background-color: transparent !important;
   }
   th {
     font-size: 16px;
@@ -202,6 +196,7 @@ $text-primary-color: #000;
 
 .uk-table-striped > tr:nth-of-type(even), .uk-table-striped tbody tr:nth-of-type(even) {
   background-color: #fafafa;
+  border-top: none;
 }
 
 .uk-table-striped > tr:nth-of-type(even):last-child, .uk-table-striped tbody tr:nth-of-type(even):last-child {
@@ -221,6 +216,18 @@ $text-primary-color: #000;
   width: fit-content;
   border-radius: 30px; 
   background-color: #F5F5F5;
+  .selected {
+    background-color: #000;
+  }
+  .category {
+    color: black;
+    padding: 4px 24px !important;
+    line-height: 24px;
+    font-size: 16px;
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 .grid {

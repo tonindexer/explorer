@@ -95,7 +95,7 @@ defineEmits(['toggleMsg'])
                     <AtomsAddressField v-for="msg in messageKeys" class="uk-text-right" :addr="store.messages[msg].dst_address ?? null" :break_word="false"/>
                 </div>
             </td>
-            <td>
+            <td class="uk-flex uk-flex-column">
                 <AtomsTableDateCell :date-time="trn.created_at"/>
             </td>   
         </template>

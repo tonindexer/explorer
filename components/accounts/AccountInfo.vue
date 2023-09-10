@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
+const router = useRouter()
 
 interface Props {
     hex: string
@@ -21,6 +22,21 @@ const ownerKeys = computed(() => account.value?.owned_nfts?.length > 0 ? account
 const getMethods = computed(() => account.value?.executed_get_methods && Object.keys(account.value.executed_get_methods).length > 0 ? account.value.executed_get_methods : {} as {[key: string] : GetMethod[]})
 const sankeyType = ref("count")
 
+const routes = computed(() => {
+    const output: { route: string, t: string }[] = []
+    if (trKeys.value.length > 0) output.push({ route: 'transactions', t: 'route.transactions'})
+    if (jtKeys.value.length > 0) output.push({ route: 'jettons', t: 'route.jettons'})
+    if (account.value.address.hex in store.jettonHolders) output.push({ route: 'jetton_holders', t: 'ton.jetton_holders'})
+    if (ownerKeys.value.length > 0) output.push({ route: 'nfts', t: 'route.nfts'})
+    if (minterKeys.value.length > 0) output.push({ route: 'minter', t: 'ton.minter'})
+    if (account.value.address.hex in store.nftHolders) output.push({ route: 'nft_holders', t: 'ton.nft_holders'})
+    if (Object.keys(getMethods.value).length > 0) output.push({ route: 'get_methods', t: 'ton.get_methods'})
+    if (props.hex in store.sankeyCount) output.push({ route: 'money_flow', t: 'general.money_flow'})
+    return output
+})
+
+const selectedRoute = ref('transactions')
+
 const reloadInfo = async() => {
     error.value = false
     loading.value = true
@@ -36,6 +52,7 @@ const reloadInfo = async() => {
 }
 
 onMounted(async() => reloadInfo())
+watch(selectedRoute,() => router.replace({ hash: '#' + selectedRoute.value, query: route.query}))
 
 watch(() => props.hex, async() => await reloadInfo())
 </script>
@@ -59,66 +76,19 @@ watch(() => props.hex, async() => await reloadInfo())
         </AtomsTile>
         <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
             <template #top>
-                <ul v-if="trKeys.length > 0" class="uk-child-width-expand uk-text-medium tab-styler" :style="isMobile() ? 'margin-bottom: 0.3rem' : ''" uk-tab>
-                    <li class="uk-margin-remove-left" v-if="trKeys.length > 0" :class="{'uk-active' : (route.hash === '#transactions' || route.hash === '#overview')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#transactions', query: route.query}">
+                <select v-if="isMobile()" :value="selectedRoute" aria-label="Select" @change="($event: any) => selectedRoute = $event.target.value" class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary">
+                    <option v-for="option in routes" :value="option.route">{{ $t(option.t) }}</option>
+                </select>
+                <div v-if="!isMobile()" class="category-wrapper">
+                    <div class="uk-flex uk-flex-middle uk-margin-remove-top">
+                        <NuxtLink v-if="trKeys.length > 0" class="category" :to="{ hash: '#transactions', query: route.query}" :class="{'selected white': (route.hash === '#transactions' || route.hash === '#overview')}">
                             {{ $t('route.transactions')}}
-                            <span>
-                                {{ account.transaction_amount }}
-                            </span>
                         </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" v-if="jtKeys.length > 0" :class="{'uk-active' : (route.hash === '#jettons')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#jettons', query: route.query}">
-                            {{ $t('route.jettons') }}
-                            <span>
-                                {{ account.jetton_amount }}
-                            </span>
+                        <NuxtLink v-for="item in routes.slice(1,)" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{'selected white': (route.hash === `#${item.route}`)}">
+                            {{ $t(item.t)}}
                         </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" v-if="account.address.hex in store.jettonHolders" :class="{'uk-active' : (route.hash === '#jetton_holders')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#jetton_holders', query: route.query}">
-                            {{ $t('ton.jetton_holders') }}
-                            <span>
-                                {{ store.jettonHolders[account.address.hex].wallets }}
-                            </span>
-                        </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" v-if="ownerKeys.length > 0" :class="{'uk-active' : (route.hash === '#nfts')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#nfts', query: route.query}">
-                            {{ $t('route.nfts') }}
-                            <span>
-                                {{ account.nft_amount }}
-                            </span>
-                        </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" v-if="minterKeys.length > 0" :class="{'uk-active' : (route.hash === '#minter')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#minter', query: route.query}">
-                            {{ $t('ton.minter') }}
-                            <span>
-                                {{ account.minted_amount }}
-                            </span>
-                        </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" v-if="account.address.hex in store.nftHolders" :class="{'uk-active' : (route.hash === '#nft_holders')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#nft_holders', query: route.query}">
-                            {{ $t('ton.nft_holders') }}
-                            <span>
-                                {{ store.nftHolders[account.address.hex].owners_count }}
-                            </span>
-                        </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" v-if="Object.keys(getMethods).length > 0" :class="{'uk-active' : (route.hash === '#get_methods')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#get_methods', query: route.query}">
-                            {{ $t('ton.get_methods') }}
-                        </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" v-if="hex in store.sankeyCount" :class="{'uk-active' : (route.hash === '#money_flow')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#money_flow', query: route.query}">
-                            {{ $t('general.money_flow') }}
-                        </NuxtLink>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </template>
             <template #body>
                 <div v-show="(route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
@@ -142,7 +112,7 @@ watch(() => props.hex, async() => await reloadInfo())
                 <div v-if="route.hash === '#get_methods'" id="get_methods" style="padding: 0 12px">
                     <AccountsGetMethods :methods="getMethods"/>
                 </div>
-                <div v-if="route.hash === '#money_flow'" id="money_flow">
+                <div v-if="route.hash === '#money_flow'" id="money_flow" style="padding: 0 12px">
                     <div class="uk-form-controls">
                         <label><input class="uk-radio" type="radio" v-model="sankeyType" value="count" name="radio1"> {{ $t('options.count') }} </label><br>
                         <label><input class="uk-radio" type="radio" v-model="sankeyType" value="amount" name="radio1"> {{ $t('options.amount') }} </label>

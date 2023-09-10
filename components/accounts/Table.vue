@@ -164,7 +164,7 @@ onMounted(() => {
             </tbody>
         </template>
     </table>
-    <div v-show="!emptyTable && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
+    <div v-show="!(emptyTable && store.totalQueryAccounts === 0) && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
         <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
             <ClientOnly>
                 <AtomsSelector 

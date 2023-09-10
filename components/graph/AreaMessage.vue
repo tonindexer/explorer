@@ -55,7 +55,7 @@ const dataParser = computed(() : Graph => {
         times: []
     }
     store.messageGraphData.forEach(item => {
-        output.series[0].data.push(item.Value)
+        output.series[0].data.push(chartType.value === 'message_amount_sum' ? Math.round(item.Value / 1000000000) : item.Value)
         output.times.push(new Date(item.Timestamp).getTime())
     })
 
@@ -250,7 +250,7 @@ onMounted(async () => {
         <div class="category-wrapper">
             <div class="uk-flex uk-flex-middle uk-margin-remove-top" style="justify-content: space-between;">
                 <button class="uk-button category" id="8h" @click="chartType = 'message_amount_sum'" :class="{'selected white': chartType === 'message_amount_sum'}">
-                    Amount
+                    TON Amount
                 </button>
                 <button class="uk-button category" id="24h" @click="chartType = 'message_count'" :class="{'selected white': chartType === 'message_count'}">
                     Count

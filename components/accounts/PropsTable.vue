@@ -21,7 +21,7 @@ const externalLink = computed(() : MockType=> {
 </script>
 
 <template>
-    <table class="uk-table uk-table-middle">
+    <table class="uk-table uk-table-middle uk-margin-remove-top uk-table-striped">
         <tbody class="uk-table-divider">
             <tr v-if="acc.label && acc.label.name">
                 <AtomsPropLine :bold="true">
@@ -65,7 +65,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.status`) }}
                     </template>
                     <template #value>
-                        {{ acc.status }}
+                        <AtomsStatusCell :status="acc.status"></AtomsStatusCell>
                     </template>
                 </AtomsPropLine>
             </tr>
@@ -75,7 +75,9 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.balance`) }}
                     </template>
                     <template #value>
-                        {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none') }}
+                        <div class="uk-flex uk-flex-right diamond">
+                            {{ roundTON(acc.balance) }}
+                        </div>
                     </template>
                 </AtomsPropLine>
             </tr>
