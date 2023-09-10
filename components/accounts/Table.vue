@@ -118,6 +118,19 @@ onMounted(() => {
 </script>
 
 <template>
+    <div v-if="isMobile() && route.path === '/accounts'" class="uk-flex uk-flex-right" style="padding: 16px 16px 0;">
+        <div class="uk-width-1-1 uk-text-small" style="margin-right: 0.5rem;">
+            <AtomsSelector 
+                :item-count="selectedContract"
+                :def="true"
+                :amount="null"
+                :start-line="null"
+                :options="optionsContract"
+                @set-value="(e: any) => selectedContract = e.value"
+            />
+        </div>
+        <a v-if="selectedContract !== 'All'" uk-icon="icon: close" @click="selectedContract = 'All'" style="align-self: center; margin-left: 0.5rem;"></a>
+    </div>
     <table v-show="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <colgroup v-if="!isMobile()">
             <col width="20%" />

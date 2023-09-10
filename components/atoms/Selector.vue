@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface Props {
     startLine?: string | null
+    def?: boolean
     amount: number | null
     itemCount: number | string,
     options: Array<number | string>
@@ -11,7 +12,7 @@ defineEmits(['setValue'])
 
 <template>
     <p v-if="startLine !== null" class="uk-margin-remove uk-text-muted">{{ $t(startLine ?? 'general.show')}}</p>
-    <select :value="itemCount" @change="$event => $emit('setValue', $event.target)" class="uk-select uk-text-muted uk-background-primary">
+    <select :value="itemCount" @change="$event => $emit('setValue', $event.target)" class="uk-select uk-text-muted uk-background-primary" :class="{'custom' : !def}">
         <option v-for="option in options">{{ option }}</option>
     </select>
     <template v-if="amount && isNumeric(itemCount)">
@@ -20,11 +21,13 @@ defineEmits(['setValue'])
 </template>
 
 <style scoped lang="scss">
-    .uk-select:not([multiple]):not([size]) { 
-        background-position: 100% 60%;
+    .uk-select:not([multiple]):not([size]) {
+        &.custom {
+            background-position: 100% 60%;
+        }
     }
 
-    .uk-select {
+    .uk-select.custom {
         border: 1px solid rgba(0, 0, 0, 0.50);
         min-width: fit-content; 
         border-radius: 4px; 

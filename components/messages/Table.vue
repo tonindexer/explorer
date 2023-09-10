@@ -265,6 +265,7 @@ onMounted(() => {
                 <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
                     <AtomsSelector 
                         :item-count="filterFields.src_contract_mobile"
+                        :def="true"
                         :amount="null"
                         :start-line="null"
                         :options="optionsMobile"
@@ -286,6 +287,7 @@ onMounted(() => {
                 <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
                     <AtomsSelector 
                         :item-count="filterFields.dst_contract_mobile"
+                        :def="true"
                         :amount="null"
                         :start-line="null"
                         :options="optionsMobile"
@@ -318,6 +320,7 @@ onMounted(() => {
             <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
                 <AtomsSelector 
                     :item-count="filterFields.op_name_mobile"
+                    :def="true"
                     :amount="null"
                     :start-line="null"
                     :options="opOptionsMobile"
