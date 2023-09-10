@@ -172,9 +172,6 @@ const external = [
             <table class="uk-table uk-table-divider uk-padding-remove-top" style="align-items: center; font-size: 1.25rem;">
                 <tbody>
                     <tr><td>
-                        <NuxtLink :to="'/blocks'" class="link" :class="{ 'active' : route.path === '/blocks'}" @click="showMobileNav = false"> {{ $t('route.blocks') }}</NuxtLink>
-                    </td></tr>
-                    <tr><td>
                         <NuxtLink :to="'/transactions'" class="link" :class="{ 'active' : route.path === '/transactions'}" @click="showMobileNav = false"> {{ $t('route.transactions') }}</NuxtLink>
                     </td></tr>
                     <tr><td>
@@ -191,9 +188,6 @@ const external = [
                     </td></tr>
                     <tr><td>
                         <NuxtLink :to="'/dashboard/bridge'" class="link" :class="{ 'active' : route.path === '/dashboard/bridge'}" @click="showMobileNav = false"> {{ $t('route.bridge') }}</NuxtLink>
-                    </td></tr>
-                    <tr><td>
-                        <NuxtLink :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}" @click="showMobileNav = false"> {{ $t('route.about') }} </NuxtLink>
                     </td></tr>
                 </tbody>
             </table>

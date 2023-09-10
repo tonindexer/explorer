@@ -127,7 +127,7 @@ const chartOptions = computed(() => { return {
         lineColor: 'white',
         labels: {
             // @ts-ignore
-            formatter: function() { return new Date(this.value).toLocaleDateString("en-US",  selection.value === '24h'?  { year: 'numeric', month: 'short', day: 'numeric' } : { month: 'short', day: 'numeric' }) },
+            formatter: function() { return new Date(this.value).toLocaleDateString("en-US",  { month: 'short', day: 'numeric' }) },
             style : {
                 'color': '#999'
             }
