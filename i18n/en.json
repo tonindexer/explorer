@@ -78,6 +78,7 @@
         "noone" : "Noone",
         "src_tx" : "SRC Tx",
         "dst_tx" : "DST Tx",
+        "tx_names" : "tx Id",
         "amount" : "Amount",
         "scanned" : "Scanned",
         "created" : "Created",

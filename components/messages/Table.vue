@@ -41,6 +41,9 @@ const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
 const maxExploredPage = ref(0)
+const sortby = ref({
+    order_desc: true
+})
 
 const firstLT: NullableBigRef = ref(0n)
 const lastLT: NullableBigRef = ref(0n)
@@ -64,10 +67,10 @@ const updateValues = async (next: boolean = true) => {
     emptyTable.value = false
     setExtraFields()
     if (props.keys.length === 0 || pageNum.value === 0) {
-        await store.updateMessages(itemCount.value, null, selectedOptions.value)
+        await store.updateMessages(itemCount.value, null, selectedOptions.value, sortby.value.order_desc ? 'DESC' : 'ASC')
     }
     else {
-        await store.updateMessages(itemCount.value, next ? lastLT.value : firstLT.value, selectedOptions.value)
+        await store.updateMessages(itemCount.value, next ? lastLT.value : firstLT.value, selectedOptions.value, sortby.value.order_desc ? 'DESC' : 'ASC')
     }
     if (props.keys.length === 0) emptyTable.value = true
 }
@@ -196,6 +199,11 @@ watch(pageNum, async(to, from) => {
     }
 }, {deep : true}) 
 
+watch(sortby, () => {
+    if (pageNum.value === 0) updateValues()
+    else pageNum.value = 0
+}, {deep: true})
+
 watch(itemCount, async() => {
     if (pageNum.value === 0) updateValues()
     else pageNum.value = 0
@@ -214,12 +222,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <div v-if="route.path === '/messages'" class="uk-flex" :class="{ 'uk-text-secondary' : filterFlag}">
+    <div v-if="route.path === '/messages'" class="uk-flex" style="padding: 12px 16px" :class="{ 'uk-text-secondary' : filterFlag}">
         <div :uk-icon="`icon: ${filterFlag ? 'chevron-down' : 'chevron-right'}; ratio: 1.2`" @click="filterFlag = !filterFlag" style="cursor: pointer;"></div>
         <div @click="filterFlag = !filterFlag" style="cursor: pointer;">{{ $t('options.filter') }}</div>
     </div>
 
-    <div v-if="filterFlag" class="uk-child-width-1-1 uk-child-width-1-2@m uk-child-width-1-3@xl" uk-grid>
+    <div v-if="filterFlag" class="uk-child-width-1-1 uk-child-width-1-2@m uk-child-width-1-3@xl" style="padding: 0 16px 12px " uk-grid>
         <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
             <div>   
                 {{ $t('ton.src_address') }}
@@ -251,7 +259,7 @@ onMounted(() => {
                 {{ $t('ton.src_contract') }}
             </div>
             <div class="uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
-                <div v-if="!isMobile()" class="uk-width-2-3">
+                <div v-if="!isMobile()" class="uk-width-1-1">
                     <ModelSelect :options="options" v-model="filterFields.src_contract_desktop" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
                 </div>
                 <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
@@ -272,7 +280,7 @@ onMounted(() => {
             </div>
             <div class="uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
 
-                <div v-if="!isMobile()" class="uk-width-2-3">
+                <div v-if="!isMobile()" class="uk-width-1-1">
                     <ModelSelect :options="options" v-model="filterFields.dst_contract_desktop" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
                 </div>
                 <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
@@ -330,44 +338,64 @@ onMounted(() => {
             </div>
         </template>
     </div>
-    <template v-if="emptyTable">
-        <div class="uk-flex uk-margin-top">
-            {{ $t('warning.nothing_found') }}
-        </div>
-    </template>
-    <template v-else-if="loading">
-        <div class="uk-flex uk-flex-center uk-margin-top">
-            <Loader />
-        </div>
-    </template>
-    <template v-else-if="!hidden">
-        <table class="uk-table uk-table-divider uk-table-middle uk-margin-remove-vertical">
-            <tbody>
-                <tr v-for="msg in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                    <td :colspan="isMobile() ? 5 : 6" class="uk-padding-remove-vertical">
-                        <MessagesTableLine :msg="store.messages[msg]" :show-link="showLink"/>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end; padding-right: 12px;">
-            <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
-                <AtomsSelector 
-                    :item-count="itemCount"
-                    :amount="store.totalQueryMessages"
-                    :options="[5, 10, 20, 50]"
-                    @set-value="(e: any) => itemCount = e.value"
-                />
+    <table v-show="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
+        <colgroup v-if="!isMobile()">
+            <col width="13%" />
+            <col width="13%" />
+            <col width="25%" />
+            <col width="13%" />
+            <col width="13%" />
+            <col width="13%" />
+            <col width="10%" />
+        </colgroup>
+        <thead v-if="!isMobile()">
+            <tr>
+                <th style="width:13%; min-width: 20px">{{ $t('general.tx_names') }}</th>
+                <th style="width:13%;">{{ $t('ton.type')}}</th>
+                <th class="uk-table-expand" style="width:25%;">{{ $t('ton.operation_name') }}</th>
+                <th style="width:13%;">{{ $t('general.sender')}}</th>
+                <th style="width:13%;">{{ $t('general.receiver')}}</th>
+                <th class="uk-text-right" style="width:13%;">{{ $t('general.amount')}}</th>
+                <th class="uk-text-right uk-text-nowrap" style="width:10%;" :class="{'hover-header' : update}" @click="sortby.order_desc = !sortby.order_desc">
+                    {{ $t('general.created') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
+                </th>
+            </tr>
+        </thead>
+        <template v-if="emptyTable">
+            <div class="uk-flex uk-margin-top">
+                {{ $t('warning.nothing_found') }}
             </div>
-            <AtomsPageArrows    
-                :page="pageNum" 
-                :left-disabled="pageNum === 0" 
-                :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
-                @increase="pageNum += 1"
-                @decrease="pageNum -= 1"
-            />            
+        </template>
+        <template v-else-if="loading">
+            <div class="uk-flex uk-flex-center uk-margin-top">
+                <Loader />
+            </div>
+        </template>
+        <template v-else>
+            <tbody>
+                <template v-for="msg in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+                    <MessagesTableLine :msg="store.messages[msg]" :show-link="showLink"/>
+                </template>
+            </tbody>
+        </template>
+    </table>
+    <div v-if="!emptyTable && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end; padding-right: 12px;">
+        <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
+            <AtomsSelector 
+                :item-count="itemCount"
+                :amount="store.totalQueryMessages"
+                :options="[5, 10, 20, 50]"
+                @set-value="(e: any) => itemCount = e.value"
+            />
         </div>
-    </template>
+        <AtomsPageArrows    
+            :page="pageNum" 
+            :left-disabled="pageNum === 0" 
+            :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
+            @increase="pageNum += 1"
+            @decrease="pageNum -= 1"
+        />            
+    </div>
 </template>
 
 <style lang="scss">

@@ -119,7 +119,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <table v-if="!hidden" class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
+    <table v-show="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <colgroup v-if="!isMobile()">
             <col width="13%" />
             <col width="13%" />
@@ -132,7 +132,7 @@ onMounted(() => {
         <thead v-if="!isMobile()">
             <tr>
                 <th style="width:13%; min-width: 20px">{{ $t('ton.id') }}</th>
-                <th class="uk-flex" style="position: relative; width: fit-content;" :class="{'dropdown-text filter-icon hover-header' : update && route.path === '/transactions'}">
+                <th class="uk-flex" style="position: relative; width: fit-content;" :class="{'dropdown-text filter-icon hover-header' : update && (route.path === '/transactions' || route.path === '/'), 'active' : workchain}">
                     {{ $t('ton.type')}}
                     <div class="dropdown-filter">
                         <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary" style="padding: 8px 16px;">

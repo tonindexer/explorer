@@ -18,7 +18,7 @@ defineProps<Props>()
                 <div class="uk-margin-small-left uk-margin-small-right" v-if="fourth">{{ '·' }}</div>
                 {{ fourth }}
             </p>
-            <p class="uk-flex uk-margin-remove uk-text-left" :class="{'uk-flex-wrap' : wrap}">
+            <p class="uk-flex uk-margin-remove uk-text-left uk-text-primary" :class="{'uk-flex-wrap' : wrap}">
                 <slot name="value"/>
             </p>
         </td>

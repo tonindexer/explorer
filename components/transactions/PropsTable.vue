@@ -23,7 +23,7 @@ const externalLink = computed(() : MockType=> {
 </script>
 
 <template>
-    <table class="uk-table uk-table-middle">
+    <table class="uk-table uk-table-middle uk-margin-remove-vertical uk-table-striped">
         <tbody class="uk-table-divider">
             <tr>
                 <AtomsPropLine>
@@ -95,7 +95,7 @@ const externalLink = computed(() : MockType=> {
                     <template #value>
                         <template v-if="trn.prev_tx_hash !== 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='">
                             <AtomsCopyableText :text="trn.prev_tx_hash">
-                                <NuxtLink :to="`/transactions?hash=${toBase64Web(trn.prev_tx_hash)}#overview`">
+                                <NuxtLink class="uk-text-primary" :to="`/transactions?hash=${toBase64Web(trn.prev_tx_hash)}#overview`">
                                     {{ trn.prev_tx_hash }}
                                 </NuxtLink>
                             </AtomsCopyableText> 

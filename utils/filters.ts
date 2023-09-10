@@ -3,6 +3,11 @@ export const shortTON = (rawTON: bigint) : string => {
     return Math.abs(out) < 0.1 ? out.toFixed(3).toString() : Math.abs(out) > 100 ? out.toString() : out.toPrecision(3).toString()
 }
 
+export const tinyTON = (rawTON: bigint) : string => {
+    const out = (Number(BigInt(rawTON) * 100n) / 100000000000)
+    return out.toFixed(5).toString()
+}
+
 export const roundTON = (rawTON: bigint) : string => {
     const out = (Number(BigInt(rawTON) * 100n) / 100000000000)
     return Math.round(out).toString()

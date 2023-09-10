@@ -60,7 +60,7 @@ defineEmits(['toggleMsg'])
     </tr>
     <tr v-else>
         <template v-if="messageKeys.length > 0">
-            <td class="uk-flex uk-flex-column">
+            <td>
                 <NuxtLink class="uk-text-truncate uk-text-emphasis" aria-label="transaction_link" :to="{ path: 'transactions', query: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
                     {{ truncString(trn.hash, 5) }}
                 </NuxtLink>
@@ -95,7 +95,7 @@ defineEmits(['toggleMsg'])
                     <AtomsAddressField v-for="msg in messageKeys" class="uk-text-right" :addr="store.messages[msg].dst_address ?? null" :break_word="false"/>
                 </div>
             </td>
-            <td class="uk-flex uk-flex-column">
+            <td>
                 <AtomsTableDateCell :date-time="trn.created_at"/>
             </td>   
         </template>

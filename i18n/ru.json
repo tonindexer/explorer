@@ -78,6 +78,7 @@
         "interval" : "Интервал",
         "src_tx" : "SRC Транз",
         "dst_tx" : "DST Транз",
+        "tx_names" : "трнз Id",
         "amount" : "Кол-во",
         "scanned" : "Отслежено",
         "created" : "Создано",

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
+const router = useRouter()
 
 interface Props {
     hash: string
@@ -34,10 +35,20 @@ const reloadInfo = async() => {
     }
 }
 
+const routes = computed(() => {
+    const output: { route: string, t: string }[] = []
+    if (inMessageKeys.value.length + outMessageKeys.value.length > 0) output.push({ route: 'messages', t: 'route.messages'})
+    if (loadedAccountKeys.value.length + unloadedAccountKeys.value.length  > 0) output.push({ route: 'messages', t: 'route.messages'})
+    return output
+})
+
+const selectedRoute = ref('messages')
+
 onMounted(async() => {
     await reloadInfo()
 })
 
+watch(selectedRoute,() => router.replace({ hash: '#' + selectedRoute.value, query: route.query}))
 watch(props, async() => await reloadInfo())
 </script>
 
@@ -58,26 +69,21 @@ watch(props, async() => await reloadInfo())
                 <TransactionsPropsTable :trn="transaction"/>
             </template>
         </AtomsTile>
-        <AtomsTile v-if="[...inMessageKeys, ...outMessageKeys].length > 0" :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
+        <AtomsTile v-if="inMessageKeys.length + outMessageKeys.length > 0" :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
             <template #top>
-                <ul class="uk-child-width-expand uk-text-medium tab-styler" uk-tab>
-                    <li class="uk-margin-remove-left" v-if="[...inMessageKeys, ...outMessageKeys].length > 0" :class="{'uk-active' : (route.hash === '#messages' || route.hash === '#overview')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#messages', query: route.query}">
-                            {{ $t('route.messages') }}
-                            <span>
-                                {{ inMessageKeys.length + outMessageKeys.length }}
-                            </span>
+                <select v-if="isMobile()" :value="selectedRoute" aria-label="Select" @change="($event: any) => selectedRoute = $event.target.value" class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary">
+                    <option v-for="option in routes" :value="option.route">{{ $t(option.t) }}</option>
+                </select>
+                <div v-if="!isMobile()" class="category-wrapper">
+                    <div class="uk-flex uk-flex-middle uk-margin-remove-top">
+                        <NuxtLink v-if="inMessageKeys.length + outMessageKeys.length > 0" class="category" :to="{ hash: '#messages', query: route.query}" :class="{'selected white': (route.hash === '#messages' || route.hash === '#overview')}">
+                            {{ $t('route.messages')}}
                         </NuxtLink>
-                    </li>
-                    <li class="uk-margin-remove-left" v-if="loadedAccountKeys.length + unloadedAccountKeys.length > 0" :class="{'uk-active' : (route.hash === '#accounts')}" style="min-width: fit-content;">
-                        <NuxtLink :to="{ hash: '#accounts', query: route.query}">
-                            {{ $t('route.accounts') }}
-                            <span>
-                                {{ loadedAccountKeys.length + unloadedAccountKeys.length }}
-                            </span>
+                        <NuxtLink v-if="loadedAccountKeys.length + unloadedAccountKeys.length > 0" class="category" :to="{ hash: '#accounts', query: route.query}" :class="{'selected white': (route.hash === '#accounts')}">
+                            {{ $t('route.accounts')}}
                         </NuxtLink>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </template>
             <template #body>
                 <div v-if="route.hash === '#messages' || route.hash === '#overview'" id="messages" style="padding: 0 12px">

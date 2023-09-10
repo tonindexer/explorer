@@ -118,7 +118,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <table class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
+    <table v-show="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <colgroup v-if="!isMobile()">
             <col width="20%" />
             <col width="20%" />
@@ -156,7 +156,7 @@ onMounted(() => {
                 </td>
             </tr>
         </template>
-        <template v-else-if="!hidden">
+        <template v-else>
             <tbody>
                 <template v-for="acc in keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                     <AccountsTableLine :acc="store.accounts[acc]"/>
