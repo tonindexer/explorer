@@ -119,7 +119,7 @@ onMounted(() => {
 
 <template>
     <div v-if="isMobile() && route.path === '/accounts'" class="uk-flex uk-flex-right" style="padding: 16px 16px 0;">
-        <div class="uk-width-1-1 uk-text-small" style="margin-right: 0.5rem;">
+        <div class="uk-width-1-1 uk-text-small">
             <AtomsSelector 
                 :item-count="selectedContract"
                 :def="true"
