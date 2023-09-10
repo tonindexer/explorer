@@ -6,6 +6,6 @@ const store = useMainStore()
 
 <template>
   <div class="uk-flex uk-flex-column">
-    <LazyTransactionsTable :keys="store.exploredTransactions" :update="true" :default-length="isMobile() ? 5 : 10" :item-selector="true" :hidden="false" :account="null" :order="'DESC'"/>
+    <LazyTransactionsTable :keys="store.exploredTransactions" :update="true" :default-length="isMobile() ? 5 : 10" :item-selector="true" :hidden="false" :account="null"/>
   </div>
 </template>

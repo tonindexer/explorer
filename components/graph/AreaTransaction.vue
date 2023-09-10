@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Chart } from 'highcharts-vue';
 import { useMainStore } from '~/store/TONExp';
+const route = useRoute()
 
 interface Graph {
     series: {
@@ -12,7 +13,7 @@ interface Graph {
 }
 
 const store = useMainStore()
-const excludeMC = ref(false)
+const workchain = computed(() => 'workchain' in route.query? (route.query.workchain?.toString() ?? null) : null)
 
 const filterInterval = ref({
     from: store.startupTime - 86400000 * 31 * 6 as number,
@@ -166,7 +167,7 @@ const dayMaxCaption = computed(() => {
 const selection: Ref<IntervalAPI> = ref('24h')
 
 const requestData = async (reset: boolean, setLast: boolean = false) => {
-    await store.getTransactionsChart(selection.value, excludeMC.value, requestTimes.value.from, requestTimes.value.to, reset, setLast)
+    await store.getTransactionsChart(selection.value, workchain.value, requestTimes.value.from, requestTimes.value.to, reset, setLast)
     graph.value?.chart.xAxis[0].setExtremes(0, dataParser.value.times.length - 1)
 }
 
@@ -220,7 +221,7 @@ watch(() => filterInterval.value, () => {
     setInterval()
 }, {deep: true})
 
-watch(excludeMC, () => {
+watch(workchain, () => {
     requestData(true)
 })
 

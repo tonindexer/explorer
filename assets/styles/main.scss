@@ -180,6 +180,13 @@ $text-primary-color: #000;
   background-color: white;
 }
 
+.uk-radio:checked, .uk-checkbox:checked, .uk-checkbox:indeterminate {
+  background-color: black !important;
+}
+
+.uk-table {
+  margin-bottom: 12px;
+}
 .uk-table > thead {
   border-bottom: 1px solid #ccc;
   tr {

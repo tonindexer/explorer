@@ -19,7 +19,6 @@ const jtKeys = computed(() => account.value?.jetton_wallets?.length > 0 ? accoun
 const minterKeys = computed(() => account.value?.minted_nfts?.length > 0 ? account.value.minted_nfts : [] as AccountKey[])
 const ownerKeys = computed(() => account.value?.owned_nfts?.length > 0 ? account.value.owned_nfts : [] as AccountKey[])
 const getMethods = computed(() => account.value?.executed_get_methods && Object.keys(account.value.executed_get_methods).length > 0 ? account.value.executed_get_methods : {} as {[key: string] : GetMethod[]})
-const trDesc = ref(true)
 const sankeyType = ref("count")
 
 const reloadInfo = async() => {
@@ -123,8 +122,7 @@ watch(() => props.hex, async() => await reloadInfo())
             </template>
             <template #body>
                 <div v-show="(route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
-                    <label class="uk-align-right uk-margin-right uk-margin-remove-bottom"><input v-model="trDesc" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.desc') }}</label>
-                    <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :account="hex" :order="trDesc ? 'DESC' : 'ASC'"/>
+                    <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :account="hex"/>
                 </div>
                 <div v-if="route.hash === '#jettons'" id="jettons">
                     <LazyAccountsJettonsTable :owner="hex" :keys="jtKeys" :default-length="10" />

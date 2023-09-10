@@ -57,7 +57,7 @@ onMounted(() => routeChecker(route.query))
             
             <AtomsTile :body="true" :tile-style="'margin-top: 32px; padding-bottom: 12px'">
                 <template #body>
-                    <LazyTransactionsTable :keys="store.exploredTransactions" :update="true" :default-length="20" :item-selector="true" :hidden="false" :order="'DESC'" :account="null"/>
+                    <LazyTransactionsTable :keys="store.exploredTransactions" :update="true" :default-length="20" :item-selector="true" :hidden="false" :account="null"/>
                 </template>
             </AtomsTile>
 

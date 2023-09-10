@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
-import { ModelSelect } from 'vue-search-select'
+
 const route = useRoute()
 const router = useRouter()
 
@@ -10,11 +10,6 @@ interface AccountTable {
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
-}
-
-type SelectItem = {
-    value: string,
-    text: string
 }
 
 const props = defineProps<AccountTable>()
@@ -75,6 +70,7 @@ const routeChecker = () => {
         selectedContract.value = 'All'
     }
 }
+
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     emptyTable.value = false
@@ -168,7 +164,7 @@ onMounted(() => {
             </tbody>
         </template>
     </table>
-    <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
+    <div v-show="!emptyTable && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
         <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
             <ClientOnly>
                 <AtomsSelector 

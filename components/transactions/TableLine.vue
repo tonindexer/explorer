@@ -1,36 +1,43 @@
 <script setup lang="ts">
+import { useMainStore } from '~/store/TONExp';
+
 interface Props {
     trn: Transaction
     msgShow: boolean
 }
 
 const props = defineProps<Props>()
+const store = useMainStore()
+
+const messageKeys = computed(() => store.getMessageKeys([props.trn.hash], true, true).filter(key => key in store.messages))
 
 defineEmits(['toggleMsg'])
 </script>
 
 <template>
     <tr v-if="isMobile()">
-        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem;">
+        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 16px">
             <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
-                    <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(trn.hash) }, hash: '#overview'}" class="uk-text-primary">
-                        <div uk-icon="icon: link"></div>{{ truncString(trn.hash, 25,0) }}
-                    </NuxtLink>
+                <NuxtLink :to="{ path: 'transactions', query: { hash: toBase64Web(trn.hash) }, hash: '#overview'}" class="uk-text-emphasis">
+                    {{ truncString(trn.hash, 5) }}
+                </NuxtLink>
             </div>
             <div class="uk-flex" style="justify-content: space-between;">
                 <div>   
                     {{ $t('route.account') }}
                 </div>
                 <div class="uk-margin-remove uk-text-right">
-                    <NuxtLink :to="{path: 'accounts', query: { hex: trn.address.hex}, hash: '#overview'}" class="uk-text-primary"> {{ trn.address.hex in badAddresses ? badAddresses[trn.address.hex].name : truncString(trn.address.base64, 7) }}</NuxtLink>
+                    <NuxtLink :to="{path: 'accounts', query: { hex: trn.address.hex}, hash: '#overview'}" class="uk-text-emphasis"> {{ trn.address.hex in badAddresses ? badAddresses[trn.address.hex].name : truncString(trn.address.base64, 7) }}</NuxtLink>
                 </div>
             </div>
             <div class="uk-flex" style="justify-content: space-between;">
                 <div>   
                     {{ $t('ton.balance') }}
                 </div>
-                <div class="uk-margin-remove uk-text-right uk-text-truncate"  :class="colorAmount(trn.delta)">
-                    {{ trn.delta ? `${fullTON(trn.delta, true)}💎` : $t('general.none')}}
+                <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="align-self: center;">
+                    <div class="diamond">
+                        {{ roundTON(trn.delta) }}
+                    </div>
                 </div>
             </div>
             <div class="uk-flex" style="justify-content: space-between;">
@@ -46,31 +53,68 @@ defineEmits(['toggleMsg'])
                     {{ $t('ton.created_at') }}
                 </div>
                 <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                    <AtomsTableDateMobileCell :date-time="trn.created_at"/>
+                    <AtomsTableDateCell :date-time="trn.created_at"/>
                 </div>
             </div>
         </td>
     </tr>
     <tr v-else>
-        <td style="min-width: 20px" v-if="trn.in_msg_hash || trn.out_msg_count > 0"> 
-            <button aria-label="open_details" uk-icon="icon: chevron-right" v-if="!msgShow" @click="$emit('toggleMsg', trn.hash)" style="min-width: 20px"></button>
-            <button aria-label="close_details" uk-icon="icon: chevron-down" v-else @click="$emit('toggleMsg', trn.hash)" style="min-width: 20px"></button>
-        </td>
-        <td v-else style="min-width: 20px"> </td>
-        <td style="min-width: 20px"> 
-            <NuxtLink aria-label="transaction_link" :to="{ path: 'transactions', query: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
-                <p uk-icon="icon: social"></p>
-            </NuxtLink>
-        </td>
-        <td class="uk-width-1-5">
-            <p style="overflow-wrap: break-word; max-width: 150px;">{{ trn.op_type in knownOp ? (knownOp[trn.op_type] + ' in ') : trn.op_type }}</p>
-        </td>
-        <td>
-            <AtomsAddressField :addr="trn.address" :break_word="true"/>
-        </td>
-        <td class="uk-text-right uk-text-nowrap" :class="colorAmount(trn.delta)"> {{ trn.delta ? `${shortTON(trn.delta)}💎` : $t('general.none')}}</td>
-        <td>
-            <AtomsTableDateCell :date-time="trn.created_at"/>
-        </td>    
+        <template v-if="messageKeys.length > 0">
+            <td class="uk-flex uk-flex-column">
+                <NuxtLink class="uk-text-truncate uk-text-emphasis" aria-label="transaction_link" :to="{ path: 'transactions', query: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
+                    {{ truncString(trn.hash, 5) }}
+                </NuxtLink>
+            </td>
+            <td>
+                <div class="uk-flex uk-flex-column" style="gap: 24px">
+                    <AtomsStatusCell v-for="msg in messageKeys" :status="store.messages[msg].type"></AtomsStatusCell>
+                </div>
+            </td>
+            <td class="uk-text-truncate">
+                <div class="uk-flex uk-flex-column" style="gap: 24px">
+                    <div v-for="msg in messageKeys" class="uk-text-primary">
+                        {{ store.messages[msg].operation_name? store.messages[msg].operation_name : 
+                        ( store.messages[msg].operation_id? `op=0x${opToHex(store.messages[msg].operation_id ?? 0)}` : "&#8203") }}
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="uk-flex uk-flex-column" style="gap: 24px">
+                    <div v-for="msg in messageKeys" class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                        {{ (msg === trn.in_msg_hash ? '+' : '-') + roundTON(store.messages[msg].amount ?? 0n) }}
+                    </div>
+                </div>
+            </td>
+            <td class="uk-text-truncate"> 
+                <div class="uk-flex uk-flex-column" style="gap: 24px">
+                    <AtomsAddressField v-for="msg in messageKeys" class="uk-text-right" :addr="store.messages[msg].src_address ?? null" :break_word="false"/>
+                </div>
+            </td>
+            <td class="uk-text-truncate"> 
+                <div class="uk-flex uk-flex-column" style="gap: 24px">
+                    <AtomsAddressField v-for="msg in messageKeys" class="uk-text-right" :addr="store.messages[msg].dst_address ?? null" :break_word="false"/>
+                </div>
+            </td>
+            <td>
+                <AtomsTableDateCell :date-time="trn.created_at"/>
+            </td>   
+        </template>
+        <template v-else-if="messageKeys.length === 0">
+            <td>
+                <NuxtLink class="uk-text-emphasis" aria-label="transaction_link" :to="{ path: 'transactions', query: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
+                    {{ truncString(trn.hash, 5) }}
+                </NuxtLink>
+            </td>
+            <td class="uk-flex">
+                <AtomsStatusCell :status="'UPDATE'"></AtomsStatusCell>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <AtomsTableDateCell :date-time="trn.created_at"/>
+            </td> 
+        </template>
     </tr>
 </template>

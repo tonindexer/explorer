@@ -12,7 +12,7 @@ const store = useMainStore()
 
 <template>
     <template v-if="addr === null">
-        <div class="uk-text-secondary">
+        <div class="uk-text-primary">
             {{ $t('general.empty') }}
         </div> 
     </template>

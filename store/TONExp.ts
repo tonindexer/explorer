@@ -305,7 +305,7 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
         try {
-          await this.updateTransactions(mobi ? 5 : 10, null, true)
+          await this.updateTransactions(mobi ? 5 : 10, null, 'base')
         } catch (error) {
           console.log(error)
         }
@@ -460,7 +460,7 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async updateTransactions(limit: number, seqOffset: bigint | null, excludeMC: boolean | null, account: AccountKey | null = null, order: "ASC" | "DESC" = "DESC") { 
+      async updateTransactions(limit: number, seqOffset: bigint | null, workchain: 'main' | 'base' | null, account: AccountKey | null = null, order: "ASC" | "DESC" = "DESC") { 
         const fullReq: MockType = {
           order, 
           limit
@@ -468,7 +468,7 @@ export const useMainStore = defineStore('tonexp', {
         if (seqOffset) fullReq.after = seqOffset
         if (!seqOffset) this.exploredTransactions = []
         if (account) fullReq.address = account
-        if (excludeMC) fullReq.workchain = 0
+        if (workchain) fullReq.workchain = workchain === 'base' ? '0' : '-1'
         const query = getQueryString(fullReq, true)
         try {
           const { data } = await apiRequest(`/transactions?${query}`, 'GET')
@@ -488,14 +488,14 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async getTransactionsChart(interval: IntervalAPI, excludeMC: boolean, from: string, to: string | null, reset: boolean = false, setEnd : boolean = false) {
+      async getTransactionsChart(interval: IntervalAPI, workchain: string | null, from: string, to: string | null, reset: boolean = false, setEnd : boolean = false) {
         const fullReq: MockType = {
           interval,
           from,
           to,
           metric : 'transaction_count'
         }
-        if (excludeMC) fullReq.workchain = 0
+        if (workchain) fullReq.workchain = workchain
 
         let newArr: GraphCell[] = reset ? [] : [...this.transactionGraphData]
         const query = getQueryString(fullReq, true)
