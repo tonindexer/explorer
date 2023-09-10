@@ -86,7 +86,7 @@ const loadData = async () => {
     }
 }
 
-watch(finalData, () => loadAccounts())
+watch(finalData, () => loadAccounts(), {deep: true})
 
 onMounted(async () => {
     await loadData()

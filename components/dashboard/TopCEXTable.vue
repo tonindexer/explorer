@@ -68,7 +68,6 @@ const composeAddress = (item: string) => store.accounts[item]?.address ?? null
 
 const loadAccounts = async () => {
     await store.fetchBareAccounts([...topAccs.value])
-
 }
 
 watch(pageNum, async(to, from) => {
@@ -107,7 +106,7 @@ const loadData = async () => {
     }
 }
 
-watch(finalData, () => loadAccounts())
+watch(finalData, () => loadAccounts(), {deep: true})
 
 onMounted(async () => {
     await loadData()
