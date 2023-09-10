@@ -88,7 +88,7 @@ watch(props, async() => await reloadInfo())
                 </div>
                 <div v-if="route.hash === '#accounts' && (loadedAccountKeys.length + unloadedAccountKeys.length > 0)" id="accounts" style="padding: 0 12px">
                     <h3 v-if="loadedAccountKeys.length > 0" class="uk-margin-remove uk-text-primary">{{ $t('general.loaded_accs') + ` (${loadedAccountKeys.length})` }}</h3>
-                    <AccountsTable :default-length="10" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false" :filters="{ interface: null }"/>
+                    <AccountsTable :default-length="10" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false"/>
                     <h3 v-if="unloadedAccountKeys.length > 0" class="uk-margin-remove uk-text-primary">{{ $t('general.unloaded_accs') + ` (${unloadedAccountKeys.length})` }}</h3>
                     <AccountsUnloadedTable :default-length="5" :keys="unloadedAccountKeys" :hidden="unloadedAccountKeys.length === 0"/>
                 </div>

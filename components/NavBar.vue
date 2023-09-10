@@ -166,7 +166,7 @@ const external = [
         </a>
     </div>
 
-    <nav v-show="isMobile()" class="uk-position-fixed uk-position-z-index mob-nav uk-flex uk-flex-column" :class="{ 'open' : showMobileNav , 'closed' : !showMobileNav}" style="justify-content: space-between;">
+    <nav v-show="isMobile()" class="uk-position-fixed mob-nav uk-flex uk-flex-column" :class="{ 'open' : showMobileNav , 'closed' : !showMobileNav}" style="justify-content: space-between; z-index: 3;">
         <div>
             <table class="uk-table uk-table-divider uk-padding-remove-top" style="align-items: center; font-size: 1.25rem;">
                 <tbody>

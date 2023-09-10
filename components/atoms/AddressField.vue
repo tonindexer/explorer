@@ -17,13 +17,13 @@ const store = useMainStore()
         </div> 
     </template>
     <template v-else-if="addr.hex in badAddresses"> 
-        <NuxtLink class="uk-text-primary" :to="{ path: '/accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
+        <NuxtLink class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
             {{ badAddresses[addr.hex].name }}
         </NuxtLink>
     </template>
     <template v-else> 
-        <NuxtLink class="uk-text-primary" :to="{ path: '/accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
-            {{ store.accounts[addr.hex]?.label?.name ?? (showHex? addr.hex : addr.base64) }}
+        <NuxtLink class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
+            {{ store.accounts[addr.hex]?.label?.name ?? truncString((showHex? addr.hex : addr.base64), 5) }}
         </NuxtLink>
     </template>
 </template>

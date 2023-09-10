@@ -3,6 +3,11 @@ export const shortTON = (rawTON: bigint) : string => {
     return Math.abs(out) < 0.1 ? out.toFixed(3).toString() : Math.abs(out) > 100 ? out.toString() : out.toPrecision(3).toString()
 }
 
+export const roundTON = (rawTON: bigint) : string => {
+    const out = (Number(BigInt(rawTON) * 100n) / 100000000000)
+    return Math.round(out).toString()
+}
+
 export const fullTON = (rawTON: bigint, delta: boolean = true) : string => {
     return (BigInt(rawTON) > 0n && delta ? '+' : '') + (Number(BigInt(rawTON) * 100n) / 100000000000).toString()
 }
@@ -71,6 +76,67 @@ export const formatTons = function formatNanoTonsLimitNumberLength(value: number
     return round
         ? currencyFormatter.format(value / valueMultiplier)
         : feeFormatter.format(value / valueMultiplier);
+};
+
+export const getHumanTime = (timestamp: number | Date | string) => {
+
+	// Convert to a positive integer
+	const time = Math.abs(new Date(timestamp).getTime() - new Date().getTime())
+
+	// Define humanTime and units
+	let humanTime: number, units : string
+
+	// If there are years
+	if (time > (1000 * 60 * 60 * 24 * 365)) {
+		humanTime = Math.round(time / (1000 * 60 * 60 * 24 * 365))
+		units = 'y';
+	}
+
+	// If there are months
+	else if (time > (1000 * 60 * 60 * 24 * 30)) {
+		humanTime = Math.round(time / (1000 * 60 * 60 * 24 * 30))
+		units = 'mo';
+	}
+
+	// If there are days
+	else if (time > (1000 * 60 * 60 * 24)) {
+		humanTime = Math.round(time / (1000 * 60 * 60 * 24))
+		units = 'd';
+	}
+
+	// If there are hours
+	else if (time > (1000 * 60 * 60)) {
+		humanTime = Math.round(time / (1000 * 60 * 60))
+		units = 'h';
+	}
+
+	// If there are minutes
+	else if (time > (1000 * 60)) {
+		humanTime = Math.round(time / (1000 * 60))
+		units = ' min';
+	}
+
+    else if (time > 1000*45) {
+		humanTime = 45;
+		units = 's';
+	}
+
+    else if (time > 1000*30) {
+		humanTime = 30;
+		units = 's';
+	}
+
+	// Otherwise, use seconds
+	else if (time > 1000*15) {
+		humanTime = 15;
+		units = 's';
+	}
+  else {
+    humanTime = 0
+    units = ''
+  }
+	return humanTime && units ? (humanTime + units + ' ago') : 'just now';
+
 };
 
 type badList = {

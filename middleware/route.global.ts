@@ -15,4 +15,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
         store.updateTransactions(20, null, null)
         return
     }
+    if (to.fullPath === '/accounts' && (from.path !== '/accounts')) {
+        store.updateAccounts(20, null, null)
+        return
+    }
   })

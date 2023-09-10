@@ -9,6 +9,7 @@ export default <RouterConfig>{
 
         if (to.hash && from.hash) return false
         if (to.path === '/messages' && from.path === '/messages') return false
+        if (to.path === '/accounts' && from.path === '/accounts' && !from.query?.hex && !to.query?.hex) return false
         if (to.path === '/transactions' && from.path === '/transactions' && !from.hash && !to.hash) return false
 
         return { top: 0, left: 0, behavior: 'smooth'}

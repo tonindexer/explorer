@@ -30,21 +30,18 @@ const maxExploredPage = ref(0)
 const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
 const emptyTable = ref(false)
 
-const selected: Ref<SelectItem | {}> = ref({ value: '', text: ''})
-const selectedMobile = ref('All')
 const contract = computed(() => route.query.contract? route.query.contract.toString() : null)
 
-const options = computed(() => Object.values(store.interfaces).map(item => { return { value: item.name, text: item.name}}).sort((a, b) => a.text > b.text ? 1 : -1))
-const optionsMobile = computed(() : string[] => {
+const selectedContract = ref('All')
+const sortby = ref({
+    order_desc: true
+})
+
+const optionsContract = computed(() : string[] => {
     const defualt = ['All']
     defualt.push(...Object.keys(store.interfaces))
     return defualt.sort()
 })
-
-const reset = () => { 
-    selected.value = {};
-    selectedMobile.value = 'All' 
-}
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {
@@ -61,9 +58,7 @@ const setExtraFields = () => {
 const setRoute = () => {
     if (route.path !== '/accounts') return
     let contract = null
-    if ('value' in selected.value && selected.value.value !== '')
-        contract = selected['value'].value
-    else if (selectedMobile.value !== 'All') contract = selectedMobile.value
+    if (selectedContract.value !== 'All') contract = selectedContract.value
 
     if (!('hex' in route.query)) {
         const queryString = getQueryString({ contract } , true)
@@ -75,33 +70,27 @@ const setRoute = () => {
 const routeChecker = () => {
     if (route.path !== '/accounts') return
     if ('contract' in route.query && route.query.contract !== '') {
-        isMobile() ? (selectedMobile.value = route.query.contract?.toString() ?? 'All') :
-            selected.value = {value: route.query.contract, text: route.query.contract }
+        selectedContract.value = route.query.contract?.toString() ?? 'All'
     } else {
-        selectedMobile.value = 'All'
-        selected.value = {}
+        selectedContract.value = 'All'
     }
 }
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     emptyTable.value = false
     if (props.keys.length === 0 || pageNum.value === 0)
-        await store.updateAccounts(itemCount.value, null, {interface: contract.value})
+        await store.updateAccounts(itemCount.value, null, {interface: contract.value}, sortby.value.order_desc ? 'DESC' :'ASC')
     else {
-        await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value, {contract: contract.value})
+        await store.updateAccounts(itemCount.value, next ? lastTX.value : firstTX.value, {interface: contract.value}, sortby.value.order_desc ? 'DESC' :'ASC')
     }
     if (props.keys.length === 0) emptyTable.value = true
 }
 
-watch(contract, () => 
-    isMobile() ? (selectedMobile.value = route.query.contract?.toString() ?? 'All') :
-            selected.value = {value: route.query.contract, text: route.query.contract })
+watch(contract, () => selectedContract.value = route.query.contract?.toString() ?? 'All')
 
-watch(selected, (to, from) => {
-    if (to !== from)
-        setRoute()
-})
-watch(selectedMobile, () => setRoute())
+watch(selectedContract, () => setRoute())
+
+watch(sortby, () => updateValues(), {deep: true})
 
 watch(pageNum, async(to, from) => {
     if (props.update) {
@@ -133,65 +122,69 @@ onMounted(() => {
 </script>
 
 <template>
-    <div v-if="route.path === '/accounts'" class="uk-flex uk-flex-right" style="padding: 12px;">
-        <div v-if="!isMobile()" class="uk-width-2-5">
-            <ModelSelect :options="options" v-model="selected" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
-        </div>
-        <div v-else-if="isMobile()" class="uk-width-4-5 uk-text-small" style="margin-right: 0.5rem;">
-            <AtomsSelector 
-                :item-count="selectedMobile"
-                :amount="null"
-                :start-line="null"
-                :options="optionsMobile"
-                @set-value="(e: any) => selectedMobile = e.value"
-            />
-        </div>
-        <a v-if="Object.keys(selected).length > 0 && contract" uk-icon="icon: close" @click="reset" style="align-self: center; margin-left: 0.5rem;"></a>
-    </div>
-    <template v-if="emptyTable && store.totalQueryAccounts === 0">
-        <div class="uk-flex uk-margin-top">
-            {{ $t('warning.nothing_found') }}
-        </div>
-    </template>
-    <template v-else-if="loading">
-        <div class="uk-flex uk-flex-center">
-            <Loader />
-        </div>
-    </template>
-    <template v-else-if="!hidden">
-        <table class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
-            <thead v-if="!isMobile()">
-                <tr>
-                    <th class="uk-width-2-5">{{ $t('ton.id')}}</th>
-                    <th class="uk-width-1-3">{{ $t('ton.contract')}}</th>
-                    <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
-                    <th class="uk-width-1-6 uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
-                </tr>
-            </thead>
+    <table class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
+        <colgroup v-if="!isMobile()">
+            <col width="20%" />
+            <col width="20%" />
+            <col width="20%" />
+            <col width="20%" />
+            <col width="20%" />
+        </colgroup>
+        <thead v-if="!isMobile()">
+            <tr>
+                <th class="uk-width-1-5">{{ $t('ton.id')}}</th>
+                <th class="uk-width-1-5 uk-flex" style="position: relative; width: fit-content;" :class="{'dropdown-text filter-icon hover-header' : update}">
+                    {{ $t('ton.contract')}}
+                    <div class="dropdown-filter">
+                        <div v-for="item of optionsContract" class="filter-item" :class="{'selected-filter': selectedContract === item}" @click="selectedContract = item">
+                            {{ item }}
+                        </div>
+                    </div>
+                </th>
+                <th class="uk-width-1-5 uk-text-right">{{ $t('ton.balance')}}</th>
+                <th class="uk-width-1-5 uk-text-right uk-margin-small-right">{{ $t('ton.status')}}</th>
+                <th class="uk-width-1-5 uk-text-right" :class="{'hover-header' : update}" @click="sortby.order_desc = !sortby.order_desc">
+                    {{ $t('general.updated') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
+                </th>
+            </tr>
+        </thead>
+        <template v-if="emptyTable && store.totalQueryAccounts === 0">
+            <div class="uk-flex uk-margin-top">
+                {{ $t('warning.nothing_found') }}
+            </div>
+        </template>
+        <template v-else-if="loading">
+            <tr class="uk-text-center">
+                <td colspan="5">
+                    <Loader />
+                </td>
+            </tr>
+        </template>
+        <template v-else-if="!hidden">
             <tbody>
                 <template v-for="acc in keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                     <AccountsTableLine :acc="store.accounts[acc]"/>
                 </template>
             </tbody>
-        </table>
-        <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
-            <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
-                <ClientOnly>
-                    <AtomsSelector 
-                        :item-count="itemCount"
-                        :amount="store.totalQueryAccounts"
-                        :options="[5, 10, 20, 50]"
-                        @set-value="(e: any) => itemCount = e.value"
-                    />
-                </ClientOnly>
-            </div>
-            <AtomsPageArrows    
-                :page="pageNum" 
-                :left-disabled="pageNum === 0" 
-                :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
-                @increase="pageNum += 1"
-                @decrease="pageNum -= 1"
-            />
+        </template>
+    </table>
+    <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
+        <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
+            <ClientOnly>
+                <AtomsSelector 
+                    :item-count="itemCount"
+                    :amount="store.totalQueryAccounts"
+                    :options="[5, 10, 20, 50]"
+                    @set-value="(e: any) => itemCount = e.value"
+                />
+            </ClientOnly>
         </div>
-    </template>
+        <AtomsPageArrows    
+            :page="pageNum" 
+            :left-disabled="pageNum === 0" 
+            :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
+            @increase="pageNum += 1"
+            @decrease="pageNum -= 1"
+        />
+    </div>
 </template>
