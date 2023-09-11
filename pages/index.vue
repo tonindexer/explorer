@@ -1,3 +1,17 @@
+<script lang="ts" setup>
+import { createToast } from 'mosha-vue-toastify';
+import 'mosha-vue-toastify/dist/style.css';
+
+onMounted(() => {
+    createToast({
+        description: '<a class="uk-text-primary uk-margin-left" uk-icon="icon: arrow-right" rel="external" href="https://explorer-beta.anton.tools" class="link"> Go and test our new design </a>',
+    },{
+        hideProgressBar: true,
+        timeout: 1000*60*3,
+        })
+})
+</script>
+
 <template>
     <template v-if="isMobile()">
         <div class="uk-flex uk-flex-column uk-margin-top" style="gap: 1.5rem">
@@ -34,3 +48,10 @@
         </div>
     </template>
 </template>
+
+<style>
+.mosha__toast__content-wrapper {
+    width: 100%;
+    justify-content: center;
+}
+</style>

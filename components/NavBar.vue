@@ -21,10 +21,9 @@ watch(showMobileNav, () => {
                     <NuxtLink :to="'/dashboard/telemint#charts'" class="link"  :class="{ 'active' : route.path === '/dashboard/telemint' }" > {{ $t('route.telemint') }}</NuxtLink>
                     <NuxtLink :to="'/dashboard/cex#charts'" class="link"  :class="{ 'active' : route.path === '/dashboard/cex' }" > {{ $t('route.cex') }}</NuxtLink>
                     <NuxtLink :to="'/dashboard/bridge'" class="link"  :class="{ 'active' : route.path === '/dashboard/bridge' }" > {{ $t('route.bridge') }}</NuxtLink>
-                    <NuxtLink style="white-space: nowrap;" :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}"> {{ $t('route.about') }} </NuxtLink>
                 </div>
                 <div class="uk-flex uk-padding-remove" style="align-items: center;">
-                    <NuxtLink rel="external" target="_blank" to="https://explorer-beta.anton.tools" style="line-height: 1;" class="link"> {{ 'switch to beta' }} </NuxtLink>
+                    <NuxtLink style="white-space: nowrap;" :to="'/about'" class="link" :class="{ 'active' : route.path === '/about'}"> {{ $t('route.about') }} </NuxtLink>
                     <AtomsLangSwitcher/>
                 </div>
             </template>
@@ -73,9 +72,7 @@ watch(showMobileNav, () => {
             </table>
         </div>
         <div class="uk-container uk-margin-small-bottom">
-            <NuxtLink rel="external" to="https://explorer-beta.anton.tools" class="link"> {{ 'switch to beta' }} </NuxtLink>
-
-            <AtomsLangSwitcher style="justify-content: center;"/>
+            <AtomsLangSwitcher/>
         </div>
     </nav>
 </template>
