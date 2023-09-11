@@ -5,9 +5,9 @@ useHead({
         lang: 'en'
     },
     script: [{
-        src: "js/uikit.min.js"
+        src: "/js/uikit.min.js"
     },{
-        src: "js/uikit-icons.min.js"
+        src: "/js/uikit-icons.min.js"
     }]    
 })
 useSeoMeta({

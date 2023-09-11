@@ -114,7 +114,9 @@ onMounted(async () => {
                     <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
                         <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
                             <AtomsAddressField v-if="tline.trader in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader)"/>
-                            <Loader :ratio="1" v-else />
+                            <NuxtLink v-else class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: tline.trader }, hash: '#overview'}">
+                                {{ truncString(tline.trader, 5) }}
+                            </NuxtLink> 
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;" >
                             <div>   
@@ -137,7 +139,9 @@ onMounted(async () => {
                 <template v-else>
                     <td class="uk-text-truncate">
                         <AtomsAddressField v-if="tline.trader in store.accounts" :full="true" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader)"/>
-                        <Loader :ratio="1" v-else />
+                        <NuxtLink v-else class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: tline.trader }, hash: '#overview'}">
+                            {{ truncString(tline.trader, 5) }}
+                        </NuxtLink>
                     </td>
                     <td class="uk-text-right" style="text-wrap: nowrap">
                         <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">

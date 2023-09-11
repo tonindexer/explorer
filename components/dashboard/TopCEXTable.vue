@@ -157,8 +157,8 @@ onMounted(async () => {
             <tr v-for="tline of finalData.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                 <template v-if="isMobile()">
                     <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
-                        <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
-                            {{ type === 'deposit' ? ((tline.deposit_amount ?? 0).toFixed(2) + '💎') : ((tline.withdrawal_amount ?? 0).toFixed(2) + '💎')  }}
+                        <div class="uk-flex diamond uk-text-primary" style="padding: 3px;">
+                            {{ type === 'deposit' ? (tline.deposit_amount ?? 0).toFixed(2) : (tline.withdrawal_amount ?? 0).toFixed(2)  }}
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;">
                             <div>   
@@ -205,11 +205,15 @@ onMounted(async () => {
                 <template v-else>
                     <td>
                         <AtomsAddressField v-if="tline.src_address in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.src_address)"/>
-                        <Loader :ratio="1" v-else />
+                        <NuxtLink v-else class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: tline.src_address }, hash: '#overview'}">
+                            {{ truncString(tline.src_address, 5) }}
+                        </NuxtLink>
                     </td>
                     <td>
                         <AtomsAddressField v-if="tline.dst_address in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.dst_address)"/>
-                        <Loader :ratio="1" v-else />
+                        <NuxtLink v-else class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: tline.dst_address }, hash: '#overview'}">
+                            {{ truncString(tline.dst_address, 5) }}
+                        </NuxtLink>
                     </td>
                     <td class="uk-text-right" style="text-wrap: nowrap">
                         {{ type === 'deposit' ? ((tline.deposit_amount ?? 0).toFixed(2) + '💎') : ((tline.withdrawal_amount ?? 0).toFixed(2) + '💎') }}
