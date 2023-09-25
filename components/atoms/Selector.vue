@@ -32,7 +32,7 @@ defineEmits(['setValue'])
         min-width: fit-content; 
         border-radius: 4px; 
         height: 24px !important;
-        padding: 0 4px;
+        padding: 0 20px 0 4px;
         line-height: 16px; 
         margin-left: 8px;
     }
