@@ -115,12 +115,18 @@ onMounted(async () => {
                             <AtomsAddressField v-if="key in store.accounts" :break_word="true" :addr="store.accounts[key].address" :full="true"/>
                             <Loader :ratio="1" v-else />
                         </td>
-                        <td class="uk-text-right uk-flex uk-flex-right" style="gap: 0.5rem">
+                        <td class="uk-text-right uk-flex uk-flex-right uk-text-primary" style="gap: 0.5rem">
                             {{ `${formatTons(Number(store.accounts[key]?.jetton_balance ?? 0), jtList[key].decimals)} ${store.metadata[jtRelations[key].minter.hex]?.symbol ?? ''}`}}
 
                             <p v-if="store.accounts[key]?.fake" class="uk-margin-remove uk-text-danger">
                                 {{ $t('ton.fake') }}
                             </p>
+
+                            <svg style="min-width: 24px" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="13.5" cy="12.5" r="7" stroke="#141414"/>
+                                <path d="M6.39241 6.5C4.35958 7.7249 3 9.95367 3 12.5C3 15.0463 4.35958 17.2751 6.39241 18.5" stroke="#141414" stroke-linecap="round"/>
+                            </svg>
+
                         </td>
                     </template>
                 </tr>

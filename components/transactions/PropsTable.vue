@@ -132,7 +132,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.orig_status`) }}
                     </template>
                     <template #value>
-                        {{ trn.orig_status }}
+                        <AtomsStatusCell :status="trn.orig_status"></AtomsStatusCell>
                     </template>
                 </AtomsPropLine>
             </tr>
@@ -142,7 +142,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.end_status`) }}
                     </template>
                     <template #value>
-                        {{ trn.end_status }}
+                        <AtomsStatusCell :status="trn.end_status"></AtomsStatusCell>
                     </template>
                 </AtomsPropLine>
             </tr>
