@@ -35,9 +35,10 @@ defineEmits(['toggleMsg'])
                     {{ $t('ton.balance') }}
                 </div>
                 <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="align-self: center;">
-                    <div class="diamond">
+                    <!-- <div class="diamond">
                         {{ roundTON(trn.delta) }}
-                    </div>
+                    </div> -->
+                    <AtomsBalanceCell :balance="trn.delta" :delta="true" :place="'end'"/>
                 </div>
             </div>
             <div class="uk-flex" style="justify-content: space-between;">
@@ -80,10 +81,14 @@ defineEmits(['toggleMsg'])
             </td>
             <td>
                 <div class="uk-flex uk-flex-column" style="gap: 24px">
-                    <div v-for="msg in messageKeys" class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
-                        {{ (msg === trn.in_msg_hash ? '+' : '-') + roundTON(store.messages[msg].amount ?? 0n) }}
-                    </div>
+                    <AtomsBalanceCell 
+                        v-for="msg in messageKeys" 
+                        :balance="store.messages[msg].amount ?? 0n" 
+                        :place="'end'"
+                        :filler="msg === trn.in_msg_hash ? '+' : '-'"
+                    />
                 </div>
+
             </td>
             <td class="uk-text-truncate"> 
                 <div class="uk-flex uk-flex-column" style="gap: 24px">

@@ -99,7 +99,7 @@ onMounted(async () => {
                             </div>
                             <div class="uk-flex">
                                 <div class="uk-margin-remove uk-text-left uk-text-truncate" style="max-width: 85vw">
-                                    <AtomsAddressField v-if="key in store.accounts" :break_word="true" :addr="store.accounts[key].address"/>
+                                    <AtomsAddressField v-if="key in store.accounts" :break_word="true" :addr="store.accounts[key].address" :full="true"/>
                                     <Loader :ratio="1" v-else />
                                 </div>
                             </div>
@@ -111,8 +111,8 @@ onMounted(async () => {
                                 {{ store.metadata[jtRelations[key].minter.hex]?.name }}
                             </NuxtLink>
                         </td>
-                        <td>
-                            <AtomsAddressField v-if="key in store.accounts" :break_word="true" :addr="store.accounts[key].address"/>
+                        <td class="uk-text-truncate">
+                            <AtomsAddressField v-if="key in store.accounts" :break_word="true" :addr="store.accounts[key].address" :full="true"/>
                             <Loader :ratio="1" v-else />
                         </td>
                         <td class="uk-text-right uk-flex uk-flex-right" style="gap: 0.5rem">

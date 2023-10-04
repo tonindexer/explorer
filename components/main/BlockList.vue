@@ -42,8 +42,8 @@ const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '
                 {{ isMobile() ? `${block.workchain}:${block.shard.toString().slice(0,3)}:${block.seq_no}` : block.seq_no }}
               </NuxtLink>
             </div>
-            <div class="uk-width-1-3 uk-text-center" style="align-self: center; font-size: 1rem" :uk-tooltip="fullTON(block.transaction_delta, false)">
-              {{ block.transaction_keys ? `${block.transaction_keys.length} (${shortTON(block.transaction_delta)}💎)` : $t('general.none') }}
+            <div class="uk-width-1-3 diamond uk-text-center" style="align-self: center; font-size: 1rem" :uk-tooltip="fullTON(block.transaction_delta, false)">
+              {{ block.transaction_keys ? `${block.transaction_keys.length} (${shortTON(block.transaction_delta)})` : 0 }}
             </div>
           </div>
           <div v-for="shard of store.getBlockShards(store.blockKeyGen(block.workchain, block.shard, block.seq_no))"
@@ -58,8 +58,8 @@ const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '
                     {{ isMobile() ? `${shard.workchain}:${shard.shard.toString().slice(0,3)}:${shard.seq_no}` : shard.seq_no }}
                 </NuxtLink>
               </div>
-              <div class="uk-width-1-3 uk-text-center" style="align-self: center;" :uk-tooltip="shard.transaction_delta ? fullTON(shard.transaction_delta, false): 'cls: uk-hidden'">
-                {{ shard.transaction_keys.length !== 0 ? `${shard.transaction_keys.length}${shard.transaction_delta ? ' (' + shortTON(shard.transaction_delta) + '💎)' : ''}` : $t('general.none') }}
+              <div class="uk-width-1-3 uk-text-center diamond" style="align-self: center;" :uk-tooltip="shard.transaction_delta ? fullTON(shard.transaction_delta, false): 'cls: uk-hidden'">
+                {{ shard.transaction_keys.length !== 0 ? `${shard.transaction_keys.length}${shard.transaction_delta ? ' (' + shortTON(shard.transaction_delta) + ')' : ''}` : 0 }}
               </div>
             </div>
         </div>

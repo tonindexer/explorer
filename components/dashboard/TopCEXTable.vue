@@ -215,8 +215,8 @@ onMounted(async () => {
                             {{ truncString(tline.dst_address, 5) }}
                         </NuxtLink>
                     </td>
-                    <td class="uk-text-right" style="text-wrap: nowrap">
-                        {{ type === 'deposit' ? ((tline.deposit_amount ?? 0).toFixed(2) + '💎') : ((tline.withdrawal_amount ?? 0).toFixed(2) + '💎') }}
+                    <td class="uk-flex uk-flex-right uk-text-primary diamond" style="text-wrap: nowrap">
+                        {{ type === 'deposit' ? ((tline.deposit_amount ?? 0).toFixed(2)) : ((tline.withdrawal_amount ?? 0).toFixed(2)) }}
                     </td>
                     <td>
                         <AtomsTableDateCell :date-time="tline.created_at"/>

@@ -32,10 +32,8 @@ onMounted(() => {
                 <div>   
                     {{ $t('ton.balance') }}
                 </div>
-                <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="align-self: center;">
-                    <div class="diamond">
-                        {{ roundTON(acc.balance) }}
-                    </div>
+                <div class="uk-margin-remove uk-text-secondary uk-text-truncate" style="align-self: center;">
+                    <AtomsBalanceCell :balance="acc.balance" :place="'end'"/>
                 </div>
             </div>
 
@@ -65,10 +63,8 @@ onMounted(() => {
         <td class="uk-text-primary uk-text-truncate">
             {{ acc.types && acc.types?.length > 0 ? acc.types.join(', ') : "" }}
         </td>
-        <td class="uk-text-right uk-text-primary"> 
-            <div class="uk-flex uk-flex-right diamond">
-                {{ roundTON(acc.balance) }}
-            </div>
+        <td class="uk-text-right uk-text-primary">
+            <AtomsBalanceCell :balance="acc.balance" :place="'end'"/>
         </td>
         <td class="uk-flex uk-flex-right">
             <AtomsStatusCell :status="acc.status"></AtomsStatusCell>

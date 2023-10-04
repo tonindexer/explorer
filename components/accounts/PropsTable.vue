@@ -75,9 +75,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.balance`) }}
                     </template>
                     <template #value>
-                        <div class="uk-flex uk-flex-right diamond">
-                            {{ roundTON(acc.balance) }}
-                        </div>
+                        <AtomsBalanceCell :balance="acc.balance" :full="true"/>
                     </template>
                 </AtomsPropLine>
             </tr>
@@ -114,7 +112,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="acc.minter_address.base64">
-                            <AtomsAddressField :addr="acc.minter_address" :break_word="false"/>
+                            <AtomsAddressField :addr="acc.minter_address" :break_word="false" :full="true"/>
                         </AtomsCopyableText> 
                     </template>
                 </AtomsPropLine>
@@ -126,7 +124,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="acc.owner_address.base64">
-                            <AtomsAddressField :addr="acc.owner_address" :break_word="false"/>
+                            <AtomsAddressField :addr="acc.owner_address" :break_word="false" :full="true"/>
                         </AtomsCopyableText> 
                     </template>
                 </AtomsPropLine>

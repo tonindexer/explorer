@@ -58,7 +58,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="trn.address.base64">
-                            <AtomsAddressField :addr="trn.address" :break_word="false"/>
+                            <AtomsAddressField :addr="trn.address" :break_word="false" :full="true"/>
                         </AtomsCopyableText> 
                     </template>
                 </AtomsPropLine>
@@ -112,7 +112,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.total_fees`) }}
                     </template>
                     <template #value>
-                        {{ trn.full_fees ? (`${fullTON(trn.full_fees, false)}💎`) : $t('general.none') }}
+                        <AtomsBalanceCell :balance="trn.full_fees" :full="true"/>
                     </template>
                 </AtomsPropLine>
             </tr>
@@ -122,9 +122,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.delta`) }}
                     </template>
                     <template #value>
-                        <div :class="colorAmount(trn.delta)">
-                            {{ trn.delta ? `${fullTON(trn.delta, true)}💎` : $t('general.none') }}
-                        </div>
+                        <AtomsBalanceCell :balance="trn.delta" :delta="true" :full="true"/>
                     </template>
                 </AtomsPropLine>
             </tr>

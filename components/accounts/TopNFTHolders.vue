@@ -69,9 +69,12 @@ watch(itemCount, async() => {
                             <div>   
                                 {{ $t('ton.balance') }}
                             </div>
-                            <div v-if="acc.owner_address && acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
-                                {{ store.accounts[acc.owner_address.hex].balance ? `${fullTON(store.accounts[acc.owner_address.hex].balance, false)}💎` : $t('general.none')}}
-                            </div>
+                            <AtomsBalanceCell
+                                v-if="acc.owner_address && acc.owner_address.hex in store.accounts"
+                                :balance="store.accounts[acc.owner_address.hex]?.balance ? store.accounts[acc.owner_address.hex].balance : 0n"
+                                :full="true"
+                                :place="'end'"
+                            />
                             <div v-else>
                                 -
                             </div>
@@ -82,7 +85,7 @@ watch(itemCount, async() => {
                                 {{ $t('ton.updated_at') }}
                             </div>
                             <div v-if="acc.owner_address && acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                                <AtomsTableDateMobileCell :date-time="store.accounts[acc.owner_address.hex].updated_at"/>
+                                <AtomsTableDateCell :date-time="store.accounts[acc.owner_address.hex].updated_at"/>
                             </div>
                             <div class="uk-text-right" v-else>
                                 -
@@ -97,13 +100,16 @@ watch(itemCount, async() => {
                     <td v-else>
                         {{ $t('general.noone') }}
                     </td>
-                    <td>
+                    <td class="uk-text-primary">
                         {{ acc.items_count }}
                     </td>
                     <td class="uk-text-right uk-text-nowrap"> 
-                        <div v-if="acc.owner_address && acc.owner_address.hex in store.accounts">
-                            {{ store.accounts[acc.owner_address.hex].balance ? `${fullTON(store.accounts[acc.owner_address.hex].balance, false)}💎` : $t('general.none')}}
-                        </div>
+                        <AtomsBalanceCell
+                            v-if="acc.owner_address && acc.owner_address.hex in store.accounts"
+                            :balance="store.accounts[acc.owner_address.hex]?.balance ? store.accounts[acc.owner_address.hex].balance : 0n"
+                            :full="true"
+                            :place="'end'"
+                        />
                         <div v-else>
                             -
                         </div>

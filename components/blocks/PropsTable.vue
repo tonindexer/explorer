@@ -98,9 +98,10 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.transaction_delta`) }}
                     </template>
                     <template #value>
-                        <div :class="colorAmount(block.transaction_delta)">
-                            {{ block.transaction_delta ? `${fullTON(block.transaction_delta, true)}💎` : t('general.none') }}
-                        </div>
+                        <AtomsBalanceCell
+                            :balance="block.transaction_delta ? block.transaction_delta : 0n"
+                            :delta="true"
+                        />
                     </template>
                 </AtomsPropLine>
             </tr>

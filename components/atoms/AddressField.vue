@@ -1,14 +1,22 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
+const { t } = useI18n()
+
 interface Props {
     addr: Address | null
     showHex?: boolean
     full?: boolean
     break_word: boolean
 }
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const store = useMainStore()
+
+const accName = computed(() => {
+    if (props.addr)
+        return store.accounts[props.addr.hex ?? '']?.label?.name ?? (props.full ? (props.showHex? props.addr.hex : props.addr.base64) : truncString(props.showHex? props.addr.hex : props.addr.base64, 5))
+    return t('general.empty')
+})
 </script>
 
 <template>
@@ -24,7 +32,7 @@ const store = useMainStore()
     </template>
     <template v-else> 
         <NuxtLink class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
-            {{ store.accounts[addr.hex]?.label?.name ?? (full ? (showHex? addr.hex : addr.base64): truncString((showHex? addr.hex : addr.base64), 5)) }}
+            {{ accName }}
         </NuxtLink>
     </template>
 </template>
