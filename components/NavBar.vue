@@ -238,6 +238,9 @@ const external = [
     line-height: 16px;
     align-items: center;
     overflow: hidden;
+    .nav-icon {
+        min-width: 24px;
+    }
     .nav-icon-special > path {
         stroke: #B2B2B2;
     }

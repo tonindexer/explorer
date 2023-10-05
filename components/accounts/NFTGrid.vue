@@ -88,8 +88,8 @@ onMounted(async () => {
                     <NuxtLink :to="`/accounts?hex=${key}#overview`" :uk-tooltip=" nft.name ? nft.name : 'No name'" class="uk-text-primary">
                         {{ nft.name ? nft.name : "No name" }}
                     </NuxtLink>
-                    <h4 class="uk-margin-remove-top uk-text-truncate" :uk-tooltip="store.metadata[nftRelationsMap[key].minter.hex]?.name ? store.metadata[nftRelationsMap[key].minter.hex].name : 'No collection'"> 
-                        {{ store.metadata[nftRelationsMap[key].minter.hex]?.name ? store.metadata[nftRelationsMap[key].minter.hex].name : 'No collection' }}
+                    <h4 class="uk-margin-remove-top uk-text-truncate" :uk-tooltip="store.metadata[nftRelationsMap[key]?.minter.hex]?.name ? store.metadata[nftRelationsMap[key].minter.hex].name : 'No collection'"> 
+                        {{ store.metadata[nftRelationsMap[key]?.minter.hex]?.name ? store.metadata[nftRelationsMap[key].minter.hex].name : 'No collection' }}
                     </h4>
                 </div>
             </div>

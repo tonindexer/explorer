@@ -47,7 +47,7 @@ const dataParser = computed(() : Graph => {
         }],
         times: []
     }
-    store.transactionGraphData.forEach(item => {
+    store.transactionGraphData.slice(1,).forEach(item => {
         output.series[0].data.push(item.Value)
         output.times.push(new Date(item.Timestamp).getTime())
     })
