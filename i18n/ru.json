@@ -119,6 +119,7 @@
         "endpoint" : "Эндпоинт",
         "block" : "Блок",
         "transaction" : "Транзакция",
+        "tx_tree" : "Дерево",
         "message" : "Сообщение",
         "account" : "Аккаунт",
         "jetton" : "Jetton",

@@ -119,6 +119,7 @@
         "endpoint" : "Endpoint",
         "block" : "Block",
         "transaction" : "Transaction",
+        "tx_tree" : "Tree",
         "message" : "Message",
         "account" : "Account",
         "jetton" : "Jetton",

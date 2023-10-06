@@ -2,7 +2,7 @@ export { };
 
 declare global {
     
-    type AccountStatus = "ACTIVE" | "UNINIT" | "FROZEN" | "NONEXIST"
+    type AccountStatus = "ACTIVE" | "UNINIT" | "FROZEN" | "NON_EXIST"
     type LabelCategory = "centralized_exchange" | "scam"
     type ReturnFormat = boolean | bigint | string | number | {"URI" : string}
 

@@ -83,6 +83,9 @@ watch(props, async() => await reloadInfo())
                         <NuxtLink v-if="loadedAccountKeys.length + unloadedAccountKeys.length > 0" class="category" :to="{ hash: '#accounts', query: route.query}" :class="{'selected white': (route.hash === '#accounts')}">
                             {{ $t('route.accounts')}}
                         </NuxtLink>
+                        <NuxtLink v-if="inMessageKeys.length + outMessageKeys.length > 0" class="category" :to="{ hash: '#tree', query: route.query}" :class="{'selected white': (route.hash === '#tree')}">
+                            {{ $t('route.tx_tree')}}
+                        </NuxtLink>
                     </div>
                 </div>
             </template>
@@ -98,6 +101,9 @@ watch(props, async() => await reloadInfo())
                     <AccountsTable :default-length="10" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false"/>
                     <h3 v-if="unloadedAccountKeys.length > 0" class="uk-margin-remove uk-text-primary">{{ $t('general.unloaded_accs') + ` (${unloadedAccountKeys.length})` }}</h3>
                     <AccountsUnloadedTable :default-length="5" :keys="unloadedAccountKeys" :hidden="unloadedAccountKeys.length === 0"/>
+                </div>
+                <div v-if="route.hash === '#tree'" id="tx_tree" style="padding: 0 12px">
+                    <GraphMessageTree :hash="hash"/>
                 </div>
             </template>
         </AtomsTile>

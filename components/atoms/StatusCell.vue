@@ -21,10 +21,10 @@ defineProps<Props>()
             <path d="M3.33333 5.33333C3.33333 4.96514 3.63181 4.66667 4 4.66667H6V3.33333H4C2.89543 3.33333 2 4.22876 2 5.33333V10.6667C2 11.7712 2.89543 12.6667 4 12.6667H6V11.3333H4C3.63181 11.3333 3.33333 11.0349 3.33333 10.6667V5.33333Z" fill="black"/>
             <path d="M12.6667 5.33333C12.6667 4.96514 12.3682 4.66667 12 4.66667H10V3.33333H12C13.1046 3.33333 14 4.22876 14 5.33333V10.6667C14 11.7712 13.1046 12.6667 12 12.6667H10V11.3333H12C12.3682 11.3333 12.6667 11.0349 12.6667 10.6667V5.33333Z" fill="black"/>
         </svg>
-        <svg v-else-if="status === 'NONEXIST'" uk-svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <svg v-else-if="status === 'NON_EXIST'" uk-svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" fill="black"/>
         </svg>
-        <div v-if="status === 'ACTIVE' || status === 'FROZEN' || status === 'UNINIT' || status === 'NONEXIST'" class="uk-margin-remove uk-padding-remove" style="font-size: 16px;">
+        <div v-if="status === 'ACTIVE' || status === 'FROZEN' || status === 'UNINIT' || status === 'NON_EXIST'" class="uk-margin-remove uk-padding-remove" style="font-size: 16px;">
             {{ status[0] + status.slice(1,).toLowerCase() }}
         </div>
         <div v-else-if="status === 'EXTERNAL_IN' || status === 'EXTERNAL_OUT'" class="uk-margin-remove uk-padding-remove uk-text-nowrap" style="font-size: 16px;">
@@ -49,7 +49,7 @@ defineProps<Props>()
     background-color: #DDF1DF;
 }
 
-.NONEXIST {
+.NON_EXIST {
     background-color: #F3DFEA;
 }
 

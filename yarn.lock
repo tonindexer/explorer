@@ -1448,6 +1448,11 @@
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.4.0.tgz#8ae96573236cdb12de6850a6d929b5537ec85390"
   integrity sha512-xdguqb+VUwiRpSg+nsc2HtbAUSGak25DXYvpQQi4RVU1Xq1uworyoH/md9Rfd8zMmPR/pSghr309QNcftUVseg==
 
+"@vue-flow/background@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@vue-flow/background/-/background-1.2.0.tgz#6b7c283fd679838df90dda8dd98f322c368b7e59"
+  integrity sha512-ZqmYhOM/0aRmA5dA3KSHJNYpHnhmG2e6tzjmttoibo4JBI3KNbdyOX+OTlqt7Ic0LYUC6NWzRLAwv4gjJuc6Mg==
+
 "@vue-flow/core@^1.22.3":
   version "1.22.3"
   resolved "https://registry.yarnpkg.com/@vue-flow/core/-/core-1.22.3.tgz#2f98bb5185df64ac33e9eaa47093a624ef291698"
@@ -1455,6 +1460,14 @@
   dependencies:
     "@vueuse/core" "^10.1.2"
     d3-drag "^3.0.0"
+    d3-selection "^3.0.0"
+    d3-zoom "^3.0.0"
+
+"@vue-flow/minimap@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@vue-flow/minimap/-/minimap-1.2.0.tgz#95770b380dbb55b951bd13339e27429cf171010f"
+  integrity sha512-0Nk7iWjRC9hgyVGEVELKULXZsJtYmzic4CEAM6mIhB/lDVUsQsae9NXB6gYFN0OlBXx71pZHBnqqUYvLxUE0jg==
+  dependencies:
     d3-selection "^3.0.0"
     d3-zoom "^3.0.0"
 

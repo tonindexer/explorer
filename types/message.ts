@@ -75,4 +75,55 @@ declare global {
     type MessageMap = {
         [key: MessageKey]: Message
     }
+
+    type MessageNodeData = {
+        add_data: object | null
+        contract: ContractType | null
+        op_name: string | null
+        op_type: string | null
+    }
+
+    type MessageNode = {
+        id: MessageKey
+        type: 'custom'
+        position: {
+            x: number,
+            y: number
+        }
+        data: MessageNodeData
+    }
+
+    type MessageEdge = {
+        id: string
+        target: MessageKey
+        source: MessageKey
+        animated?: boolean
+    }
+
+    type TreeKey = string
+    type EdgeKey = `${string}:${string}`
+
+    type MessageNodeMap = {
+        [key: MessageKey] : MessageNode
+    }
+
+    type MessageEdgeMap = {
+        [key: EdgeKey] : MessageEdge
+    }
+
+    type TreeEdgeMap = {
+        [key: TreeKey] : EdgeKey[]
+    }
+
+    type TreeMap = {
+        [key: TreeKey] : MessageKey[]
+    }
+
+    type MessageReverseMap = {
+        [key: MessageKey] : TreeKey
+    }
+
+    type TxReverseMap = {
+        [key: TransactionKey] : TreeKey
+    }
 }

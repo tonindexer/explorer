@@ -46,6 +46,13 @@ export const useMainStore = defineStore('tonexp', {
       messageGraphData : [] as GraphCell[],
       transactionGraphData: [] as GraphCell[],
       accountsGraphData: [] as GraphCell[],
+      // Tree
+      treeMap: {} as TreeMap,
+      treeEdgeMap: {} as TreeEdgeMap,
+      messageTreeKeys: {} as MessageReverseMap,
+      txTreeKeys: {} as TxReverseMap,
+      messageTreeDataMap: {} as MessageNodeMap,
+      messageTreeEdgeMap: {} as MessageEdgeMap,
       // dashboard
       chartNames: {} as { [key: string] : string },
       chartXs: {} as { [key: string] : string },
@@ -607,6 +614,88 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
         return hash
+      },
+      async composeTreeNodes (hash: string, treeKey: string) {
+        if (hash in this.txTreeKeys) return
+
+        if (hash in this.transactionComboKeys) {
+          hash = this.transactionComboKeys[hash]
+        }
+        
+        for (const msgKey of this.getMessageKeys([hash], true, true)) {
+          if (msgKey in this.messageTreeKeys) continue
+          
+          const msg = this.messages[msgKey]
+
+          if (!msg) continue
+
+          const newData: MessageNodeData = {
+            add_data: msg.data ?? null,
+            contract: msg.src_contract ?? null,
+            op_name: msg.operation_id ? opToHex(msg.operation_id) : null,
+            op_type: msg.operation_name ?? null
+          }
+          this.messageTreeDataMap[msgKey] = {
+            id: msgKey,
+            type: 'custom',
+            position: { x: 100, y: 0},
+            data: newData
+          }
+          this.messageTreeKeys[msgKey] = treeKey
+          this.treeMap[treeKey].push(msgKey)
+        }
+
+        if (this.transactions[hash].in_msg_hash && this.transactions[hash].out_msg_keys.length > 0) {
+          for (const outMsg of this.transactions[hash].out_msg_keys) {
+            const edgeKey: EdgeKey = `${this.transactions[hash].in_msg_hash}:${outMsg}`
+            if (!(edgeKey in this.messageTreeEdgeMap)) {
+
+              const newEdge: MessageEdge = {
+                id: edgeKey,
+                source: this.transactions[hash].in_msg_hash,
+                target: outMsg
+              }
+
+              this.messageTreeEdgeMap[edgeKey] = newEdge
+              this.treeEdgeMap[treeKey].push(edgeKey)
+
+            }
+          }
+        }
+
+        this.txTreeKeys[hash] = treeKey
+      },
+      async addTreeTx (hash: string, treeKey: string) {
+        if (hash in this.txTreeKeys) return hash
+
+        if (!(hash in this.transactions)) {
+          const tx_key = await this.fetchTransaction(hash)
+          if (tx_key) hash = tx_key
+          else return
+        }
+
+        await this.composeTreeNodes(hash, treeKey)
+
+        if (this.transactions[hash].in_msg_hash) {
+          const prevHash = this.messages[this.transactions[hash].in_msg_hash].src_tx_key
+          if (prevHash) {
+            await this.addTreeTx(prevHash, treeKey)
+          }
+        }
+        for (const outKey of this.transactions[hash].out_msg_keys) {
+          const nextHash = this.messages[outKey].dst_tx_key
+          if (nextHash) {
+            await this.addTreeTx(nextHash, treeKey)
+          }
+        }
+      },
+      async fetchMessageTree (hash: string) {
+        if (hash in this.txTreeKeys) return this.txTreeKeys[hash]
+        let treeKey = 'tree_' + (Object.keys(this.treeMap).length + 1)
+        this.treeMap[treeKey] = []
+        this.treeEdgeMap[treeKey] = []
+        await this.addTreeTx(hash, treeKey)
+        return treeKey
       },
       async fetchBareAccounts(hex: string[]) {
         // hex = hex.filter(key => !(key in badAddresses))
