@@ -30,7 +30,7 @@ const graph = ref<Chart | null>(null)
 const dataParser = computed(() : Graph => {
     const output : Graph = {
         series: [{
-            name: 'volume',
+            name: 'count',
             data: [],
             fillColor : {
                 linearGradient : {
@@ -232,7 +232,14 @@ onMounted(async () => {
 
 <template>
     <div class="uk-flex uk-flex-column uk-width-1-1 uk-margin-small">
-        <div class="uk-width-1-1" style="position: relative;">
+        <div class="category-wrapper">
+            <div class="uk-flex uk-flex-middle uk-margin-remove-top" style="justify-content: space-between;">
+                <button class="uk-button category selected white" id="8h">
+                    TX Count
+                </button>
+            </div>
+        </div>
+        <div class="uk-width-1-1" style="position: relative; margin-top: 32px">
             <ClientOnly fallback="Loading graph...">
                 <Chart :options="chartOptions" ref="graph"/>
                 <div v-if="dataParser.series[0].data.length === 0" class="uk-position-center uk-text-center uk-overlay uk-text-bold">

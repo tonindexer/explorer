@@ -11,9 +11,18 @@ interface Props {
     add_data: Object | null
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
     top: true,
     bottom: true
+})
+
+const label = computed(() => {
+    let out = ''
+    if (props.contract) out = props.contract
+    if (props.contract && (props.op_name || props.op_type)) out += '::'
+    out += props.op_type ? props.op_type : (props.op_name ? props.op_name : '')
+    if (out === '') return 'message'
+    return out
 })
 
 const random_rgba = computed(() => {
@@ -28,7 +37,7 @@ const random_rgba = computed(() => {
 
         </div>
         <div class="custom-node">
-            <div class="label uk-width-1-1" v-if="contract || op_type || op_name">{{ (contract ? (contract + '::') : '') + (op_type ? op_type : (op_name ? op_name : ''))}}</div>
+            <div class="label uk-width-1-1" v-if="contract || op_type || op_name">{{ label }}</div>
             <div class="label uk-width-1-1" v-else>message</div>
             <div v-if="add_data" class="uk-margin-remove divider_node uk-width-1-1">
 
