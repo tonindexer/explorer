@@ -170,7 +170,7 @@ const showData = ref(false)
                 <div class="uk-flex uk-flex-column" style="gap: 24px">
                     <AtomsAddressField :addr="msg.src_address ?? null" :break_word="false"/>
                     <div class="uk-text-nowrap" v-if="msg.src_contract">   
-                        {{ msg.dst_contract }}
+                        {{ msg.src_contract }}
                     </div>
                     <div v-else>
                         {{ "&#8203" }}
