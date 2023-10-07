@@ -621,16 +621,24 @@ export const useMainStore = defineStore('tonexp', {
         if (hash in this.transactionComboKeys) {
           hash = this.transactionComboKeys[hash]
         }
-        
+        const mobi = isMobile()
+
         for (const msgKey of this.getMessageKeys([hash], true, true)) {
           if (msgKey in this.messageTreeKeys) continue
           
           const msg = this.messages[msgKey]
 
           if (!msg) continue
-
+          
+          let addData : MockType = {...msg.data}
+          if (addData) {
+            for (const key of Object.keys(addData)) {
+              if (addData[key] && addParse(addData[key].toString())) continue
+              if (addData[key]?.toString().length > 45) addData[key] = addData[key].toString().slice(0,45) + '...' 
+            }
+          }
           const newData: MessageNodeData = {
-            add_data: msg.data ?? null,
+            add_data: msg.data ? addData : null,
             contract: msg.src_contract ?? null,
             op_name: msg.operation_id ? opToHex(msg.operation_id) : null,
             op_type: msg.operation_name ?? null
@@ -639,6 +647,7 @@ export const useMainStore = defineStore('tonexp', {
             id: msgKey,
             type: 'custom',
             position: { x: 100, y: 0},
+            draggable: !mobi,
             data: newData
           }
           this.messageTreeKeys[msgKey] = treeKey
@@ -653,7 +662,8 @@ export const useMainStore = defineStore('tonexp', {
               const newEdge: MessageEdge = {
                 id: edgeKey,
                 source: this.transactions[hash].in_msg_hash,
-                target: outMsg
+                target: outMsg,
+                draggable: !mobi
               }
 
               this.messageTreeEdgeMap[edgeKey] = newEdge

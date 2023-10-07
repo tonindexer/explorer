@@ -29,10 +29,12 @@ const findNext = (start: string) : string[] => {
 const recursiveSearch = (prevIndex: string) => {
     let newEnds = findNext(prevIndex)
     if (newEnds.length) {
-        let x_delta = newEnds.length === 2 ? 400 : 0
+        let x_delta = newEnds.length > 1 ? 800 : 0
+        // 400 800 1200 1/2 1 3/2
+        let x_start = -(x_delta * (newEnds.length - 1) * 0.5)
         for (let i = 0; i < newEnds.length; i++) {
             const delta = store.messageTreeDataMap[prevIndex].data.add_data ? 250 : 100
-            positionMap.value[newEnds[i]] = { x: positionMap.value[prevIndex].x + (i === 0 ? (-x_delta) : x_delta), y: positionMap.value[prevIndex].y + delta}
+            positionMap.value[newEnds[i]] = { x: positionMap.value[prevIndex].x + (i === 0 ? (x_start) : (x_start + x_delta*i)), y: positionMap.value[prevIndex].y + delta}
             recursiveSearch(newEnds[i])
         }
     } else return

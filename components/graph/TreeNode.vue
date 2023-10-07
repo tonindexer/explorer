@@ -32,7 +32,7 @@ const random_rgba = computed(() => {
 </script>
 
 <template>
-    <div class="uk-flex uk-flex-row uk-text-primary" style="border: 1px solid black; border-radius: 4px; width: 450px">
+    <div class="uk-flex uk-flex-row uk-text-primary" style="border: 1px solid black; border-radius: 4px; width: 680px">
         <div class="stripe" :style="`background-color: ${random_rgba};`">
 
         </div>
@@ -44,7 +44,7 @@ const random_rgba = computed(() => {
             </div>
 
             <div class="node_data uk-width-1-1" v-if="add_data">
-                <pre class="uk-text-primary uk-background-primary uk-padding-remove uk-margin-remove" style="max-width: 420px; overflow: visible;">{{ JSON.stringify(add_data, null, 4) }}</pre>
+                <pre class="uk-text-primary uk-background-primary uk-padding-remove uk-margin-remove" style="width: 652px; overflow: visible;">{{ JSON.stringify(add_data, null, 4) }}</pre>
             </div>
         </div>
 

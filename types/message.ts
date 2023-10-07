@@ -91,12 +91,14 @@ declare global {
             y: number
         }
         data: MessageNodeData
+        draggable: boolean
     }
 
     type MessageEdge = {
         id: string
         target: MessageKey
         source: MessageKey
+        draggable: boolean
         animated?: boolean
     }
 
