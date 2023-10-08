@@ -1,5 +1,5 @@
 import { parseJson } from '@ton.js/json-parser';
-import { isObject } from 'highcharts';
+
 export const useMainStore = defineStore('tonexp', {
     state: () => ({
       // Maps to store blocks / messages / transactions / accounts efficiently
@@ -651,7 +651,7 @@ export const useMainStore = defineStore('tonexp', {
             for (const [index, key] of Object.keys(addData).entries()) {
               height += 1
               if (addData[key] ?? null) {
-                if (isObject(addData[key], true)) {
+                if (typeof addData[key] === 'object') {
                   height += 1
 
                   for (const [index1, key1] of Object.keys(addData[key]).entries()) {
@@ -690,7 +690,6 @@ export const useMainStore = defineStore('tonexp', {
           if (titleLength === 0) titleLength = 7
           // 24 padding + 2 border + 4 stripe
           width = ((titleLength > width * 0.875) ? titleLength : (width * 0.875)) * letterWidth + 24 + 2 + 4
-          console.log(`${msgKey}:${height}`)
           height = (height * letterHeight * 0.875 * 1.5) + 8 * (msg.data ? 2 : 1) + 2 + 24
           const newData: MessageNodeData = {
             add_data: msg.data ? addData : null,

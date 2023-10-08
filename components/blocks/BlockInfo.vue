@@ -121,7 +121,7 @@ watch(props, async() => await reloadInfo())
                     <AccountsUnloadedTable :default-length="5" :keys="unloadedAccountKeys" :hidden="unloadedAccountKeys.length === 0"/>
                 </div>
                 <div v-if="(route.hash === '#shards' )&& block.shard_keys.length > 0" id="shards">
-                    <BlocksTable :item-selector="true" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block.shard_keys.length === 0" :line-link="false"/>
+                    <LazyBlocksTable :item-selector="true" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block.shard_keys.length === 0" :line-link="false"/>
                 </div>
             </template>
         </AtomsTile>
