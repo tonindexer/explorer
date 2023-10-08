@@ -118,7 +118,7 @@ const showData = ref(false)
                         {{ $t('ton.type') }}
                     </div>
                     <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                        {{ msg.operation_id in knownOp ? knownOp[msg.operation_id] : `op=0x${opToHex(msg.operation_id)}` }}
+                        {{ msg.operation_id in knownOp ? knownOp[msg.operation_id] : `op=${opToHex(msg.operation_id)}` }}
                     </div>
                 </div>
                 <div v-if="msg.operation_name" class="uk-flex" style="justify-content: space-between;">
@@ -164,7 +164,7 @@ const showData = ref(false)
             </td>
             <td class="uk-text-truncate">
                 {{ msg.operation_name? msg.operation_name : 
-                ( msg.operation_id? `op=0x${opToHex(msg.operation_id ?? 0)}` : "&#8203") }}
+                ( msg.operation_id? `op=${opToHex(msg.operation_id ?? 0)}` : "&#8203") }}
             </td>
             <td class="uk-text-truncate"> 
                 <div class="uk-flex uk-flex-column" style="gap: 24px">

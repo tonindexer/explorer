@@ -75,5 +75,6 @@ const random_rgba = computed(() => {
 
 pre {
     border: none;
+    font-family: 'Roboto mono', monospace;
 }
 </style>
