@@ -30,7 +30,7 @@ const recursiveSearch = (prevIndex: string) => {
     let newEnds = findNext(prevIndex)
     if (newEnds.length) {
         // forks variables
-        let x_delta = newEnds.length > 1 ? 800 : 0
+        let x_delta = newEnds.length > 1 ? 900 : 0
         let x_start = -(x_delta * (newEnds.length - 1) * 0.5)
         // shift defendping on width
         const prevW = store.messageTreeDataMap[prevIndex].nodeWidth
