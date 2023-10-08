@@ -29,12 +29,20 @@ const findNext = (start: string) : string[] => {
 const recursiveSearch = (prevIndex: string) => {
     let newEnds = findNext(prevIndex)
     if (newEnds.length) {
+        // forks variables
         let x_delta = newEnds.length > 1 ? 800 : 0
-        // 400 800 1200 1/2 1 3/2
         let x_start = -(x_delta * (newEnds.length - 1) * 0.5)
+        // shift defendping on width
+        const prevW = store.messageTreeDataMap[prevIndex].nodeWidth
+        const newW = store.messageTreeDataMap[newEnds[newEnds.length - 1]].nodeWidth
+        let x_shift = 0
+        x_shift = (newW - prevW) / (newEnds.length === 1 || (newW < prevW) ? 2 : 1)
         for (let i = 0; i < newEnds.length; i++) {
-            const delta = store.messageTreeDataMap[prevIndex].data.add_data ? 250 : 100
-            positionMap.value[newEnds[i]] = { x: positionMap.value[prevIndex].x + (i === 0 ? (x_start) : (x_start + x_delta*i)), y: positionMap.value[prevIndex].y + delta}
+            let x_shift_multi = 0
+            const thisW = store.messageTreeDataMap[newEnds[i]].nodeWidth
+            x_shift_multi = (thisW - prevW) / (newEnds.length === 1 || (thisW < prevW) ? 2 : 1)
+            const delta = store.messageTreeDataMap[prevIndex].nodeHeight + 70
+            positionMap.value[newEnds[i]] = { x: positionMap.value[prevIndex].x + (i === 0 ? (x_start) : (x_start + x_delta*i)) - (i >= Math.floor(newEnds.length / 2) || thisW < prevW ? x_shift_multi : 0), y: positionMap.value[prevIndex].y + delta}
             recursiveSearch(newEnds[i])
         }
     } else return

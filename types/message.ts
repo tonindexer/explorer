@@ -91,6 +91,8 @@ declare global {
             y: number
         }
         data: MessageNodeData
+        nodeWidth: number
+        nodeHeight: number
         draggable: boolean
     }
 

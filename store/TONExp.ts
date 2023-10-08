@@ -1,5 +1,5 @@
 import { parseJson } from '@ton.js/json-parser';
-
+import { isObject } from 'highcharts';
 export const useMainStore = defineStore('tonexp', {
     state: () => ({
       // Maps to store blocks / messages / transactions / accounts efficiently
@@ -631,12 +631,67 @@ export const useMainStore = defineStore('tonexp', {
           if (!msg) continue
           
           let addData : MockType = {...msg.data}
-          if (addData) {
-            for (const key of Object.keys(addData)) {
+          let height: number = 0
+          // width in symbols
+          // for add_data its (4*depth) spaces + 2 quotes + 1 colon + 1 space before + 2 quotes if not number + 1 comma if not last index
+          let width: number = 0
+          // default letter width for roboto mono 16px
+          const letterWidth: number = 9.6
+          const letterHeight: number = 16
+          function widthCounter (key: string, value: string, index: number, objLength: number, depth: number) {
+            let append = (isNumeric(value) ? 4 : 6) + (index !== objLength - 1 ? 1 : 0) + (depth * 4)
+            if (value.length <= 49 - depth*4 ) {
+              if (value.length + key.length + append > width) width = value.length + key.length + append
+            } else {
+              if (key.length + 49 - depth*4 + 3 + append > width) width = key.length + 49 - depth*4 + 3 + append
+            }
+          }
+          if (addData && Object.keys(addData).length > 0) {
+            height += 2
+            for (const [index, key] of Object.keys(addData).entries()) {
+              height += 1
+              if (addData[key] ?? null) {
+                if (isObject(addData[key], true)) {
+                  height += 1
+
+                  for (const [index1, key1] of Object.keys(addData[key]).entries()) {
+                    height += 1
+                    const value1 = addData[key][key1].toString()
+
+                    widthCounter(key1, value1, index1, Object.keys(addData[key]).length, 2)
+                    
+                    // if (addParse(value1)) continue
+
+                    if (value1.length > 41) {
+                      addData[key][key1] = value1.slice(0,41) + '...'
+                    }
+
+                  }
+                } else {
+                  const value = addData[key].toString()
+
+                  widthCounter(key, value, index, Object.keys(addData).length, 1)
+                  
+                  // if (addParse(value)) continue
+
+                  if (value.length > 45) {
+                    addData[key] = value.slice(0,45) + '...'
+                  }
+                }
+              }
               if (addData[key] && addParse(addData[key].toString())) continue
               if (addData[key]?.toString().length > 45) addData[key] = addData[key].toString().slice(0,45) + '...' 
             }
           }
+          let titleLength = (msg.src_contract ? msg.src_contract.length : 0) + 
+            (msg.src_contract && (msg.operation_name || msg.operation_id)? 2 : 0) +
+              (msg.operation_name ? msg.operation_name.length : (msg.operation_id ? opToHex(msg.operation_id).length : 0))
+          
+          if (titleLength === 0) titleLength = 7
+          // 24 padding + 2 border + 4 stripe
+          width = ((titleLength > width * 0.875) ? titleLength : (width * 0.875)) * letterWidth + 24 + 2 + 4
+          console.log(`${msgKey}:${height}`)
+          height = (height * letterHeight * 0.875 * 1.5) + 8 * (msg.data ? 2 : 1) + 2 + 24
           const newData: MessageNodeData = {
             add_data: msg.data ? addData : null,
             contract: msg.src_contract ?? null,
@@ -647,6 +702,8 @@ export const useMainStore = defineStore('tonexp', {
             id: msgKey,
             type: 'custom',
             position: { x: 100, y: 0},
+            nodeWidth: width,
+            nodeHeight: height,
             draggable: !mobi,
             data: newData
           }
