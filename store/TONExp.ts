@@ -621,7 +621,6 @@ export const useMainStore = defineStore('tonexp', {
         if (hash in this.transactionComboKeys) {
           hash = this.transactionComboKeys[hash]
         }
-        const mobi = isMobile()
 
         for (const msgKey of this.getMessageKeys([hash], true, true)) {
           if (msgKey in this.messageTreeKeys) continue
@@ -703,7 +702,7 @@ export const useMainStore = defineStore('tonexp', {
             position: { x: 100, y: 0},
             nodeWidth: width,
             nodeHeight: height,
-            draggable: !mobi,
+            draggable: false,
             data: newData
           }
           this.messageTreeKeys[msgKey] = treeKey
@@ -719,7 +718,7 @@ export const useMainStore = defineStore('tonexp', {
                 id: edgeKey,
                 source: this.transactions[hash].in_msg_hash,
                 target: outMsg,
-                draggable: !mobi
+                draggable: false
               }
 
               this.messageTreeEdgeMap[edgeKey] = newEdge
