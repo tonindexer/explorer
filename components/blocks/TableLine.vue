@@ -45,8 +45,8 @@ const props = defineProps<Props>()
     <tr v-else>
         <td class="uk-text-primary">{{ chainTitle(block.workchain) }}</td>
         <td class="uk-text-primary">{{ block.shard.toString() }}</td>
-        <td class="uk-text-primary" v-if="linkBlock" >
-            <NuxtLink :to="{ path: '/blocks', query: { workchain: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }}" class="uk-text-primary">
+        <td v-if="linkBlock" >
+            <NuxtLink :to="{ path: '/blocks', query: { workchain: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }}" class="uk-text-emphasis">
                 {{ block.seq_no}}
             </NuxtLink>
         </td>

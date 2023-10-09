@@ -25,13 +25,13 @@ const sankeyType = ref("count")
 const routes = computed(() => {
     const output: { route: string, t: string }[] = []
     if (trKeys.value.length > 0) output.push({ route: 'transactions', t: 'route.transactions'})
+    if (props.hex in store.sankeyCount) output.push({ route: 'money_flow', t: 'general.money_flow'})
     if (jtKeys.value.length > 0) output.push({ route: 'jettons', t: 'route.jettons'})
     if (account.value.address.hex in store.jettonHolders) output.push({ route: 'jetton_holders', t: 'ton.jetton_holders'})
     if (ownerKeys.value.length > 0) output.push({ route: 'nfts', t: 'route.nfts'})
     if (minterKeys.value.length > 0) output.push({ route: 'minter', t: 'ton.minter'})
     if (account.value.address.hex in store.nftHolders) output.push({ route: 'nft_holders', t: 'ton.nft_holders'})
     if (Object.keys(getMethods.value).length > 0) output.push({ route: 'get_methods', t: 'ton.get_methods'})
-    if (props.hex in store.sankeyCount) output.push({ route: 'money_flow', t: 'general.money_flow'})
     return output
 })
 

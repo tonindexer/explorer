@@ -28,9 +28,9 @@
         "operation_name": "Имя",
         "status": "Статус",
 
-        "hash" : "Хэш (base64)",
-        "base64" : "Хэш (base64)",
-        "hex" : "Хэш (hex)",
+        "hash" : "Хэш",
+        "base64" : "Адрес (base64)",
+        "hex" : "Адрес (hex)",
         "account_key": "Ключ аккаунта",
         "prev_tx_hash": "Пред. транзакция",
         "total_fees": "Платеж",

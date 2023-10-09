@@ -28,9 +28,9 @@
         "operation_name": "Name",
         "status": "Status",
 
-        "hash" : "Hash (base64)",
-        "base64" : "Hash (base64)",
-        "hex" : "Hash (hex)",
+        "hash" : "Hash",
+        "base64" : "Addr (base64)",
+        "hex" : "Addr (hex)",
         "account_key": "Account key",
         "prev_tx_hash": "Prev tx hash",
         "total_fees": "Total fees",

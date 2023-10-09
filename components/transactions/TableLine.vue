@@ -75,7 +75,7 @@ defineEmits(['toggleMsg'])
                 <div class="uk-flex uk-flex-column" style="gap: 24px">
                     <div v-for="msg in messageKeys" class="uk-text-primary">
                         {{ store.messages[msg].operation_name? store.messages[msg].operation_name : 
-                        ( store.messages[msg].operation_id? `op=0x${opToHex(store.messages[msg].operation_id ?? 0)}` : "&#8203") }}
+                        ( store.messages[msg].operation_id? `0x${opToHex(store.messages[msg].operation_id ?? 0)}` : "&#8203") }}
                     </div>
                 </div>
             </td>
@@ -115,7 +115,11 @@ defineEmits(['toggleMsg'])
             </td>
             <td></td>
             <td></td>
-            <td></td>
+            <td class="uk-text-truncateг uk-text-right">
+                <NuxtLink :to="{path: 'accounts', query: { hex: trn.address.hex}, hash: '#overview'}" class="uk-text-emphasis">
+                    {{ trn.address.hex in badAddresses ? badAddresses[trn.address.hex].name : truncString(trn.address.base64, 7) }}
+                </NuxtLink>
+            </td>
             <td></td>
             <td>
                 <AtomsTableDateCell :date-time="trn.created_at"/>

@@ -51,7 +51,7 @@ const parseData = computed((): TableSection[] => {
                     })
                 }
             }
-            for (const [index, arg] of method.return_values.entries()) {
+            for (const [index, arg] of method.return_values?.entries()) {
                 const value = (!method.error && (method.returns[index] || method.returns[index] === 0)) ? method.returns[index] : ''
                 methodOut.returns.push({
                     key: arg.name,
