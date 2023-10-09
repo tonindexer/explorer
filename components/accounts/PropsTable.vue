@@ -136,7 +136,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="`${acc.workchain}:${acc.shard}:${acc.block_seq_no}`">
-                            <NuxtLink :to="`/blocks?workchain=${acc.workchain}&shard=${acc.shard}&seq_no=${acc.block_seq_no}#overview`" class="uk-text-primary">
+                            <NuxtLink :to="`/blocks?workchain=${acc.workchain}&shard=${acc.shard}&seq_no=${acc.block_seq_no}`" class="uk-text-primary">
                                 {{ `${acc.workchain}:${acc.shard}:${acc.block_seq_no}` }}
                             </NuxtLink>
                     </AtomsCopyableText> 

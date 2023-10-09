@@ -344,7 +344,7 @@ export const useMainStore = defineStore('tonexp', {
             break
           } 
           case '/blocks': {
-            if (Object.entries(route.query).length === 0) {
+            if (Object.entries(route.query).length !== 3) {
               await this.updateBlockValues(null, 10, null)
             } else {
               const wc = route.query.workchain && isNumeric(route.query.workchain) ? Number(route.query.workchain) : null

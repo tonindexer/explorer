@@ -147,7 +147,7 @@ onMounted(() => {
                         v-if="lineLink"
                         :class="{'hover' : lineLink}" 
                         :block="store.blocks[block]" 
-                        @click="navigateTo(`/blocks?workchain=${store.blocks[block].workchain}&shard=${store.blocks[block].shard}&seq_no=${store.blocks[block].seq_no}#overview`)" 
+                        @click="navigateTo(`/blocks?workchain=${store.blocks[block].workchain}&shard=${store.blocks[block].shard}&seq_no=${store.blocks[block].seq_no}`)" 
                         style="cursor: pointer;"/>
                     <BlocksTableLine v-else :block="store.blocks[block]" :link-block="true"/>
                 </template>

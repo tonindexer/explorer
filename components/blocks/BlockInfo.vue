@@ -31,7 +31,11 @@ const reloadInfo = async() => {
         await store.fetchBlock(props.workchain, props.shard, props.seq_no)
     }
     await store.fetchBareAccounts(unloadedAccountKeys.value)
-    if (route.hash) selectedRoute.value = route.hash === '#overview' ? 'transactions' : route.hash.slice(1,)
+
+    selectedRoute.value = route.hash ? 
+        (route.hash.slice(1,) === 'shards' ? 
+            (block.value.shard_keys?.length > 0 ? 'shards' : 'transactions' ) : route.hash.slice(1,)) 
+                : block.value.shard_keys?.length > 0 ? 'shards' : 'transactions'
 
     loading.value = false
     if (!block.value) {
@@ -42,29 +46,29 @@ const reloadInfo = async() => {
 
 const routes = computed(() => {
     const output: { route: string, t: string }[] = []
+    if (block.value.shard_keys?.length > 0) output.push({ route: 'shards', t: 'ton.shards'})
     if (trKeys.value.length > 0) output.push({ route: 'transactions', t: 'route.transactions'})
     if (inMessageKeys.value.length + outMessageKeys.value.length > 0) output.push({ route: 'messages', t: 'route.messages'})
     if (loadedAccountKeys.value.length + unloadedAccountKeys.value.length  > 0) output.push({ route: 'accounts', t: 'route.accounts'})
-    if (block.value.shard_keys?.length > 0) output.push({ route: 'shards', t: 'ton.shards'})
     return output
 })
 
-const selectedRoute = ref('transactions')
+const selectedRoute = ref('')
 
 onMounted(async() => {
     await reloadInfo()
 })
 
-watch(selectedRoute,() => {
-    console.log(route.query)
-    router.replace({ hash: '#' + selectedRoute.value, query: route.query})
+watch(selectedRoute, (to, from) => {
+    if (to !== from)
+        router.replace({ hash: '#' + selectedRoute.value, query: route.query})
 })
 watch(props, async() => await reloadInfo())
 </script>
 
 <template>
     <template v-if="error">
-        <NuxtLink :to="{ path: 'blocks' }">
+        <NuxtLink :to="{ path: '/blocks' }">
             {{ 'An error occured while loading block! Go to overview page..' }}
         </NuxtLink>
     </template>
@@ -86,17 +90,20 @@ watch(props, async() => await reloadInfo())
                 </select>
                 <div v-if="!isMobile()" class="category-wrapper">
                     <div class="uk-flex uk-flex-middle uk-margin-remove-top">
-                        <NuxtLink v-if="trKeys.length > 0" class="category" :to="{ hash: '#transactions', query: route.query}" :class="{'selected white': (route.hash === '#transactions' || route.hash === '#overview')}">
+                        <!-- <NuxtLink v-if="trKeys.length > 0" class="category" :to="{ hash: '#transactions', query: route.query}" :class="{'selected white': (route.hash === '#transactions')}">
                             {{ $t('route.transactions')}}
-                        </NuxtLink>
-                        <NuxtLink v-for="item in routes.slice(1,)" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{'selected white': (route.hash === `#${item.route}`)}">
+                        </NuxtLink> -->
+                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{'selected white': (route.hash === `#${item.route}`)}">
                             {{ $t(item.t)}}
                         </NuxtLink>
                     </div>
                 </div>
             </template>
             <template #body>
-                <div v-if="(route.hash === '#transactions' || route.hash === '#overview')&& block?.transaction_keys.length" id="transactions">
+                <div v-if="(route.hash === '#shards' )&& block.shard_keys.length > 0" id="shards">
+                    <LazyBlocksTable :item-selector="true" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block.shard_keys.length === 0" :line-link="false"/>
+                </div>
+                <div v-if="(route.hash === '#transactions') && block?.transaction_keys.length" id="transactions">
                     <div class="uk-child-width-auto uk-text-left uk-margin-remove-top uk-margin-small-left" v-if="block.shard_keys.length > 0">
                         <label><input v-model="deepTrKeys" class="uk-checkbox uk-margin-small-right" type="checkbox">{{ $t('options.deep_transactions') }}</label>
                     </div>
@@ -119,9 +126,6 @@ watch(props, async() => await reloadInfo())
                     <AccountsTable :default-length="10" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false"/>
                     <h3 v-if="unloadedAccountKeys.length > 0" class="uk-margin-remove-bottom uk-text-primary uk-margin-small-left">{{ $t('general.unloaded_accs')+ ` (${unloadedAccountKeys.length})` }}</h3>
                     <AccountsUnloadedTable :default-length="5" :keys="unloadedAccountKeys" :hidden="unloadedAccountKeys.length === 0"/>
-                </div>
-                <div v-if="(route.hash === '#shards' )&& block.shard_keys.length > 0" id="shards">
-                    <LazyBlocksTable :item-selector="true" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block.shard_keys.length === 0" :line-link="false"/>
                 </div>
             </template>
         </AtomsTile>

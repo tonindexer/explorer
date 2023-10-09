@@ -20,7 +20,7 @@ const emptyTable = ref(false)
 const goTo = (res: BlockSearch | AccSearch | TxSearch | LabelSearch) => {
     switch (res.type) {
         case 'account': navigateTo({path: '/accounts', query: { hex: res.value.hex}, hash: '#overview'}); break;
-        case 'block': navigateTo({path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }, hash: '#overview'}); break;
+        case 'block': navigateTo({path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }}); break;
         case 'transaction': navigateTo({path: '/transactions', query: { hash: toBase64Web(res.value.hash)}, hash: '#overview'}); break;
         case 'label': navigateTo({path: '/accounts', query: { hex: res.value}, hash: '#overview'}); break;
         default:
@@ -71,7 +71,7 @@ watch(itemCount, async() => {
                     <NuxtLink v-else-if="res.type === 'label'" :to="{path: '/accounts', query: { hex: res.value}, hash: '#overview'}" class="uk-text-primary">
                         {{ mobileFieldProcess(res.show ?? res.value) }}
                     </NuxtLink>
-                    <NuxtLink v-else-if="res.type === 'block'" :to="{path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }, hash: '#overview'}" class="uk-text-primary">
+                    <NuxtLink v-else-if="res.type === 'block'" :to="{path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }}" class="uk-text-primary">
                         {{ res.show ?? store.blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no) }}
                     </NuxtLink>
                     <p class="uk-margin-remove-vertical">

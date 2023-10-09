@@ -38,7 +38,7 @@ const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '
               {{ chainTitle(block.workchain) }}
             </div>
             <div :class="isMobile()? 'uk-width-2-3' : 'uk-width-1-3 uk-text-center'" style="align-self: center; font-size: 1.1rem; padding-left: 12px;">
-              <NuxtLink :to="{ path: 'blocks', query: { workchain: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }, hash: '#overview'}" class="uk-text-primary">
+              <NuxtLink :to="{ path: '/blocks', query: { workchain: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }}" class="uk-text-primary">
                 {{ isMobile() ? `${block.workchain}:${block.shard.toString().slice(0,3)}:${block.seq_no}` : block.seq_no }}
               </NuxtLink>
             </div>
@@ -54,7 +54,7 @@ const prefix = (shard?: boolean, last?: boolean) => shard ? !last ? '├┄' : '
               </div>
               <div :class="isMobile()? 'uk-width-2-3' : 'uk-width-1-3 uk-text-center uk-margin-left'" style="align-self: center; margin-left: 0.7rem;">
                 <p class="uk-margin-remove uk-inline"> {{ prefix(true, lastId(store.blockKeyGen(shard.workchain, shard.shard, shard.seq_no), block.shard_keys)) }} </p>
-                <NuxtLink :to="{ path: 'blocks', query: { workchain: shard.workchain, shard: shard.shard.toString(), seq_no: shard.seq_no }, hash: '#overview'}" class="uk-text-primary">
+                <NuxtLink :to="{ path: '/blocks', query: { workchain: shard.workchain, shard: shard.shard.toString(), seq_no: shard.seq_no }}" class="uk-text-primary">
                     {{ isMobile() ? `${shard.workchain}:${shard.shard.toString().slice(0,3)}:${shard.seq_no}` : shard.seq_no }}
                 </NuxtLink>
               </div>
