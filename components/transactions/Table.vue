@@ -113,7 +113,11 @@ watch(itemCount, async() => {
 }, {deep : true})
 
 onMounted(() => {
-    setExtraFields()
+    if (props.account) {
+        updateValues()
+    } else { 
+        setExtraFields()
+    }
     routeChecker()
 })
 </script>

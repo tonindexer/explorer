@@ -13,7 +13,9 @@ const store = useMainStore()
 
 const itemCount = ref(props.defaultLength)
 
-onMounted(() => {
+onMounted(async () => {
+    if (props.keys.length === 0)
+        await store.loadTopHolders(props.minter, itemCount.value)
     store.fetchBareAccounts(props.keys.filter(item => item.owner_address).map(item => item.owner_address.hex))
 })
 
@@ -50,7 +52,7 @@ watch(itemCount, async() => {
                 <tr v-if="isMobile()">
                     <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 0;">
                         <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem" v-if="acc.owner_address">
-                            <NuxtLink :to="{ path: 'accounts', query: { hex: toBase64Web(acc.owner_address.hex) }, hash: '#overview'}" class="uk-text-primary">
+                            <NuxtLink :to="{ name: 'accounts-hex', params: { hex: toBase64Web(acc.owner_address.hex) }, hash: '#overview'}" class="uk-text-primary">
                                 <div uk-icon="icon: link"></div>{{ truncString(acc.owner_address.base64, 25,0) }}
                             </NuxtLink>
                         </div>

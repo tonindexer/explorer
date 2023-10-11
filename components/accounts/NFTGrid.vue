@@ -85,7 +85,7 @@ onMounted(async () => {
                     <div v-if="store.accounts[key]?.fake" class="uk-position-top-left uk-overlay uk-margin-small-top uk-margin-small-left uk-background-muted uk-text-danger uk-text-large uk-text-bold" style="padding: 0 5px">Fake</div>
                 </div>
                 <div class="uk-card-body uk-text-truncate uk-padding-small">
-                    <NuxtLink :to="`/accounts?hex=${key}#overview`" :uk-tooltip=" nft.name ? nft.name : 'No name'" class="uk-text-primary">
+                    <NuxtLink :to="{name: 'accounts-hex', params: {hex: key}, hash: '#overview'}" :uk-tooltip=" nft.name ? nft.name : 'No name'" class="uk-text-primary">
                         {{ nft.name ? nft.name : "No name" }}
                     </NuxtLink>
                     <h4 class="uk-margin-remove-top uk-text-truncate" :uk-tooltip="store.metadata[nftRelationsMap[key]?.minter.hex]?.name ? store.metadata[nftRelationsMap[key].minter.hex].name : 'No collection'"> 

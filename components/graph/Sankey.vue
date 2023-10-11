@@ -12,7 +12,7 @@ interface GraphData {
 
 const props = defineProps<GraphData>()
 const store = useMainStore()
-
+const loaded = computed(() => props.hex in store.sankeyCount)
 const data = computed(() => props.hex in store.sankeyCount ? (props.count ? store.sankeyCount[props.hex] : store.sankeyAmount[props.hex]) : null)
 
 const chartOptions = computed(() => { return {
@@ -46,16 +46,16 @@ const chartOptions = computed(() => { return {
                 // node click
                 if (!point.from && !point.to) {
                     if (point.id !== 'This account')
-                        navigateTo({path: '/accounts', query: { hex: store.sankeyAddressMap[point.id] }, hash: '#money_flow'})
+                        navigateTo({name: 'accounts-hex', params: { hex: store.sankeyAddressMap[point.id] }, hash: '#money_flow'})
                     else {
-                        navigateTo({path: '/accounts', query: { hex: props.hex }, hash: '#money_flow', replace: true})
+                        navigateTo({name: 'accounts-hex', params: { hex: props.hex }, hash: '#money_flow', replace: true})
                     }
                 // connection click
                 } else {
                     if (point.to === 'This account') {
-                        navigateTo({path: '/accounts', query: { hex: store.sankeyAddressMap[point.from] }, hash: '#money_flow'})
+                        navigateTo({name: 'accounts-hex', params: { hex: store.sankeyAddressMap[point.from] }, hash: '#money_flow'})
                     } else {
-                        navigateTo({path: '/accounts', query: { hex: store.sankeyAddressMap[point.to] }, hash: '#money_flow'})
+                        navigateTo({name: 'accounts-hex', params: { hex: store.sankeyAddressMap[point.to] }, hash: '#money_flow'})
 
                     }
                 }
@@ -74,10 +74,12 @@ const chartOptions = computed(() => { return {
 }})
 
 onBeforeMount(() => Sankey(Highcharts))
+
+onMounted(() => store.loadSankeyDiagram(props.hex))
 </script>
 
 <template>
-    <div class="uk-flex uk-width-1-1 uk-margin-small-top uk-text-primary" style="justify-content: space-between;" v-if="data">
+    <div v-if="data" class="uk-flex uk-width-1-1 uk-margin-small-top uk-text-primary" style="justify-content: space-between;" >
         <div class="uk-flex uk-flex-column">
             <div class="uk-flex uk-text-primary" :class="{'diamond' : !count}" style="white-space: nowrap; padding: 3px;"> {{  "Recieved Total: " + data.receivedTotal }} </div>
             <div v-if="Math.floor(data.receivedTotal) !== Math.floor(data.receivedTop) " class="uk-flex uk-text-primary" :class="{'diamond' : !count}" style="white-space: nowrap; padding: 3px;"> {{ "Top10: " + Math.round(data.receivedTop) }} </div>
@@ -87,7 +89,10 @@ onBeforeMount(() => Sankey(Highcharts))
             <div v-if="Math.floor(data.sentTotal) !== Math.floor(data.sentTop)" class="uk-flex uk-flex-right uk-text-primary" :class="{'diamond' : !count}" style="white-space: nowrap; padding: 3px;"> {{ "Top10: " + Math.round(data.sentTop) }} </div>
         </div>
     </div>
-    <div class="uk-width-1-1">
+    <div v-else class="uk-flex uk-flex-center">
+        <Loader :ratio="2"/>
+    </div>
+    <div v-show="data" class="uk-width-1-1">
         <ClientOnly fallback="Loading graph...">
             <Chart :options="chartOptions" ref="graph"/>
         </ClientOnly>

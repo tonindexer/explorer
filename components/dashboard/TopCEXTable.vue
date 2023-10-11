@@ -165,7 +165,7 @@ onMounted(async () => {
                                 {{ $t('ton.src_address') }}
                             </div>
                             <div class="uk-margin-remove uk-text-right">
-                                <NuxtLink :to="{path: '/accounts', query: { hex: tline.src_address}, hash: '#overview'}" class="uk-text-primary"> {{ tline.src_address in badAddresses ? badAddresses[tline.src_address].name : truncString(tline.src_address, 7) }}</NuxtLink>
+                                <NuxtLink :to="{name: 'accounts-hex', params: { hex: tline.src_address}, hash: '#overview'}" class="uk-text-primary"> {{ tline.src_address in badAddresses ? badAddresses[tline.src_address].name : truncString(tline.src_address, 7) }}</NuxtLink>
                             </div>
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;">
@@ -173,7 +173,7 @@ onMounted(async () => {
                                 {{ $t('ton.dst_address') }}
                             </div>
                             <div class="uk-margin-remove uk-text-right">
-                                <NuxtLink :to="{path: '/accounts', query: { hex: tline.dst_address}, hash: '#overview'}" class="uk-text-primary"> {{ tline.dst_address in badAddresses ? badAddresses[tline.dst_address].name : truncString(tline.dst_address, 7) }}</NuxtLink>
+                                <NuxtLink :to="{name: 'accounts-hex', params: { hex: tline.dst_address}, hash: '#overview'}" class="uk-text-primary"> {{ tline.dst_address in badAddresses ? badAddresses[tline.dst_address].name : truncString(tline.dst_address, 7) }}</NuxtLink>
                             </div>
                         </div>
                         <div v-if="type === 'withdrawal'" class="uk-flex" style="justify-content: space-between;" >
@@ -205,13 +205,13 @@ onMounted(async () => {
                 <template v-else>
                     <td>
                         <AtomsAddressField v-if="tline.src_address in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.src_address)"/>
-                        <NuxtLink v-else class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: tline.src_address }, hash: '#overview'}">
+                        <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.src_address }, hash: '#overview'}">
                             {{ truncString(tline.src_address, 5) }}
                         </NuxtLink>
                     </td>
                     <td>
                         <AtomsAddressField v-if="tline.dst_address in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.dst_address)"/>
-                        <NuxtLink v-else class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: tline.dst_address }, hash: '#overview'}">
+                        <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.dst_address }, hash: '#overview'}">
                             {{ truncString(tline.dst_address, 5) }}
                         </NuxtLink>
                     </td>

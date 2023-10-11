@@ -90,7 +90,7 @@ onMounted(async () => {
                         <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
                             <div class="uk-flex uk-flex-row" style="gap: 0.5rem">
                                 {{ `${formatTons(Number(store.accounts[key]?.jetton_balance ?? 0), jtList[key].decimals)}` }}
-                                <NuxtLink :to="{ path: 'accounts', query: { hex: jtRelations[key].minter.hex }, hash: '#overview'}" class="uk-text-primary">
+                                <NuxtLink :to="{ name: 'accounts-hex', params: { hex: jtRelations[key].minter.hex }, hash: '#overview'}" class="uk-text-primary">
                                     {{ store.metadata[jtRelations[key].minter.hex]?.symbol ?? '' }}
                                 </NuxtLink>
                                 <p v-if="store.accounts[key]?.fake" class="uk-margin-remove uk-text-danger">
@@ -107,7 +107,7 @@ onMounted(async () => {
                     </template>
                     <template v-else>
                         <td class="uk-flex uk-flex-row" style="gap: 0.5rem">
-                            <NuxtLink :to="{ path: 'accounts', query: { hex: jtRelations[key].minter.hex }, hash: '#overview'}" class="uk-text-primary">
+                            <NuxtLink :to="{ name: 'accounts-hex', params: { hex: jtRelations[key].minter.hex }, hash: '#overview'}" class="uk-text-primary">
                                 {{ store.metadata[jtRelations[key].minter.hex]?.name }}
                             </NuxtLink>
                         </td>

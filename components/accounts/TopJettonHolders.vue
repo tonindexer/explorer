@@ -17,7 +17,9 @@ const minterMeta = computed(() => props.minter in store.metadata ?
     { decimals: store.metadata[props.minter].decimals, symbol: store.metadata[props.minter].symbol} : 
     { decimals: 9, symbol: "💎"})
 
-onMounted(() => {
+onMounted(async () => {
+    if (props.keys.length === 0)
+        await store.loadTopHolders(props.minter, itemCount.value)
     store.fetchBareAccounts(props.keys.map(item => item.owner_address.hex))
 })
 
@@ -60,7 +62,7 @@ watch(itemCount, async() => {
                                 {{ $t('ton.owner') }}
                             </div>
                             <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                                <NuxtLink :to="{ path: 'accounts', query: { hex: toBase64Web(acc.owner_address.hex) }, hash: '#overview'}" class="uk-text-primary">
+                                <NuxtLink :to="{ name: 'accounts-hex', params: { hex: toBase64Web(acc.owner_address.hex) }, hash: '#overview'}" class="uk-text-primary">
                                     <div uk-icon="icon: link"></div>{{ truncString(acc.owner_address.base64, 25,0) }}
                                 </NuxtLink>
                             </div>
@@ -70,7 +72,7 @@ watch(itemCount, async() => {
                                 {{ $t('ton.wallet') }}
                             </div>
                             <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                                <NuxtLink :to="{ path: 'accounts', query: { hex: toBase64Web(acc.wallet_address.hex) }, hash: '#overview'}" class="uk-text-primary">
+                                <NuxtLink :to="{ name: 'accounts-hex', params: { hex: toBase64Web(acc.wallet_address.hex) }, hash: '#overview'}" class="uk-text-primary">
                                     <div uk-icon="icon: link"></div>{{ truncString(acc.wallet_address.base64, 25,0) }}
                                 </NuxtLink>
                             </div>

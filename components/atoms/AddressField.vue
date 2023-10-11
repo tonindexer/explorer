@@ -26,12 +26,12 @@ const accName = computed(() => {
         </div> 
     </template>
     <template v-else-if="addr.hex in badAddresses"> 
-        <NuxtLink class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
+        <NuxtLink class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
             {{ badAddresses[addr.hex].name }}
         </NuxtLink>
     </template>
     <template v-else> 
-        <NuxtLink class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
+        <NuxtLink class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
             {{ accName }}
         </NuxtLink>
     </template>

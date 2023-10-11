@@ -119,7 +119,7 @@ onMounted(async () => {
                     <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
                         <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem; max-width: 80vw;">
                             <AtomsAddressField v-if="tline.trader_address in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader_address)"/>
-                            <NuxtLink v-else class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: tline.trader_address }, hash: '#overview'}">
+                            <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.trader_address }, hash: '#overview'}">
                                 {{ truncString(tline.trader_address, 5) }}
                             </NuxtLink>
                         </div>
@@ -160,7 +160,7 @@ onMounted(async () => {
                 <template v-else>
                     <td class="uk-text-truncate">
                         <AtomsAddressField v-if="tline.trader_address in store.accounts" :full="true" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader_address)"/>
-                        <NuxtLink v-else class="uk-text-emphasis" :to="{ path: '/accounts', query: { hex: tline.trader_address }, hash: '#overview'}">
+                        <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.trader_address }, hash: '#overview'}">
                             {{ truncString(tline.trader_address, 5) }}
                         </NuxtLink>
                     </td>

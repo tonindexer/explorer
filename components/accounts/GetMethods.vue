@@ -110,7 +110,7 @@ const parseData = computed((): TableSection[] => {
                                                 <NuxtLink v-else-if="value.content" rel="external" aria-label="nft_link" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove">
                                                     {{ value.value }}
                                                 </NuxtLink>
-                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="`/accounts?hex=${value.value}`"> 
+                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="{name: 'accounts-hex', params: {hex: value.value}, hash: '#overview'}"> 
                                                     {{ value.value }}
                                                 </NuxtLink>
                                             </AtomsCopyableText>
@@ -144,7 +144,7 @@ const parseData = computed((): TableSection[] => {
                                                 <NuxtLink v-else-if="value.content" rel="external" aria-label="nft_link" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove">
                                                     {{ value.value }}
                                                 </NuxtLink>
-                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="`/accounts?hex=${value.value}`"> 
+                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="{name: 'accounts-hex', params: {hex: value.value}, hash: '#overview'}"> 
                                                     {{ value.value }}
                                                 </NuxtLink>
                                             </AtomsCopyableText>

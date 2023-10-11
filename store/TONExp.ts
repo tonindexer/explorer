@@ -242,7 +242,7 @@ export const useMainStore = defineStore('tonexp', {
                 else mappedTransaction.msg_fees = msg.fwd_fee
               }
               msg.operation_name ? ( (op_type ===0 || op_type === 1) ? op_type = msg.operation_name : op_type = 99) :
-                (msg.operation_id ? ( (op_type ===0 || op_type === 1) ? op_type = `Contract op=0x${opToHex(msg.operation_id)}` : op_type = 99) :
+                (msg.operation_id ? ( (op_type ===0 || op_type === 1) ? op_type = `Contract ${opToHex(msg.operation_id)}` : op_type = 99) :
                   op_type = 2)
               return this.processMessage(msg, transactionKey, 'src', parseAccount)
             }))
@@ -338,12 +338,12 @@ export const useMainStore = defineStore('tonexp', {
       async initLoad() {
         const route = useRoute()
 
-        switch (route.path) {
-          case '/': {
+        switch (route.name) {
+          case 'index': {
             await this.mainPageLoad()
             break
           } 
-          case '/blocks': {
+          case 'blocks': {
             if (Object.entries(route.query).length !== 3) {
               await this.updateBlockValues(null, 10, null)
             } else {
@@ -354,7 +354,7 @@ export const useMainStore = defineStore('tonexp', {
             }
             break;
           }
-          case '/transactions': {
+          case 'transactions': {
             if (!route.query.hash) {
               await this.updateTransactions(20, null, null)
             } else {
@@ -363,18 +363,21 @@ export const useMainStore = defineStore('tonexp', {
             }
             break;
           }
-          case '/messages': {
+          case 'messages': {
             await this.updateMessages(10, null, null)
           }
-          case '/accounts': {
+          case 'accounts': {
             if (Object.entries(route.query).length === 0 || 'contract' in route.query) {
               const sq = route.query.contract ? route.query.contract.toString() : null
 
               await this.updateAccounts(20, null, { interface : sq })
-            }  else {
-              const hex = route.query.hex && route.query.hex.toString()
-              if (hex) await this.fetchAccount(hex)
             }
+            break;
+          }
+          case 'accounts-hex': {
+            const hex = route.params.hex && route.params.hex.toString()
+            if (hex) await this.fetchAccount(hex)
+
             break;
           }
         }
@@ -478,6 +481,7 @@ export const useMainStore = defineStore('tonexp', {
         }
       },
       async updateTransactions(limit: number, seqOffset: bigint | null, workchain: 'main' | 'base' | null, account: AccountKey | null = null, order: "ASC" | "DESC" = "DESC") { 
+        console.trace()
         const fullReq: MockType = {
           order, 
           limit
@@ -497,7 +501,6 @@ export const useMainStore = defineStore('tonexp', {
             this.exploredTransactions.push(trn)
           }
           if (account) {
-              this.accounts[account].transaction_amount = parsed.total
               this.accounts[account].transaction_keys = []
               this.accounts[account].transaction_keys.push(...this.exploredTransactions)
           }
@@ -785,29 +788,7 @@ export const useMainStore = defineStore('tonexp', {
           }
         return hex
       },
-      async fetchAccount(hex: string, preload: boolean = false) {
-        this.loadNextNFTFlag = false
-        if (hex in this.accountBases) hex = this.accountBases[hex]
-        if (!(hex in this.accounts))
-          try {
-          const fullReq: MockType = {
-            address: hex,
-            latest: true
-          }
-          const query = getQueryString(fullReq, true);
-          // get latest account state
-            const { data } = await apiRequest(`/accounts?${query}`, 'GET')
-            const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
-                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            if (parsed.results && parsed.results.length > 0) {
-              this.processAccount(parsed.results[0])
-              if (hex !== parsed.results[0].address.hex) hex = parsed.results[0].address.hex
-            } else return null
-          } catch (error) {
-            console.log(error)
-          }
-        if (this.accounts[hex]?.loaded || preload) return hex
-        // request aggregated messages for sankey diagram
+      async loadSankeyDiagram(hex: string) {
         if (!(hex in this.sankeyCount)) {
           let loadAmountFlag = false
           // count request
@@ -910,26 +891,75 @@ export const useMainStore = defineStore('tonexp', {
             }
           }
         }
+      },
+      async fetchAccount(hex: string, preload: boolean = true) {
+        this.loadNextNFTFlag = false
+        if (hex in this.accountBases) hex = this.accountBases[hex]
+        if (!(hex in this.accounts))
+          try {
+          const fullReq: MockType = {
+            address: hex,
+            latest: true
+          }
+          const query = getQueryString(fullReq, true);
+          // get latest account state
+            const { data } = await apiRequest(`/accounts?${query}`, 'GET')
+            const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            if (parsed.results && parsed.results.length > 0) {
+              this.processAccount(parsed.results[0])
+              if (hex !== parsed.results[0].address.hex) hex = parsed.results[0].address.hex
+            } else return null
+          } catch (error) {
+            console.log(error)
+          }
+        if (this.accounts[hex]?.loaded || !preload) return hex
         // request meta for jetton minters and nft collections
-        if (this.accounts[hex].types?.includes('jetton_minter') || this.accounts[hex].types?.includes('nft_collection'))
-          await this.requestMetaBulk([hex])
-        // get first 10 transactions for account if they are empty
-        if (this.accounts[hex]?.transaction_keys.length === 0)
-          await this.updateTransactions(10, null, null, hex)
-        // get one jetton_wallet of account
-        if (this.accounts[hex]?.jetton_wallets.length === 0) {
-          await this.loadAccountJettons(hex, false, 1, null)  
+        // if (this.accounts[hex].types?.includes('jetton_minter') || this.accounts[hex].types?.includes('nft_collection'))
+        //   await this.requestMetaBulk([hex])
+        // load account statistics
+        try {
+          const fullReq: MockType = {
+            address: hex,
+            limit: 25
+          }
+          const query = getQueryString(fullReq, true);
+          // get latest account state
+          const { data } = await apiRequest(`/accounts/aggregated?${query}`, 'GET')
+          const parsed = parseJson<AccountAPIStats>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          if (Object.keys(parsed).length !== 0) {
+            if (parsed.transactions_count) {
+              this.accounts[hex].transaction_amount = parsed.transactions_count
+            }
+            if (parsed.owned_jetton_wallets) {
+              this.accounts[hex].jetton_amount = parsed.owned_jetton_wallets
+            }
+            if (parsed.owned_nft_items) {
+              this.accounts[hex].nft_amount = parsed.owned_nft_items
+            }
+          }
+        } catch (error) {
+          console.log(error)
         }
-        // get 18 nft_item of account
-        if (this.accounts[hex]?.owned_nfts.length === 0)
-          await this.loadAccountNFTs(hex, true, false, 18, null)
+        
+        // // get first 10 transactions for account if they are empty
+        // if (this.accounts[hex]?.transaction_keys.length === 0)
+        //   await this.updateTransactions(10, null, null, hex)
+        // // get one jetton_wallet of account
+        // if (this.accounts[hex]?.jetton_wallets.length === 0) {
+        //   await this.loadAccountJettons(hex, false, 1, null)  
+        // }
+        // // get 18 nft_item of account
+        // if (this.accounts[hex]?.owned_nfts.length === 0)
+        //   await this.loadAccountNFTs(hex, true, false, 18, null)
         // get 18 minted nft_item of account
         if (this.accounts[hex]?.minted_nfts.length === 0)
           await this.loadAccountNFTs(hex, true, true, 18, null)
         // get top 10 holders of account if its nft_collection or jetton_minter
-        if (this.accounts[hex]?.types?.includes('nft_collection') || this.accounts[hex]?.types?.includes('jetton_minter')) {
-          await this.loadTopHolders(hex, 10)
-        }
+        // if (this.accounts[hex]?.types?.includes('nft_collection') || this.accounts[hex]?.types?.includes('jetton_minter')) {
+        //   await this.loadTopHolders(hex, 10)
+        // }
 
         this.accounts[hex].loaded = true
 
@@ -1129,7 +1159,7 @@ export const useMainStore = defineStore('tonexp', {
               show: req.value.hex
             }]
           } else {
-            const key = await this.fetchAccount(req.value.hex, true)
+            const key = await this.fetchAccount(req.value.hex, false)
             if (key) this.searchResults = [{
               type: 'account',
               value: {
