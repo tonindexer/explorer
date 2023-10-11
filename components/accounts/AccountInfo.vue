@@ -29,7 +29,7 @@ const routes = computed(() => {
     if (account.value.jetton_amount > 0) output.push({ route: 'jettons', t: 'route.jettons'})
     if (account.value.types?.includes('jetton_minter')) output.push({ route: 'jetton_holders', t: 'ton.jetton_holders'})
     if (account.value.nft_amount > 0) output.push({ route: 'nfts', t: 'route.nfts'})
-    if (minterKeys.value.length > 0) output.push({ route: 'minter', t: 'ton.minter'})
+    if (account.value.types?.includes('nft_collection')) output.push({ route: 'minter', t: 'ton.minter'})
     if (account.value.types?.includes('nft_collection')) output.push({ route: 'nft_holders', t: 'ton.nft_holders'})
     if (Object.keys(getMethods.value).length > 0) output.push({ route: 'get_methods', t: 'ton.get_methods'})
     return output
@@ -110,7 +110,7 @@ watch(() => props.hex, async() => await reloadInfo())
                 <div v-if="route.hash === '#nfts'" id="nfts" style="padding: 0 16px;">
                     <LazyAccountsNFTGrid :minter-flag="false" :keys="ownerKeys" :default-length="18" :account="hex" />
                 </div>
-                <div v-if="route.hash === '#minter'" id="minter" style="padding: 0 16px;">
+                <div v-if="route.hash === '#minter' && account.types?.includes('nft_collection')" id="minter" style="padding: 0 16px;">
                     <LazyAccountsNFTGrid :minter-flag="true" :keys="minterKeys" :default-length="18" :account="hex" />
                 </div>
                 <div v-if="route.hash === '#nft_holders' && account.types?.includes('nft_collection')" id="nft_holders" style="padding: 0 16px;">

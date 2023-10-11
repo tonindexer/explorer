@@ -914,9 +914,7 @@ export const useMainStore = defineStore('tonexp', {
             console.log(error)
           }
         if (this.accounts[hex]?.loaded || !preload) return hex
-        // request meta for jetton minters and nft collections
-        // if (this.accounts[hex].types?.includes('jetton_minter') || this.accounts[hex].types?.includes('nft_collection'))
-        //   await this.requestMetaBulk([hex])
+        
         // load account statistics
         try {
           const fullReq: MockType = {
@@ -942,24 +940,6 @@ export const useMainStore = defineStore('tonexp', {
         } catch (error) {
           console.log(error)
         }
-        
-        // // get first 10 transactions for account if they are empty
-        // if (this.accounts[hex]?.transaction_keys.length === 0)
-        //   await this.updateTransactions(10, null, null, hex)
-        // // get one jetton_wallet of account
-        // if (this.accounts[hex]?.jetton_wallets.length === 0) {
-        //   await this.loadAccountJettons(hex, false, 1, null)  
-        // }
-        // // get 18 nft_item of account
-        // if (this.accounts[hex]?.owned_nfts.length === 0)
-        //   await this.loadAccountNFTs(hex, true, false, 18, null)
-        // get 18 minted nft_item of account
-        if (this.accounts[hex]?.minted_nfts.length === 0)
-          await this.loadAccountNFTs(hex, true, true, 18, null)
-        // get top 10 holders of account if its nft_collection or jetton_minter
-        // if (this.accounts[hex]?.types?.includes('nft_collection') || this.accounts[hex]?.types?.includes('jetton_minter')) {
-        //   await this.loadTopHolders(hex, 10)
-        // }
 
         this.accounts[hex].loaded = true
 
