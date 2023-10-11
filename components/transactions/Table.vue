@@ -60,11 +60,11 @@ const updateValues = async (next: boolean = true) => {
 }
 
 const setRoute = () => {
-    if (route.path !== '/transactions') return
+    if (route.name !== 'transactions') return
 
     if (!('hash' in route.query)) {
         if (!workchain.value) {
-            router.replace(`/transactions`)
+            router.replace({ name: `transactions` })
             return
         }
         const queryString = getQueryString({ workchain: workchain.value === 'base' ? '0' : '-1' } , true)
@@ -74,7 +74,7 @@ const setRoute = () => {
 }
 
 const routeChecker = () => {
-    if (route.path !== '/transactions') return
+    if (route.name !== 'transactions') return
     if ('workchain' in route.query && (route.query.workchain === '0' || route.query.workchain === '-1')) {
         workchain.value = route.query.workchain === '-1' ? 'main' : 'base'
     } else {

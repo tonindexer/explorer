@@ -80,7 +80,7 @@ const goToLink = (res: BlockSearch | AccSearch | TxSearch | LabelSearch) => {
     switch (res.type) {
         case 'account': navigateTo({name: 'accounts-hex', params: { hex: res.value.hex}, hash: '#overview'}); break;
         case 'block': navigateTo({path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }}); break;
-        case 'transaction': navigateTo({path: '/transactions', query: { hash: toBase64Web(res.value.hash)}, hash: '#overview'}); break;
+        case 'transaction': navigateTo({ name: 'transactions-hash', params: {hash: toBase64Web(res.value.hash)}, hash: '#overview' }); break;
         case 'label': navigateTo({name: 'accounts-hex', params: { hex: res.value}, hash: '#overview'}); break;
         default:
     }

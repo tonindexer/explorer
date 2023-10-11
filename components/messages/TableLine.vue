@@ -47,7 +47,7 @@ const showData = ref(false)
                         {{ $t('general.src_tx') }}
                     </div>
                     <div v-if="msg.src_tx_key" class="uk-margin-remove uk-text-right uk-flex">
-                        <NuxtLink :to="{ name: 'transactions', query: { hash: toBase64Web(msg.src_tx_key) }, hash: '#overview'}" class="uk-text-primary uk-text-truncate" style="max-width: 50vw;"> {{ msg.src_tx_lt }}</NuxtLink>
+                        <NuxtLink :to="{ name: 'transactions-hash', params: { hash: toBase64Web(msg.src_tx_key) }, hash: '#overview'}" class="uk-text-primary uk-text-truncate" style="max-width: 50vw;"> {{ msg.src_tx_lt }}</NuxtLink>
                     </div>
                     <div v-else class="uk-margin-remove uk-text-right">
                         <div class="uk-text-secondary">{{ $t('general.empty') }}</div>
@@ -94,7 +94,7 @@ const showData = ref(false)
                         {{ $t('general.dst_tx') }}
                     </div>
                     <div v-if="msg.dst_tx_key" class="uk-margin-remove uk-text-right uk-flex">
-                        <NuxtLink :to="{ name: 'transactions', query: { hash: toBase64Web(msg.dst_tx_key) }, hash: '#overview'}" class="uk-text-primary uk-text-truncate" style="max-width: 50vw;"> {{ msg.dst_tx_lt }}</NuxtLink>
+                        <NuxtLink :to="{ name: 'transactions-hash', params: { hash: toBase64Web(msg.dst_tx_key) }, hash: '#overview'}" class="uk-text-primary uk-text-truncate" style="max-width: 50vw;"> {{ msg.dst_tx_lt }}</NuxtLink>
                     </div>
                     <div v-else class="uk-margin-remove uk-text-right">
                         <div class="uk-text-secondary">{{ $t('general.empty') }}</div>
@@ -145,14 +145,14 @@ const showData = ref(false)
             <td>
                 <div class="uk-flex" style="gap: 4px">
                     <div v-if="msg.src_tx_key" class="uk-margin-remove">
-                        <NuxtLink :to="{ name: 'transactions', query: { hash: toBase64Web(msg.src_tx_key) }, hash: '#overview'}" class="uk-text-emphasis uk-text-truncate"> {{ 'src' }}</NuxtLink>
+                        <NuxtLink :to="{ name: 'transactions-hash', params: { hash: toBase64Web(msg.src_tx_key) }, hash: '#overview'}" class="uk-text-emphasis uk-text-truncate"> {{ 'src' }}</NuxtLink>
                     </div>
                     <div v-else class="uk-margin-remove">
                         <div class="uk-text-primary">{{ $t('general.none').toLowerCase() }}</div>
                     </div>
                     {{ '/' }}
                     <div v-if="msg.dst_tx_key" class="uk-margin-remove">
-                        <NuxtLink :to="{ name: 'transactions', query: { hash: toBase64Web(msg.dst_tx_key) }, hash: '#overview'}" class="uk-text-emphasis uk-text-truncate"> {{ 'dst' }}</NuxtLink>
+                        <NuxtLink :to="{ name: 'transactions-hash', params: { hash: toBase64Web(msg.dst_tx_key) }, hash: '#overview'}" class="uk-text-emphasis uk-text-truncate"> {{ 'dst' }}</NuxtLink>
                     </div>
                     <div v-else class="uk-margin-remove">
                         <div class="uk-text-primary">{{ $t('general.none').toLowerCase() }}</div>

@@ -150,7 +150,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="acc.last_tx_hash">
-                            <NuxtLink :to="`/transactions?hash=${toBase64Web(acc.last_tx_hash)}#overview`" class="uk-text-primary">
+                            <NuxtLink :to="{ name: 'transactions-hash', params: {hash: toBase64Web(acc.last_tx_hash)}, hash: '#overview' }" class="uk-text-primary">
                                 {{ acc.last_tx_hash }}
                             </NuxtLink>
                         </AtomsCopyableText>

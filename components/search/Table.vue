@@ -55,7 +55,7 @@ watch(itemCount, async() => {
                     <NuxtLink v-if="res.type === 'account'" :to="{name: 'accounts-hex', params: { hex: res.value.hex}, hash: '#overview'}" class="uk-text-primary">
                         {{ res.show ?? res.value.hex }}
                     </NuxtLink>
-                    <NuxtLink v-else-if="res.type === 'transaction'" :to="{path: '/transactions', query: { hash: toBase64Web(res.value.hash)}, hash: '#overview'}" class="uk-text-primary">
+                    <NuxtLink v-else-if="res.type === 'transaction'" :to="{ name: 'transactions-hash', params: {hash: toBase64Web(res.value.hash)}, hash: '#overview' }" class="uk-text-primary">
                         {{ toBase64Rfc(res.show ?? res.value.hash) }}
                     </NuxtLink>
                     <NuxtLink v-else-if="res.type === 'label'" :to="{name: 'accounts-hex', params: { hex: res.value}, hash: '#overview'}" class="uk-text-primary">

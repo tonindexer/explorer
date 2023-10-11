@@ -28,7 +28,8 @@
         "operation_name": "Name",
         "status": "Status",
 
-        "hash" : "Hash",
+        "hash" : "Hash (base64)",
+        "hash-hex": "Hash (hex)",
         "base64" : "Addr (base64)",
         "hex" : "Addr (hex)",
         "account_key": "Account key",

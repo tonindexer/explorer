@@ -23,12 +23,14 @@ const reloadInfo = async() => {
     error.value = false
     loading.value = true
     if (!transaction.value) {
-        const key = await store.fetchTransaction(props.hash)
+        const key = await store.fetchTransaction(toBase64Rfc(props.hash))
         if (props.hash != key) emits('setHash', key)
     }
     if (unloadedAccountKeys.value.length > 0)
         await store.fetchBareAccounts(unloadedAccountKeys.value)
-    if (route.hash) selectedRoute.value = route.hash === '#overview' ? 'messages' : route.hash.slice(1,)
+
+    selectedRoute.value = route.hash ? route.hash.slice(1,) : 'overview'
+
     loading.value = false
     if (!transaction.value) {
         error.value = true
@@ -43,14 +45,17 @@ const routes = computed(() => {
     return output
 })
 
-const selectedRoute = ref('messages')
+const selectedRoute = ref('')
 
 onMounted(async() => {
     await reloadInfo()
 })
 
-watch(selectedRoute,() => router.replace({ hash: '#' + selectedRoute.value, query: route.query}))
-watch(props, async() => await reloadInfo())
+watch(selectedRoute, (to, from) => {
+    if (to !== from)
+        router.replace({ hash: '#' + selectedRoute.value, query: route.query})
+})
+watch(() => props.hash, async() => await reloadInfo())
 </script>
 
 <template>

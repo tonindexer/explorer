@@ -174,8 +174,8 @@ export const useMainStore = defineStore('tonexp', {
         // Don't override messages
         if (messageKey in this.messages) {
           if (tr_key) {
-            if (tr_type === 'dst' && (this.messages[messageKey].dst_tx_key === null || this.messages[messageKey].dst_tx_key?.includes('|'))) this.messages[messageKey].dst_tx_key = tr_key
-            if (tr_type === 'src' && (this.messages[messageKey].src_tx_key === null || this.messages[messageKey].src_tx_key?.includes('|'))) this.messages[messageKey].src_tx_key = tr_key
+            if (tr_type === 'dst' && (this.messages[messageKey].dst_tx_key === null || this.messages[messageKey].dst_tx_key?.includes('~'))) this.messages[messageKey].dst_tx_key = tr_key
+            if (tr_type === 'src' && (this.messages[messageKey].src_tx_key === null || this.messages[messageKey].src_tx_key?.includes('~'))) this.messages[messageKey].src_tx_key = tr_key
           }
           return messageKey
         }
@@ -183,8 +183,8 @@ export const useMainStore = defineStore('tonexp', {
         if (message.type === 'EXTERNAL_OUT' && message.dst_address) delete message.dst_address
         const mappedMessage = <Message>{}
 
-        mappedMessage.src_tx_key = (message.src_tx_lt && message.src_address) ?  `${message.src_address.base64}|${message.src_tx_lt}` : null
-        mappedMessage.dst_tx_key = (message.dst_tx_lt && message.dst_address) ?  `${message.dst_address.base64}|${message.dst_tx_lt}` : null
+        mappedMessage.src_tx_key = (message.src_tx_lt && message.src_address) ?  `${message.src_address.base64}~${message.src_tx_lt}` : null
+        mappedMessage.dst_tx_key = (message.dst_tx_lt && message.dst_address) ?  `${message.dst_address.base64}~${message.dst_tx_lt}` : null
 
         if (tr_type === 'src' && tr_key) mappedMessage.src_tx_key = tr_key
         if (tr_type === 'dst' && tr_key) mappedMessage.dst_tx_key = tr_key
@@ -255,7 +255,7 @@ export const useMainStore = defineStore('tonexp', {
 
         this.transactions[transactionKey] = mappedTransaction
         this.transactionMsgFlag[transactionKey] = false
-        this.transactionComboKeys[`${mappedTransaction.address.base64}|${mappedTransaction.created_lt.toString()}`] = transactionKey
+        this.transactionComboKeys[`${mappedTransaction.address.base64}~${mappedTransaction.created_lt.toString()}`] = transactionKey
 
         return transactionKey
       },
@@ -352,19 +352,15 @@ export const useMainStore = defineStore('tonexp', {
               const sq = route.query.seq_no && isNumeric(route.query.seq_no) ? Number(route.query.seq_no) : null
               if (wc && sh && sq) await this.fetchBlock(wc, sh, sq)
             }
-            break;
+            break
           }
           case 'transactions': {
-            if (!route.query.hash) {
-              await this.updateTransactions(20, null, null)
-            } else {
-              const hash = route.query.hash && toBase64Rfc(route.query.hash.toString())
-              if (hash) await this.fetchTransaction(hash)
-            }
-            break;
+            await this.updateTransactions(20, null, null)
+            break
           }
-          case 'messages': {
-            await this.updateMessages(10, null, null)
+          case 'transactions-hash' : {
+            const hash = route.params.hash && trnParse(route.params.hash.toString()) && toBase64Rfc(route.params.hash.toString())
+            if (hash) await this.fetchTransaction(hash)
           }
           case 'accounts': {
             if (Object.entries(route.query).length === 0 || 'contract' in route.query) {
@@ -372,13 +368,17 @@ export const useMainStore = defineStore('tonexp', {
 
               await this.updateAccounts(20, null, { interface : sq })
             }
-            break;
+            break
           }
           case 'accounts-hex': {
             const hex = route.params.hex && route.params.hex.toString()
             if (hex) await this.fetchAccount(hex)
 
-            break;
+            break
+          }
+          case 'messages': {
+            await this.updateMessages(10, null, null)
+            break
           }
         }
         if (Object.keys(this.interfaces).length === 0) {
@@ -481,7 +481,6 @@ export const useMainStore = defineStore('tonexp', {
         }
       },
       async updateTransactions(limit: number, seqOffset: bigint | null, workchain: 'main' | 'base' | null, account: AccountKey | null = null, order: "ASC" | "DESC" = "DESC") { 
-        console.trace()
         const fullReq: MockType = {
           order, 
           limit
@@ -600,7 +599,7 @@ export const useMainStore = defineStore('tonexp', {
       },
       async fetchTransaction(hash: string) {
         let fullReq: MockType = {}
-        if (hash.includes('|')) fullReq = { address: toBase64Web(hash.split('|')[0]), created_lt: hash.split('|')[1]}
+        if (hash.includes('~')) fullReq = { address: toBase64Web(hash.split('~')[0]), created_lt: hash.split('~')[1]}
         else fullReq = { hash }
         const query = getQueryString(fullReq, true);
         try {
@@ -914,7 +913,7 @@ export const useMainStore = defineStore('tonexp', {
             console.log(error)
           }
         if (this.accounts[hex]?.loaded || !preload) return hex
-        
+
         // load account statistics
         try {
           const fullReq: MockType = {

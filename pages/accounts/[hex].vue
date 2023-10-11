@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
-
 const route = useRoute()
 
-const hex = computed(() => {
-    const out = route.params.hex ? (Array.isArray(route.params.hex) ? route.params.hex[0] : route.params.hex) : null
-    return out && addParse(out) ? out : null
-})
+const hex = ref<string | null>('')
 
-const store = useMainStore()
+onMounted(() => {
+    const out = route.params.hex ? (Array.isArray(route.params.hex) ? route.params.hex[0] : route.params.hex) : null
+    hex.value = out && addParse(out) ? out : null
+})
 </script>
 
 <template>
@@ -19,7 +17,7 @@ const store = useMainStore()
     </template>
     <template v-else>
         <div class="uk-flex uk-flex-column">
-            <AccountsAccountInfo :hex="hex" @set-hex="(e) => navigateTo( e ? {name: 'accounts-hex', params: {hex: e}, hash: '#overview', replace: true} : {name: 'accounts', replace: true})"/>
+            <AccountsAccountInfo :hex="hex" @set-hex="(e) => hex = e"/>
         </div>
     </template>
 </template>

@@ -18,7 +18,7 @@ defineEmits(['toggleMsg'])
     <tr v-if="isMobile()">
         <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 16px">
             <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
-                <NuxtLink :to="{ name: 'transactions', query: { hash: toBase64Web(trn.hash) }, hash: '#overview'}" class="uk-text-emphasis">
+                <NuxtLink :to="{ name: 'transactions-hash', params: { hash: toBase64Web(trn.hash) }, hash: '#overview'}" class="uk-text-emphasis">
                     {{ truncString(trn.hash, 5) }}
                 </NuxtLink>
             </div>
@@ -62,7 +62,7 @@ defineEmits(['toggleMsg'])
     <tr v-else>
         <template v-if="messageKeys.length > 0">
             <td>
-                <NuxtLink class="uk-text-truncate uk-text-emphasis" aria-label="transaction_link" :to="{ name: 'transactions', query: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
+                <NuxtLink class="uk-text-truncate uk-text-emphasis" aria-label="transaction_link" :to="{ name: 'transactions-hash', params: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
                     {{ truncString(trn.hash, 5) }}
                 </NuxtLink>
             </td>
@@ -106,7 +106,7 @@ defineEmits(['toggleMsg'])
         </template>
         <template v-else-if="messageKeys.length === 0">
             <td>
-                <NuxtLink class="uk-text-emphasis" aria-label="transaction_link" :to="{ name: 'transactions', query: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
+                <NuxtLink class="uk-text-emphasis" aria-label="transaction_link" :to="{ name: 'transactions-hash', params: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
                     {{ truncString(trn.hash, 5) }}
                 </NuxtLink>
             </td>

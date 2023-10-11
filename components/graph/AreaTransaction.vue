@@ -235,7 +235,7 @@ onMounted(async () => {
         <div class="category-wrapper">
             <div class="uk-flex uk-flex-middle uk-margin-remove-top" style="justify-content: space-between;">
                 <button class="uk-button category selected white" id="8h">
-                    TX Count
+                    Transactions count
                 </button>
             </div>
         </div>

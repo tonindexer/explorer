@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
         store.updateBlockValues(null, 10, null)
         return
     }
-    if (to.fullPath === '/transactions') {
+    if (to.name === 'transactions' && from.name !== 'transactions') {
         store.updateTransactions(20, null, null)
         return
     }

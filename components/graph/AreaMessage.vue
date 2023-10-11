@@ -250,10 +250,10 @@ onMounted(async () => {
         <div class="category-wrapper">
             <div class="uk-flex uk-flex-middle uk-margin-remove-top" style="justify-content: space-between;">
                 <button class="uk-button category" id="8h" @click="chartType = 'message_amount_sum'" :class="{'selected white': chartType === 'message_amount_sum'}">
-                    TON Amount
+                    TON amount
                 </button>
                 <button class="uk-button category" id="24h" @click="chartType = 'message_count'" :class="{'selected white': chartType === 'message_count'}">
-                    Count
+                    Message count
                 </button>
             </div>
         </div>

@@ -11,15 +11,15 @@ const routeType = computed(() => {
 })
 
 const showRoute = computed(() => {
-    if (route.path === '/transactions' && route.query?.hash) {
-        const hash = toBase64Web(route.query.hash.toString())
+    if (route.name === 'transactions-hash') {
+        const hash = toBase64Rfc(route.params.hash.toString())
         if (hash in store.transactions) return hash
         else if (hash in store.transactionHexes) return store.transactionHexes[hash]
-        else if (hash in store.transactionComboKeys) return store.transactionComboKeys[hash]
+        else if (toBase64Web(hash) in store.transactionComboKeys) return store.transactionComboKeys[toBase64Web(hash)]
         return hash
     }
-    if (route.path === '/accounts' && route.query?.hex) {
-        const hex = route.query.hex.toString()
+    if (route.name === 'accounts-hex') {
+        const hex = route.params.hex.toString()
         if (hex in store.accounts) return store.accounts[hex].address.base64
         else if (hex in store.accountBases) return hex
         return hex

@@ -13,7 +13,6 @@ const routes = [
     {
         name: 'transactions',
         link: '/transactions',
-        active: '/transactions',
         icon: `<svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M20 22H4C3.73478 22 3.48043 21.8946 3.29289 21.7071C3.10536 21.5196 3 21.2652 3 21V3C3 2.73478 3.10536 2.48043 3.29289 2.29289C3.48043 2.10536 3.73478 2 4 2H20C20.2652 2 20.5196 2.10536 20.7071 2.29289C20.8946 2.48043 21 2.73478 21 3V21C21 21.2652 20.8946 21.5196 20.7071 21.7071C20.5196 21.8946 20.2652 22 20 22ZM19.5 20.5V12V3.5H12H4.5V12V20.5H12H19.5ZM8 9H16V10.5H12H8V9ZM8 13.5H12H16V15H8V13.5Z"/>
                 </svg>`
@@ -21,7 +20,6 @@ const routes = [
     {
         name: 'accounts',
         link: '/accounts',
-        active: '/accounts',
         icon: `<svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M18.375 15.75C17.3395 15.75 16.5 16.5895 16.5 17.625C16.5 18.6605 17.3395 19.5 18.375 19.5C19.4105 19.5 20.25 18.6605 20.25 17.625C20.25 16.5895 19.4105 15.75 18.375 15.75ZM15 17.625C15 15.761 16.511 14.25 18.375 14.25C20.239 14.25 21.75 15.761 21.75 17.625C21.75 19.489 20.239 21 18.375 21C16.511 21 15 19.489 15 17.625Z" />
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M12.9697 3.96967C13.2626 3.67678 13.7374 3.67678 14.0303 3.96967L17.5835 7.5228C18.5686 8.50898 19.1231 9.84565 19.125 11.2396L19.125 11.2406L19.125 15C19.125 15.4142 18.7892 15.75 18.375 15.75C17.9608 15.75 17.625 15.4142 17.625 15V11.2411C17.6235 10.2442 17.2271 9.28848 16.5225 8.58318L12.9697 5.03033C12.6768 4.73744 12.6768 4.26256 12.9697 3.96967Z" />
@@ -35,7 +33,6 @@ const routes = [
     {
         name: 'messages',
         link: '/messages',
-        active: '/messages',
         icon: `<svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M2.68936 4.93934C2.97067 4.65804 3.3522 4.5 3.75002 4.5H20.25C20.6478 4.5 21.0294 4.65804 21.3107 4.93934C21.592 5.22065 21.75 5.60218 21.75 6V18C21.75 18.3978 21.592 18.7794 21.3107 19.0607C21.0294 19.342 20.6478 19.5 20.25 19.5H7.73459C7.73909 19.5 7.74344 19.4984 7.74685 19.4954L7.73458 19.4812L7.25627 18.9281L7.73729 19.5036L4.70916 22.0348L4.7063 22.0372C4.48777 22.218 4.22244 22.3332 3.9411 22.3693C3.65976 22.4055 3.37394 22.3611 3.11681 22.2414C2.85967 22.1216 2.64175 21.9314 2.48834 21.6929C2.33492 21.4543 2.25229 21.1771 2.25005 20.8934L2.25 20.8875L2.25002 6C2.25002 5.60217 2.40806 5.22064 2.68936 4.93934ZM6.77124 18.356C7.03946 18.1264 7.38096 18.0001 7.73421 18H20.25V6L3.75002 6V20.8815L6.77124 18.356Z"/>
                 </svg>
@@ -44,7 +41,6 @@ const routes = [
     {
         name: 'dashboard',
         link: '/dashboard',
-        active: '/dashboard',
         icon: `<svg class="nav-icon-special" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M3 5V19C3 19.5523 4.44772 20 5 20H20.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M18 9L13 13.9999L10.5 11.4998L7 14.9998" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
@@ -120,7 +116,7 @@ const external = [
             </Transition>
             <div class="uk-flex uk-flex-column" style="row-gap: 8px; margin-top: 48px">
                 <div v-for="link of routes" style="height: 40px">
-                    <NuxtLink :to="link.link" class="link uk-flex" :class="{ 'active' : route.path === link.active}">
+                    <NuxtLink :to="link.link" class="link uk-flex" :class="{ 'active' : route.name?.toString().includes(link.name)}">
                         <div v-html="link.icon" style="padding: 8px"></div>
                         <Transition name="fade">
                             <div style="margin-left: 4px; margin-right: 8px;" v-show="showFullMenu">
@@ -171,23 +167,8 @@ const external = [
         <div>
             <table class="uk-table uk-table-divider uk-padding-remove-top" style="align-items: center; font-size: 1.25rem;">
                 <tbody>
-                    <tr><td>
-                        <NuxtLink :to="'/transactions'" class="link" :class="{ 'active' : route.path === '/transactions'}" @click="showMobileNav = false"> {{ $t('route.transactions') }}</NuxtLink>
-                    </td></tr>
-                    <tr><td>
-                        <NuxtLink :to="'/accounts'" class="link" :class="{ 'active' : route.path === '/accounts'}" @click="showMobileNav = false"> {{ $t('route.accounts') }}</NuxtLink>
-                    </td></tr>
-                    <tr><td>
-                        <NuxtLink :to="'/messages'" class="link" :class="{ 'active' : route.path === '/messages'}" @click="showMobileNav = false"> {{ $t('route.messages') }}</NuxtLink>
-                    </td></tr>
-                    <tr><td>
-                        <NuxtLink :to="'/dashboard/telemint#charts'" class="link" :class="{ 'active' : route.path === '/dashboard/telemint'}" @click="showMobileNav = false"> {{ $t('route.telemint') }}</NuxtLink>
-                    </td></tr>
-                    <tr><td>
-                        <NuxtLink :to="'/dashboard/cex#charts'" class="link" :class="{ 'active' : route.path === '/dashboard/cex'}" @click="showMobileNav = false"> {{ $t('route.cex') }}</NuxtLink>
-                    </td></tr>
-                    <tr><td>
-                        <NuxtLink :to="'/dashboard/bridge'" class="link" :class="{ 'active' : route.path === '/dashboard/bridge'}" @click="showMobileNav = false"> {{ $t('route.bridge') }}</NuxtLink>
+                    <tr v-for="link of routes" :key="link.name"><td>
+                        <NuxtLink :to="link.link" class="link" :class="{ 'active' : route.name?.toString().includes(link.name)}" @click="showMobileNav = false"> {{ $t(`route.${link.name}`) }}</NuxtLink>
                     </td></tr>
                 </tbody>
             </table>

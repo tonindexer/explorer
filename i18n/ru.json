@@ -28,7 +28,8 @@
         "operation_name": "Имя",
         "status": "Статус",
 
-        "hash" : "Хэш",
+        "hash" : "Хэш (base64)",
+        "hash-hex": "Хэш (hex)",
         "base64" : "Адрес (base64)",
         "hex" : "Адрес (hex)",
         "account_key": "Ключ аккаунта",

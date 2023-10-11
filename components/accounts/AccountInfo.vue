@@ -49,7 +49,6 @@ const reloadInfo = async() => {
         (route.hash.slice(1,) === 'overview' ? 
             'transactions' : route.hash.slice(1,)) : 'transacitions'
                 
-    // if (route.hash) selectedRoute.value = route.hash === '#overview' ? 'transactions' : route.hash.slice(1,)
     loading.value = false
     if (!account.value) {
         error.value = true
