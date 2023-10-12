@@ -469,7 +469,9 @@ export const useMainStore = defineStore('tonexp', {
         const fullReq: MockType = {
           ...filters,
           interval,
-          metric
+          metric,
+          src_workchain: 0,
+          dst_workchain: 0
         }
         let newArr: GraphCell[] = reset ? [] : [...this.messageGraphData]
         const query = getQueryString(fullReq, true)
