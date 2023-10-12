@@ -80,7 +80,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="trn.address.base64">
-                            <NuxtLink :to="`/blocks?workchain=${trn.workchain}&shard=${trn.shard}&seq_no=${trn.block_seq_no}`" class="uk-text-primary">
+                            <NuxtLink :to="{ name: 'blocks-key', params: {key : `${trn.workchain}:${trn.shard}:${trn.block_seq_no}` }}" class="uk-text-primary">
                                 {{ `${trn.workchain}:${trn.shard}:${trn.block_seq_no}` }}
                             </NuxtLink>
                         </AtomsCopyableText> 

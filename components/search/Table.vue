@@ -61,8 +61,8 @@ watch(itemCount, async() => {
                     <NuxtLink v-else-if="res.type === 'label'" :to="{name: 'accounts-hex', params: { hex: res.value}, hash: '#overview'}" class="uk-text-primary">
                         {{ mobileFieldProcess(res.show ?? res.value) }}
                     </NuxtLink>
-                    <NuxtLink v-else-if="res.type === 'block'" :to="{path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }}" class="uk-text-primary">
-                        {{ res.show ?? store.blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no) }}
+                    <NuxtLink v-else-if="res.type === 'block'" :to="{ name: 'blocks-key', params: {key : `${res.value.workchain}:${res.value.shard.toString()}:${res.value.seq_no}` }}" class="uk-text-primary">
+                        {{ res.show ?? blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no) }}
                     </NuxtLink>
                     <p class="uk-margin-remove-vertical">
                         {{ $t(`route.${res.type === 'label' ? 'account' :res.type}`) }}

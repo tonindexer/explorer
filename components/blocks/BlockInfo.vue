@@ -16,7 +16,7 @@ const router = useRouter()
 const deepTrKeys = ref(false)
 
 
-const key = computed(() => store.blockKeyGen(props.workchain, props.shard, props.seq_no))
+const key = computed(() => blockKeyGen(props.workchain, props.shard, props.seq_no))
 const block = computed(() => store.blocks[key.value] ?? null)
 const trKeys = computed(() => (deepTrKeys.value) ? store.deepTransactionKeys(key.value) : block.value?.transaction_keys ?? [])
 const inMessageKeys = computed(() => store.getMessageKeys(trKeys.value, true, false))
@@ -32,16 +32,18 @@ const reloadInfo = async() => {
     }
     await store.fetchBareAccounts(unloadedAccountKeys.value)
 
+    if (!block.value) {
+        loading.value = false
+        error.value = true
+        return;
+    }
+
     selectedRoute.value = route.hash ? 
         (route.hash.slice(1,) === 'shards' ? 
             (block.value.shard_keys?.length > 0 ? 'shards' : 'transactions' ) : route.hash.slice(1,)) 
                 : block.value.shard_keys?.length > 0 ? 'shards' : 'transactions'
 
     loading.value = false
-    if (!block.value) {
-        error.value = true
-        return;
-    }
 }
 
 const routes = computed(() => {
@@ -67,7 +69,7 @@ watch(props, async() => await reloadInfo())
 
 <template>
     <template v-if="error">
-        <NuxtLink :to="{ path: '/blocks' }">
+        <NuxtLink :to="{ name: 'blocks' }">
             {{ 'An error occured while loading block! Go to overview page..' }}
         </NuxtLink>
     </template>

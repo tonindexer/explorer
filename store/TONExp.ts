@@ -124,7 +124,6 @@ export const useMainStore = defineStore('tonexp', {
       },
     },
     actions: {
-      blockKeyGen: (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`,
       convertBase64ToHex: (value: string) => {
         if (process.server) {
           return Buffer.from(value, 'base64').toString('hex');
@@ -260,7 +259,7 @@ export const useMainStore = defineStore('tonexp', {
         return transactionKey
       },
       processBlock(block: BlockAPI) {
-        const blockKey : BlockKey = this.blockKeyGen(block.workchain, block.shard, block.seq_no)
+        const blockKey : BlockKey = blockKeyGen(block.workchain, block.shard, block.seq_no)
 
         // Don't override existing blocks
         if (blockKey in this.blocks) return blockKey
@@ -344,13 +343,16 @@ export const useMainStore = defineStore('tonexp', {
             break
           } 
           case 'blocks': {
-            if (Object.entries(route.query).length !== 3) {
-              await this.updateBlockValues(null, 10, null)
-            } else {
-              const wc = route.query.workchain && isNumeric(route.query.workchain) ? Number(route.query.workchain) : null
-              const sh = route.query.shard  && isNumeric(route.query.shard) ? BigInt(route.query.shard.toString()) : null
-              const sq = route.query.seq_no && isNumeric(route.query.seq_no) ? Number(route.query.seq_no) : null
-              if (wc && sh && sq) await this.fetchBlock(wc, sh, sq)
+            await this.updateBlockValues(null, 10, null)
+            break
+          }
+          case 'blocks-key': {
+            const key = route.params.key ? (Array.isArray(route.params.key) ? route.params.key[0] : route.params.key) : null
+            if (key) {
+                const params = blockKeyDegen(key)
+                if (params) {
+                  this.fetchBlock(params.workchain, params.shard, params.seq_no)
+                }
             }
             break
           }
@@ -1150,7 +1152,7 @@ export const useMainStore = defineStore('tonexp', {
 
         } else if (req.type === 'block') {
 
-          if (this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) { this.searchResults = [req]; return this.searchResults }
+          if (blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) { this.searchResults = [req]; return this.searchResults }
 
           const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no)
           if (key) this.searchResults = [{
@@ -1160,7 +1162,7 @@ export const useMainStore = defineStore('tonexp', {
               shard: this.blocks[key].shard,
               seq_no: this.blocks[key].seq_no
             },
-            show: this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
+            show: blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
           }]
         } else if (req.type === 'transaction') {
 

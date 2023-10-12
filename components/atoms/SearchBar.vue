@@ -79,7 +79,7 @@ const parse = async () => {
 const goToLink = (res: BlockSearch | AccSearch | TxSearch | LabelSearch) => {
     switch (res.type) {
         case 'account': navigateTo({name: 'accounts-hex', params: { hex: res.value.hex}, hash: '#overview'}); break;
-        case 'block': navigateTo({path: '/blocks', query: { workchain: res.value.workchain, shard: res.value.shard.toString(), seq_no: res.value.seq_no }}); break;
+        case 'block': navigateTo({ name: 'blocks-key', params: {key : `${res.value.workchain}:${res.value.shard.toString()}:${res.value.seq_no}` }}); break;
         case 'transaction': navigateTo({ name: 'transactions-hash', params: {hash: toBase64Web(res.value.hash)}, hash: '#overview' }); break;
         case 'label': navigateTo({name: 'accounts-hex', params: { hex: res.value}, hash: '#overview'}); break;
         default:
@@ -132,7 +132,7 @@ onMounted(async () => {
                                 {{ mobileFieldProcess(res.show ?? res.value) }}
                             </h4>
                             <h4 class="uk-margin-remove-vertical uk-text-ellipsis uk-text-primary" v-else-if="res.type === 'block'" style="cursor: pointer;">
-                                {{ mobileFieldProcess(res.show ?? store.blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no), 5, 15) }}
+                                {{ mobileFieldProcess(res.show ?? blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no), 5, 15) }}
                             </h4>
                             <p class="uk-margin-remove-vertical">
                                 {{ $t(`route.${res.type === 'label' ? 'account' :res.type}`) }}

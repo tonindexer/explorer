@@ -4,7 +4,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if (to.fullPath === from.fullPath) return
     const store = useMainStore()
 
-    if (to.fullPath === '/blocks') {
+    if (to.name === 'blocks' && from.name !== 'blocks') {
         store.updateBlockValues(null, 10, null)
         return
     }

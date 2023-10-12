@@ -70,7 +70,7 @@ const setRoute = () => {
 }
 
 const routeChecker = () => {
-    if (route.path !== '/blocks' || route.hash === '#shards') return
+    if (route.name !== 'blocks' || route.hash === '#shards') return
     if ('workchain' in route.query && (route.query.workchain === '0' || route.query.workchain === '-1')) {
         workchain.value = route.query.workchain === '-1' ? 'main' : 'base'
     } else {
@@ -147,7 +147,7 @@ onMounted(() => {
                         v-if="lineLink"
                         :class="{'hover' : lineLink}" 
                         :block="store.blocks[block]" 
-                        @click="navigateTo(`/blocks?workchain=${store.blocks[block].workchain}&shard=${store.blocks[block].shard}&seq_no=${store.blocks[block].seq_no}`)" 
+                        @click="navigateTo({ name: 'blocks-key', params: {key : block }})" 
                         style="cursor: pointer;"/>
                     <BlocksTableLine v-else :block="store.blocks[block]" :link-block="true"/>
                 </template>

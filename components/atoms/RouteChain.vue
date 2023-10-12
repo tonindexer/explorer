@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
+import { blockKeyDegen } from '~/utils/filters';
 
 const route = useRoute()
 const store = useMainStore()
@@ -24,11 +25,12 @@ const showRoute = computed(() => {
         else if (hex in store.accountBases) return hex
         return hex
     }
-    if (route.path === '/blocks') {
-        const wc = (route.query?.workchain || route.query?.workchain === '0') && isNumeric(route.query.workchain) ? Number(route.query.workchain) : null
-        const sh = route.query.shard  && isNumeric(route.query.shard) ? BigInt(route.query.shard.toString()) : null
-        const sq = route.query.seq_no && isNumeric(route.query.seq_no) ? Number(route.query.seq_no) : null
-        if ((wc || wc === 0) && sh && sq) return `${wc}:${sh}:${sq}`
+    if (route.name === 'blocks-key') {
+        const key = blockKeyDegen(route.params.key.toString())
+        if (key) {
+            return blockKeyGen(key.workchain, key.shard, key.seq_no)
+        }
+        return null
     }
     if (route.path === '/dashboard/cex') return 'CEX'
     if (route.path === '/dashboard/telemint') return 'Telemint'

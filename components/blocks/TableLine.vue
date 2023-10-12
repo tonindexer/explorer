@@ -12,7 +12,7 @@ const props = defineProps<Props>()
     <tr v-if="isMobile()">
         <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem;">
             <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
-                <NuxtLink :to="{ path: '/blocks', query: { workchain: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }}" class="uk-text-primary">
+                <NuxtLink :to="{ name: 'blocks-key', params: {key : `${block.workchain}:${block.shard}:${block.seq_no}` }}" class="uk-text-primary">
                     {{ truncString(`${block.workchain}:${block.shard}:${block.seq_no}`, 8, 12) }}
                 </NuxtLink>
             </div>
@@ -46,7 +46,7 @@ const props = defineProps<Props>()
         <td class="uk-text-primary">{{ chainTitle(block.workchain) }}</td>
         <td class="uk-text-primary">{{ block.shard.toString() }}</td>
         <td v-if="linkBlock" >
-            <NuxtLink :to="{ path: '/blocks', query: { workchain: block.workchain, shard: block.shard.toString(), seq_no: block.seq_no }}" class="uk-text-emphasis">
+            <NuxtLink :to="{ name: 'blocks-key', params: {key : `${block.workchain}:${block.shard}:${block.seq_no}` }}" class="uk-text-emphasis">
                 {{ block.seq_no}}
             </NuxtLink>
         </td>

@@ -50,7 +50,7 @@ export const mobileFieldProcess = (value: string | number | bigint, left: number
 
 export const truncString = (value: string, keepLeft: number = 3, keepRight: number = keepLeft) : string => {
     if (value.length < (keepLeft + keepRight)) return value;
-    return value.slice(0, keepLeft) + '...' + value.slice(value.length - keepRight, value.length);
+    return value.slice(0, keepLeft) + '...' + value.slice(value.length - keepRight, value.length)
 }
 
 export const chainTitle = (id: number) => {
@@ -59,19 +59,43 @@ export const chainTitle = (id: number) => {
     return id
 }
 
-export const toBase64Web = (base64: string) => base64.replace(/\+/g, '-').replace(/\//g, '_');
+export const blockKeyGen = (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`
 
-export const toBase64Rfc = (base64: string) => base64.replace(/\-/g, '+').replace(/_/g, '/');
+export const blockKeyDegen = (key: string) : { workchain: number, shard: bigint, seq_no: number } | null => {
+    const out = {
+        workchain: 0,
+        shard: 0n,
+        seq_no: 0
+    }
+    const params: string[] = key.split(':')
+    if (params.length === 0 || (params[0] !== '0' && params[0] !== '-1')) return null
+    if (params.length === 2 && isNumeric(params[1])) {
+        out.workchain = Number(params[0])
+        out.seq_no = Number(params[1])
+        out.shard = -9223372036854775808n
+    } 
+    else if (params.length === 3 && isNumeric(params[1]) && isNumeric(params[2])) {
+        out.workchain = Number(params[0])
+        out.shard = BigInt(params[1])
+        out.seq_no = Number(params[2])
+    } 
+    else return null
+    return out
+}
+
+export const toBase64Web = (base64: string) => base64.replace(/\+/g, '-').replace(/\//g, '_')
+
+export const toBase64Rfc = (base64: string) => base64.replace(/\-/g, '+').replace(/_/g, '/')
 
 const feeFormatter = new Intl.NumberFormat('fullwide', {
     maximumFractionDigits: 9,
     minimumFractionDigits: 0,
-});
+})
 
 const currencyFormatter = new Intl.NumberFormat('en', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 0,
-});
+})
 
 export const formatTons = function formatNanoTonsLimitNumberLength(value: number, decimals = 9, round = false) {
     const valueMultiplier = Number.isInteger(decimals)
@@ -81,7 +105,7 @@ export const formatTons = function formatNanoTonsLimitNumberLength(value: number
     return round
         ? currencyFormatter.format(value / valueMultiplier)
         : feeFormatter.format(value / valueMultiplier);
-};
+}
 
 export const getHumanTime = (timestamp: number | Date | string) => {
 
@@ -142,7 +166,7 @@ export const getHumanTime = (timestamp: number | Date | string) => {
   }
 	return humanTime && units ? (humanTime + units + ' ago') : 'just now';
 
-};
+}
 
 type badList = {
     [key: string] : {
@@ -151,6 +175,7 @@ type badList = {
         base64: string
     }
 }
+
 export const badAddresses = {
     "0:0000000000000000000000000000000000000000000000000000000000000000" : {
         name: "Burner account",
