@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     const store = useMainStore()
 
     if (to.name === 'blocks' && from.name !== 'blocks') {
-        store.updateBlockValues(null, 10, null)
+        store.updateBlockValues('main', 5, null)
         return
     }
     if (to.name === 'transactions' && from.name !== 'transactions') {

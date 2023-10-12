@@ -11,10 +11,7 @@ interface BlockTable {
 }
 
 const props = defineProps<BlockTable>()
-const route = useRoute()
-const router = useRouter()
 
-const workchain = ref<'main' | 'base' | null>(null)
 const sortby = ref({
     order_desc: true
 })
@@ -29,6 +26,12 @@ const maxExploredPage = ref(0)
 const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'block'): false)
 
 const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+
+const displayedKeys = computed(() => {
+    const out = [] as BlockKey[]
+    props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).map(key => out.push(...[key, ...store.blocks[key].shard_keys]))
+    return out
+})
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {
@@ -47,42 +50,12 @@ const setExtraFields = () => {
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     if (props.keys.length === 0 || pageNum.value === 0)
-        await store.updateBlockValues(workchain.value, itemCount.value, null, undefined, sortby.value.order_desc ? 'DESC' : 'ASC')
+        await store.updateBlockValues('main', itemCount.value, null, undefined, sortby.value.order_desc ? 'DESC' : 'ASC')
     else {
-        await store.updateBlockValues(workchain.value, itemCount.value, next ? lastMC.value : firstMC.value, pageNum.value, sortby.value.order_desc ? 'DESC' : 'ASC')
+        await store.updateBlockValues('main', itemCount.value, next ? lastMC.value : firstMC.value, pageNum.value, sortby.value.order_desc ? 'DESC' : 'ASC')
     }
     setExtraFields()
 }
-
-
-const setRoute = () => {
-    if (route.path !== '/blocks' || route.hash === '#shards') return
-
-    if (!('hash' in route.query)) {
-        if (!workchain.value) {
-            router.replace(`/blocks`)
-            return
-        }
-        const queryString = getQueryString({ workchain: workchain.value === 'base' ? '0' : '-1' } , true)
-        if (queryString || route.fullPath.split('?')[1] !== queryString) router.replace(`/blocks?${queryString}`)
-    }
-
-}
-
-const routeChecker = () => {
-    if (route.name !== 'blocks' || route.hash === '#shards') return
-    if ('workchain' in route.query && (route.query.workchain === '0' || route.query.workchain === '-1')) {
-        workchain.value = route.query.workchain === '-1' ? 'main' : 'base'
-    } else {
-        workchain.value = null
-    }
-}
-
-watch(workchain, () => {
-    setRoute()
-    if (pageNum.value === 0) updateValues()
-    else pageNum.value = 0
-})
 
 watch(sortby, () => {
     if (pageNum.value === 0) updateValues()
@@ -104,7 +77,6 @@ watch(itemCount, async() => {
 }, {deep : true})
 
 onMounted(() => {
-    routeChecker()
     setExtraFields()
 })
 </script>
@@ -119,20 +91,7 @@ onMounted(() => {
         <table v-if="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
             <thead v-if="!isMobile()">
                 <tr>
-                    <th class="uk-flex" style="position: relative; width: fit-content;" :class="{'dropdown-text filter-icon hover-header' : update && (route.path === '/blocks'), 'active' : workchain}">
-                        {{ $t('ton.workchain')}}
-                        <div class="dropdown-filter">
-                            <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary" style="padding: 8px 16px;">
-                                <label><input type="radio" :value="null" v-model="workchain" class="uk-radio uk-margin-small-right">{{ $t('options.both') }}</label>
-                            </div>
-                            <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary" style="padding: 8px 16px;">
-                                <label><input type="radio" :value="'base'" v-model="workchain" class="uk-radio uk-margin-small-right">{{ $t('options.basechain') }}</label>
-                            </div>
-                            <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary" style="padding: 8px 16px;">
-                                <label><input type="radio" :value="'main'" v-model="workchain" class="uk-radio uk-margin-small-right">{{ $t('options.masterchain') }}</label>
-                            </div>
-                        </div>
-                    </th>
+                    <th class="uk-width-1-6">{{ $t('ton.workchain')}}</th>
                     <th class="uk-width-1-6">{{ $t('ton.shard')}}</th>
                     <th class="uk-text-nowrap uk-width-1-6" :class="{'hover-header' : update}" @click="sortby.order_desc = !sortby.order_desc">
                         {{ $t('ton.block') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
@@ -142,7 +101,7 @@ onMounted(() => {
                 </tr>
             </thead>
             <tbody>
-                <template v-for="block in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+                <template v-for="block in displayedKeys">
                     <BlocksTableLine 
                         v-if="lineLink"
                         :class="{'hover' : lineLink}" 

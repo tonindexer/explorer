@@ -17,7 +17,7 @@ const filteredKeys = computed(() => store.getBlockKeys(store.exploredBlocks, fal
     </AtomsHeaderCount>
     <AtomsTile :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'">
         <template #body>
-            <LazyBlocksTable :keys="filteredKeys" :update="true" :default-length="10" :item-selector="true" :hidden="false" :line-link="true"/>
+            <LazyBlocksTable :keys="filteredKeys" :update="true" :default-length="5" :item-selector="true" :hidden="false" :line-link="true"/>
         </template>
     </AtomsTile>
 </template>

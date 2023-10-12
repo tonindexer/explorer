@@ -346,7 +346,7 @@ export const useMainStore = defineStore('tonexp', {
             break
           } 
           case 'blocks': {
-            await this.updateBlockValues(null, 10, null)
+            await this.updateBlockValues('main', 5, null)
             break
           }
           case 'blocks-key': {
@@ -419,11 +419,9 @@ export const useMainStore = defineStore('tonexp', {
         }
         if (workchain) fullReq.workchain = workchain === 'base' ? '0' : '-1'
 
-        if (seqOffset) {
-          fullReq.after = seqOffset
-          this.exploredBlocks = this.exploredBlocks.slice(0, limit*cutPage)
-        }
-        if (!seqOffset) this.exploredBlocks = []
+        if (seqOffset) fullReq.after = seqOffset
+        else this.exploredBlocks = []
+
         const query = getQueryString(fullReq, false)
         try {
           const { data } = await apiRequest(`/blocks?${query}`, 'GET')
@@ -434,7 +432,6 @@ export const useMainStore = defineStore('tonexp', {
           for (const key in parsed.results) {
             const block = this.processBlock(parsed.results[key])
             this.exploredBlocks.push(block)
-            if (workchain !== 'main') this.exploredBlocks.push(...this.blocks[block].shard_keys)
           }
         } catch (error) {
           console.log(error)
