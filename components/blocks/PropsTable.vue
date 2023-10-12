@@ -95,19 +95,6 @@ const externalLink = computed(() : MockType=> {
             <tr>
                 <AtomsPropLine>
                     <template #name>
-                        {{ $t(`ton.transaction_delta`) }}
-                    </template>
-                    <template #value>
-                        <AtomsBalanceCell
-                            :balance="block.transaction_delta ? block.transaction_delta : 0n"
-                            :delta="true"
-                        />
-                    </template>
-                </AtomsPropLine>
-            </tr>
-            <tr>
-                <AtomsPropLine>
-                    <template #name>
                         {{ $t(`ton.root_hash`) }}
                     </template>
                     <template #value>

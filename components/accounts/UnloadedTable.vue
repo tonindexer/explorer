@@ -46,20 +46,14 @@ const itemCount = ref(props.defaultLength)
                 <template v-else-if="acc in badAddresses">
                     <tr v-if="!isMobile()">
                         <td style="text-wrap: nowrap;"> 
-                            <NuxtLink :to="{ name: 'accounts-hex', params: { hex: acc }, hash: '#overview'}" class="uk-text-primary">
-                                {{ badAddresses[acc].name }}
-                            </NuxtLink>
+                            <AtomsAddressField :addr="{ hex: badAddresses[acc].hex, base64: badAddresses[acc].base64 }" :break_word="false"/>
                         </td>
                         
                         <td class="uk-text-right">Unloaded</td>
                         <td class="uk-text-right">-</td>
                     </tr>
                     <tr v-else>
-                        <td style="text-wrap: nowrap; padding: 0.5rem 0;"> 
-                            <NuxtLink :to="{ name: 'accounts-hex', params: { hex: acc }, hash: '#overview'}" class="uk-text-primary">
-                                {{ badAddresses[acc].name }}
-                            </NuxtLink>
-                        </td>
+                        <AtomsAddressField :addr="{ hex: badAddresses[acc].hex, base64: badAddresses[acc].base64 }" :break_word="false"/>
                     </tr>
                 </template>
             </template>

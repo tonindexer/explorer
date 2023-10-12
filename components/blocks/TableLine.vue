@@ -29,7 +29,7 @@ const props = defineProps<Props>()
                     {{ $t('ton.transactions-count') }}
                 </div>
                 <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate">
-                    {{ block.transaction_keys.length || $t('general.none') }}
+                    {{ block.transactions_count || $t('general.none') }}
                 </div>
             </div>
             <div class="uk-flex" style="justify-content: space-between;">
@@ -53,7 +53,7 @@ const props = defineProps<Props>()
         <td class="uk-text-primary" v-else>
             {{ block.seq_no}}
         </td>
-        <td class="uk-text-primary">{{ block.transaction_keys.length }}</td>
+        <td class="uk-text-primary">{{ block.transactions_count }}</td>
         <td class="uk-text-primary">    
             <AtomsTableDateCell :date-time="block.scanned_at"/>
         </td>

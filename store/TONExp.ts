@@ -258,16 +258,16 @@ export const useMainStore = defineStore('tonexp', {
 
         return transactionKey
       },
-      processBlock(block: BlockAPI) {
+      processBlock(block: BlockAPI, full: boolean = false) {
         const blockKey : BlockKey = blockKeyGen(block.workchain, block.shard, block.seq_no)
 
         // Don't override existing blocks
-        if (blockKey in this.blocks) return blockKey
+        if (blockKey in this.blocks && this.blocks[blockKey].loaded) return blockKey
 
         const mappedBlock = <Block>{}
         mappedBlock.shard_keys = []
         mappedBlock.transaction_keys = []
-        mappedBlock.transaction_delta = 0n
+        mappedBlock.loaded = false
         
         if (block.master !== undefined) {
           if (block.master) {
@@ -277,21 +277,24 @@ export const useMainStore = defineStore('tonexp', {
         }
         if (block.shards !== undefined) {
           if (block.shards) {
-            mappedBlock.shard_keys.push(...block.shards.map(shard => this.processBlock(shard)))
+            mappedBlock.shard_keys.push(...block.shards.map(shard => this.processBlock(shard, full)))
           }
           delete block.shards
         }
-        if (block.transactions !== undefined) {
+        if (full && block.transactions_count > 0) {
           if (block.transactions) {
             mappedBlock.transaction_keys.push(...block.transactions.map(tr => this.processTransaction(tr)))
-            mappedBlock.transaction_keys.forEach((tr: TransactionKey) => mappedBlock.transaction_delta += this.transactions[tr].delta)
           }
           delete block.transactions
         }
 
         Object.assign(mappedBlock, block)
 
-        this.blocks[blockKey] = mappedBlock
+        if (!(blockKey in this.blocks) && !full) {
+          this.blocks[blockKey] = mappedBlock
+        } else {
+          this.blocks[blockKey] = { ...this.blocks[blockKey], ...mappedBlock, loaded: true}
+        }
         return blockKey
       },
       async mainPageLoad() {
@@ -351,7 +354,7 @@ export const useMainStore = defineStore('tonexp', {
             if (key) {
                 const params = blockKeyDegen(key)
                 if (params) {
-                  this.fetchBlock(params.workchain, params.shard, params.seq_no)
+                  this.fetchBlock(params.workchain, params.shard, params.seq_no, false)
                 }
             }
             break
@@ -410,7 +413,7 @@ export const useMainStore = defineStore('tonexp', {
       },
       async updateBlockValues(workchain: 'main' | 'base' | null,limit: number = 10, seqOffset: number | null, cutPage: number = 0, order: "ASC" | "DESC" = "DESC") {
         const fullReq: MockType = {
-          with_transactions: true,
+          with_transactions: false,
           order,
           limit
         }
@@ -578,11 +581,11 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async fetchBlock(workchain: number, shard: bigint, seq_no: number) {
+      async fetchBlock(workchain: number, shard: bigint, seq_no: number, full: boolean) {
         const fullReq: MockType = {
           workchain: workchain? -1 : 0,
           shard,
-          with_transactions: true,
+          with_transactions: full,
           seq_no
         }
         const query = getQueryString(fullReq, false);
@@ -591,7 +594,7 @@ export const useMainStore = defineStore('tonexp', {
           const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           if (parsed.results && parsed.results.length > 0) {
-            const key = this.processBlock(parsed.results[0])
+            const key = this.processBlock(parsed.results[0], full)
             this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys(this.deepTransactionKeys(key), true, true), false))
             return key
           } else return null
@@ -1154,7 +1157,7 @@ export const useMainStore = defineStore('tonexp', {
 
           if (blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) { this.searchResults = [req]; return this.searchResults }
 
-          const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no)
+          const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no, false)
           if (key) this.searchResults = [{
             type: 'block',
             value: {

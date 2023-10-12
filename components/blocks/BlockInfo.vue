@@ -27,10 +27,9 @@ const unloadedAccountKeys = computed(() => store.getAccountKeys([...inMessageKey
 const reloadInfo = async() => {
     error.value = false
     loading.value = true
-    if (!block.value) {
-        await store.fetchBlock(props.workchain, props.shard, props.seq_no)
+    if (!block.value || !block.value.loaded) {
+        await store.fetchBlock(props.workchain, props.shard, props.seq_no, true)
     }
-    await store.fetchBareAccounts(unloadedAccountKeys.value)
 
     if (!block.value) {
         loading.value = false
