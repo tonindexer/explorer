@@ -6,16 +6,6 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const masterLink = computed(() => {
-    const arr = props.block.master_key ? props.block.master_key.split(':') : '0:1:2'
-    return {
-          workchain: arr[0],
-          shard: arr[1],
-          seq_no: arr[2]
-        }
-    }
-)
-
 const externalLink = computed(() : MockType=> {
     return {
         'Toncoin': `https://explorer.toncoin.org/search?workchain=${props.block.workchain}&shard=8000000000000000&seqno=${props.block.seq_no}&lt=&utime=&roothash=&filehash=`,

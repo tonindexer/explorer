@@ -4,12 +4,7 @@ interface Props {
     showLink: boolean
 }
 
-const props = defineProps<Props>()
-
-const desc =  computed(() => {
-    if (props.msg)
-        return (props.msg.type) + (`${props.msg.bounce ? ' · BOUNCE' : ''}`) + (`${props.msg.bounced ? ' · BOUNCED' : ''}`)
-})
+defineProps<Props>()
 
 const showData = ref(false)
 </script>

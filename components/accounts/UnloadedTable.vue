@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
-
 interface UnloadedAccountTable {
     keys: AccountKey[]
     defaultLength: number
@@ -9,7 +7,6 @@ interface UnloadedAccountTable {
 
 const props = defineProps<UnloadedAccountTable>()
 
-const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
 </script>

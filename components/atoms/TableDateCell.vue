@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const { localeProperties } = useI18n()
 interface Props {
     dateTime: string | number | null
 }

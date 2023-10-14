@@ -5,8 +5,6 @@ const store = useMainStore()
 const loading = ref(true)
 const error = ref(false)
 
-const route = useRoute()
-
 const parsedReqs: Ref<StoredRequests> = ref([])
 
 onMounted(async() => {

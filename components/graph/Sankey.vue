@@ -12,7 +12,6 @@ interface GraphData {
 
 const props = defineProps<GraphData>()
 const store = useMainStore()
-const loaded = computed(() => props.hex in store.sankeyCount)
 const data = computed(() => props.hex in store.sankeyCount ? (props.count ? store.sankeyCount[props.hex] : store.sankeyAmount[props.hex]) : null)
 
 const chartOptions = computed(() => { return {
@@ -27,15 +26,6 @@ const chartOptions = computed(() => { return {
         name: props.count ? 'Message count' : "TON Volume",
         keys: ['from', 'to', 'weight'],
         data: data.value?.data ?? [],
-
-        // events: {
-        //     click: function(event: any) {
-        //         console.log(event)
-        //     },
-        //     legendItemClick: function(event: any) {
-        //         console.log(event)
-        //     }
-        // },
     }],
     plotOptions: {
         series: {

@@ -7,7 +7,7 @@ interface MetricData {
     }
 }
 
-const props = defineProps<MetricData>()
+defineProps<MetricData>()
 </script>
 
 

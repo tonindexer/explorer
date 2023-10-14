@@ -4,8 +4,7 @@ interface Props {
     linkBlock?: boolean
 }
 
-const props = defineProps<Props>()
-
+defineProps<Props>()
 </script>
 
 <template>

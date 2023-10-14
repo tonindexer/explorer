@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/TONExp';
 
-
 const store = useMainStore()
 </script>
 
