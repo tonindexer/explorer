@@ -3,7 +3,7 @@ import { useMainStore } from '~/store/TONExp';
 const store = useMainStore()
 const route = useRoute()
 
-type SearchStatus = 'EMPTY'| 'INCORRECT' | 'WAITING' | 'NOTHING' | 'FOUND'
+type SearchStatus = 'EMPTY'| 'INCORRECT' | 'PARSING' | 'WAITING' | 'NOTHING' | 'FOUND'
 
 const search = ref('')
 const lastSearch = ref('')
@@ -20,27 +20,31 @@ const performSearch = async (query: BlockSearch | AccSearch | TxSearch | LabelSe
     status.value = 'WAITING'
     searchRes.value = []
     // request to store
-    console.log(1)
     const res = await store.search(query)
     // check if empty
-    if (res.length === 0) {
+    if (res.length > 0) {
+        // set values
+        searchRes.value = res
+        lastSearch.value = search.value
+        // now set show flag
+        status.value = 'FOUND'
+        lastStatus.value = status.value
+        return
+    } else {
         status.value = 'NOTHING'
         lastSearch.value = search.value
         lastStatus.value = status.value
-        return
     }
-    // set values
-    searchRes.value = res
-    lastSearch.value = search.value
-    // now set show flag
-    status.value = 'FOUND'
-    lastStatus.value = status.value
 
 }
 
-const parse = async () => {
-    if (search.value === '') status.value = 'EMPTY'
-    if (search.value === lastSearch.value) {
+const parse = async (str: string) => {
+
+    lastStatus.value = status.value
+    status.value = 'PARSING'
+
+    if (str === '') status.value = 'EMPTY'
+    if (str === lastSearch.value) {
         status.value = lastStatus.value
         lastSearch.value = '§'
         return
@@ -48,23 +52,23 @@ const parse = async () => {
     else {
         let input = null
         // parcing
-        input = blockParse(search.value)
+        input = blockParse(str)
         if (input) {
             await performSearch(input)
             return
         }
-        input = trnParse(search.value)
+        input = trnParse(str)
         if (input) {
             input.value.hash = toBase64Rfc(input.value.hash)
             await performSearch(input)
             return
         }
-        input = addParse(search.value)
+        input = addParse(str)
         if (input) {
             await performSearch(input)
             return
         }
-        input = asciiParse(search.value)
+        input = asciiParse(str)
         if (input) {
             await performSearch(input)
             return
@@ -72,7 +76,7 @@ const parse = async () => {
         // if nothing found
         status.value = 'INCORRECT'
         lastStatus.value = status.value
-        lastSearch.value = search.value
+        lastSearch.value = str
     }
 }
 
@@ -92,7 +96,7 @@ watch (route, (to, from) => {
 })
 
 watch (search, (to) => {
-    parse()
+    parse(to)
     if (route.path === '/search') navigateTo(`/search?search=${search.value}`, {replace: true})
 })
 
@@ -116,7 +120,7 @@ onMounted(async () => {
                     </defs>
                 </svg>
             </NuxtLink>
-            <input id="searchbar" v-model.trim="search" class="uk-search-input" type="search" :placeholder="$t('general.search' + (isMobile() ? '_mobile' : ''))" aria-label="Search" @focus="parse"
+            <input id="searchbar" v-model.trim="search" class="uk-search-input" type="search" :placeholder="$t('general.search' + (isMobile() ? '_mobile' : ''))" aria-label="Search" @focus="parse(search)"
                 :style="isMobile() ? 'height: 40px; padding-left: 40px;' : 'height: 56px; padding-left: 48px;'">
             <table v-if="status !== 'EMPTY' && route.path !== '/search'" class="uk-table results-table uk-position-absolute uk-position-bottom uk-width-1-1 uk-margin-remove-vertical uk-table-divider" style="top: 100%; z-index: 100; background-color: white">
                 <tbody v-if="status === 'FOUND'">
@@ -154,7 +158,7 @@ onMounted(async () => {
                         </td>
                     </tr>
                 </tbody>
-                <tbody v-else-if="status === 'WAITING'">
+                <tbody v-else-if="status === 'WAITING' || status === 'PARSING'">
                     <tr>
                         <td>
                             <Loader :ratio="1"/>

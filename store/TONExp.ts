@@ -1093,13 +1093,13 @@ export const useMainStore = defineStore('tonexp', {
       },
       async search(req: BlockSearch | TxSearch | AccSearch | LabelSearch | null, limit : number = 20, useLastSearch: boolean = false, offset? : number): Promise<Search> {
         this.isLoading.search = true
-
-        if (!offset) this.searchResults = []
+        let out = [] as Search
+        if (offset) out = [...this.searchResults]
 
         if (useLastSearch && this.lastSearch) req = this.lastSearch
         this.lastSearch = req
 
-        if (!req) return this.searchResults
+        if (!req) return out
 
         if (req.type == 'label') {
 
@@ -1115,84 +1115,89 @@ export const useMainStore = defineStore('tonexp', {
             const parsed = parseJson<SearchAPIData>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
             this.totalQuerySearch = parsed.total
-            if (this.lastSearch?.value !== req.value) this.searchResults = []
-            if (parsed.results && parsed.results.length > 0)
+            if (this.lastSearch?.value !== req.value) out = []
+            if (parsed.results && parsed.results.length > 0) {
               parsed.results.forEach((acc: SearchAPI) => {
-                this.searchResults.push({
+                out.push({
                   type: 'label',
                   value: acc.address.hex,
                   show: acc.name
                 })
               })
+            }
           } catch (err) {
-            return this.searchResults
+            this.searchResults = out
+            return out
           } finally {
             this.isLoading.search = false
           }
         } else if (req.type == 'account') {
 
-          if (req.value.hex in this.accounts) { this.searchResults = [req]; return this.searchResults }
-
-          if (req.value.hex in this.accountBases) {
-            this.searchResults = [{
+          if (req.value.hex in this.accounts) {
+            out = [req]
+          }
+          else if (req.value.hex in this.accountBases) {
+            out.push({
               type: 'account',
               value: {
                 hex: this.accountBases[req.value.hex]
               },
               show: req.value.hex
-            }]
+            })
           } else {
             const key = await this.fetchAccount(req.value.hex, false)
-            if (key) this.searchResults = [{
+            if (key) out.push({
               type: 'account',
               value: {
                 hex: key
               },
               show: req.value.hex
-            }]
+            })
           }
 
         } else if (req.type === 'block') {
 
-          if (blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) { this.searchResults = [req]; return this.searchResults }
-
-          const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no, false)
-          if (key) this.searchResults = [{
-            type: 'block',
-            value: {
-              workchain: this.blocks[key].workchain,
-              shard: this.blocks[key].shard,
-              seq_no: this.blocks[key].seq_no
-            },
-            show: blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
-          }]
+          if (blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) { 
+            out = [req]
+          } else {
+            const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no, false)
+            if (key) out.push({
+              type: 'block',
+              value: {
+                workchain: this.blocks[key].workchain,
+                shard: this.blocks[key].shard,
+                seq_no: this.blocks[key].seq_no
+              },
+              show: blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
+            })
+          }
         } else if (req.type === 'transaction') {
 
-          if (req.value.hash in this.transactions) { this.searchResults = [req]; return this.searchResults }
-
-          if (req.value.hash in this.transactionHexes) {
-            this.searchResults = [{
+          if (req.value.hash in this.transactions) {
+            out = [req]
+          } 
+          else if (req.value.hash in this.transactionHexes) {
+            out.push({
               type: 'transaction',
               value: {
                 hash: this.transactionHexes[req.value.hash]
               },
               show: req.value.hash
-            }]
+            })
           } else {
             const key = await this.fetchTransaction(req.value.hash)
-            if (key) this.searchResults = [{
+            if (key) out.push({
               type: 'transaction',
               value: {
                 hash: key
               },
               show: req.value.hash
-            }]
+            })
           }
         }
-
+        this.searchResults = [...out]
         this.isLoading.search = false
-
-        return this.searchResults
+        return out
       },
       async loadDashboards(slug: dashboardName) {
         const { data } = await apiRequest(`/dashboard/${slug}/charts`, 'GET', {}, `https://superset.anton.tools/api/v1`)
