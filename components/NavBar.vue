@@ -167,6 +167,9 @@ const external = [
         <div>
             <table class="uk-table uk-table-divider uk-padding-remove-top" style="align-items: center; font-size: 1.25rem;">
                 <tbody>
+                    <tr><td>
+                        <NuxtLink :to="'/'" class="link" :class="{ 'active' : route.name?.toString().includes('index')}" @click="showMobileNav = false"> {{ $t(`route.explorer`) }}</NuxtLink>
+                    </td></tr>
                     <tr v-for="link of routes" :key="link.name"><td>
                         <NuxtLink :to="link.link" class="link" :class="{ 'active' : route.name?.toString().includes(link.name)}" @click="showMobileNav = false"> {{ $t(`route.${link.name}`) }}</NuxtLink>
                     </td></tr>
