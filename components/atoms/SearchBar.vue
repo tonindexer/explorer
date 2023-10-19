@@ -16,7 +16,7 @@ const emptyEverything = () => {
     lastRes.value = [...searchRes.value]
     lastSearch.value = search.value
     lastStatus.value = status.value
-    
+
     searchRes.value = []
     status.value = 'EMPTY'
 }
@@ -116,8 +116,13 @@ onMounted(async () => {
 </script>
 
 <template>
-    <form class="uk-search uk-background-primary uk-search-default uk-width-1-1" id="overview" @focusout="emptyEverything" @submit.prevent.stop="navigateTo(`/search?search=${search}`);"
-        :class="{ 'open-results' : status !== 'EMPTY' }" :style="isMobile() ? 'height: 40px' : 'height: 56px'">
+    <form 
+        class="uk-search uk-background-primary uk-search-default uk-width-1-1" 
+        id="overview" 
+        @focusout="emptyEverything" 
+        @submit.prevent.stop="navigateTo(`/search?search=${search}`);"
+        :class="{ 'open-results' : status !== 'EMPTY' }" 
+        :style="isMobile() ? 'height: 40px' : 'height: 56px'">
         <NuxtLink :href="`/search?search=${search}`" style="position: absolute;" :style="isMobile() ? 'padding: 8px' : 'padding: 16px'">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_443_12881)">
@@ -200,11 +205,17 @@ onMounted(async () => {
     &.open-results {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
+        box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);
+        input {
+            clip-path: inset(-20px -20px 0px -20px);
+        }
     }
 }
 
 table {
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px; 
+    clip-path: inset(0px -20px -20px -20px);
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);
 }
 </style>
