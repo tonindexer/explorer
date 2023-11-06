@@ -184,6 +184,7 @@ const external = [
 
 
 <style lang="scss">
+@import "@/assets/styles/variables.scss";
 
 .nav-logo {
     font-family: 'HelveticaNeueCyr';
@@ -205,7 +206,7 @@ const external = [
             min-width: 20px;
             margin-right: 15px;
             line-height: normal;
-            color: white;
+            color: $color-bg-emphasis;
         }
     }
 }
@@ -224,47 +225,47 @@ const external = [
         min-width: 24px;
     }
     .nav-icon-special > path {
-        stroke: #B2B2B2;
+        stroke: $color-text-muted;
     }
     .nav-icon > path {
-        fill: #B2B2B2;
+        fill: $color-text-muted;
     }
     .nav-icon > rect {
-        stroke: #B2B2B2;
+        stroke: $color-text-muted;
     }
     &.active {
-        color: black;
+        color: $color-text-emphasis;
         text-decoration: none;
         .nav-icon > path {
-            fill: black;
+            fill: $color-text-emphasis;
         }
         .nav-icon-special > path {
-            stroke: black;
+            stroke: $color-text-emphasis;
         }
         .nav-icon > rect {
-            stroke: black;
+            stroke: $color-text-emphasis;
         }
     }
     &:hover {
         text-decoration: none;
-        color: black;
+        color: $color-text-emphasis;
         .nav-icon > path {
-            fill: black;
+            fill: $color-text-emphasis;
         }
         .nav-icon > rect {
-            stroke: black;
+            stroke: $color-text-emphasis;
         }
         .nav-icon-special > path {
-            stroke: black;
+            stroke: $color-text-emphasis;
         }
     }
 }
 
 .locale.active {
     text-decoration: underline;
-    color: black;
+    color: $color-text-emphasis;
     &:hover { 
-        color: black;
+        color: $color-text-emphasis;
     }
 }
 
@@ -299,7 +300,7 @@ const external = [
     width: 0;
     height: calc(100% - 53px);
     transition: right 0.3s;
-    background-color: white;
+    background-color: $color-bg-emphasis;
     overflow: hidden;
     &.open {
         right: 0;

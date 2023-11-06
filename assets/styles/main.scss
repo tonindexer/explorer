@@ -1,12 +1,15 @@
-$global-link-color: #B2B2B2;
-$global-emphasis-color: #0057FF;
-$global-font-family: 'Roboto Mono', sans-serif;
-$hover-color: #f3f3ff;
+@import "variables.scss";
 
-$global-background: #F7F8FC;
-$global-primary-background: #fff;
-$global-muted-color: rgba(0,0,0,.5);
-$text-primary-color: #000;
+$global-link-color: $color-text-muted;
+$global-emphasis-color: $color-text-highlight;
+$hover-color: $color-bg-hovered;
+
+$global-background: $color-bg;
+$global-primary-background: $color-bg-emphasis;
+$global-muted-color: $color-text;
+$text-primary-color: $color-text-emphasis;
+
+$global-font-family: 'Roboto Mono', sans-serif;
 
 @font-face {
   font-family: "HelveticaNeueCyr";
@@ -23,38 +26,11 @@ $text-primary-color: #000;
 
 @import "vue-search-select/dist/VueSearchSelect.css";
 
-.table-header {
-    div {
-      text-align: left;
-      vertical-align: bottom;
-      font-size: 0.875rem;
-      font-weight: normal;
-      color: #999;
-      text-transform: uppercase;
-    }
-}
-
-.tab-styler > li > a {
-  vertical-align: baseline;
-  position: relative;
-  display: inline-block;
-  width: 100%;
-  text-align: center;    
-  text-transform: capitalize;
-  width: -webkit-fill-available;
-  span {
-    font-size: 13px;
-    color: rgb(153, 153, 153);
-    display: inline-block;
-    vertical-align: bottom;
-  }
-}
-
 .arrow, .white_svg {
   * {
-      color: white;
-      stroke: white;
-      fill: white;
+      color: $color-bg-emphasis;
+      stroke: $color-bg-emphasis;
+      fill: $color-bg-emphasis;
   }
 }
 
@@ -63,11 +39,11 @@ $text-primary-color: #000;
 }
 
 .white {
-  color: white !important;
-  stroke: white;
+  color: $color-bg-emphasis !important;
+  stroke: $color-bg-emphasis;
   * {
-    color: white;
-    stroke: white;
+    color: $color-bg-emphasis;
+    stroke: $color-bg-emphasis;
   }
 }
 
@@ -95,7 +71,7 @@ $text-primary-color: #000;
 
 .hover-header:hover {
   cursor: pointer;
-  color: black !important;
+  color: $color-text-emphasis !important;
 }
 
 .hover-text:hover {
@@ -116,8 +92,8 @@ $text-primary-color: #000;
   flex-direction: column;
   gap: 8px;
   backface-visibility: hidden;
-  background-color: white;
-  color: rgba(0, 0, 0, 0.5);
+  background-color: $color-bg-emphasis;
+  color: $color-text;
   border-radius: 8px;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);
   max-height: 16rem;
@@ -129,13 +105,13 @@ $text-primary-color: #000;
     gap: 8px;
     align-self: stretch;
     &.selected-filter {
-      color: black;
+      color: $color-text-emphasis;
     }
     &.selected-filter::before {
       content: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"%3E%3Ccircle cx="6" cy="6" r="6" fill="black"/%3E%3C/svg%3E')
     }
     &:hover {
-      color: black;
+      color: $color-text-emphasis;
     }
   }
 }
@@ -177,10 +153,12 @@ $text-primary-color: #000;
   border-radius: 30px;
   text-transform: none !important;
   padding: 4px 16px !important;
-  background-color: #F5F5F5;
-  color: black;
+  background-color: $color-bg-muted;
+  color: $color-text-emphasis;
+  mix-blend-mode: darken;
   &.selected {
-    background-color: #000;
+    background-color: $color-text-emphasis;
+    color: $color-bg-emphasis;
   }
 }
 
@@ -191,7 +169,7 @@ $text-primary-color: #000;
 }
 
 .uk-radio:checked, .uk-checkbox:checked, .uk-checkbox:indeterminate {
-  background-color: black !important;
+  background-color: $color-text-emphasis !important;
 }
 
 .uk-table {
@@ -205,13 +183,13 @@ $text-primary-color: #000;
   th {
     font-size: 16px;
     line-height: 1;
-    color: rgba(0, 0, 0, 0.5);
+    color: $color-text;
     text-transform: none;
   }
 }
 
 .uk-table-striped > tr:nth-of-type(even), .uk-table-striped tbody tr:nth-of-type(even) {
-  background-color: #fafafa;
+  background-color: $color-bg-muted;
   border-top: none;
 }
 
@@ -233,10 +211,10 @@ $text-primary-color: #000;
   border-radius: 30px; 
   background-color: #F5F5F5;
   .selected {
-    background-color: #000;
+    background-color: $color-text-emphasis;
   }
   .category {
-    color: black;
+    color: $color-text-emphasis;
     padding: 4px 24px !important;
     line-height: 24px;
     font-size: 16px;

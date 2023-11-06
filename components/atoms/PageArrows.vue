@@ -35,8 +35,10 @@ defineEmits(['increase', 'decrease'])
 </template>
 
 <style lang="scss" scoped>
+@import "@/assets/styles/variables.scss";
+
 .bg {
-    background-color: black;
+    background-color: $color-text-emphasis;
 }
 .disabled {
     background-color: rgb(0,0,0,.2) !important;

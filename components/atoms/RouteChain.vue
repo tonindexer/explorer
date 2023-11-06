@@ -46,9 +46,3 @@ const showRoute = computed(() => {
         <div class="uk-text-primary uk-inline uk-text-truncate uk-text-light">{{ showRoute }}</div>
     </div>
 </template>
-
-<style lang="scss" scoped>
-.muted {
-    color: #888
-}
-</style>

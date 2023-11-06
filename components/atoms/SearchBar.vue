@@ -146,7 +146,7 @@ onMounted(async () => {
             @focus="($event: any) => parse($event.target.value)"
             :style="isMobile() ? 'height: 40px; padding-left: 40px;' : 'height: 56px; padding-left: 48px;'"
         >
-        <table v-if="status !== 'EMPTY' && route.path !== '/search'" class="uk-table results-table uk-position-absolute uk-position-bottom uk-width-1-1 uk-margin-remove-vertical uk-table-divider" style="top: 100%; z-index: 100; background-color: white">
+        <table v-if="status !== 'EMPTY' && route.path !== '/search'" class="uk-table results-table uk-position-absolute uk-position-bottom uk-width-1-1 uk-margin-remove-vertical uk-table-divider">
             <tbody v-if="status === 'FOUND'">
                 <tr v-for="res in searchRes.slice(0, 5)" class="uk-flex uk-flex-column hover">
                     <td style="max-width: 70vw" @mousedown="goToLink(res)" :style="isMobile() ? 'padding: 0.3rem 10px' : 'padding: 0.3rem 1rem; '">
@@ -194,11 +194,17 @@ onMounted(async () => {
 </template>
 
 <style scoped lang="scss">
+@import "@/assets/styles/variables.scss";
+
 #searchbar::placeholder {
-    color: rgba(0,0,0,.3)
+    color: $color-text-muted;
 }
 
-
+.results-table {
+    top: 100%; 
+    z-index: 100; 
+    background-color: $color-bg-emphasis;
+}
 .uk-search, .uk-search-input {
     border: none !important;
     border-radius: 12px;
