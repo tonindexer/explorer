@@ -92,12 +92,12 @@ defineEmits(['toggleMsg'])
             </td>
             <td class="uk-text-truncate"> 
                 <div class="uk-flex uk-flex-column" style="gap: 24px">
-                    <AtomsAddressField v-for="msg in messageKeys" class="uk-text-right" :addr="store.messages[msg].src_address ?? null" :break_word="false"/>
+                    <AtomsAddressField v-for="msg in messageKeys" class="uk-text-right" :addr="store.messages[msg].src_address ?? null" :break_word="false" :link_style="'overflow: hidden'"/>
                 </div>
             </td>
             <td class="uk-text-truncate"> 
                 <div class="uk-flex uk-flex-column" style="gap: 24px">
-                    <AtomsAddressField v-for="msg in messageKeys" class="uk-text-right" :addr="store.messages[msg].dst_address ?? null" :break_word="false"/>
+                    <AtomsAddressField v-for="msg in messageKeys" class="uk-text-right" :addr="store.messages[msg].dst_address ?? null" :break_word="false" :link_style="'overflow: hidden'"/>
                 </div>
             </td>
             <td>

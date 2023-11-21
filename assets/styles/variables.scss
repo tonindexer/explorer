@@ -1,17 +1,39 @@
-$color-bg: #F7F8FC !default;
-$color-bg-muted: #FAFAFA !default;
-$color-bg-emphasis: white !default;
-$color-bg-hovered: #f3f3ff !default;
-$color-text: rgba(0,0,0,.5) !default;
-$color-text-muted: rgba(0,0,0,.3) !default;
-$color-text-emphasis: black !default;
-$color-text-highlight: #0057FF !default;
+$color-bg: #F7F8FC;
+$color-bg-muted: #FAFAFA;
+$color-bg-emphasis: white;
+$color-bg-hovered: #f3f3ff;
+$color-text: rgba(0,0,0,.5);
+$color-text-muted: rgba(0,0,0,.3);
+$color-text-emphasis: black;
+$color-text-highlight: #0057FF;
 
-// $color-bg: #1B1B1B;
-// $color-bg-muted: rgba(255,255,255, 0.7);
-// $color-bg-emphasis: #232323;
-// $color-bg-hovered: #000222;
-// $color-text: rgba(255,255,255,.3);
-// $color-text-muted: rgba(255,255,255,.5);
-// $color-text-emphasis: white;
-// $color-text-highlight: #81A0FF;
+$dark-color-bg: #1B1B1B;
+$dark-color-bg-muted: rgba(255,255,255, 0.7);
+$dark-color-bg-emphasis: #232323;
+$dark-color-bg-hovered: #000222;
+$dark-color-text: rgba(255,255,255,.3);
+$dark-color-text-muted: rgba(255,255,255,.5);
+$dark-color-text-emphasis: white;
+$dark-color-text-highlight: #81A0FF;
+
+:root {
+    --color-bg: #{$color-bg};
+    --color-bg-muted: #{$color-bg-muted};
+    --color-bg-emphasis: #{$color-bg-emphasis};
+    --color-bg-hovered: #{$color-bg-hovered};
+    --color-text: #{$color-text};
+    --color-text-muted: #{$color-text-muted};
+    --color-text-emphasis: #{$color-text-emphasis};
+    --color-text-highlight: #{$color-text-highlight};
+}
+
+[data-theme="dark"] {
+    --color-bg: #{$dark-color-bg};
+    --color-bg-muted: #{$dark-color-bg-muted};
+    --color-bg-emphasis: #{$dark-color-bg-emphasis};
+    --color-bg-hovered: #{$dark-color-bg-hovered};
+    --color-text: #{$dark-color-text};
+    --color-text-muted: #{$dark-color-text-muted};
+    --color-text-emphasis: #{$dark-color-text-emphasis};
+    --color-text-highlight: #{$dark-color-text-highlight};
+};

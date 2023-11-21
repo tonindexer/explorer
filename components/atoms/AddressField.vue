@@ -7,6 +7,7 @@ interface Props {
     showHex?: boolean
     full?: boolean
     break_word: boolean
+    link_style?: string
 }
 const props = defineProps<Props>()
 
@@ -26,12 +27,12 @@ const accName = computed(() => {
         </div> 
     </template>
     <template v-else-if="addr.hex in badAddresses"> 
-        <NuxtLink class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: addr.base64 }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
+        <NuxtLink class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: addr.base64 }, hash: '#overview'} " :style="(link_style ? link_style : '') + ';' + (break_word ? 'word-break: break-all;': '')">
             {{ badAddresses[addr.hex].name }}
         </NuxtLink>
     </template>
     <template v-else> 
-        <NuxtLink class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: addr.hex }, hash: '#overview'} " :style="break_word ? 'word-break: break-all;': ''">
+        <NuxtLink class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: addr.hex }, hash: '#overview'} " :style="(link_style ? link_style : '') + ';' + (break_word ? 'word-break: break-all;': '')">
             {{ accName }}
         </NuxtLink>
     </template>
