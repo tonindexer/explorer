@@ -45,7 +45,7 @@ yarn preview
 
 ## Roadmap
 
-- [ ] Full redisign of the page
+- [x] Full redisign of the page
 - [ ] Overall optimization of requests and rendering
 
 See the [open issues](https://github.com/tonindexer/explorer/issues) for a full list of proposed features (and known issues).
