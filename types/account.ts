@@ -2,7 +2,7 @@ export { };
 
 declare global {
     
-    type AccountStatus = "ACTIVE" | "UNINIT" | "FROZEN" | "NONEXIST"
+    type AccountStatus = "ACTIVE" | "UNINIT" | "FROZEN" | "NON_EXIST"
     type LabelCategory = "centralized_exchange" | "scam"
     type ReturnFormat = boolean | bigint | string | number | {"URI" : string}
 
@@ -96,6 +96,14 @@ declare global {
         total: number
         results: AccountAPI[]
     }
+
+    interface AccountAPIStats extends HoldersAPI {
+        owned_jetton_wallets?: number
+        owned_nft_collections?: number
+        owned_nft_items?: number
+        transactions_count?: number
+    }
+
     type AccountKey = string
 
     type AccountMap = {

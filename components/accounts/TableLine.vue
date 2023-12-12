@@ -14,18 +14,35 @@ onMounted(() => {
 
 <template>
     <tr v-if="isMobile()">
-        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 0;">
+        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical">
             <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
-                <NuxtLink :to="{ path: 'accounts', query: { hex: toBase64Web(acc.address.hex) }, hash: '#overview'}" class="uk-text-primary">
-                    <div uk-icon="icon: link"></div>{{ truncString(acc.address.base64, 25,0) }}
-                </NuxtLink>
+                <AtomsAddressField :addr="acc.address" :break_word="false"/>
             </div>
+
+            <div v-if="acc.types" class="uk-flex" style="justify-content: space-between;">
+                <div>   
+                    {{ $t('ton.contract') }}
+                </div>
+                <div class="uk-margin-remove uk-text-primary uk-text-truncate" style="max-width: 60vw;">
+                    {{ acc.types?.length > 0 ? acc.types.join(', ') : "" }}
+                </div>
+            </div>
+
             <div class="uk-flex" style="justify-content: space-between;">
                 <div>   
                     {{ $t('ton.balance') }}
                 </div>
-                <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
-                    {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none')}}
+                <div class="uk-margin-remove uk-text-primary uk-text-truncate" style="align-self: center;">
+                    <AtomsBalanceCell :balance="acc.balance" :place="'end'"/>
+                </div>
+            </div>
+
+            <div class="uk-flex" style="justify-content: space-between;">
+                <div>   
+                    {{ $t('ton.status') }}
+                </div>
+                <div class="uk-margin-remove" style="max-width: 60vw;">
+                    <AtomsStatusCell :status="acc.status"></AtomsStatusCell>
                 </div>
             </div>
             
@@ -33,30 +50,26 @@ onMounted(() => {
                 <div>   
                     {{ $t('ton.updated_at') }}
                 </div>
-                <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                    <AtomsTableDateMobileCell :date-time="acc.updated_at"/>
+                <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                    <AtomsTableDateCell :date-time="acc.updated_at"/>
                 </div>
             </div>
         </td>
     </tr>
     <tr v-else>
-        <td> 
-            <AtomsAddressField :addr="acc.address" :break_word="true"/>
+        <td class="uk-text-truncate"> 
+            <AtomsAddressField :addr="acc.address" :break_word="false"/>
         </td>
-        <td v-if="showWallets">
-            <div class="uk-flex uk-align-center uk-flex-wrap uk-margin-remove">
-                <NuxtLink v-for="item of acc.types" :to="`/accounts?contract=${item}`" class="uk-text-primary uk-margin-small-right" uk-icon="icon: link" style="line-height: 1.5;">
-                    {{ item }}
-                </NuxtLink>
-            </div>
+        <td class="uk-text-primary uk-text-truncate">
+            {{ acc.types && acc.types?.length > 0 ? acc.types.join(', ') : "" }}
         </td>
-        <td class="uk-flex uk-align-center uk-flex-wrap uk-margin-remove" v-else-if="!showWallets">
-            <div v-for="item of acc.types" class="uk-text-primary uk-margin-small-right">
-                {{ item }}
-            </div>
+        <td class="uk-text-right uk-text-primary">
+            <AtomsBalanceCell :balance="acc.balance" :place="'end'"/>
         </td>
-        <td class="uk-text-right uk-text-nowrap"> {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none')}}</td>
-        <td class="uk-padding-remove-left">
+        <td class="uk-flex uk-flex-right">
+            <AtomsStatusCell :status="acc.status"></AtomsStatusCell>
+        </td>
+        <td>
             <AtomsTableDateCell :date-time="acc.updated_at"/>
         </td>
     </tr>

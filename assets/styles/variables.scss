@@ -1,0 +1,84 @@
+$color-bg: #F7F8FC;
+$color-bg-muted: #FAFAFA;
+$color-bg-emphasis: white;
+$color-bg-hovered: #F8F8F8;
+$color-bg-shadow: rgba(0, 0, 0, 0.1);
+$color-text: rgba(0, 0, 0, 0.3);
+$color-text-blend: rgba(0,0,0,.3);
+$color-text-muted: rgba(0,0,0,.5);
+$color-text-emphasis: black;
+$color-text-highlight: #0057FF;
+
+$dark-color-bg: #1B1B1B;
+$dark-color-bg-muted: rgb(45,45,45);
+$dark-color-bg-emphasis: #232323;
+$dark-color-bg-hovered: #2D2D2D;
+$dark-color-bg-shadow: rgba(255, 255, 255, 0.1);
+$dark-color-text: rgba(255,255,255,0.5);
+$dark-color-text-blend: rgba(255,255,255,0.3);
+$dark-color-text-muted: rgba(255,255,255,0.7);
+$dark-color-text-emphasis: white;
+$dark-color-text-highlight: #81A0FF;
+
+// Status cells
+$frozen-bg: #D7DBEF;
+$dark-frozen-bg: #39248F;
+$uninit-bg: #F1E6D1;
+$dark-uninit-bg: #7B4F0D;
+$active-bg: #DDF1DF;
+$dark-active-bg: #15651D;
+$nonexist-bg: #F3DFEA;
+$dark-nonexist-bg: #7d2154;
+
+$internal-bg: #E7EFFF;
+$dark-internal-bg: #4a4c52;
+$externalin-bg: #EFEFEF;
+$dark-externalin-bg: #2b2a2a;
+$externalout-bg: #F0EBE7;
+$dark-externalout-bg: #3e3c3a;
+
+// Slider stuff
+$slider-color: #D2DEFF;
+$dark-slider-color: #102D82;
+
+:root {
+    --color-bg: #{$color-bg};
+    --color-bg-muted: #{$color-bg-muted};
+    --color-bg-emphasis: #{$color-bg-emphasis};
+    --color-bg-hovered: #{$color-bg-hovered};
+    --color-bg-shadow:#{$color-bg-shadow};
+    --color-text: #{$color-text};
+    --color-text-muted: #{$color-text-muted};
+    --color-text-blend: #{$color-text-blend};
+    --color-text-emphasis: #{$color-text-emphasis};
+    --color-text-highlight: #{$color-text-highlight};
+    --color-frozen: #{$frozen-bg};
+    --color-uninit: #{$uninit-bg};
+    --color-active: #{$active-bg};
+    --color-nonexist: #{$nonexist-bg};
+    --color-internal: #{$internal-bg};
+    --color-externalin: #{$externalin-bg};
+    --color-externalout: #{$externalout-bg};
+    --color-slider: #{$slider-color};
+}
+
+.dark-mode {
+    --color-bg: #{$dark-color-bg};
+    --color-bg-muted: #{$dark-color-bg-muted};
+    --color-bg-emphasis: #{$dark-color-bg-emphasis};
+    --color-bg-hovered: #{$dark-color-bg-hovered};
+    --color-bg-shadow:#{$dark-color-bg-shadow};
+    --color-text: #{$dark-color-text};
+    --color-text-muted: #{$dark-color-text-muted};
+    --color-text-blend: #{$dark-color-text-blend};
+    --color-text-emphasis: #{$dark-color-text-emphasis};
+    --color-text-highlight: #{$dark-color-text-highlight};
+    --color-frozen: #{$dark-frozen-bg};
+    --color-uninit: #{$dark-uninit-bg};
+    --color-active: #{$dark-active-bg};
+    --color-nonexist: #{$dark-nonexist-bg};
+    --color-internal: #{$dark-internal-bg};
+    --color-externalin: #{$dark-externalin-bg};
+    --color-externalout: #{$dark-externalout-bg};
+    --color-slider: #{$dark-slider-color};
+}

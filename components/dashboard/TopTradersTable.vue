@@ -86,7 +86,7 @@ const loadData = async () => {
     }
 }
 
-watch(finalData, () => loadAccounts())
+watch(finalData, () => loadAccounts(), {deep: true})
 
 onMounted(async () => {
     await loadData()
@@ -97,17 +97,17 @@ onMounted(async () => {
     <div v-if="loading && data.length === 0" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <div v-if="!loading || data.length > 0" class="uk-align-right uk-flex uk-flex-middle uk-margin-small-bottom uk-width-1-3 uk-text-right">
+    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right" :class="{'uk-width-1-3' : !isMobile()}" style="justify-content: flex-end; padding: 0 16px;">
         <label class="uk-margin-right" for="profit_search">Search</label>
-        <input class="uk-input" v-model="filter" id="profit_search" type="text" placeholder="Anything..." aria-label="Search top profit traders">
+        <input class="uk-input uk-background-primary" v-model="filter" id="profit_search" type="text" placeholder="Anything..." aria-label="Search top profit traders">
     </div>
     <div v-if="!loading && finalData.length === 0" class="uk-flex uk-flex-center">
         {{ $t('warning.nothing_found') }}
     </div>
-    <table v-if="!loading && finalData.length > 0" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <table v-if="!loading && finalData.length > 0" class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <thead v-if="!isMobile()">
             <th class="uk-width-1-3 hover-text" @click="setSort('trader_address')">
-                {{ 'TRADER_ADDRESS' + (sortby.by === 'trader_address' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+                {{ 'trader_address' + (sortby.by === 'trader_address' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
             </th>
             <th v-for="header of (['buy_volume', 'buy_count', 'sale_volume', 'sale_count'] as const)" class="uk-width-1-6 hover-text uk-text-right" @click="setSort(header)" style="white-space: nowrap;">
                 {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
@@ -117,24 +117,25 @@ onMounted(async () => {
             <tr v-for="tline of finalData.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                 <template v-if="isMobile()">
                     <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
-                        <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
-                            <NuxtLink :to="{ path: '/accounts', query: { hex: toBase64Web(tline.trader_address) }, hash: '#overview'}" class="uk-text-primary">
-                                <div uk-icon="icon: link"></div>{{ store.accounts[tline.trader_address]?.label?.name ?? truncString(store.accounts[tline.trader_address]?.address.base64 ?? tline.trader_address, 25,0) }}
+                        <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem; max-width: 80vw;">
+                            <AtomsAddressField v-if="tline.trader_address in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader_address)"/>
+                            <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.trader_address }, hash: '#overview'}">
+                                {{ truncString(tline.trader_address, 5) }}
                             </NuxtLink>
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;" >
                             <div>   
                                 Buy Volume
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
-                                {{ tline.buy_volume.toFixed(2) + '💎' }}
+                            <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px 0;">
+                                {{ tline.buy_volume.toFixed(2) }}
                             </div>
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;" >
                             <div>   
                                 Buy Count
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate">
                                 {{ tline.buy_count }}
                             </div>
                         </div>
@@ -142,42 +143,48 @@ onMounted(async () => {
                             <div>   
                                 Sale Volume
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
-                                {{ tline.sale_volume.toFixed(2) + '💎' }}
+                            <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px 0;">
+                                {{ tline.sale_volume.toFixed(2) }}
                             </div>
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;" >
                             <div>   
                                 Sale Count
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate">
                                 {{ tline.sale_count }}
                             </div>
                         </div>
                     </td>
                 </template>
                 <template v-else>
+                    <td class="uk-text-truncate">
+                        <AtomsAddressField v-if="tline.trader_address in store.accounts" :full="true" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader_address)"/>
+                        <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.trader_address }, hash: '#overview'}">
+                            {{ truncString(tline.trader_address, 5) }}
+                        </NuxtLink>
+                    </td>
                     <td>
-                        <AtomsAddressField v-if="tline.trader_address in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader_address)"/>
-                        <Loader :ratio="1" v-else />
+                        <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                            {{ tline.buy_volume.toFixed(2) }}
+                        </div>
                     </td>
-                    <td class="uk-text-right" style="text-wrap: nowrap">
-                        {{ tline.buy_volume.toFixed(2) + '💎' }}
-                    </td>
-                    <td class="uk-text-right">
+                    <td class="uk-text-right uk-text-primary">
                         {{ tline.buy_count }}
                     </td>
-                    <td class="uk-text-right" style="text-wrap: nowrap">
-                        {{ tline.sale_volume.toFixed(2) + '💎' }}
+                    <td>
+                        <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                            {{ tline.sale_volume.toFixed(2) }}
+                        </div>
                     </td>
-                    <td class="uk-text-right">
+                    <td class="uk-text-right uk-text-primary">
                         {{ tline.sale_count }}
                     </td>
                 </template>
             </tr>
         </tbody>
     </table>
-    <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+    <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
         <div class="uk-flex uk-flex-middle" v-if="!isMobile() && finalData.length > 0">
             <AtomsSelector 
                 :item-count="itemCount"

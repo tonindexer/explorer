@@ -70,7 +70,7 @@ const parseData = computed((): FirstLevel[] => {
                         <AtomsCopyableText v-if="!(section.addr && section.value !== 'NONE')"  :text="section.value.toString()">
                             {{ section.value ? section.value : $t('general.empty') }}
                         </AtomsCopyableText>
-                        <NuxtLink v-else-if="section.addr" class="uk-text-primary uk-text-truncate" :to="`/accounts?hex=${section.value}`" style="max-width: calc(100vw * 0.75 * 0.7)"> 
+                        <NuxtLink v-else-if="section.addr" class="uk-text-primary uk-text-truncate" :to="{name: 'accounts-hex', params: {hex: section.value.toString()}, hash: '#overview'}" style="max-width: calc(100vw * 0.75 * 0.7)"> 
                             {{ section.value }}
                         </NuxtLink>
                     </td>
@@ -89,7 +89,7 @@ const parseData = computed((): FirstLevel[] => {
                             <AtomsCopyableText v-if="!(second.addr && second.value !== 'NONE')"  :text="second.value.toString()">
                                 {{ second.value ? second.value : $t('general.empty') }}
                             </AtomsCopyableText>
-                            <NuxtLink v-else-if="second.addr" class="uk-text-primary uk-text-truncate" :to="`/accounts?hex=${second.value}`" style="max-width: calc(100vw * 0.75 * 0.7)"> 
+                            <NuxtLink v-else-if="second.addr" class="uk-text-primary uk-text-truncate" :to="{name: 'accounts-hex', params: {hex: section.value.toString()}, hash: '#overview'}" style="max-width: calc(100vw * 0.75 * 0.7)"> 
                                 {{ second.value }}
                             </NuxtLink>
                         </td>
@@ -108,7 +108,7 @@ const parseData = computed((): FirstLevel[] => {
                             <AtomsCopyableText v-if="!(section.addr && section.value !== 'NONE')"  :text="section.value.toString()">
                             {{ section.value ? section.value : $t('general.empty') }}
                             </AtomsCopyableText>
-                            <NuxtLink v-else-if="section.addr" class="uk-text-primary uk-text-truncate" :to="`/accounts?hex=${section.value}`" style="max-width: calc(100vw * 0.9)"> 
+                            <NuxtLink v-else-if="section.addr" class="uk-text-primary uk-text-truncate" :to="{name: 'accounts-hex', params: {hex: section.value.toString()}, hash: '#overview'}" style="max-width: calc(100vw * 0.9)"> 
                                 {{ section.value }}
                             </NuxtLink>
                         </template>
@@ -123,7 +123,7 @@ const parseData = computed((): FirstLevel[] => {
                             <AtomsCopyableText v-if="!(second.addr && second.value !== 'NONE')"  :text="second.value.toString()">
                                 {{ second.value ? second.value : $t('general.empty') }}
                             </AtomsCopyableText>
-                            <NuxtLink v-else-if="second.addr" class="uk-text-primary uk-text-truncate" :to="`/accounts?hex=${second.value}`" style="max-width: calc(100vw * 0.9)"> 
+                            <NuxtLink v-else-if="second.addr" class="uk-text-primary uk-text-truncate" :to="{name: 'accounts-hex', params: {hex: section.value.toString()}, hash: '#overview'}" style="max-width: calc(100vw * 0.9)"> 
                                 {{ second.value }}
                             </NuxtLink>
                         </template>

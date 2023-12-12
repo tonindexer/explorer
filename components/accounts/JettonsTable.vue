@@ -75,7 +75,7 @@ onMounted(async () => {
     <div v-if="loading" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <table v-else-if="!loading" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <table v-else-if="!loading" class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <thead v-if="!isMobile()">
             <tr>
                 <th class="uk-width-1-4">{{ $t('ton.name')}}</th>
@@ -90,7 +90,7 @@ onMounted(async () => {
                         <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
                             <div class="uk-flex uk-flex-row" style="gap: 0.5rem">
                                 {{ `${formatTons(Number(store.accounts[key]?.jetton_balance ?? 0), jtList[key].decimals)}` }}
-                                <NuxtLink :to="{ path: 'accounts', query: { hex: jtRelations[key].minter.hex }, hash: '#overview'}" class="uk-text-primary">
+                                <NuxtLink :to="{ name: 'accounts-hex', params: { hex: jtRelations[key].minter.hex }, hash: '#overview'}" class="uk-text-primary">
                                     {{ store.metadata[jtRelations[key].minter.hex]?.symbol ?? '' }}
                                 </NuxtLink>
                                 <p v-if="store.accounts[key]?.fake" class="uk-margin-remove uk-text-danger">
@@ -99,7 +99,7 @@ onMounted(async () => {
                             </div>
                             <div class="uk-flex">
                                 <div class="uk-margin-remove uk-text-left uk-text-truncate" style="max-width: 85vw">
-                                    <AtomsAddressField v-if="key in store.accounts" :break_word="true" :addr="store.accounts[key].address"/>
+                                    <AtomsAddressField v-if="key in store.accounts" :break_word="true" :addr="store.accounts[key].address" :full="true"/>
                                     <Loader :ratio="1" v-else />
                                 </div>
                             </div>
@@ -107,27 +107,33 @@ onMounted(async () => {
                     </template>
                     <template v-else>
                         <td class="uk-flex uk-flex-row" style="gap: 0.5rem">
-                            <NuxtLink :to="{ path: 'accounts', query: { hex: jtRelations[key].minter.hex }, hash: '#overview'}" class="uk-text-primary">
+                            <NuxtLink :to="{ name: 'accounts-hex', params: { hex: jtRelations[key].minter.hex }, hash: '#overview'}" class="uk-text-primary">
                                 {{ store.metadata[jtRelations[key].minter.hex]?.name }}
                             </NuxtLink>
                         </td>
-                        <td>
-                            <AtomsAddressField v-if="key in store.accounts" :break_word="true" :addr="store.accounts[key].address"/>
+                        <td class="uk-text-truncate">
+                            <AtomsAddressField v-if="key in store.accounts" :break_word="true" :addr="store.accounts[key].address" :full="true"/>
                             <Loader :ratio="1" v-else />
                         </td>
-                        <td class="uk-text-right uk-flex uk-flex-right" style="gap: 0.5rem">
+                        <td class="uk-text-right uk-flex uk-flex-right uk-text-primary" style="gap: 0.5rem">
                             {{ `${formatTons(Number(store.accounts[key]?.jetton_balance ?? 0), jtList[key].decimals)} ${store.metadata[jtRelations[key].minter.hex]?.symbol ?? ''}`}}
 
                             <p v-if="store.accounts[key]?.fake" class="uk-margin-remove uk-text-danger">
                                 {{ $t('ton.fake') }}
                             </p>
+
+                            <svg style="min-width: 24px" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="13.5" cy="12.5" r="7" stroke="#141414"/>
+                                <path d="M6.39241 6.5C4.35958 7.7249 3 9.95367 3 12.5C3 15.0463 4.35958 17.2751 6.39241 18.5" stroke="#141414" stroke-linecap="round"/>
+                            </svg>
+
                         </td>
                     </template>
                 </tr>
             </template>
         </tbody>
     </table>
-    <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+    <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
         <div class="uk-flex uk-flex-middle" v-if="!isMobile()">
             <AtomsSelector 
                 :item-count="itemCount"

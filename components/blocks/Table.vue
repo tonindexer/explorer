@@ -7,11 +7,14 @@ interface BlockTable {
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
-    excludeEmpty: boolean
     lineLink: boolean
 }
 
 const props = defineProps<BlockTable>()
+
+const sortby = ref({
+    order_desc: true
+})
 
 const store = useMainStore()
 const pageNum = ref(0)
@@ -23,6 +26,12 @@ const maxExploredPage = ref(0)
 const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'block'): false)
 
 const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+
+const displayedKeys = computed(() => {
+    const out = [] as BlockKey[]
+    props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).map(key => out.push(...[key, ...store.blocks[key].shard_keys]))
+    return out
+})
 
 const setExtraFields = () => {
     if (props.keys.length > 0) {
@@ -41,21 +50,18 @@ const setExtraFields = () => {
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     if (props.keys.length === 0 || pageNum.value === 0)
-        await store.updateBlockValues(itemCount.value, null)
+        await store.updateBlockValues('main', itemCount.value, null, undefined, sortby.value.order_desc ? 'DESC' : 'ASC')
     else {
-        await store.updateBlockValues(itemCount.value, next ? lastMC.value : firstMC.value, pageNum.value)
+        await store.updateBlockValues('main', itemCount.value, next ? lastMC.value : firstMC.value, pageNum.value, sortby.value.order_desc ? 'DESC' : 'ASC')
     }
     setExtraFields()
 }
 
-watch(() => props.excludeEmpty, () => {
-    for (const block of props.keys.reverse()) {
-        if (store.blocks[block].workchain === -1) {
-            lastMC.value = store.blocks[block].seq_no;
-            return
-        }
-    }
-})
+watch(sortby, () => {
+    if (pageNum.value === 0) updateValues()
+    else pageNum.value = 0
+}, {deep: true})
+
 watch(pageNum, async(to, from) => {
     if (props.update) {
         if (to === 0 || (to > from && to > maxExploredPage.value)) { 
@@ -70,7 +76,9 @@ watch(itemCount, async() => {
     else pageNum.value = 0
 }, {deep : true})
 
-onMounted(() => setExtraFields())
+onMounted(() => {
+    setExtraFields()
+})
 </script>
 
 <template>
@@ -80,33 +88,35 @@ onMounted(() => setExtraFields())
         </div>
     </template>
     <template v-else>
-        <table v-if="!hidden" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+        <table v-if="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
             <thead v-if="!isMobile()">
                 <tr>
                     <th class="uk-width-1-6">{{ $t('ton.workchain')}}</th>
                     <th class="uk-width-1-6">{{ $t('ton.shard')}}</th>
-                    <th class="uk-width-1-6">{{ $t('ton.block')}}</th>
+                    <th class="uk-text-nowrap uk-width-1-6" :class="{'hover-header' : update}" @click="sortby.order_desc = !sortby.order_desc">
+                        {{ $t('ton.block') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
+                    </th>
                     <th class="uk-width-1-6">{{ $t('ton.transactions-count')}}</th>
                     <th class="uk-table-expand uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.scanned')}}</th>
                 </tr>
             </thead>
             <tbody>
-                <template v-for="block in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
+                <template v-for="block in displayedKeys">
                     <BlocksTableLine 
                         v-if="lineLink"
                         :class="{'hover' : lineLink}" 
                         :block="store.blocks[block]" 
-                        @click="navigateTo(`/blocks?workchain=${store.blocks[block].workchain}&shard=${store.blocks[block].shard}&seq_no=${store.blocks[block].seq_no}#overview`)" 
+                        @click="navigateTo({ name: 'blocks-key', params: {key : block }})" 
                         style="cursor: pointer;"/>
                     <BlocksTableLine v-else :block="store.blocks[block]" :link-block="true"/>
                 </template>
             </tbody>
         </table>
-        <div v-if="!hidden" class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+        <div v-if="!hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
             <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
                 <AtomsSelector 
                     :item-count="itemCount"
-                    :amount="store.totalQueryBlocks"
+                    :amount="update ? store.totalQueryBlocks : keys.length"
                     :options="[5, 10, 20, 50]"
                     @set-value="(e: any) => itemCount = e.value"
                 />

@@ -23,7 +23,7 @@ const externalLink = computed(() : MockType=> {
 </script>
 
 <template>
-    <table class="uk-table uk-table-middle">
+    <table class="uk-table uk-table-middle uk-margin-remove-vertical uk-table-striped">
         <tbody class="uk-table-divider">
             <tr>
                 <AtomsPropLine>
@@ -42,7 +42,7 @@ const externalLink = computed(() : MockType=> {
             <tr>
                 <AtomsPropLine>
                     <template #name>
-                        {{ $t(`ton.hex`) }}
+                        {{ $t(`ton.hash-hex`) }}
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="trn.hex">
@@ -58,7 +58,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="trn.address.base64">
-                            <AtomsAddressField :addr="trn.address" :break_word="false"/>
+                            <AtomsAddressField :addr="trn.address" :break_word="false" :full="true"/>
                         </AtomsCopyableText> 
                     </template>
                 </AtomsPropLine>
@@ -80,7 +80,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="trn.address.base64">
-                            <NuxtLink :to="`/blocks?workchain=${trn.workchain}&shard=${trn.shard}&seq_no=${trn.block_seq_no}#overview`" class="uk-text-primary">
+                            <NuxtLink :to="{ name: 'blocks-key', params: {key : `${trn.workchain}:${trn.shard}:${trn.block_seq_no}` }}" class="uk-text-primary">
                                 {{ `${trn.workchain}:${trn.shard}:${trn.block_seq_no}` }}
                             </NuxtLink>
                         </AtomsCopyableText> 
@@ -95,7 +95,7 @@ const externalLink = computed(() : MockType=> {
                     <template #value>
                         <template v-if="trn.prev_tx_hash !== 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='">
                             <AtomsCopyableText :text="trn.prev_tx_hash">
-                                <NuxtLink :to="`/transactions?hash=${toBase64Web(trn.prev_tx_hash)}#overview`">
+                                <NuxtLink class="uk-text-primary" :to="{ name: 'transactions-hash', params: {hash: toBase64Web(trn.prev_tx_hash)}, hash: '#overview' }">
                                     {{ trn.prev_tx_hash }}
                                 </NuxtLink>
                             </AtomsCopyableText> 
@@ -112,7 +112,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.total_fees`) }}
                     </template>
                     <template #value>
-                        {{ trn.full_fees ? (`${fullTON(trn.full_fees, false)}💎`) : $t('general.none') }}
+                        <AtomsBalanceCell :balance="trn.full_fees" :full="true"/>
                     </template>
                 </AtomsPropLine>
             </tr>
@@ -122,9 +122,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.delta`) }}
                     </template>
                     <template #value>
-                        <div :class="colorAmount(trn.delta)">
-                            {{ trn.delta ? `${fullTON(trn.delta, true)}💎` : $t('general.none') }}
-                        </div>
+                        <AtomsBalanceCell :balance="trn.delta" :delta="true" :full="true"/>
                     </template>
                 </AtomsPropLine>
             </tr>
@@ -134,7 +132,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.orig_status`) }}
                     </template>
                     <template #value>
-                        {{ trn.orig_status }}
+                        <AtomsStatusCell :status="trn.orig_status"></AtomsStatusCell>
                     </template>
                 </AtomsPropLine>
             </tr>
@@ -144,7 +142,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.end_status`) }}
                     </template>
                     <template #value>
-                        {{ trn.end_status }}
+                        <AtomsStatusCell :status="trn.end_status"></AtomsStatusCell>
                     </template>
                 </AtomsPropLine>
             </tr>

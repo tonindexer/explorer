@@ -12,7 +12,9 @@ const TONOBS_ADDRESS_REGEX = new RegExp(`^https://tonobserver.com/explorer/info?
 const DTON_ADDRESS_REGEX = new RegExp(`^https://dton.io/a/(?<address>${ADDRESS_REGEX.source})`, 'i');
 
 export const trnParse = (input: string): TxSearch | null => {
-    if ((input.length === 44 && input.endsWith('=')) || input.match(/^[\da-f]{64}$/))
+    if ((input.length === 44 && input.endsWith('=')) 
+        || input.match(/^[\da-f]{64}$/)
+        || (input.split('~').length === 2 && input.split('~')[0].match(ADDRESS_REGEX) && isNumeric(input.split('~')[1])))
         return {type: 'transaction',
             value: {
                 hash: input

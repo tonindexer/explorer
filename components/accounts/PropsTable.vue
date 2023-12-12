@@ -21,7 +21,7 @@ const externalLink = computed(() : MockType=> {
 </script>
 
 <template>
-    <table class="uk-table uk-table-middle">
+    <table class="uk-table uk-table-middle uk-margin-remove-top uk-table-striped">
         <tbody class="uk-table-divider">
             <tr v-if="acc.label && acc.label.name">
                 <AtomsPropLine :bold="true">
@@ -65,7 +65,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.status`) }}
                     </template>
                     <template #value>
-                        {{ acc.status }}
+                        <AtomsStatusCell :status="acc.status"></AtomsStatusCell>
                     </template>
                 </AtomsPropLine>
             </tr>
@@ -75,7 +75,7 @@ const externalLink = computed(() : MockType=> {
                         {{ $t(`ton.balance`) }}
                     </template>
                     <template #value>
-                        {{ acc.balance ? `${fullTON(acc.balance, false)}💎` : $t('general.none') }}
+                        <AtomsBalanceCell :balance="acc.balance" :full="true"/>
                     </template>
                 </AtomsPropLine>
             </tr>
@@ -112,7 +112,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="acc.minter_address.base64">
-                            <AtomsAddressField :addr="acc.minter_address" :break_word="false"/>
+                            <AtomsAddressField :addr="acc.minter_address" :break_word="false" :full="true"/>
                         </AtomsCopyableText> 
                     </template>
                 </AtomsPropLine>
@@ -124,7 +124,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="acc.owner_address.base64">
-                            <AtomsAddressField :addr="acc.owner_address" :break_word="false"/>
+                            <AtomsAddressField :addr="acc.owner_address" :break_word="false" :full="true"/>
                         </AtomsCopyableText> 
                     </template>
                 </AtomsPropLine>
@@ -136,7 +136,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="`${acc.workchain}:${acc.shard}:${acc.block_seq_no}`">
-                            <NuxtLink :to="`/blocks?workchain=${acc.workchain}&shard=${acc.shard}&seq_no=${acc.block_seq_no}#overview`" class="uk-text-primary">
+                            <NuxtLink :to="{ name: 'blocks-key', params: {key : `${acc.workchain}:${acc.shard}:${acc.block_seq_no}` }}" class="uk-text-primary">
                                 {{ `${acc.workchain}:${acc.shard}:${acc.block_seq_no}` }}
                             </NuxtLink>
                     </AtomsCopyableText> 
@@ -150,7 +150,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="acc.last_tx_hash">
-                            <NuxtLink :to="`/transactions?hash=${toBase64Web(acc.last_tx_hash)}#overview`" class="uk-text-primary">
+                            <NuxtLink :to="{ name: 'transactions-hash', params: {hash: toBase64Web(acc.last_tx_hash)}, hash: '#overview' }" class="uk-text-primary">
                                 {{ acc.last_tx_hash }}
                             </NuxtLink>
                         </AtomsCopyableText>

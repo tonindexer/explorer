@@ -10,6 +10,7 @@ interface GraphData {
 }
 
 const props = defineProps<GraphData>()
+const graphColors = reactive(useGraphColors())
 
 const chartOptions = computed(() => { return {
     accessibility: {
@@ -17,8 +18,9 @@ const chartOptions = computed(() => { return {
     },
     chart: {
         type: props.series.length === 1 ? 'area' : 'column',
+        height: isMobile() ? '200px' : null,
         animation: false,
-        backgroundColor: '#f8f8f8',
+        backgroundColor: 'none',
         zooming: {
             type: 'x'
         },
@@ -28,16 +30,31 @@ const chartOptions = computed(() => { return {
     legend: {
         enabled: false
     },
+    yAxis: {
+        gridLineColor: graphColors.colors.gridLinesColor,
+        title : {
+            text: undefined
+        },
+        labels : {
+            style : {
+                'color': graphColors.colors.axisLabelsColor
+            }
+        }
+    },
     xAxis: {
         type: 'datetime',
         categories: props.times,  
-        tickInterval: props.times.length / 6,  
+        tickInterval: props.times.length / 6,
+        lineColor: graphColors.colors.xAxisColor,
         crosshairs: {
             width: 0.1,
         },
         labels: {
             // @ts-ignore
-            formatter: function() { return new Date(this.value).toLocaleDateString() }
+            formatter: function() { return new Date(this.value).toLocaleDateString("en-US", { month: 'short', day: 'numeric' }) },
+            style : {
+                'color': graphColors.colors.axisLabelsColor
+            }
         },
     },
     tooltip: {

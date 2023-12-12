@@ -1,0 +1,145 @@
+.uk-icon-button { 
+  background-color: transparent;
+  cursor: pointer;
+  &:hover {
+    border-radius: 4px;
+    background: transparent;
+  }
+}
+
+.uk-input {
+  border-color: var(--color-text-muted);
+}
+
+.uk-button {
+  border-radius: 30px;
+  text-transform: none !important;
+  padding: 4px 16px !important;
+  background-color: var(--color-bg-muted);
+  color: var(--color-text-emphasis);
+  transition: none;
+  &.selected {
+    background-color: var(--color-text-emphasis);
+    color: var(--color-bg-emphasis);
+  }
+}
+
+.uk-table-striped > tr:nth-of-type(odd), .uk-table-striped tbody tr:nth-of-type(odd) {
+  border-top: none;
+  border-bottom: none;
+  background-color: transparent;
+}
+
+.uk-radio:checked, .uk-checkbox:checked, .uk-checkbox:indeterminate {
+  background-color: var(--color-text-emphasis) !important;
+}
+
+.uk-table {
+  margin-bottom: 12px;
+  td {
+    color: var(--color-text-emphasis)
+  }
+  tbody > tr {
+    transition: none;
+  }
+}
+.uk-table > thead {
+  border-bottom: 1px solid var(--color-bg-muted);
+  tr {
+    background-color: transparent !important;
+  }
+  th {
+    font-size: 16px;
+    line-height: 1;
+    color: var(--color-text-muted);
+    text-transform: none;
+  }
+}
+.uk-table-divider > tr:not(:first-child), .uk-table-divider > :not(:first-child) > tr, 
+.uk-table-divider > :first-child > tr:not(:first-child) {
+  border-color: var(--color-text-muted);
+}
+
+.uk-table-striped > tr:nth-of-type(even), .uk-table-striped tbody tr:nth-of-type(even) {
+  background-color: var(--color-bg-muted);
+  border-top: none;
+}
+
+.uk-table-striped > tr:nth-of-type(even):last-child, .uk-table-striped tbody tr:nth-of-type(even):last-child {
+  border-bottom: none;
+}
+
+.uk-margin-small-left {
+  margin-left: 8px !important;
+}
+.uk-button:disabled {
+  cursor: not-allowed !important;
+  color: var(--color-bg-emphasis);
+}
+
+.ui.selection.dropdown {
+  background: var(--color-bg-emphasis);
+  border-color: var(--color-text-muted);
+  color: var(--color-text-muted);
+  &:hover {
+    border-color: var(--color-text-muted);
+  }
+}
+
+.ui.dropdown .menu {
+  background: var(--color-bg-emphasis);
+  color: var(--color-text-emphasis);
+}
+
+.ui.selection.dropdown .menu {
+  .item {
+    border-color: var(--color-bg-emphasis);
+    color: var(--color-text-emphasis);
+  }
+}
+
+.ui.dropdown.selected, .ui.dropdown .menu .selected.item {
+  background: var(--color-bg-muted);
+  color: var(--color-text-emphasis);
+}
+
+.ui.dropdown:not(.button)>.default.text {
+  color: var(--color-text-muted);
+}
+// Default color classes override 
+
+.uk-background-primary {
+  background-color: var(--color-bg-emphasis) !important;
+}
+
+.uk-background-default {
+  background-color: var(--color-bg) !important;
+}
+
+.uk-background-emphasis {
+  background-color: var(--color-text-highlight) !important;
+}
+
+.uk-background-muted {
+  background-color: var(--color-bg-muted) !important;
+}
+
+.uk-text-primary {
+  color: var(--color-text-emphasis) !important;
+}
+
+.uk-text-secondary, .uk-text-default {
+  color: var(--color-text) !important;
+}
+
+.uk-text-blend {
+  color: var(--color-text-blend) !important;
+}
+
+.uk-text-muted {
+  color: var(--color-text-muted) !important;
+}
+
+.uk-text-emphasis {
+  color: var(--color-text-highlight) !important;
+}

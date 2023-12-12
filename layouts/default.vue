@@ -3,7 +3,12 @@ const route = useRoute()
 useHead({
     htmlAttrs: {
         lang: 'en'
-    }
+    },
+    script: [{
+        src: "/js/uikit.min.js"
+    },{
+        src: "/js/uikit-icons.min.js"
+    }]    
 })
 useSeoMeta({
     'title' : 'tonindexer',
@@ -19,15 +24,24 @@ useSeoMeta({
 </script>
 
 <template>
-    <NavBar/>
-    <div class="uk-section uk-padding-remove-vertical" style="margin: 66px auto 0; min-height: calc(100vh - 120px);" :style="{ 'width' : isMobile() ? '90%' : '75%'}">
-        <AtomsSearchBar/>
-        <div v-if="route.fullPath !== '/' && !isMobile()">
+    <div v-if="!isMobile()" uk-grid class="uk-width-1-1 uk-height-1-1 uk-grid uk-margin-remove uk-background-default" style="column-gap: 24px; padding: 16px; position: relative;">
+        <NavBar />
+        <main class="uk-padding-remove uk-margin-remove uk-flex uk-flex-column uk-width-expand">
+            <AtomsSearchBar/>
             <AtomsRouteChain/>
-        </div>
-        <slot />
+            <slot />
+        </main>
     </div>
-    <FooterBar/>
+    <div v-if="isMobile()" class="uk-width-1-1 uk-height-1-1 uk-flex uk-flex-column" style="column-gap: 24px; padding: 16px">
+        <div class="uk-flex" style="align-items: center; column-gap: 16px;">
+            <AtomsSearchBar/>
+            <NavBar />
+        </div>
+        <main class="uk-padding-remove uk-margin-remove uk-flex uk-flex-column">
+            <AtomsRouteChain/>
+            <slot />
+        </main>
+    </div>
 </template>
 
 <style src="~/assets/styles/main.scss" lang="scss"></style>

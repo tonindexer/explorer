@@ -10,6 +10,7 @@ interface GraphData {
 }
 
 const props = defineProps<GraphData>()
+const graphColors = reactive(useGraphColors())
 
 const chartOptions = computed(() => { return{
     accessibility: {
@@ -18,7 +19,8 @@ const chartOptions = computed(() => { return{
     chart: {
         type: 'column',
         animation: false,
-        backgroundColor: '#f8f8f8',
+        backgroundColor: 'none',
+        height: isMobile() ? '200px' : null,
         zooming: {
             type: 'x'
         },
@@ -28,12 +30,28 @@ const chartOptions = computed(() => { return{
     legend: {
         enabled: false
     },
+    yAxis: {
+        gridLineColor: graphColors.colors.gridLinesColor,
+        title : {
+            text: undefined
+        },
+        labels : {
+            style : {
+                'color': graphColors.colors.axisLabelsColor
+            }
+        }
+    },
     xAxis: {
         categories: props.labels,  
-        tickAmount: 6,  
+        tickAmount: props.labels.length / 6,  
         crosshairs: {
             width: 0.1,
         },
+        labels : {
+            style : {
+                'color': graphColors.colors.axisLabelsColor
+            }
+        }
     },
     tooltip: {
         shared: true,

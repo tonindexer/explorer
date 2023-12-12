@@ -68,7 +68,6 @@ const composeAddress = (item: string) => store.accounts[item]?.address ?? null
 
 const loadAccounts = async () => {
     await store.fetchBareAccounts([...topAccs.value])
-
 }
 
 watch(pageNum, async(to, from) => {
@@ -107,7 +106,7 @@ const loadData = async () => {
     }
 }
 
-watch(finalData, () => loadAccounts())
+watch(finalData, () => loadAccounts(), {deep: true})
 
 onMounted(async () => {
     await loadData()
@@ -118,7 +117,7 @@ onMounted(async () => {
     <div v-if="loading && data.length === 0" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom" style="justify-content: space-between; gap: 0.4rem; max-width: 600px;">
+    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom" style="justify-content: space-between; gap: 0.4rem; max-width: 600px; padding: 0 12px">
         <div class="uk-margin-remove-vertical" style=" white-space: nowrap;">
             {{ $t('ton.from') }}
         </div>
@@ -128,20 +127,20 @@ onMounted(async () => {
         </div>
         <VueDatePicker :min-date="interval.from ? new Date(interval.from) : new Date(firstDate)" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="interval.to"/>
     </div> 
-    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right" :class="{'uk-width-1-3' : !isMobile()}">
+    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right" :class="{'uk-width-1-3' : !isMobile()}" style="padding: 0 12px">
         <label class="uk-margin-right" for="cex_search">Search</label>
-        <input class="uk-input" v-model="filter" id="cex_search" type="text" placeholder="Anything..." aria-label="Search top CEX">
+        <input class="uk-input uk-background-primary" v-model="filter" id="cex_search" type="text" placeholder="Anything..." aria-label="Search top CEX">
     </div>
     <div v-if="!loading && finalData.length === 0" class="uk-flex uk-flex-center">
         {{ $t('warning.nothing_found') }}
     </div>
-    <table v-if="!loading  && finalData.length > 0" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <table v-if="!loading  && finalData.length > 0" class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <thead v-if="!isMobile()">
             <th class="uk-width-1-4">
-                {{ 'SRC_ADDRESS' }}
+                {{ 'src_address' }}
             </th>
             <th class="uk-width-1-4">
-                {{ 'DST_ADDRESS' }}
+                {{ 'dst_address' }}
             </th>
             <template v-if="type === 'deposit'">
                 <th v-for="header of (['deposit_amount', 'created_at'] as const)" class="uk-width-1-4 hover-text uk-text-right" @click="setSort(header)" style="white-space: nowrap;">
@@ -158,15 +157,15 @@ onMounted(async () => {
             <tr v-for="tline of finalData.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                 <template v-if="isMobile()">
                     <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
-                        <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
-                            {{ type === 'deposit' ? ((tline.deposit_amount ?? 0).toFixed(2) + '💎') : ((tline.withdrawal_amount ?? 0).toFixed(2) + '💎')  }}
+                        <div class="uk-flex diamond uk-text-primary" style="padding: 3px;">
+                            {{ type === 'deposit' ? (tline.deposit_amount ?? 0).toFixed(2) : (tline.withdrawal_amount ?? 0).toFixed(2)  }}
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;">
                             <div>   
                                 {{ $t('ton.src_address') }}
                             </div>
                             <div class="uk-margin-remove uk-text-right">
-                                <NuxtLink :to="{path: '/accounts', query: { hex: tline.src_address}, hash: '#overview'}" class="uk-text-primary"> {{ tline.src_address in badAddresses ? badAddresses[tline.src_address].name : truncString(tline.src_address, 7) }}</NuxtLink>
+                                <NuxtLink :to="{name: 'accounts-hex', params: { hex: tline.src_address}, hash: '#overview'}" class="uk-text-primary"> {{ tline.src_address in badAddresses ? badAddresses[tline.src_address].name : truncString(tline.src_address, 7) }}</NuxtLink>
                             </div>
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;">
@@ -174,14 +173,14 @@ onMounted(async () => {
                                 {{ $t('ton.dst_address') }}
                             </div>
                             <div class="uk-margin-remove uk-text-right">
-                                <NuxtLink :to="{path: '/accounts', query: { hex: tline.dst_address}, hash: '#overview'}" class="uk-text-primary"> {{ tline.dst_address in badAddresses ? badAddresses[tline.dst_address].name : truncString(tline.dst_address, 7) }}</NuxtLink>
+                                <NuxtLink :to="{name: 'accounts-hex', params: { hex: tline.dst_address}, hash: '#overview'}" class="uk-text-primary"> {{ tline.dst_address in badAddresses ? badAddresses[tline.dst_address].name : truncString(tline.dst_address, 7) }}</NuxtLink>
                             </div>
                         </div>
                         <div v-if="type === 'withdrawal'" class="uk-flex" style="justify-content: space-between;" >
                             <div>   
                                 {{ $t('ton.src_label') }}
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate">
                                 {{ tline.src_label ?? '-' }}
                             </div>
                         </div>
@@ -189,7 +188,7 @@ onMounted(async () => {
                             <div>   
                                 {{ $t('ton.dst_label') }}
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate">
                                 {{ tline.dst_label ?? '-' }}
                             </div>
                         </div>
@@ -197,8 +196,8 @@ onMounted(async () => {
                             <div>   
                                 {{ $t('ton.created_at') }}
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                                <AtomsTableDateMobileCell :date-time="tline.created_at"/>
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                                <AtomsTableDateCell :date-time="tline.created_at"/>
                             </div>
                         </div>
                     </td>
@@ -206,16 +205,20 @@ onMounted(async () => {
                 <template v-else>
                     <td>
                         <AtomsAddressField v-if="tline.src_address in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.src_address)"/>
-                        <Loader :ratio="1" v-else />
+                        <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.src_address }, hash: '#overview'}">
+                            {{ truncString(tline.src_address, 5) }}
+                        </NuxtLink>
                     </td>
                     <td>
                         <AtomsAddressField v-if="tline.dst_address in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.dst_address)"/>
-                        <Loader :ratio="1" v-else />
+                        <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.dst_address }, hash: '#overview'}">
+                            {{ truncString(tline.dst_address, 5) }}
+                        </NuxtLink>
                     </td>
-                    <td class="uk-text-right" style="text-wrap: nowrap">
-                        {{ type === 'deposit' ? ((tline.deposit_amount ?? 0).toFixed(2) + '💎') : ((tline.withdrawal_amount ?? 0).toFixed(2) + '💎') }}
+                    <td class="uk-flex uk-flex-right uk-text-primary diamond" style="text-wrap: nowrap">
+                        {{ type === 'deposit' ? ((tline.deposit_amount ?? 0).toFixed(2)) : ((tline.withdrawal_amount ?? 0).toFixed(2)) }}
                     </td>
-                    <td class="uk-padding-remove-right">
+                    <td>
                         <AtomsTableDateCell :date-time="tline.created_at"/>
                     </td> 
                 </template>

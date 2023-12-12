@@ -8,6 +8,7 @@ export const useMainStore = defineStore('tonexp', {
       transactions: {} as TransactionMap,
       transactionMsgFlag: {} as { [key: TransactionKey] : boolean },
       transactionHexes: {} as { [key: string] : TransactionKey},
+      transactionComboKeys: {} as { [key: string] : TransactionKey},
       accounts: {} as AccountMap,
       accountBases: {} as { [key: string] : AccountKey},
       // wallets and nfts
@@ -45,6 +46,13 @@ export const useMainStore = defineStore('tonexp', {
       messageGraphData : [] as GraphCell[],
       transactionGraphData: [] as GraphCell[],
       accountsGraphData: [] as GraphCell[],
+      // Tree
+      treeMap: {} as TreeMap,
+      treeEdgeMap: {} as TreeEdgeMap,
+      messageTreeKeys: {} as MessageReverseMap,
+      txTreeKeys: {} as TxReverseMap,
+      messageTreeDataMap: {} as MessageNodeMap,
+      messageTreeEdgeMap: {} as MessageEdgeMap,
       // dashboard
       chartNames: {} as { [key: string] : string },
       chartXs: {} as { [key: string] : string },
@@ -53,7 +61,11 @@ export const useMainStore = defineStore('tonexp', {
       sankeyCount: {} as { [key: string] : { sentTotal: number, sentTop: number, receivedTotal: number, receivedTop: number, data: SankeyData }},
       telemintDashboard: [] as DashboardAPICell[],
       cexDashboard: [] as DashboardAPICell[],
-      bridgeDashboard: [] as DashboardAPICell[]
+      bridgeDashboard: [] as DashboardAPICell[],
+      // Loader varibles
+      isLoading: {
+        search: false
+      }
     }),
     getters: {
       getLatestBlocks: (state) => state.latestBlocks.map((key) => state.blocks[key]),
@@ -107,9 +119,11 @@ export const useMainStore = defineStore('tonexp', {
           default: return false;
         }
       },
+      isLoaded: (state) => (module: 'search') => {
+        return state.isLoading[module]
+      },
     },
     actions: {
-      blockKeyGen: (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`,
       convertBase64ToHex: (value: string) => {
         if (process.server) {
           return Buffer.from(value, 'base64').toString('hex');
@@ -159,8 +173,8 @@ export const useMainStore = defineStore('tonexp', {
         // Don't override messages
         if (messageKey in this.messages) {
           if (tr_key) {
-            if (tr_type === 'dst' && (this.messages[messageKey].dst_tx_key === null || this.messages[messageKey].dst_tx_key?.includes('|'))) this.messages[messageKey].dst_tx_key = tr_key
-            if (tr_type === 'src' && (this.messages[messageKey].src_tx_key === null || this.messages[messageKey].src_tx_key?.includes('|'))) this.messages[messageKey].src_tx_key = tr_key
+            if (tr_type === 'dst' && (this.messages[messageKey].dst_tx_key === null || this.messages[messageKey].dst_tx_key?.includes('~'))) this.messages[messageKey].dst_tx_key = tr_key
+            if (tr_type === 'src' && (this.messages[messageKey].src_tx_key === null || this.messages[messageKey].src_tx_key?.includes('~'))) this.messages[messageKey].src_tx_key = tr_key
           }
           return messageKey
         }
@@ -168,8 +182,8 @@ export const useMainStore = defineStore('tonexp', {
         if (message.type === 'EXTERNAL_OUT' && message.dst_address) delete message.dst_address
         const mappedMessage = <Message>{}
 
-        mappedMessage.src_tx_key = (message.src_tx_lt && message.src_address) ?  `${message.src_address.base64}|${message.src_tx_lt}` : null
-        mappedMessage.dst_tx_key = (message.dst_tx_lt && message.dst_address) ?  `${message.dst_address.base64}|${message.dst_tx_lt}` : null
+        mappedMessage.src_tx_key = (message.src_tx_lt && message.src_address) ?  `${message.src_address.base64}~${message.src_tx_lt}` : null
+        mappedMessage.dst_tx_key = (message.dst_tx_lt && message.dst_address) ?  `${message.dst_address.base64}~${message.dst_tx_lt}` : null
 
         if (tr_type === 'src' && tr_key) mappedMessage.src_tx_key = tr_key
         if (tr_type === 'dst' && tr_key) mappedMessage.dst_tx_key = tr_key
@@ -227,7 +241,7 @@ export const useMainStore = defineStore('tonexp', {
                 else mappedTransaction.msg_fees = msg.fwd_fee
               }
               msg.operation_name ? ( (op_type ===0 || op_type === 1) ? op_type = msg.operation_name : op_type = 99) :
-                (msg.operation_id ? ( (op_type ===0 || op_type === 1) ? op_type = `Contract op=0x${opToHex(msg.operation_id)}` : op_type = 99) :
+                (msg.operation_id ? ( (op_type ===0 || op_type === 1) ? op_type = `Contract ${opToHex(msg.operation_id)}` : op_type = 99) :
                   op_type = 2)
               return this.processMessage(msg, transactionKey, 'src', parseAccount)
             }))
@@ -240,18 +254,20 @@ export const useMainStore = defineStore('tonexp', {
 
         this.transactions[transactionKey] = mappedTransaction
         this.transactionMsgFlag[transactionKey] = false
+        this.transactionComboKeys[`${mappedTransaction.address.base64}~${mappedTransaction.created_lt.toString()}`] = transactionKey
+
         return transactionKey
       },
-      processBlock(block: BlockAPI) {
-        const blockKey : BlockKey = this.blockKeyGen(block.workchain, block.shard, block.seq_no)
+      processBlock(block: BlockAPI, full: boolean = false) {
+        const blockKey : BlockKey = blockKeyGen(block.workchain, block.shard, block.seq_no)
 
         // Don't override existing blocks
-        if (blockKey in this.blocks) return blockKey
+        if (blockKey in this.blocks && this.blocks[blockKey].loaded) return blockKey
 
         const mappedBlock = <Block>{}
         mappedBlock.shard_keys = []
         mappedBlock.transaction_keys = []
-        mappedBlock.transaction_delta = 0n
+        mappedBlock.loaded = false
         
         if (block.master !== undefined) {
           if (block.master) {
@@ -261,102 +277,113 @@ export const useMainStore = defineStore('tonexp', {
         }
         if (block.shards !== undefined) {
           if (block.shards) {
-            mappedBlock.shard_keys.push(...block.shards.map(shard => this.processBlock(shard)))
+            mappedBlock.shard_keys.push(...block.shards.map(shard => this.processBlock(shard, full)))
           }
           delete block.shards
         }
-        if (block.transactions !== undefined) {
+        if (full && block.transactions_count > 0) {
           if (block.transactions) {
             mappedBlock.transaction_keys.push(...block.transactions.map(tr => this.processTransaction(tr)))
-            mappedBlock.transaction_keys.forEach((tr: TransactionKey) => mappedBlock.transaction_delta += this.transactions[tr].delta)
           }
           delete block.transactions
         }
 
         Object.assign(mappedBlock, block)
 
-        this.blocks[blockKey] = mappedBlock
+        if (!(blockKey in this.blocks) && !full) {
+          this.blocks[blockKey] = mappedBlock
+        } else {
+          this.blocks[blockKey] = { ...this.blocks[blockKey], ...mappedBlock, loaded: true}
+        }
         return blockKey
       },
       async mainPageLoad() {
-        this.stats = {} as Statistics
-        const mobi = isMobile()
-        this.latestBlocks = []
-        try {
-          const latestReq = {
-            workchain: -1,
-            with_transactions: true,
-            order: 'DESC',
-            limit: mobi ? 5 : 10
-          }
-          const query = getQueryString(latestReq, false)
+        // Will be updated with new landing page
+        return
+        // this.stats = {} as Statistics
+        // const mobi = isMobile()
+        // this.latestBlocks = []
+        // try {
+        //   const latestReq = {
+        //     workchain: -1,
+        //     with_transactions: true,
+        //     order: 'DESC',
+        //     limit: mobi ? 5 : 10
+        //   }
+        //   const query = getQueryString(latestReq, false)
         
-          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
-          const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          for (const key in parsed.results) {
-            const block = this.processBlock(parsed.results[key])
-            this.latestBlocks.push(block)
-          }
-        } catch (error) {
-          console.log(error)
-        }
-        try {
-          await this.updateTransactions(mobi ? 5 : 10, null, { 'workchain' : 0 })
-        } catch (error) {
-          console.log(error)
-        }
-        try {
-          const { data } = await apiRequest(`/statistics`, 'GET')
-          this.stats = JSON.parse(data);
-          Object.keys(this.stats).forEach(key => {
-            if (this.stats[key] instanceof Array) delete this.stats[key];
-          });
-        } catch (error) {
-          console.log(error)
-        }
+        //   const { data } = await apiRequest(`/blocks?${query}`, 'GET')
+        //   const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
+        //       (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+        //   for (const key in parsed.results) {
+        //     const block = this.processBlock(parsed.results[key])
+        //     this.latestBlocks.push(block)
+        //   }
+        // } catch (error) {
+        //   console.log(error)
+        // }
+        // try {
+        //   await this.updateTransactions(mobi ? 5 : 10, null, 'base')
+        // } catch (error) {
+        //   console.log(error)
+        // }
+        // try {
+        //   const { data } = await apiRequest(`/statistics`, 'GET')
+        //   this.stats = JSON.parse(data);
+        //   Object.keys(this.stats).forEach(key => {
+        //     if (this.stats[key] instanceof Array) delete this.stats[key];
+        //   });
+        // } catch (error) {
+        //   console.log(error)
+        // }
       },
       async initLoad() {
         const route = useRoute()
 
-        switch (route.path) {
-          case '/': {
+        switch (route.name) {
+          case 'index': {
             await this.mainPageLoad()
             break
           } 
-          case '/blocks': {
-            if (Object.entries(route.query).length === 0) {
-              await this.updateBlockValues(10, null)
-            } else {
-              const wc = route.query.workchain && isNumeric(route.query.workchain) ? Number(route.query.workchain) : null
-              const sh = route.query.shard  && isNumeric(route.query.shard) ? BigInt(route.query.shard.toString()) : null
-              const sq = route.query.seq_no && isNumeric(route.query.seq_no) ? Number(route.query.seq_no) : null
-              if (wc && sh && sq) await this.fetchBlock(wc, sh, sq)
+          case 'blocks': {
+            await this.updateBlockValues('main', 5, null)
+            break
+          }
+          case 'blocks-key': {
+            const key = route.params.key ? (Array.isArray(route.params.key) ? route.params.key[0] : route.params.key) : null
+            if (key) {
+                const params = blockKeyDegen(key)
+                if (params) {
+                  this.fetchBlock(params.workchain, params.shard, params.seq_no, false)
+                }
             }
-            break;
+            break
           }
-          case '/transactions': {
-            if (!route.query.hash) {
-              await this.updateTransactions(20, null, null)
-            } else {
-              const hash = route.query.hash && toBase64Rfc(route.query.hash.toString())
-              if (hash) await this.fetchTransaction(hash)
-            }
-            break;
+          case 'transactions': {
+            await this.updateTransactions(20, null, null)
+            break
           }
-          case '/messages': {
-            await this.updateMessages(10, null, null)
+          case 'transactions-hash' : {
+            const hash = route.params.hash && trnParse(route.params.hash.toString()) && toBase64Rfc(route.params.hash.toString())
+            if (hash) await this.fetchTransaction(hash)
           }
-          case '/accounts': {
+          case 'accounts': {
             if (Object.entries(route.query).length === 0 || 'contract' in route.query) {
               const sq = route.query.contract ? route.query.contract.toString() : null
 
               await this.updateAccounts(20, null, { interface : sq })
-            }  else {
-              const hex = route.query.hex && route.query.hex.toString()
-              if (hex) await this.fetchAccount(hex)
             }
-            break;
+            break
+          }
+          case 'accounts-hex': {
+            const hex = route.params.hex && route.params.hex.toString()
+            if (hex) await this.fetchAccount(hex)
+
+            break
+          }
+          case 'messages': {
+            await this.updateMessages(10, null, null)
+            break
           }
         }
         if (Object.keys(this.interfaces).length === 0) {
@@ -384,18 +411,17 @@ export const useMainStore = defineStore('tonexp', {
           }
         }
       },
-      async updateBlockValues(limit: number = 10, seqOffset: number | null, cutPage: number = 0, order: "ASC" | "DESC" = "DESC") {
+      async updateBlockValues(workchain: 'main' | 'base' | null,limit: number = 10, seqOffset: number | null, cutPage: number = 0, order: "ASC" | "DESC" = "DESC") {
         const fullReq: MockType = {
-          workchain: -1,
-          with_transactions: true,
+          with_transactions: false,
           order,
           limit
         }
-        if (seqOffset) {
-          fullReq.after = seqOffset
-          this.exploredBlocks = this.exploredBlocks.slice(0, limit*cutPage)
-        }
-        if (!seqOffset) this.exploredBlocks = []
+        if (workchain) fullReq.workchain = workchain === 'base' ? '0' : '-1'
+
+        if (seqOffset) fullReq.after = seqOffset
+        else this.exploredBlocks = []
+
         const query = getQueryString(fullReq, false)
         try {
           const { data } = await apiRequest(`/blocks?${query}`, 'GET')
@@ -406,7 +432,6 @@ export const useMainStore = defineStore('tonexp', {
           for (const key in parsed.results) {
             const block = this.processBlock(parsed.results[key])
             this.exploredBlocks.push(block)
-            this.exploredBlocks.push(...this.blocks[block].shard_keys)
           }
         } catch (error) {
           console.log(error)
@@ -441,7 +466,9 @@ export const useMainStore = defineStore('tonexp', {
         const fullReq: MockType = {
           ...filters,
           interval,
-          metric
+          metric,
+          src_workchain: 0,
+          dst_workchain: 0
         }
         let newArr: GraphCell[] = reset ? [] : [...this.messageGraphData]
         const query = getQueryString(fullReq, true)
@@ -457,15 +484,15 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async updateTransactions(limit: number, seqOffset: bigint | null, filters: MockType | null, account: AccountKey | null = null, order: "ASC" | "DESC" = "DESC") { 
+      async updateTransactions(limit: number, seqOffset: bigint | null, workchain: 'main' | 'base' | null, account: AccountKey | null = null, order: "ASC" | "DESC" = "DESC") { 
         const fullReq: MockType = {
-          ...filters,
           order, 
           limit
         }
         if (seqOffset) fullReq.after = seqOffset
         if (!seqOffset) this.exploredTransactions = []
         if (account) fullReq.address = account
+        if (workchain) fullReq.workchain = workchain === 'base' ? '0' : '-1'
         const query = getQueryString(fullReq, true)
         try {
           const { data } = await apiRequest(`/transactions?${query}`, 'GET')
@@ -477,7 +504,6 @@ export const useMainStore = defineStore('tonexp', {
             this.exploredTransactions.push(trn)
           }
           if (account) {
-              this.accounts[account].transaction_amount = parsed.total
               this.accounts[account].transaction_keys = []
               this.accounts[account].transaction_keys.push(...this.exploredTransactions)
           }
@@ -485,14 +511,14 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async getTransactionsChart(interval: IntervalAPI, excludeMC: boolean, from: string, to: string | null, reset: boolean = false, setEnd : boolean = false) {
+      async getTransactionsChart(interval: IntervalAPI, workchain: string | null, from: string, to: string | null, reset: boolean = false, setEnd : boolean = false) {
         const fullReq: MockType = {
           interval,
           from,
           to,
           metric : 'transaction_count'
         }
-        if (excludeMC) fullReq.workchain = 0
+        if (workchain) fullReq.workchain = workchain
 
         let newArr: GraphCell[] = reset ? [] : [...this.transactionGraphData]
         const query = getQueryString(fullReq, true)
@@ -554,11 +580,11 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
       },
-      async fetchBlock(workchain: number, shard: bigint, seq_no: number) {
+      async fetchBlock(workchain: number, shard: bigint, seq_no: number, full: boolean) {
         const fullReq: MockType = {
           workchain: workchain? -1 : 0,
           shard,
-          with_transactions: true,
+          with_transactions: full,
           seq_no
         }
         const query = getQueryString(fullReq, false);
@@ -567,7 +593,7 @@ export const useMainStore = defineStore('tonexp', {
           const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
               (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
           if (parsed.results && parsed.results.length > 0) {
-            const key = this.processBlock(parsed.results[0])
+            const key = this.processBlock(parsed.results[0], full)
             this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys(this.deepTransactionKeys(key), true, true), false))
             return key
           } else return null
@@ -577,7 +603,7 @@ export const useMainStore = defineStore('tonexp', {
       },
       async fetchTransaction(hash: string) {
         let fullReq: MockType = {}
-        if (hash.includes('|')) fullReq = { address: toBase64Web(hash.split('|')[0]), created_lt: hash.split('|')[1]}
+        if (hash.includes('~')) fullReq = { address: toBase64Web(hash.split('~')[0]), created_lt: hash.split('~')[1]}
         else fullReq = { hash }
         const query = getQueryString(fullReq, true);
         try {
@@ -594,6 +620,153 @@ export const useMainStore = defineStore('tonexp', {
           console.log(error)
         }
         return hash
+      },
+      async composeTreeNodes (hash: string, treeKey: string) {
+        if (hash in this.txTreeKeys) return
+
+        if (hash in this.transactionComboKeys) {
+          hash = this.transactionComboKeys[hash]
+        }
+
+        for (const msgKey of this.getMessageKeys([hash], true, true)) {
+          if (msgKey in this.messageTreeKeys) continue
+          
+          const msg = this.messages[msgKey]
+
+          if (!msg) continue
+          
+          let addData : MockType = {...msg.data}
+          let height: number = 0
+          // width in symbols
+          // for add_data its (4*depth) spaces + 2 quotes + 1 colon + 1 space before + 2 quotes if not number + 1 comma if not last index
+          let width: number = 0
+          // default letter width for roboto mono 16px
+          const letterWidth: number = 9.6
+          const letterHeight: number = 16
+          function widthCounter (key: string, value: string, index: number, objLength: number, depth: number) {
+            let append = (isNumeric(value) ? 4 : 6) + (index !== objLength - 1 ? 1 : 0) + (depth * 4)
+            if (value.length <= 49 - depth*4 ) {
+              if (value.length + key.length + append > width) width = value.length + key.length + append
+            } else {
+              if (key.length + 49 - depth*4 + 3 + append > width) width = key.length + 49 - depth*4 + 3 + append
+            }
+          }
+          if (addData && Object.keys(addData).length > 0) {
+            height += 2
+            for (const [index, key] of Object.keys(addData).entries()) {
+              height += 1
+              if (addData[key] ?? null) {
+                if (typeof addData[key] === 'object') {
+                  height += 1
+
+                  for (const [index1, key1] of Object.keys(addData[key]).entries()) {
+                    height += 1
+                    const value1 = addData[key][key1].toString()
+
+                    widthCounter(key1, value1, index1, Object.keys(addData[key]).length, 2)
+                    
+                    // if (addParse(value1)) continue
+
+                    if (value1.length > 41) {
+                      addData[key][key1] = value1.slice(0,41) + '...'
+                    }
+
+                  }
+                } else {
+                  const value = addData[key].toString()
+
+                  widthCounter(key, value, index, Object.keys(addData).length, 1)
+                  
+                  // if (addParse(value)) continue
+
+                  if (value.length > 45) {
+                    addData[key] = value.slice(0,45) + '...'
+                  }
+                }
+              }
+              if (addData[key] && addParse(addData[key].toString())) continue
+              if (addData[key]?.toString().length > 45) addData[key] = addData[key].toString().slice(0,45) + '...' 
+            }
+          }
+          let titleLength = (msg.src_contract ? msg.src_contract.length : 0) + 
+            (msg.src_contract && (msg.operation_name || msg.operation_id)? 2 : 0) +
+              (msg.operation_name ? msg.operation_name.length : (msg.operation_id ? opToHex(msg.operation_id).length : 0))
+          
+          if (titleLength === 0) titleLength = 7
+          // 24 padding + 2 border + 4 stripe
+          width = ((titleLength > width * 0.875) ? titleLength : (width * 0.875)) * letterWidth + 24 + 2 + 4
+          height = (height * letterHeight * 0.875 * 1.5) + 8 * (msg.data ? 2 : 1) + 2 + 24
+          const newData: MessageNodeData = {
+            add_data: msg.data ? addData : null,
+            contract: msg.src_contract ?? null,
+            op_name: msg.operation_id ? opToHex(msg.operation_id) : null,
+            op_type: msg.operation_name ?? null
+          }
+          this.messageTreeDataMap[msgKey] = {
+            id: msgKey,
+            type: 'custom',
+            position: { x: 100, y: 0},
+            nodeWidth: width,
+            nodeHeight: height,
+            draggable: false,
+            data: newData
+          }
+          this.messageTreeKeys[msgKey] = treeKey
+          this.treeMap[treeKey].push(msgKey)
+        }
+
+        if (this.transactions[hash].in_msg_hash && this.transactions[hash].out_msg_keys.length > 0) {
+          for (const outMsg of this.transactions[hash].out_msg_keys) {
+            const edgeKey: EdgeKey = `${this.transactions[hash].in_msg_hash}:${outMsg}`
+            if (!(edgeKey in this.messageTreeEdgeMap)) {
+
+              const newEdge: MessageEdge = {
+                id: edgeKey,
+                source: this.transactions[hash].in_msg_hash,
+                target: outMsg,
+                draggable: false
+              }
+
+              this.messageTreeEdgeMap[edgeKey] = newEdge
+              this.treeEdgeMap[treeKey].push(edgeKey)
+
+            }
+          }
+        }
+
+        this.txTreeKeys[hash] = treeKey
+      },
+      async addTreeTx (hash: string, treeKey: string) {
+        if (hash in this.txTreeKeys) return hash
+
+        if (!(hash in this.transactions)) {
+          const tx_key = await this.fetchTransaction(hash)
+          if (tx_key) hash = tx_key
+          else return
+        }
+
+        await this.composeTreeNodes(hash, treeKey)
+
+        if (this.transactions[hash].in_msg_hash) {
+          const prevHash = this.messages[this.transactions[hash].in_msg_hash].src_tx_key
+          if (prevHash) {
+            await this.addTreeTx(prevHash, treeKey)
+          }
+        }
+        for (const outKey of this.transactions[hash].out_msg_keys) {
+          const nextHash = this.messages[outKey].dst_tx_key
+          if (nextHash) {
+            await this.addTreeTx(nextHash, treeKey)
+          }
+        }
+      },
+      async fetchMessageTree (hash: string) {
+        if (hash in this.txTreeKeys) return this.txTreeKeys[hash]
+        let treeKey = 'tree_' + (Object.keys(this.treeMap).length + 1)
+        this.treeMap[treeKey] = []
+        this.treeEdgeMap[treeKey] = []
+        await this.addTreeTx(hash, treeKey)
+        return treeKey
       },
       async fetchBareAccounts(hex: string[]) {
         // hex = hex.filter(key => !(key in badAddresses))
@@ -618,29 +791,7 @@ export const useMainStore = defineStore('tonexp', {
           }
         return hex
       },
-      async fetchAccount(hex: string, preload: boolean = false) {
-        this.loadNextNFTFlag = false
-        if (hex in this.accountBases) hex = this.accountBases[hex]
-        if (!(hex in this.accounts))
-          try {
-          const fullReq: MockType = {
-            address: hex,
-            latest: true
-          }
-          const query = getQueryString(fullReq, true);
-          // get latest account state
-            const { data } = await apiRequest(`/accounts?${query}`, 'GET')
-            const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
-                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            if (parsed.results && parsed.results.length > 0) {
-              this.processAccount(parsed.results[0])
-              if (hex !== parsed.results[0].address.hex) hex = parsed.results[0].address.hex
-            } else return null
-          } catch (error) {
-            console.log(error)
-          }
-        if (this.accounts[hex]?.loaded || preload) return hex
-        // request aggregated messages for sankey diagram
+      async loadSankeyDiagram(hex: string) {
         if (!(hex in this.sankeyCount)) {
           let loadAmountFlag = false
           // count request
@@ -743,25 +894,54 @@ export const useMainStore = defineStore('tonexp', {
             }
           }
         }
-        // request meta for jetton minters and nft collections
-        if (this.accounts[hex].types?.includes('jetton_minter') || this.accounts[hex].types?.includes('nft_collection'))
-          await this.requestMetaBulk([hex])
-        // get first 10 transactions for account if they are empty
-        if (this.accounts[hex]?.transaction_keys.length === 0)
-          await this.updateTransactions(10, null, null, hex)
-        // get one jetton_wallet of account
-        if (this.accounts[hex]?.jetton_wallets.length === 0) {
-          await this.loadAccountJettons(hex, false, 1, null)  
-        }
-        // get 18 nft_item of account
-        if (this.accounts[hex]?.owned_nfts.length === 0)
-          await this.loadAccountNFTs(hex, true, false, 18, null)
-        // get 18 minted nft_item of account
-        if (this.accounts[hex]?.minted_nfts.length === 0)
-          await this.loadAccountNFTs(hex, true, true, 18, null)
-        // get top 10 holders of account if its nft_collection or jetton_minter
-        if (this.accounts[hex]?.types?.includes('nft_collection') || this.accounts[hex]?.types?.includes('jetton_minter')) {
-          await this.loadTopHolders(hex, 10)
+      },
+      async fetchAccount(hex: string, preload: boolean = true) {
+        this.loadNextNFTFlag = false
+        if (hex in this.accountBases) hex = this.accountBases[hex]
+        if (!(hex in this.accounts))
+          try {
+          const fullReq: MockType = {
+            address: hex,
+            latest: true
+          }
+          const query = getQueryString(fullReq, true);
+          // get latest account state
+            const { data } = await apiRequest(`/accounts?${query}`, 'GET')
+            const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
+                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+            if (parsed.results && parsed.results.length > 0) {
+              this.processAccount(parsed.results[0])
+              if (hex !== parsed.results[0].address.hex) hex = parsed.results[0].address.hex
+            } else return null
+          } catch (error) {
+            console.log(error)
+          }
+        if (this.accounts[hex]?.loaded || !preload) return hex
+
+        // load account statistics
+        try {
+          const fullReq: MockType = {
+            address: hex,
+            limit: 25
+          }
+          const query = getQueryString(fullReq, true);
+          // get latest account state
+          const { data } = await apiRequest(`/accounts/aggregated?${query}`, 'GET')
+          const parsed = parseJson<AccountAPIStats>(data, (key, value, context) => (
+              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          if (Object.keys(parsed).length !== 0) {
+            if (parsed.transactions_count) {
+              this.accounts[hex].transaction_amount = parsed.transactions_count
+            }
+            if (parsed.owned_jetton_wallets) {
+              this.accounts[hex].jetton_amount = parsed.owned_jetton_wallets
+            }
+            if (parsed.owned_nft_items) {
+              this.accounts[hex].nft_amount = parsed.owned_nft_items
+            }
+          }
+        } catch (error) {
+          console.log(error)
         }
 
         this.accounts[hex].loaded = true
@@ -912,12 +1092,14 @@ export const useMainStore = defineStore('tonexp', {
         return hex
       },
       async search(req: BlockSearch | TxSearch | AccSearch | LabelSearch | null, limit : number = 20, useLastSearch: boolean = false, offset? : number): Promise<Search> {
-        if (!offset) this.searchResults = []
+        this.isLoading.search = true
+        let out = [] as Search
+        if (offset) out = [...this.searchResults]
 
         if (useLastSearch && this.lastSearch) req = this.lastSearch
         this.lastSearch = req
 
-        if (!req) return this.searchResults
+        if (!req) return out
 
         if (req.type == 'label') {
 
@@ -933,79 +1115,89 @@ export const useMainStore = defineStore('tonexp', {
             const parsed = parseJson<SearchAPIData>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
             this.totalQuerySearch = parsed.total
-            if (this.lastSearch?.value !== req.value) this.searchResults = []
-            if (parsed.results && parsed.results.length > 0)
+            if (this.lastSearch?.value !== req.value) out = []
+            if (parsed.results && parsed.results.length > 0) {
               parsed.results.forEach((acc: SearchAPI) => {
-                this.searchResults.push({
+                out.push({
                   type: 'label',
                   value: acc.address.hex,
                   show: acc.name
                 })
               })
+            }
           } catch (err) {
-            return this.searchResults
+            this.searchResults = out
+            return out
+          } finally {
+            this.isLoading.search = false
           }
         } else if (req.type == 'account') {
 
-          if (req.value.hex in this.accounts) { this.searchResults = [req]; return this.searchResults }
-
-          if (req.value.hex in this.accountBases) {
-            this.searchResults = [{
+          if (req.value.hex in this.accounts) {
+            out = [req]
+          }
+          else if (req.value.hex in this.accountBases) {
+            out.push({
               type: 'account',
               value: {
                 hex: this.accountBases[req.value.hex]
               },
               show: req.value.hex
-            }]
+            })
           } else {
-            const key = await this.fetchAccount(req.value.hex, true)
-            if (key) this.searchResults = [{
+            const key = await this.fetchAccount(req.value.hex, false)
+            if (key) out.push({
               type: 'account',
               value: {
                 hex: key
               },
               show: req.value.hex
-            }]
+            })
           }
 
         } else if (req.type === 'block') {
 
-          if (this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) { this.searchResults = [req]; return this.searchResults }
-
-          const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no)
-          if (key) this.searchResults = [{
-            type: 'block',
-            value: {
-              workchain: this.blocks[key].workchain,
-              shard: this.blocks[key].shard,
-              seq_no: this.blocks[key].seq_no
-            },
-            show: this.blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
-          }]
+          if (blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no) in this.blocks) { 
+            out = [req]
+          } else {
+            const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no, false)
+            if (key) out.push({
+              type: 'block',
+              value: {
+                workchain: this.blocks[key].workchain,
+                shard: this.blocks[key].shard,
+                seq_no: this.blocks[key].seq_no
+              },
+              show: blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
+            })
+          }
         } else if (req.type === 'transaction') {
 
-          if (req.value.hash in this.transactions) { this.searchResults = [req]; return this.searchResults }
-
-          if (req.value.hash in this.transactionHexes) {
-            this.searchResults = [{
+          if (req.value.hash in this.transactions) {
+            out = [req]
+          } 
+          else if (req.value.hash in this.transactionHexes) {
+            out.push({
               type: 'transaction',
               value: {
                 hash: this.transactionHexes[req.value.hash]
               },
               show: req.value.hash
-            }]
+            })
           } else {
             const key = await this.fetchTransaction(req.value.hash)
-            if (key) this.searchResults = [{
+            if (key) out.push({
               type: 'transaction',
               value: {
                 hash: key
               },
               show: req.value.hash
-            }]
+            })
           }
         }
-        return this.searchResults
+        this.searchResults = [...out]
+        this.isLoading.search = false
+        return out
       },
       async loadDashboards(slug: dashboardName) {
         const { data } = await apiRequest(`/dashboard/${slug}/charts`, 'GET', {}, `https://superset.anton.tools/api/v1`)

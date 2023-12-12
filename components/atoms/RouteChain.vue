@@ -1,38 +1,48 @@
 <script setup lang="ts">
-const route = useRoute()
+import { useMainStore } from '~/store/TONExp';
+import { blockKeyDegen } from '~/utils/filters';
 
-const parsedRoute = computed<Array<string>>(() => {
-    let output : string[];
-    if (!route.fullPath.includes('/')) return []
-    if (route.fullPath !== route.path && !('contract' in route.query) 
-        && !(route.path in {'/messages': true, '/search': true, '/dashboard/telemint': true,  '/dashboard/cex': true})) {
-        output = route.path.split('?')[0].slice(1,).split('/')
-        output = output.slice(0, output.length)
-        let type = output[output.length - 1]
-        output.push(type.slice(0, type.length - 1))
-    } else {
-        output = route.path.slice(1,).split('/')
-    }
-    return output;
+const route = useRoute()
+const store = useMainStore()
+
+const routeType = computed(() => {
+    if (!route.fullPath.includes('/')) return null
+    if (route.path === '/') return null
+    return route.path.slice(1,).split('/')[0]
 })
-const explorerLink = (arr: Array<string>, i: number) => {
-    return arr.slice(0, i+1).join('/')
-}
+
+const showRoute = computed(() => {
+    if (route.name === 'transactions-hash') {
+        const hash = toBase64Rfc(route.params.hash.toString())
+        if (hash in store.transactions) return hash
+        else if (hash in store.transactionHexes) return store.transactionHexes[hash]
+        else if (toBase64Web(hash) in store.transactionComboKeys) return store.transactionComboKeys[toBase64Web(hash)]
+        return hash
+    }
+    if (route.name === 'accounts-hex') {
+        const hex = route.params.hex.toString()
+        if (hex in store.accounts) return store.accounts[hex].address.base64
+        else if (hex in store.accountBases) return hex
+        return hex
+    }
+    if (route.name === 'blocks-key') {
+        const key = blockKeyDegen(route.params.key.toString())
+        if (key) {
+            return blockKeyGen(key.workchain, key.shard, key.seq_no)
+        }
+        return null
+    }
+    if (route.path === '/dashboard/cex') return 'CEX'
+    if (route.path === '/dashboard/telemint') return 'Telemint'
+    if (route.path === '/dashboard/bridge') return 'Bridge'
+    return null
+})
 </script>
 
 <template>
-    <div class="uk-text-left uk-text-empasis" style="margin: 0.8rem 0 0.8rem;">
-        <NuxtLink :to="'/'" class="uk-inline">{{$t('route.explorer')}}</NuxtLink>
-        <template v-for="path, index in parsedRoute">
-            <svg class="uk-inline" width="20" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0 0.5rem;"><path d="M13.5 10L8.5 15L8.5 5L13.5 10Z" fill="#666"></path></svg>
-            <NuxtLink v-if="index !== parsedRoute.length - 1" :to="`/${explorerLink(parsedRoute, index)}`" class="uk-inline">{{ $t(`route.${path}`) }}</NuxtLink>
-            <div v-else class="muted uk-inline">{{ $t(`route.${path}`) }}</div>
-        </template>
+    <div class="uk-text-left uk-flex uk-width-1-1 uk-text-nowrap" style="height: 24px; max-width: 100%;" v-if="showRoute && routeType" :style="isMobile() ? 'margin-top: 16px' : 'margin-top: 24px'">
+        <NuxtLink :to="`/${routeType}`" class="uk-inline uk-text-muted uk-text-light">{{$t(`route.${routeType}`)}}</NuxtLink>
+        <div class="uk-inline uk-margin-small-left uk-text-muted uk-margin-small-right uk-text-light">{{ '/' }}</div>
+        <div class="uk-text-primary uk-inline uk-text-truncate uk-text-light">{{ showRoute }}</div>
     </div>
 </template>
-
-<style lang="scss" scoped>
-.muted {
-    color: #888
-}
-</style>

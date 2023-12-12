@@ -1,14 +1,36 @@
 <script setup lang="ts">
-const { localeProperties } = useI18n()
 interface Props {
     dateTime: string | number | null
 }
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const passedTime = () => {
+    if (!props.dateTime) return null
+    const time = Math.abs(new Date(props.dateTime ?? '').getTime() - new Date().getTime())
+    if (time > (1000 * 60 * 60 * 24 * 365)) {
+        return Math.round(time / (1000 * 60 * 60 * 24 * 365)).toString() + 'y ago'
+    } else if (time > (1000 * 60 * 60 * 24 * 30)) {
+        return Math.round(time / (1000 * 60 * 60 * 24 * 30)).toString() + 'mo ago'
+    } else if (time > (1000 * 60 * 60 * 24)) {
+        return Math.round(time / (1000 * 60 * 60 * 24)).toString() + 'd ago'
+    } else if (time > (1000 * 60 * 60)) {
+        return Math.round(time / (1000 * 60 * 60)).toString() + 'h ago'
+    } else if (time > (1000 * 55)) {
+        return Math.round(time / (1000 * 60)).toString() + ' min ago'
+    } else if (time > (1000 * 15)) {
+        return Math.round(15 * time / (1000 * 15)).toString() + 's ago'
+    } else {
+        return 'just now'
+    }
+}
+
 </script>
 
 <template>
-    <div class="uk-flex uk-flex-column uk-align-center uk-margin-remove-vertical">
-        <p class="uk-margin-remove-bottom uk-text-right uk-text-medium"> {{ dateTime? new Date(dateTime).toLocaleTimeString() : 'Error' }}</p>
-        <p v-if="dateTime" class="uk-margin-remove uk-text-right" style="font-size: small; white-space: nowrap;">{{ new Date(dateTime).toLocaleDateString(localeProperties.iso, {year: 'numeric', month: 'short', day: 'numeric' }) }}</p>
+    <div v-if="passedTime()" class="uk-text-primary uk-text-right uk-text-nowrap">
+        {{ passedTime() }}
+    </div>
+    <div v-else>
+        {{ 'Error' }}
     </div>
 </template>

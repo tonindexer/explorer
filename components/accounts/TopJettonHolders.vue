@@ -17,7 +17,9 @@ const minterMeta = computed(() => props.minter in store.metadata ?
     { decimals: store.metadata[props.minter].decimals, symbol: store.metadata[props.minter].symbol} : 
     { decimals: 9, symbol: "💎"})
 
-onMounted(() => {
+onMounted(async () => {
+    if (props.keys.length === 0)
+        await store.loadTopHolders(props.minter, itemCount.value)
     store.fetchBareAccounts(props.keys.map(item => item.owner_address.hex))
 })
 
@@ -29,7 +31,7 @@ watch(itemCount, async() => {
 </script>
 
 <template>
-    <div v-if="keys.length >= 10" class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+    <div v-if="keys.length >= 10" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
         <div class="uk-flex uk-flex-middle">
             <AtomsSelector 
                 :item-count="itemCount"
@@ -39,7 +41,7 @@ watch(itemCount, async() => {
             />
         </div>
     </div>
-    <table class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <table class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <thead v-if="!isMobile()">
             <tr>
                 <th class="uk-width-1-3">{{ $t('ton.id')}}</th>
@@ -59,8 +61,8 @@ watch(itemCount, async() => {
                             <div>   
                                 {{ $t('ton.owner') }}
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                                <NuxtLink :to="{ path: 'accounts', query: { hex: toBase64Web(acc.owner_address.hex) }, hash: '#overview'}" class="uk-text-primary">
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                                <NuxtLink :to="{ name: 'accounts-hex', params: { hex: toBase64Web(acc.owner_address.hex) }, hash: '#overview'}" class="uk-text-primary">
                                     <div uk-icon="icon: link"></div>{{ truncString(acc.owner_address.base64, 25,0) }}
                                 </NuxtLink>
                             </div>
@@ -69,8 +71,8 @@ watch(itemCount, async() => {
                             <div>   
                                 {{ $t('ton.wallet') }}
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                                <NuxtLink :to="{ path: 'accounts', query: { hex: toBase64Web(acc.wallet_address.hex) }, hash: '#overview'}" class="uk-text-primary">
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                                <NuxtLink :to="{ name: 'accounts-hex', params: { hex: toBase64Web(acc.wallet_address.hex) }, hash: '#overview'}" class="uk-text-primary">
                                     <div uk-icon="icon: link"></div>{{ truncString(acc.wallet_address.base64, 25,0) }}
                                 </NuxtLink>
                             </div>
@@ -80,8 +82,8 @@ watch(itemCount, async() => {
                             <div>   
                                 {{ $t('ton.updated_at') }}
                             </div>
-                            <div v-if="acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                                <AtomsTableDateMobileCell :date-time="store.accounts[acc.owner_address.hex].updated_at"/>
+                            <div v-if="acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                                <AtomsTableDateCell :date-time="store.accounts[acc.owner_address.hex].updated_at"/>
                             </div>
                             <div v-else>
                                 -

@@ -6,16 +6,6 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const masterLink = computed(() => {
-    const arr = props.block.master_key ? props.block.master_key.split(':') : '0:1:2'
-    return {
-          workchain: arr[0],
-          shard: arr[1],
-          seq_no: arr[2]
-        }
-    }
-)
-
 const externalLink = computed(() : MockType=> {
     return {
         'Toncoin': `https://explorer.toncoin.org/search?workchain=${props.block.workchain}&shard=8000000000000000&seqno=${props.block.seq_no}&lt=&utime=&roothash=&filehash=`,
@@ -26,7 +16,7 @@ const externalLink = computed(() : MockType=> {
 </script>
 
 <template>
-    <table class="uk-table uk-table-middle">
+    <table class="uk-table uk-margin-remove-vertical" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <tbody class="uk-table-divider">
             <tr>
                 <AtomsPropLine>
@@ -65,8 +55,8 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         <AtomsCopyableText :text="block.master_key">
-                            <NuxtLink :to="`/blocks?workchain=${masterLink.workchain}&shard=${masterLink.shard}&seq_no=${masterLink.seq_no}#overview`" class="uk-text-primary">
-                                    {{ block.master_key }}
+                            <NuxtLink :to="{ name: 'blocks-key', params: {key : block.master_key }}" class="uk-text-primary">
+                                {{ block.master_key }}
                             </NuxtLink>
                         </AtomsCopyableText>
                     </template>
@@ -89,18 +79,6 @@ const externalLink = computed(() : MockType=> {
                     </template>
                     <template #value>
                         {{ block.transaction_keys.length }}
-                    </template>
-                </AtomsPropLine>
-            </tr>
-            <tr>
-                <AtomsPropLine>
-                    <template #name>
-                        {{ $t(`ton.transaction_delta`) }}
-                    </template>
-                    <template #value>
-                        <div :class="colorAmount(block.transaction_delta)">
-                            {{ block.transaction_delta ? `${fullTON(block.transaction_delta, true)}💎` : t('general.none') }}
-                        </div>
                     </template>
                 </AtomsPropLine>
             </tr>

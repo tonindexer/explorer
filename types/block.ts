@@ -22,14 +22,15 @@ declare global {
         shard_keys: BlockKey[]
 
         // transactions?: Transaction[] | null -- API data only -- remapped
+        transactions_count: number
         transaction_keys: TransactionKey[]
 
         scanned_at: string
 
-        transaction_delta: bigint
+        loaded: boolean
     }
 
-    interface BlockAPI extends Omit<Block, 'master_key' | 'shard_keys' | 'transaction_keys' | 'transaction_delta'> {
+    interface BlockAPI extends Omit<Block, 'master_key' | 'shard_keys' | 'transaction_keys' | 'loaded'> {
         master?: BlockID | null
         shards?: BlockAPI[] | null
         transactions?: TransactionAPI[] | null

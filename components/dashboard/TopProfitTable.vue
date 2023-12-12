@@ -81,7 +81,7 @@ const loadData = async () => {
     }
 }
 
-watch(finalData, () => loadAccounts())
+watch(finalData, () => loadAccounts(), {deep: true})
 
 onMounted(async () => {
     await loadData()
@@ -92,17 +92,17 @@ onMounted(async () => {
     <div v-if="loading && data.length === 0" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <div v-if="!loading || data.length > 0" class="uk-align-right uk-flex uk-flex-middle uk-margin-small-bottom uk-width-1-3 uk-text-right">
+    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right" :class="{'uk-width-1-3' : !isMobile()}" style="justify-content: end; padding-left: 12px;">
         <label class="uk-margin-right" for="profit_search">Search</label>
-        <input class="uk-input" v-model="filter" id="profit_search" type="text" placeholder="Anything..." aria-label="Search top profit traders">
+        <input class="uk-input uk-background-primary" v-model="filter" id="profit_search" type="text" placeholder="Anything..." aria-label="Search top profit traders">
     </div>
     <div v-if="!loading && finalData.length === 0" class="uk-flex uk-flex-center">
         {{ $t('warning.nothing_found') }}
     </div>
-    <table v-if="!loading && finalData.length > 0" class="uk-table uk-table-divider uk-table-middle uk-margin-remove-top">
+    <table v-if="!loading && finalData.length > 0" class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <thead v-if="!isMobile()">
             <th class="uk-width-1-2 hover-text" @click="setSort('trader')">
-                {{ 'TRADER_ADDRESS' + (sortby.by === 'trader' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+                {{ 'trader_address' + (sortby.by === 'trader' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
             </th>
             <th v-for="header of (['total_profit', 'total_loss'] as const)" class="uk-width-1-4 hover-text uk-text-right" @click="setSort(header)" style="white-space: nowrap;">
                 {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
@@ -113,44 +113,51 @@ onMounted(async () => {
                 <template v-if="isMobile()">
                     <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
                         <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
-                            <NuxtLink :to="{ path: '/accounts', query: { hex: toBase64Web(tline.trader) }, hash: '#overview'}" class="uk-text-primary">
-                                <div uk-icon="icon: link"></div>{{ store.accounts[tline.trader]?.label?.name ?? truncString(store.accounts[tline.trader]?.address.base64 ?? tline.trader, 25,0) }}
-                            </NuxtLink>
+                            <AtomsAddressField v-if="tline.trader in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader)"/>
+                            <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.trader }, hash: '#overview'}">
+                                {{ truncString(tline.trader, 5) }}
+                            </NuxtLink> 
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;" >
                             <div>   
                                 Total Profit
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
-                                {{ tline.total_profit.toFixed(2) + '💎' }}
+                            <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                                {{ tline.total_profit.toFixed(2) }}
                             </div>
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;" >
                             <div>   
                                 Total Loss
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
-                                {{ tline.total_loss }}
+                            <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                                {{ tline.total_loss.toFixed(2) }}
                             </div>
                         </div>
                     </td>
                 </template>
                 <template v-else>
-                    <td>
-                        <AtomsAddressField v-if="tline.trader in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader)"/>
-                        <Loader :ratio="1" v-else />
+                    <td class="uk-text-truncate">
+                        <AtomsAddressField v-if="tline.trader in store.accounts" :full="true" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader)"/>
+                        <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.trader }, hash: '#overview'}">
+                            {{ truncString(tline.trader, 5) }}
+                        </NuxtLink>
                     </td>
                     <td class="uk-text-right" style="text-wrap: nowrap">
-                        {{ tline.total_profit + '💎' }}
+                        <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                            {{ tline.total_profit.toFixed(2) }}
+                        </div>
                     </td>
                     <td class="uk-text-right" style="text-wrap: nowrap">
-                        {{ tline.total_loss + '💎' }}
+                        <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                            {{ tline.total_loss.toFixed(2) }}
+                        </div>
                     </td>
                 </template>
             </tr>
         </tbody>
     </table>
-    <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
+    <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
         <div class="uk-flex uk-flex-middle" v-if="!isMobile() && finalData.length > 0">
             <AtomsSelector 
                 :item-count="itemCount"

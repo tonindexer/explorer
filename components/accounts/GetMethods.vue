@@ -51,17 +51,18 @@ const parseData = computed((): TableSection[] => {
                     })
                 }
             }
-            for (const [index, arg] of method.return_values.entries()) {
-                const value = (!method.error && (method.returns[index] || method.returns[index] === 0)) ? method.returns[index] : ''
-                methodOut.returns.push({
-                    key: arg.name,
-                    value: typeof value === 'object' ? value.URI : value,
-                    type: arg.stack_type,
-                    format: arg.format ? arg.format.toString(): '',
-                    addr: arg.format && (arg.format === "addr") ? true : false,
-                    content: arg.format && (arg.format === "content") ? true : false,
-                })
-            }
+            if (method.return_values)
+                for (const [index, arg] of method.return_values?.entries()) {
+                    const value = (!method.error && (method.returns[index] || method.returns[index] === 0)) ? method.returns[index] : ''
+                    methodOut.returns.push({
+                        key: arg.name,
+                        value: typeof value === 'object' ? value.URI : value,
+                        type: arg.stack_type,
+                        format: arg.format ? arg.format.toString(): '',
+                        addr: arg.format && (arg.format === "addr") ? true : false,
+                        content: arg.format && (arg.format === "content") ? true : false,
+                    })
+                }
             section.methods.push(methodOut)
         }
         output.push(section)
@@ -74,19 +75,19 @@ const parseData = computed((): TableSection[] => {
 <template>
     <div class="uk-flex uk-flex-column">
         <template v-for="section of parseData">
-            <h4 class="uk-flex uk-margin-remove-bottom uk-margin-small-top">
+            <h4 class="uk-flex uk-margin-remove-vertical">
                 <NuxtLink :to="`/accounts?contract=${section.title}`" class="uk-text-bold uk-text-primary" uk-icon="icon:link" style="line-height: 1.5;">
                     {{ section.title }}
                 </NuxtLink>
             </h4>
             <ul uk-accordion="multiple: true">
-                <li class="uk-padding-small uk-border-rounded" style="background-color: rgb(233, 243, 255);" v-for="method of section.methods" >
-                    <a class="uk-accordion-title uk-text-truncate uk-text-default" href="#">
+                <li class="uk-padding-small uk-border-rounded uk-background-muted" v-for="method of section.methods" >
+                    <a class="uk-accordion-title uk-text-truncate uk-text-primary" href="#">
                         {{ method.name }}
                     </a>
                     <div class="uk-accordion-content">
                         
-                        <h4 class="uk-margin-small-left uk-margin-remove-vertical" v-if="method.recieves.length > 0">
+                        <h4 class="uk-margin-small-left uk-margin-remove-vertical uk-text-primary" v-if="method.recieves.length > 0">
                             {{ $t('general.called') }}
                         </h4>
                         <table class="uk-table uk-table-middle uk-table-divider uk-margin-remove-top" v-if="method.recieves.length > 0">
@@ -110,7 +111,7 @@ const parseData = computed((): TableSection[] => {
                                                 <NuxtLink v-else-if="value.content" rel="external" aria-label="nft_link" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove">
                                                     {{ value.value }}
                                                 </NuxtLink>
-                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="`/accounts?hex=${value.value}`"> 
+                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="{name: 'accounts-hex', params: {hex: value.value}, hash: '#overview'}"> 
                                                     {{ value.value }}
                                                 </NuxtLink>
                                             </AtomsCopyableText>
@@ -120,7 +121,7 @@ const parseData = computed((): TableSection[] => {
                             </tbody>
                         </table>
 
-                        <h4 class="uk-margin-small-left uk-margin-remove-vertical" v-if="method.returns.length > 0">
+                        <h4 class="uk-margin-small-left uk-margin-remove-vertical uk-text-primary" v-if="method.returns.length > 0">
                             {{ $t('general.returns') }}
                         </h4>
                         <table class="uk-table uk-table-middle uk-table-divider uk-margin-remove-top" v-if="method.returns.length > 0 && !method.error">
@@ -144,7 +145,7 @@ const parseData = computed((): TableSection[] => {
                                                 <NuxtLink v-else-if="value.content" rel="external" aria-label="nft_link" :to="value.value" class="uk-text-primary uk-text-truncate uk-margin-remove">
                                                     {{ value.value }}
                                                 </NuxtLink>
-                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="`/accounts?hex=${value.value}`"> 
+                                                <NuxtLink v-else-if="value.addr" class="uk-text-primary" :to="{name: 'accounts-hex', params: {hex: value.value}, hash: '#overview'}"> 
                                                     {{ value.value }}
                                                 </NuxtLink>
                                             </AtomsCopyableText>
