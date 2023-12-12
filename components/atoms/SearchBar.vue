@@ -52,8 +52,6 @@ const parse = async (str: string) => {
         return
     }
     if (str === lastSearch.value) {
-        console.log(lastStatus.value)
-        console.log(lastRes.value)
         status.value = lastStatus.value
         searchRes.value = [...lastRes.value]
         lastSearch.value = '§'
