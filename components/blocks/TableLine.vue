@@ -36,7 +36,7 @@ defineProps<Props>()
                     {{ $t('ton.scanned_at') }}
                 </div>
                 <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                    <AtomsTableDateMobileCell :date-time="block.scanned_at"/>
+                    <AtomsTableDateCell :date-time="block.scanned_at"/>
                 </div>
             </div>
         </td>

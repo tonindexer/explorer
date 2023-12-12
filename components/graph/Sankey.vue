@@ -20,6 +20,7 @@ const chartOptions = computed(() => { return {
     },
     chart: {
         type: 'sankey',
+        backgroundColor: 'none',
         animation: true,
     },
     series: [{

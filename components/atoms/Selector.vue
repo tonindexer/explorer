@@ -21,19 +21,21 @@ defineEmits(['setValue'])
 </template>
 
 <style scoped lang="scss">
-    .uk-select:not([multiple]):not([size]) {
-        &.custom {
-            background-position: 100% 60%;
-        }
+.uk-select:not([multiple]):not([size]) {
+    &.custom {
+        background-position: 100% 60%;
     }
+}
 
-    .uk-select.custom {
-        border: 1px solid rgba(0, 0, 0, 0.50);
-        min-width: fit-content; 
-        border-radius: 4px; 
-        height: 24px !important;
-        padding: 0 20px 0 4px;
-        line-height: 16px; 
-        margin-left: 8px;
-    }
+.uk-select {
+    border-color: var(--color-text-muted);
+}
+.uk-select.custom {
+    min-width: fit-content; 
+    border-radius: 4px; 
+    height: 24px !important;
+    padding: 0 20px 0 4px;
+    line-height: 16px; 
+    margin-left: 8px;
+}
 </style>

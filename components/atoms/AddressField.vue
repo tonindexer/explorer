@@ -22,7 +22,7 @@ const accName = computed(() => {
 
 <template>
     <template v-if="addr === null">
-        <div class="uk-text-primary">
+        <div class="uk-text-secondary">
             {{ $t('general.empty') }}
         </div> 
     </template>

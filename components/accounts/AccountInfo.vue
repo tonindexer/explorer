@@ -90,7 +90,7 @@ watch(() => props.hex, async() => await reloadInfo())
                 </select>
                 <div v-if="!isMobile()" class="category-wrapper">
                     <div class="uk-flex uk-flex-middle uk-margin-remove-top">
-                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{'selected white': (route.hash === `#${item.route}`)}">
+                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{'selected': (route.hash === `#${item.route}`)}">
                             {{ $t(item.t)}}
                         </NuxtLink>
                     </div>

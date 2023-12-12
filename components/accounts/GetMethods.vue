@@ -51,17 +51,18 @@ const parseData = computed((): TableSection[] => {
                     })
                 }
             }
-            for (const [index, arg] of method.return_values?.entries()) {
-                const value = (!method.error && (method.returns[index] || method.returns[index] === 0)) ? method.returns[index] : ''
-                methodOut.returns.push({
-                    key: arg.name,
-                    value: typeof value === 'object' ? value.URI : value,
-                    type: arg.stack_type,
-                    format: arg.format ? arg.format.toString(): '',
-                    addr: arg.format && (arg.format === "addr") ? true : false,
-                    content: arg.format && (arg.format === "content") ? true : false,
-                })
-            }
+            if (method.return_values)
+                for (const [index, arg] of method.return_values?.entries()) {
+                    const value = (!method.error && (method.returns[index] || method.returns[index] === 0)) ? method.returns[index] : ''
+                    methodOut.returns.push({
+                        key: arg.name,
+                        value: typeof value === 'object' ? value.URI : value,
+                        type: arg.stack_type,
+                        format: arg.format ? arg.format.toString(): '',
+                        addr: arg.format && (arg.format === "addr") ? true : false,
+                        content: arg.format && (arg.format === "content") ? true : false,
+                    })
+                }
             section.methods.push(methodOut)
         }
         output.push(section)

@@ -32,7 +32,7 @@ const random_rgba = computed(() => {
 </script>
 
 <template>
-    <div class="uk-flex uk-flex-row uk-text-primary" style="border: 1px solid black; border-radius: 4px; overflow: hidden;">
+    <div class="uk-flex uk-flex-row uk-text-primary tree-node">
         <div class="stripe" :style="`background-color: ${random_rgba};`">
 
         </div>
@@ -56,17 +56,22 @@ const random_rgba = computed(() => {
 </template>
 
 <style scoped lang="scss">
+.tree-node {
+    border: 1px solid var(--color-text-emphasis); 
+    border-radius: 4px; 
+    overflow: hidden;
+}
 .stripe {
     width: 4px; 
 }
 .custom-node {
-    background-color: white;
+    background-color: var(--color-bg-emphasis);
     .label {
         padding: 4px 12px;
     }
     .divider_node {
         height: 1px;
-        background-color: black;
+        background-color: var(--color-text-emphasis);
     }
     .node_data {
         padding: 4px 12px;

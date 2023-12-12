@@ -124,9 +124,9 @@ onMounted(async () => {
         :class="{ 'open-results' : status !== 'EMPTY' }" 
         :style="isMobile() ? 'height: 40px' : 'height: 56px'">
         <NuxtLink :href="`/search?search=${search}`" style="position: absolute;" :style="isMobile() ? 'padding: 8px' : 'padding: 16px'">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="vertical-align: text-top;">
                 <g clip-path="url(#clip0_443_12881)">
-                <path d="M19.2888 16.617L23.5718 20.899L22.1568 22.314L17.8748 18.031C16.2816 19.3082 14.2998 20.0029 12.2578 20C7.28981 20 3.25781 15.968 3.25781 11C3.25781 6.032 7.28981 2 12.2578 2C17.2258 2 21.2578 6.032 21.2578 11C21.2607 13.042 20.566 15.0237 19.2888 16.617ZM17.2828 15.875C18.5519 14.5699 19.2607 12.8204 19.2578 11C19.2578 7.132 16.1248 4 12.2578 4C8.38981 4 5.25781 7.132 5.25781 11C5.25781 14.867 8.38981 18 12.2578 18C14.0782 18.0029 15.8277 17.2941 17.1328 16.025L17.2828 15.875Z" fill="black" fill-opacity="0.3"/>
+                <path d="M19.2888 16.617L23.5718 20.899L22.1568 22.314L17.8748 18.031C16.2816 19.3082 14.2998 20.0029 12.2578 20C7.28981 20 3.25781 15.968 3.25781 11C3.25781 6.032 7.28981 2 12.2578 2C17.2258 2 21.2578 6.032 21.2578 11C21.2607 13.042 20.566 15.0237 19.2888 16.617ZM17.2828 15.875C18.5519 14.5699 19.2607 12.8204 19.2578 11C19.2578 7.132 16.1248 4 12.2578 4C8.38981 4 5.25781 7.132 5.25781 11C5.25781 14.867 8.38981 18 12.2578 18C14.0782 18.0029 15.8277 17.2941 17.1328 16.025L17.2828 15.875Z"/>
                 </g>
                 <defs>
                 <clipPath id="clip0_443_12881">
@@ -194,16 +194,18 @@ onMounted(async () => {
 </template>
 
 <style scoped lang="scss">
-@import "@/assets/styles/variables.scss";
-
 #searchbar::placeholder {
-    color: $color-text-muted;
+    color: var(--color-text);
 }
 
 .results-table {
     top: 100%; 
     z-index: 100; 
-    background-color: $color-bg-emphasis;
+    background-color: var(--color-bg-emphasis);
+    :last-child {
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px; 
+    }
 }
 .uk-search, .uk-search-input {
     border: none !important;
@@ -211,17 +213,20 @@ onMounted(async () => {
     &.open-results {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
-        box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);
+        box-shadow: 0px 0px 20px 0px var(--color-bg-shadow);
         input {
             clip-path: inset(-20px -20px 0px -20px);
         }
     }
 }
 
+path {
+    fill: var(--color-text);
+}
 table {
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px; 
     clip-path: inset(0px -20px -20px -20px);
-    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);
+    box-shadow: 0px 0px 20px 0px var(--color-bg-shadow);
 }
 </style>

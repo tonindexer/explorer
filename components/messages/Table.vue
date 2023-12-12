@@ -222,14 +222,14 @@ onMounted(() => {
 </script>
 
 <template>
-    <div v-if="route.path === '/messages'" class="uk-flex" style="padding: 12px 16px" :class="{ 'uk-text-secondary' : filterFlag}">
+    <div v-if="route.path === '/messages'" class="uk-flex" style="padding: 12px 16px" :class="{ 'uk-text-muted' : filterFlag}">
         <div :uk-icon="`icon: ${filterFlag ? 'chevron-down' : 'chevron-right'}; ratio: 1.2`" @click="filterFlag = !filterFlag" style="cursor: pointer;"></div>
         <div @click="filterFlag = !filterFlag" style="cursor: pointer;">{{ $t('options.filter') }}</div>
     </div>
 
     <div v-if="filterFlag" class="uk-child-width-1-1 uk-child-width-1-2@m uk-child-width-1-3@xl" style="padding: 0 16px 12px " uk-grid>
         <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-            <div>   
+            <div class="uk-text-muted">   
                 {{ $t('ton.src_address') }}
             </div>
             <div class=" uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
@@ -242,7 +242,7 @@ onMounted(() => {
             </div>
         </div>
         <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-            <div>   
+            <div class="uk-text-muted">   
                 {{ $t('ton.dst_address') }}
             </div>
             <div class="uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
@@ -255,14 +255,14 @@ onMounted(() => {
             </div>
         </div>
         <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-            <div>
+            <div class="uk-text-muted">
                 {{ $t('ton.src_contract') }}
             </div>
             <div class="uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
                 <div v-if="!isMobile()" class="uk-width-1-1">
                     <ModelSelect :options="options" v-model="filterFields.src_contract_desktop" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
                 </div>
-                <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
+                <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small">
                     <AtomsSelector 
                         :item-count="filterFields.src_contract_mobile"
                         :def="true"
@@ -276,7 +276,7 @@ onMounted(() => {
             </div>
         </div>
         <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-            <div>
+            <div class="uk-text-muted">
                 {{ $t('ton.dst_contract') }}
             </div>
             <div class="uk-flex uk-flex-right uk-flex-middle uk-width-2-3" style="gap: 0.5rem;">
@@ -284,7 +284,7 @@ onMounted(() => {
                 <div v-if="!isMobile()" class="uk-width-1-1">
                     <ModelSelect :options="options" v-model="filterFields.dst_contract_desktop" :placeholder="$t('ton.contract')" style="border-radius: 0;"></ModelSelect>
                 </div>
-                <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
+                <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small">
                     <AtomsSelector 
                         :item-count="filterFields.dst_contract_mobile"
                         :def="true"
@@ -298,7 +298,7 @@ onMounted(() => {
             </div>
         </div>
         <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-            <div>   
+            <div class="uk-text-muted">   
                 {{ $t('ton.operation_id') }}
             </div>
             <div class="uk-flex uk-flex-right uk-flex-middle uk-width-1-2" style="gap: 0.5rem;">
@@ -311,13 +311,13 @@ onMounted(() => {
             </div>
         </div>
         <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
-            <div>
+            <div class="uk-text-muted">
                 {{ $t('ton.operation_name') }}
             </div>
             <div v-if="!isMobile()" class="uk-width-2-3">
                 <ModelSelect :options="opOptions" v-model="filterFields.op_name_desktop" :placeholder="$t('ton.operation_name')" style="border-radius: 0;"></ModelSelect>
             </div>
-            <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small" style="margin-right: 0.5rem;">
+            <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small">
                 <AtomsSelector 
                     :item-count="filterFields.op_name_mobile"
                     :def="true"
@@ -331,9 +331,9 @@ onMounted(() => {
         </div>  
     </div>
 
-    <div class="uk-flex uk-flex-wrap" :style="isMobile() ? 'font-size: small' : ''">
+    <div class="uk-flex uk-flex-wrap" :style="isMobile() ? 'font-size: small' : ''" style="padding: 0 16px 12px">
         <template v-for="(option, key) in selectedOptions">
-            <div v-if="option" class="uk-flex uk-background-primary uk-margin-small-right uk-margin-small-top uk-border-rounded white" style="padding: 0.3rem 0.7rem ; text-wrap: nowrap">
+            <div v-if="option" class="uk-flex uk-background-emphasis uk-margin-small-right uk-margin-small-top uk-border-rounded white" style="padding: 0.3rem 0.7rem ; text-wrap: nowrap">
                 <div style="max-width: 90%;">
                     {{ $t(`ton.${key}`) + ': ' + truncString(option, 19, 0) }}
                 </div> 

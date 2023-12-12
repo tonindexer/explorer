@@ -32,7 +32,7 @@
             It has a state that is updated with any transaction on the contract&#39;s account.
             Each state has the contract code and data.
             The contract data can be complex, but developers typically provide <a class="uk-text-primary" href="https://ton.org/docs/develop/func/functions#specifiers">get-methods</a> in the contract, which can be executed to retrieve the necessary data.
-            The TON has standard contracts (such as <a class="uk-text-primary" href="https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md">TEP-62</a>, <a href="https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md">TEP-74</a>), and they have predefined get-method names.
+            The TON has standard contracts (such as <a class="uk-text-primary" href="https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md">TEP-62</a>, <a class="uk-text-primary" href="https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md">TEP-74</a>), and they have predefined get-method names.
             Therefore, you can attempt to match accounts found in the network to these standards by checking the presence of the get-methods.
             Contract standards also specify <a class="uk-text-primary" href="https://ton.org/docs/learn/overviews/tl-b-language#constructors">TL-B constructor tags</a> (or operation ids) for each acceptable message to contract, defined as the first 32 bits of the parsed message payload cell.
             So you if you know standard of a given contract, you can determine the type of message to it (for example, NFT item transfer) by parsing the first 32 bits of message body.</p>

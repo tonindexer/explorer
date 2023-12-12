@@ -13,6 +13,7 @@ interface Graph {
 
 const route = useRoute()
 const store = useMainStore()
+const graphColors = reactive(useGraphColors())
 
 const filter = computed(() => { return {
     'src_address': route.query.src_address?.toString() ?? null,
@@ -47,8 +48,8 @@ const dataParser = computed(() : Graph => {
                     y2: 1   
                 },
                 stops : [
-                    [0, 'rgba(174, 190, 253, 1)'],
-                    [1, 'rgba(44, 175, 254, 0)'],
+                    [0, graphColors.colors.gradientStartColor],
+                    [1, graphColors.colors.gradientEndColor],
                 ]
             }
         }],
@@ -77,6 +78,8 @@ const chartOptions = computed(() => { return {
     },
     chart: {
         type: 'areaspline',
+        backgroundColor: 'none',
+        height: isMobile() ? '200px' : null,
         zooming: {
             type: 'x'
         },
@@ -121,12 +124,13 @@ const chartOptions = computed(() => { return {
         enabled: false
     },
     yAxis: {
+        gridLineColor: graphColors.colors.gridLinesColor,
         title : {
             text: undefined
         },
         labels : {
             style : {
-                'color': '#999'
+                'color': graphColors.colors.axisLabelsColor
             }
         }
     },
@@ -134,12 +138,12 @@ const chartOptions = computed(() => { return {
         type: 'datetime',
         categories: dataParser.value.times,
         tickInterval: Math.round((dataParser.value.times.length) / 3),
-        lineColor: 'white',
+        lineColor: graphColors.colors.xAxisColor,
         labels: {
             // @ts-ignore
             formatter: function() { return new Date(this.value).toLocaleDateString("en-US", { month: 'short', day: 'numeric' }) },
             style : {
-                'color': '#999'
+                'color': graphColors.colors.axisLabelsColor
             }
         }
     },
@@ -151,7 +155,7 @@ const chartOptions = computed(() => { return {
     },
     plotOptions: {
         areaspline: {
-            color: 'rgb(118, 146, 253)',
+            color: graphColors.colors.graphColor,
             lineWidth: 2,
             marker: {
                 enabled: false
@@ -249,11 +253,11 @@ onMounted(async () => {
     <div class="uk-flex uk-flex-column uk-width-1-1 uk-margin-small">
         <div class="category-wrapper">
             <div class="uk-flex uk-flex-middle uk-margin-remove-top" style="justify-content: space-between;">
-                <button class="uk-button category" id="8h" @click="chartType = 'message_amount_sum'" :class="{'selected white': chartType === 'message_amount_sum'}">
+                <button class="uk-button category" @click="chartType = 'message_amount_sum'" :class="{'selected': chartType === 'message_amount_sum'}">
                     TON amount
                 </button>
-                <button class="uk-button category" id="24h" @click="chartType = 'message_count'" :class="{'selected white': chartType === 'message_count'}">
-                    Message count
+                <button class="uk-button category" @click="chartType = 'message_count'" :class="{'selected': chartType === 'message_count'}">
+                    Msg count
                 </button>
             </div>
         </div>
@@ -267,22 +271,22 @@ onMounted(async () => {
         </div>
         <div style="justify-content: space-between;" uk-grid :style="isMobile() ? 'flex-direction: column-reverse' : ''">
             <div class="interval-group uk-flex uk-flex-middle uk-margin-remove-top" :class="isMobile() ? 'uk-width-expand' : 'uk-width-auto'" style="justify-content: space-between;">
-                <div v-if="!isMobile()" class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
+                <div v-if="!isMobile()" class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove uk-text-primary" style="white-space: nowrap;">
                     Group Interval
                 </div>
-                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from > 86400000 * 14) : false" id="15m" @click="pickGroup('15m')" :class="{'selected white': selection==='15m'}">
+                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from > 86400000 * 14) : false" id="15m" @click="pickGroup('15m')" :class="{'selected': selection==='15m'}">
                     15min
                 </button>
-                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from  > 86400000 * 31 * 2) : false" id="1h" @click="pickGroup('1h')" :class="{'selected white': selection==='1h'}">
+                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from  > 86400000 * 31 * 2) : false" id="1h" @click="pickGroup('1h')" :class="{'selected': selection==='1h'}">
                     1h
                 </button>
-                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from  > 86400000 * 31 * 12) : false" id="4h" @click="pickGroup('4h')" :class="{'selected white': selection==='4h'}">
+                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from  > 86400000 * 31 * 12) : false" id="4h" @click="pickGroup('4h')" :class="{'selected': selection==='4h'}">
                     4h
                 </button>
-                <button class="uk-margin-small-left uk-button" id="8h" @click="pickGroup('8h')" :class="{'selected white': selection==='8h'}">
+                <button class="uk-margin-small-left uk-button" id="8h" @click="pickGroup('8h')" :class="{'selected': selection==='8h'}">
                     8h
                 </button>
-                <button class="uk-margin-small-left uk-button" id="24h" @click="pickGroup('24h')" :class="{'selected white': selection==='24h'}">
+                <button class="uk-margin-small-left uk-button" id="24h" @click="pickGroup('24h')" :class="{'selected': selection==='24h'}">
                     Day
                 </button>
             </div>

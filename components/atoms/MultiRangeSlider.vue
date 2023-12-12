@@ -415,19 +415,19 @@ export default {
 }
 .multi-range-slider .bar-left {
   width: 25%;
-  background-color: #F4F4F4 ;
+  background-color: var(--color-bg);
   border-radius: 10px 0px 0px 10px;
   box-shadow: none !important;
   padding: 2px 0px;
 }
 .multi-range-slider .bar-right {
   width: 25%;
-  background-color: #F4F4F4 ;
+  background-color: var(--color-bg);
   border-radius: 0px 10px 10px 0px;
   box-shadow: none !important;
 }
 .multi-range-slider .bar-inner {
-  background-color: #D2DEFF;
+  background-color: var(--color-slider);
   display: flex;
   flex-grow: 1;
   flex-shrink: 1;
@@ -450,7 +450,7 @@ export default {
 }
 .multi-range-slider .thumb::before {
   content: url('data:image/svg+xml,%3Csvg width="40" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L1 9" stroke="black" stroke-linecap="round"/%3E%3Cpath d="M7 1L7 9" stroke="black" stroke-linecap="round"/%3E%3Cpath d="M13 1L13 9" stroke="black" stroke-linecap="round"/%3E%3C/svg%3E');
-  background-color: #D2DEFF;
+  background-color: var(--color-slider);
   place-content: center center;
   display: grid;
   position: absolute;

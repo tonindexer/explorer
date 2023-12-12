@@ -63,7 +63,7 @@ watch(itemCount, async() => {
                             <div>   
                                 {{ $t('ton.items') }}
                             </div>
-                            <div class="uk-text-secondary uk-text-right">
+                            <div class="uk-text-primary uk-text-right">
                                 {{ acc.items_count }}
                             </div>
                         </div>
@@ -86,7 +86,7 @@ watch(itemCount, async() => {
                             <div>   
                                 {{ $t('ton.updated_at') }}
                             </div>
-                            <div v-if="acc.owner_address && acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                            <div v-if="acc.owner_address && acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
                                 <AtomsTableDateCell :date-time="store.accounts[acc.owner_address.hex].updated_at"/>
                             </div>
                             <div class="uk-text-right" v-else>

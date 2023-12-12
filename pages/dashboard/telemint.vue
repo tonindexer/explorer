@@ -46,7 +46,7 @@ onMounted(async() => {
                 </select>
                 <div v-if="!isMobile()" class="category-wrapper">
                     <div class="uk-flex uk-flex-middle uk-margin-remove-top">
-                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item}`, query: route.query}" :class="{'selected white': (route.hash === `#${item}`)}">
+                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item}`, query: route.query}" :class="{'selected': (route.hash === `#${item}`)}">
                             {{ $t(`general.${item}`) }}
                         </NuxtLink>
                     </div>

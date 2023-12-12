@@ -180,7 +180,7 @@ onMounted(async () => {
                             <div>   
                                 {{ $t('ton.src_label') }}
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate">
                                 {{ tline.src_label ?? '-' }}
                             </div>
                         </div>
@@ -188,7 +188,7 @@ onMounted(async () => {
                             <div>   
                                 {{ $t('ton.dst_label') }}
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate">
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate">
                                 {{ tline.dst_label ?? '-' }}
                             </div>
                         </div>
@@ -196,8 +196,8 @@ onMounted(async () => {
                             <div>   
                                 {{ $t('ton.created_at') }}
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                                <AtomsTableDateMobileCell :date-time="tline.created_at"/>
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                                <AtomsTableDateCell :date-time="tline.created_at"/>
                             </div>
                         </div>
                     </td>

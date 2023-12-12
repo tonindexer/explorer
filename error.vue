@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NuxtError } from 'nuxt/app';
+import { type NuxtError } from 'nuxt/app';
 
 interface Props {
     error: NuxtError
@@ -18,7 +18,7 @@ const handleError = () => clearError({ redirect: '/' })
                 </h2>
             </template>
             <template #body>
-                <NuxtLink @click.prevent.stop="handleError">
+                <NuxtLink class="uk-text-muted" @click.prevent.stop="handleError">
                     {{ error.message + ' ! Go to main page..' }}
                 </NuxtLink>
             </template>

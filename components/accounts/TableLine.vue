@@ -32,7 +32,7 @@ onMounted(() => {
                 <div>   
                     {{ $t('ton.balance') }}
                 </div>
-                <div class="uk-margin-remove uk-text-secondary uk-text-truncate" style="align-self: center;">
+                <div class="uk-margin-remove uk-text-primary uk-text-truncate" style="align-self: center;">
                     <AtomsBalanceCell :balance="acc.balance" :place="'end'"/>
                 </div>
             </div>
@@ -50,7 +50,7 @@ onMounted(() => {
                 <div>   
                     {{ $t('ton.updated_at') }}
                 </div>
-                <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
                     <AtomsTableDateCell :date-time="acc.updated_at"/>
                 </div>
             </div>

@@ -82,13 +82,13 @@ watch(() => props.hash, async() => await reloadInfo())
                 </select>
                 <div v-if="!isMobile()" class="category-wrapper">
                     <div class="uk-flex uk-flex-middle uk-margin-remove-top">
-                        <NuxtLink v-if="inMessageKeys.length + outMessageKeys.length > 0" class="category" :to="{ hash: '#messages', query: route.query}" :class="{'selected white': (route.hash === '#messages' || route.hash === '#overview')}">
+                        <NuxtLink v-if="inMessageKeys.length + outMessageKeys.length > 0" class="category" :to="{ hash: '#messages', query: route.query}" :class="{'selected': (route.hash === '#messages' || route.hash === '#overview')}">
                             {{ $t('route.messages')}}
                         </NuxtLink>
-                        <NuxtLink v-if="loadedAccountKeys.length + unloadedAccountKeys.length > 0" class="category" :to="{ hash: '#accounts', query: route.query}" :class="{'selected white': (route.hash === '#accounts')}">
+                        <NuxtLink v-if="loadedAccountKeys.length + unloadedAccountKeys.length > 0" class="category" :to="{ hash: '#accounts', query: route.query}" :class="{'selected': (route.hash === '#accounts')}">
                             {{ $t('route.accounts')}}
                         </NuxtLink>
-                        <NuxtLink v-if="inMessageKeys.length + outMessageKeys.length > 0" class="category" :to="{ hash: '#tree', query: route.query}" :class="{'selected white': (route.hash === '#tree')}">
+                        <NuxtLink v-if="inMessageKeys.length + outMessageKeys.length > 0" class="category" :to="{ hash: '#tree', query: route.query}" :class="{'selected': (route.hash === '#tree')}">
                             {{ $t('route.tx_tree')}}
                         </NuxtLink>
                     </div>

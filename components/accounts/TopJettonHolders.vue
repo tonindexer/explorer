@@ -61,7 +61,7 @@ watch(itemCount, async() => {
                             <div>   
                                 {{ $t('ton.owner') }}
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
                                 <NuxtLink :to="{ name: 'accounts-hex', params: { hex: toBase64Web(acc.owner_address.hex) }, hash: '#overview'}" class="uk-text-primary">
                                     <div uk-icon="icon: link"></div>{{ truncString(acc.owner_address.base64, 25,0) }}
                                 </NuxtLink>
@@ -71,7 +71,7 @@ watch(itemCount, async() => {
                             <div>   
                                 {{ $t('ton.wallet') }}
                             </div>
-                            <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
                                 <NuxtLink :to="{ name: 'accounts-hex', params: { hex: toBase64Web(acc.wallet_address.hex) }, hash: '#overview'}" class="uk-text-primary">
                                     <div uk-icon="icon: link"></div>{{ truncString(acc.wallet_address.base64, 25,0) }}
                                 </NuxtLink>
@@ -82,8 +82,8 @@ watch(itemCount, async() => {
                             <div>   
                                 {{ $t('ton.updated_at') }}
                             </div>
-                            <div v-if="acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
-                                <AtomsTableDateMobileCell :date-time="store.accounts[acc.owner_address.hex].updated_at"/>
+                            <div v-if="acc.owner_address.hex in store.accounts" class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                                <AtomsTableDateCell :date-time="store.accounts[acc.owner_address.hex].updated_at"/>
                             </div>
                             <div v-else>
                                 -

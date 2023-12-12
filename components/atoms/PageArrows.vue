@@ -14,7 +14,7 @@ defineEmits(['increase', 'decrease'])
      <div class="uk-flex uk-flex-middle uk-text-muted" v-if="(!leftDisabled) || (!rightDisabled)" style="margin-left: 36px;">
         <p class="uk-margin-remove">{{ `${$t('general.page')} ${page + 1}` }}</p>
         <div 
-            class="arrow uk-button bg uk-border-rounded uk-margin-small-left"
+            class="arrow bg uk-border-rounded uk-margin-small-left"
             :class="{'disabled' : leftDisabled}"
             style="border-radius: 4px; line-height: 16px;"
             @click.prevent="$emit('decrease')">
@@ -23,7 +23,7 @@ defineEmits(['increase', 'decrease'])
             </svg>
         </div>
         <div
-            class="arrow uk-button bg uk-border-rounded uk-margin-small-left" 
+            class="arrow bg uk-border-rounded uk-margin-small-left" 
             :class="{'disabled' : rightDisabled}"
             style="border-radius: 4px; line-height: 16px;"
             @click.prevent="$emit('increase')">
@@ -35,13 +35,19 @@ defineEmits(['increase', 'decrease'])
 </template>
 
 <style lang="scss" scoped>
-@import "@/assets/styles/variables.scss";
-
 .bg {
-    background-color: $color-text-emphasis;
+    background-color: black;
+    padding: 4px;
+}
+
+.arrow {
+    path {
+        fill: white;
+        stroke: white;
+    }
 }
 .disabled {
-    background-color: rgb(0,0,0,.2) !important;
+    background-color: var(--color-bg) !important;
     pointer-events: none;
 }
 

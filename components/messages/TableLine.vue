@@ -45,7 +45,7 @@ const showData = ref(false)
                         <NuxtLink :to="{ name: 'transactions-hash', params: { hash: toBase64Web(msg.src_tx_key) }, hash: '#overview'}" class="uk-text-primary uk-text-truncate" style="max-width: 50vw;"> {{ msg.src_tx_lt }}</NuxtLink>
                     </div>
                     <div v-else class="uk-margin-remove uk-text-right">
-                        <div class="uk-text-secondary">{{ $t('general.empty') }}</div>
+                        <div class="uk-text-primary">{{ $t('general.empty') }}</div>
                     </div>
                 </div>
 
@@ -53,11 +53,11 @@ const showData = ref(false)
                     <div>   
                         {{ $t('ton.contract') }}
                     </div>
-                    <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                    <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
                         <NuxtLink v-if="msg.src_contract" :to="`/accounts?contract=${msg.src_contract}`" class="uk-text-primary" style="line-height: 1.5;">
                             {{ msg.src_contract }}
                         </NuxtLink>
-                        <div v-else>
+                        <div v-else class="uk-text-primary">
                             {{ $t('general.none') }}
                         </div>
                     </div>
@@ -72,7 +72,7 @@ const showData = ref(false)
                 </div>
 
                 <div class="divider" style="display: flex; margin: 8px 0">
-                    <div class="uk-width-1-1" style="background-color: #ccc; height: 1px;">
+                    <div class="uk-width-1-1" style="height: 1px;">
                     </div>
                 </div>
 
@@ -92,18 +92,18 @@ const showData = ref(false)
                         <NuxtLink :to="{ name: 'transactions-hash', params: { hash: toBase64Web(msg.dst_tx_key) }, hash: '#overview'}" class="uk-text-primary uk-text-truncate" style="max-width: 50vw;"> {{ msg.dst_tx_lt }}</NuxtLink>
                     </div>
                     <div v-else class="uk-margin-remove uk-text-right">
-                        <div class="uk-text-secondary">{{ $t('general.empty') }}</div>
+                        <div class="uk-text-primary">{{ $t('general.empty') }}</div>
                     </div>
                 </div>
                 <div class="uk-flex" style="justify-content: space-between;">
                     <div>   
                         {{ $t('ton.contract') }}
                     </div>
-                    <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                    <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
                         <NuxtLink v-if="msg.dst_contract" :to="`/accounts?contract=${msg.dst_contract}`" class="uk-text-primary" style="line-height: 1.5;">
                             {{ msg.dst_contract }}
                         </NuxtLink>
-                        <div v-else>
+                        <div v-else class="uk-text-primary">
                             {{ $t('general.none') }}
                         </div>
                     </div>
@@ -112,7 +112,7 @@ const showData = ref(false)
                     <div>   
                         {{ $t('ton.type') }}
                     </div>
-                    <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                    <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
                         {{ msg.operation_id in knownOp ? knownOp[msg.operation_id] : `${opToHex(msg.operation_id)}` }}
                     </div>
                 </div>
@@ -120,7 +120,7 @@ const showData = ref(false)
                     <div>   
                         {{ $t('ton.name') }}
                     </div>
-                    <div class="uk-margin-remove uk-text-secondary uk-text-right uk-text-truncate" style="max-width: 60vw;">
+                    <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate" style="max-width: 60vw;">
                         {{ msg.operation_name }}
                     </div>
                 </div>

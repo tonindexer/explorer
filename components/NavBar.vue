@@ -96,22 +96,23 @@ const external = [
 <template>
     <nav v-if="!isMobile()" class="uk-background-primary uk-width-auto" style="padding: 12px; height: fit-content; border-radius: 12px; width: min-content; position: relative;">
         <div class="main-nav" style="align-items: center; min-width: max-content;">
-            <Transition name="slide-up">
-                <NuxtLink v-if="showFullMenu" class="nav-logo uk-flex-center uk-flex" aria-label="main_page" style="align-items: baseline; max-height: 40px;" :to="'/'">
+                <!-- <NuxtLink class="nav-logo uk-flex-center uk-flex" aria-label="main_page" style="align-items: baseline; max-height: 40px;" :to="'/'">
                     <div class="uk-text-primary" style="font-size: 40px;">Ant</div>
                     <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="13" cy="13" r="13" fill="black"/>
-                        <rect x="12" y="6" width="8" height="8" rx="2" fill="white"/>
+                        <circle cx="13" cy="13" r="13"/>
+                        <rect x="12" y="6" width="8" height="8" rx="2"/>
                     </svg>
                     <div class="uk-text-primary" style="font-size: 40px;">n</div>
-                </NuxtLink>
-                <NuxtLink v-else class="uk-flex-center uk-flex" aria-label="main_page" :to="'/'">
+                </NuxtLink> -->
+                <NuxtLink class="nav-logo uk-flex-center uk-flex" aria-label="main_page" :style="showFullMenu ? 'align-items: end; max-height: 40px' : ''" :to="'/'">
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="20" cy="20" r="20" fill="black"/>
-                        <rect x="19.0479" y="8.25391" width="11.746" height="11.746" rx="2.53968" fill="white"/>
+                        <circle cx="20" cy="20" r="20"/>
+                        <rect x="19.0479" y="8.25391" width="11.746" height="11.746" rx="2.53968"/>
                     </svg>
+                    <Transition name="slide-up">
+                        <div v-show="showFullMenu" class="uk-text-primary" style="font-size: 30px; margin-left: 4px; line-height: 1;">Anton</div>
+                    </Transition>
                 </NuxtLink>
-            </Transition>
             <div class="uk-flex uk-flex-column" style="row-gap: 8px; margin-top: 48px">
                 <div v-for="link of routes" style="height: 40px">
                     <NuxtLink :to="link.link" class="link uk-flex" :class="{ 'active' : route.name?.toString().includes(link.name)}">
@@ -136,15 +137,18 @@ const external = [
                     </NuxtLink>
                 </div>
             </div>
+            <ClientOnly>
+                <AtomsThemeSwitcher :vertical="true"/>
+            </ClientOnly>
             <div class="uk-flex uk-flex-column" style="row-gap: 8px; margin-top: 32px; margin-left:8px">
                 <a class="locale" :class="{ 'active' : locale === 'en' }" @click.prevent.stop="setLocale('en')" style="cursor: pointer; line-height: 40px;">En</a>
                 <a class="locale" :class="{ 'active' : locale === 'ru' }" @click.prevent.stop="setLocale('ru')" style="cursor: pointer; line-height: 40px;">Ru</a>
             </div>
             <div style="position: absolute; top: 346px; right: -20px" @click="showFullMenu = !showFullMenu">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg class="knob" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="20" cy="20" r="20" fill="white"/>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M14.5762 15.7699C14.8413 16.0881 14.7983 16.561 14.4801 16.8262L10.6715 20L14.4801 23.1739C14.7983 23.439 14.8413 23.9119 14.5762 24.2302C14.311 24.5484 13.8381 24.5914 13.5199 24.3262L9.01986 20.5762C8.84887 20.4337 8.75 20.2226 8.75 20C8.75 19.7774 8.84887 19.5663 9.01986 19.4239L13.5199 15.6739C13.8381 15.4087 14.311 15.4517 14.5762 15.7699Z" fill="black"/>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M25.4239 15.7699C25.689 15.4517 26.1619 15.4087 26.4802 15.6739L30.9802 19.4239C31.1512 19.5663 31.25 19.7774 31.25 20C31.25 20.2226 31.1512 20.4337 30.9802 20.5762L26.4802 24.3262C26.1619 24.5914 25.689 24.5484 25.4239 24.2302C25.1587 23.9119 25.2017 23.439 25.5199 23.1739L29.3285 20L25.5199 16.8262C25.2017 16.561 25.1587 16.0881 25.4239 15.7699Z" fill="black"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M14.5762 15.7699C14.8413 16.0881 14.7983 16.561 14.4801 16.8262L10.6715 20L14.4801 23.1739C14.7983 23.439 14.8413 23.9119 14.5762 24.2302C14.311 24.5484 13.8381 24.5914 13.5199 24.3262L9.01986 20.5762C8.84887 20.4337 8.75 20.2226 8.75 20C8.75 19.7774 8.84887 19.5663 9.01986 19.4239L13.5199 15.6739C13.8381 15.4087 14.311 15.4517 14.5762 15.7699Z"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M25.4239 15.7699C25.689 15.4517 26.1619 15.4087 26.4802 15.6739L30.9802 19.4239C31.1512 19.5663 31.25 19.7774 31.25 20C31.25 20.2226 31.1512 20.4337 30.9802 20.5762L26.4802 24.3262C26.1619 24.5914 25.689 24.5484 25.4239 24.2302C25.1587 23.9119 25.2017 23.439 25.5199 23.1739L29.3285 20L25.5199 16.8262C25.2017 16.561 25.1587 16.0881 25.4239 15.7699Z"/>
                 </svg>
             </div>
         </div>
@@ -153,10 +157,10 @@ const external = [
 
     <div v-if="isMobile()" class="uk-flex">
         <a aria-label="open_menu" class="link" @click="showMobileNav = !showMobileNav">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 12H32" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9 20H32" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9 28H32" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg class="mob-nav-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 12H32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 20H32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 28H32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </a>
     </div>
@@ -166,15 +170,20 @@ const external = [
             <table class="uk-table uk-table-divider uk-padding-remove-top" style="align-items: center; font-size: 1.25rem;">
                 <tbody>
                     <tr><td>
-                        <NuxtLink :to="'/'" class="link" :class="{ 'active' : route.name?.toString().includes('index')}" @click="showMobileNav = false"> {{ $t(`route.explorer`) }}</NuxtLink>
+                        <NuxtLink :to="'/'" class="link mobile" :class="{ 'active' : route.name?.toString().includes('index')}" @click="showMobileNav = false"> {{ $t(`route.explorer`) }}</NuxtLink>
                     </td></tr>
                     <tr v-for="link of routes" :key="link.name"><td>
-                        <NuxtLink :to="link.link" class="link" :class="{ 'active' : route.name?.toString().includes(link.name)}" @click="showMobileNav = false"> {{ $t(`route.${link.name}`) }}</NuxtLink>
+                        <NuxtLink :to="link.link" class="link mobile" :class="{ 'active' : route.name?.toString().includes(link.name)}" @click="showMobileNav = false"> {{ $t(`route.${link.name}`) }}</NuxtLink>
                     </td></tr>
                 </tbody>
             </table>
         </div>
         <div class="uk-container uk-margin-bottom">
+            
+            <ClientOnly>
+                <AtomsThemeSwitcher :vertical="false"/>
+            </ClientOnly>
+
             <a class="locale" :class="{ 'active' : locale === 'en' }" @click.prevent.stop="setLocale('en')" style="cursor: pointer; line-height: 40px;">En</a>
             {{ ' | ' }}
             <a class="locale" :class="{ 'active' : locale === 'ru' }" @click.prevent.stop="setLocale('ru')" style="cursor: pointer; line-height: 40px;">Ru</a>
@@ -184,13 +193,20 @@ const external = [
 
 
 <style lang="scss">
-@import "@/assets/styles/variables.scss";
-
 .nav-logo {
     font-family: 'HelveticaNeueCyr';
 
     &:hover {
         text-decoration: none;
+    }
+
+    svg {
+        circle {
+            fill: var(--color-text-emphasis);
+        }
+        rect {
+            fill: var(--color-bg-emphasis);
+        }
     }
 }
 
@@ -206,7 +222,7 @@ const external = [
             min-width: 20px;
             margin-right: 15px;
             line-height: normal;
-            color: $color-bg-emphasis;
+            color: var(--color-bg-emphasis);
         }
     }
 }
@@ -215,57 +231,75 @@ const external = [
     transition: all 0.5s;
 }
 
+.knob {
+    circle {
+        fill: var(--color-bg-emphasis);
+    }
+    path {
+        fill: var(--color-text-emphasis);
+    }
+}
+
 .link {
     position: relative;
     font-size: 16px;
     line-height: 16px;
     align-items: center;
     overflow: hidden;
+    &:not(.mobile) {
+        color: var(--color-text);
+    }
+    &.mobile {
+        color: var(--color-text);
+    }
     .nav-icon {
         min-width: 24px;
     }
     .nav-icon-special > path {
-        stroke: $color-text-muted;
+        stroke: var(--color-text);
     }
     .nav-icon > path {
-        fill: $color-text-muted;
+        fill: var(--color-text);
     }
     .nav-icon > rect {
-        stroke: $color-text-muted;
+        stroke: var(--color-text);
     }
     &.active {
-        color: $color-text-emphasis;
+        color: var(--color-text-emphasis);
         text-decoration: none;
         .nav-icon > path {
-            fill: $color-text-emphasis;
+            fill: var(--color-text-emphasis);
         }
         .nav-icon-special > path {
-            stroke: $color-text-emphasis;
+            stroke: var(--color-text-emphasis);
         }
         .nav-icon > rect {
-            stroke: $color-text-emphasis;
+            stroke: var(--color-text-emphasis);
         }
     }
     &:hover {
         text-decoration: none;
-        color: $color-text-emphasis;
+        color: var(--color-text-emphasis);
         .nav-icon > path {
-            fill: $color-text-emphasis;
+            fill: var(--color-text-emphasis);
         }
         .nav-icon > rect {
-            stroke: $color-text-emphasis;
+            stroke: var(--color-text-emphasis);
         }
         .nav-icon-special > path {
-            stroke: $color-text-emphasis;
+            stroke: var(--color-text-emphasis);
         }
     }
 }
 
-.locale.active {
-    text-decoration: underline;
-    color: $color-text-emphasis;
+.locale {
+    color: var(--color-text);
     &:hover { 
-        color: $color-text-emphasis;
+        color: var(--color-text-emphasis);
+    }
+    &.active {
+        text-decoration: underline;
+        color: var(--color-text-emphasis);
     }
 }
 
@@ -282,25 +316,30 @@ const external = [
   transition: ease all 0.7s;
 }
 
+.slide-up-leave-active {
+  transition: none;
+}
+
 .slide-up-enter-from {
   opacity: 0;
   height: 0;
   transform: translateY(10px);
 }
 
+.slide-up-leave-from,
 .slide-up-leave-to {
-  opacity: 0;
-  height: 0;
-  transform: translateY(-10px);
+    opacity: 0;
 }
-
+.mob-nav-icon {
+    stroke: var(--color-text-emphasis);
+}
 .mob-nav {
     top: 72px;
     right: -100vw;
     width: 0;
     height: calc(100% - 53px);
     transition: right 0.3s;
-    background-color: $color-bg-emphasis;
+    background-color: var(--color-bg-emphasis);
     overflow: hidden;
     &.open {
         right: 0;
