@@ -23,15 +23,15 @@ const getMethods = computed(() => account.value?.executed_get_methods && Object.
 const sankeyType = ref("count")
 
 const routes = computed(() => {
-    const output: { route: string, t: string }[] = []
-    if (account.value.transaction_amount > 0) output.push({ route: 'transactions', t: 'route.transactions'})
-    if (account.value.transaction_amount > 0) output.push({ route: 'money_flow', t: 'general.money_flow'})
-    if (account.value.jetton_amount > 0) output.push({ route: 'jettons', t: 'route.jettons'})
-    if (account.value.types?.includes('jetton_minter')) output.push({ route: 'jetton_holders', t: 'ton.jetton_holders'})
-    if (account.value.nft_amount > 0) output.push({ route: 'nfts', t: 'route.nfts'})
-    if (account.value.types?.includes('nft_collection')) output.push({ route: 'minter', t: 'ton.minter'})
-    if (account.value.types?.includes('nft_collection')) output.push({ route: 'nft_holders', t: 'ton.nft_holders'})
-    if (Object.keys(getMethods.value).length > 0) output.push({ route: 'get_methods', t: 'ton.get_methods'})
+    const output: { route: string, t: string, selected: boolean }[] = []
+    if (account.value.transaction_amount > 0) output.push({ route: 'transactions', t: 'route.transactions', selected: route.hash === '#transactions' || route.hash === '#overview'})
+    if (account.value.transaction_amount > 0) output.push({ route: 'money_flow', t: 'general.money_flow', selected: route.hash === '#jettons' })
+    if (account.value.jetton_amount > 0) output.push({ route: 'jettons', t: 'route.jettons', selected: route.hash === '#jettons' })
+    if (account.value.types?.includes('jetton_minter')) output.push({ route: 'jetton_holders', t: 'ton.jetton_holders', selected: route.hash === '#jetton_holders' })
+    if (account.value.nft_amount > 0) output.push({ route: 'nfts', t: 'route.nfts', selected: route.hash === '#nfts' })
+    if (account.value.types?.includes('nft_collection')) output.push({ route: 'minter', t: 'ton.minter', selected: route.hash === '#minter' })
+    if (account.value.types?.includes('nft_collection')) output.push({ route: 'nft_holders', t: 'ton.nft_holders', selected: route.hash === '#nft_holders' })
+    if (Object.keys(getMethods.value).length > 0) output.push({ route: 'get_methods', t: 'ton.get_methods', selected: route.hash === '#get_methods' })
     return output
 })
 
@@ -44,10 +44,9 @@ const reloadInfo = async() => {
         const res = await store.fetchAccount(props.hex)
         if (props.hex != res) emits('setHex', res)
     }
+    if (!route.hash) router.replace({ hash: '#overview'})
 
-    selectedRoute.value = route.hash ? 
-        (route.hash.slice(1,) === 'overview' ? 
-            'transactions' : route.hash.slice(1,)) : 'transacitions'
+    selectedRoute.value = (!route.hash || route.hash.slice(1,) === 'overview') ? 'transactions' : route.hash.slice(1,)
                 
     loading.value = false
     if (!account.value) {
@@ -90,7 +89,7 @@ watch(() => props.hex, async() => await reloadInfo())
                 </select>
                 <div v-if="!isMobile()" class="category-wrapper">
                     <div class="uk-flex uk-flex-middle uk-margin-remove-top">
-                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{'selected': (route.hash === `#${item.route}`)}">
+                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{ selected: item.selected }">
                             {{ $t(item.t)}}
                         </NuxtLink>
                     </div>

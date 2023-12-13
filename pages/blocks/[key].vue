@@ -27,7 +27,7 @@ onMounted(() => {
     </template>
     <template v-else>
         <div v-if="(workchain || workchain === 0) && shard && seq_no" class="uk-flex uk-flex-column">
-            <BlocksBlockInfo :shard="shard" :seq_no="seq_no" :workchain="workchain"/>
+            <LazyBlocksBlockInfo :shard="shard" :seq_no="seq_no" :workchain="workchain"/>
         </div>
     </template>
 </template>

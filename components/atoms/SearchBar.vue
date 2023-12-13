@@ -137,7 +137,7 @@ onMounted(async () => {
             :value="search" 
             @input="($event: any) => search = $event.target.value" 
             :placeholder="$t('general.search' + (isMobile() ? '_mobile' : ''))" 
-            class="uk-search-input" 
+            class="uk-search-input uk-text-muted" 
             type="search" 
             id="searchbar" 
             aria-label="Search" 
@@ -192,10 +192,6 @@ onMounted(async () => {
 </template>
 
 <style scoped lang="scss">
-#searchbar::placeholder {
-    color: var(--color-text);
-}
-
 .results-table {
     top: 100%; 
     z-index: 100; 

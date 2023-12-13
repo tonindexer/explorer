@@ -29,7 +29,7 @@ const reloadInfo = async() => {
     if (unloadedAccountKeys.value.length > 0)
         await store.fetchBareAccounts(unloadedAccountKeys.value)
 
-    selectedRoute.value = route.hash ? route.hash.slice(1,) : 'overview'
+    selectedRoute.value = route.hash ? route.hash.slice(1,) : 'messages'
 
     loading.value = false
     if (!transaction.value) {
@@ -39,9 +39,10 @@ const reloadInfo = async() => {
 }
 
 const routes = computed(() => {
-    const output: { route: string, t: string }[] = []
-    if (inMessageKeys.value.length + outMessageKeys.value.length > 0) output.push({ route: 'messages', t: 'route.messages'})
-    if (loadedAccountKeys.value.length + unloadedAccountKeys.value.length  > 0) output.push({ route: 'accounts', t: 'route.accounts'})
+    const output: { route: string, t: string, selected: boolean }[] = []
+    if (inMessageKeys.value.length + outMessageKeys.value.length > 0) output.push({ route: 'messages', t: 'route.messages', selected: route.hash === '#messages' || route.hash === '#overview' })
+    if (loadedAccountKeys.value.length + unloadedAccountKeys.value.length  > 0) output.push({ route: 'accounts', t: 'route.accounts', selected: route.hash === '#accounts' })
+    if (inMessageKeys.value.length + outMessageKeys.value.length > 0) output.push({ route: 'tree', t: 'route.tx_tree', selected: route.hash === '#tree'})
     return output
 })
 
@@ -82,14 +83,8 @@ watch(() => props.hash, async() => await reloadInfo())
                 </select>
                 <div v-if="!isMobile()" class="category-wrapper">
                     <div class="uk-flex uk-flex-middle uk-margin-remove-top">
-                        <NuxtLink v-if="inMessageKeys.length + outMessageKeys.length > 0" class="category" :to="{ hash: '#messages', query: route.query}" :class="{'selected': (route.hash === '#messages' || route.hash === '#overview')}">
-                            {{ $t('route.messages')}}
-                        </NuxtLink>
-                        <NuxtLink v-if="loadedAccountKeys.length + unloadedAccountKeys.length > 0" class="category" :to="{ hash: '#accounts', query: route.query}" :class="{'selected': (route.hash === '#accounts')}">
-                            {{ $t('route.accounts')}}
-                        </NuxtLink>
-                        <NuxtLink v-if="inMessageKeys.length + outMessageKeys.length > 0" class="category" :to="{ hash: '#tree', query: route.query}" :class="{'selected': (route.hash === '#tree')}">
-                            {{ $t('route.tx_tree')}}
+                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{ selected: item.selected }">
+                            {{ $t(item.t)}}
                         </NuxtLink>
                     </div>
                 </div>

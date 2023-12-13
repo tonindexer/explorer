@@ -98,7 +98,7 @@ onMounted(async () => {
         <Loader :ratio="2"/>
     </div>
     <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right" :class="{'uk-width-1-3' : !isMobile()}" style="justify-content: flex-end; padding: 0 16px;">
-        <label class="uk-margin-right" for="profit_search">Search</label>
+        <label class="uk-margin-right uk-text-muted" for="profit_search">Search</label>
         <input class="uk-input uk-background-primary" v-model="filter" id="profit_search" type="text" placeholder="Anything..." aria-label="Search top profit traders">
     </div>
     <div v-if="!loading && finalData.length === 0" class="uk-flex uk-flex-center">

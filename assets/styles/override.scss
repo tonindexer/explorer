@@ -9,6 +9,13 @@
 
 .uk-input {
   border-color: var(--color-text-muted);
+  &::placeholder {
+    color: var(--color-text);
+  }
+}
+
+.uk-search-input::placeholder {
+  color: var(--color-text);
 }
 
 .uk-button {
@@ -32,6 +39,11 @@
 
 .uk-radio:checked, .uk-checkbox:checked, .uk-checkbox:indeterminate {
   background-color: var(--color-text-emphasis) !important;
+  background-image: none;
+}
+
+.uk-checkbox {
+  border-radius: 50%;
 }
 
 .uk-table {
@@ -43,6 +55,7 @@
     transition: none;
   }
 }
+
 .uk-table > thead {
   border-bottom: 1px solid var(--color-bg-muted);
   tr {
@@ -55,6 +68,7 @@
     text-transform: none;
   }
 }
+
 .uk-table-divider > tr:not(:first-child), .uk-table-divider > :not(:first-child) > tr, 
 .uk-table-divider > :first-child > tr:not(:first-child) {
   border-color: var(--color-text-muted);
@@ -72,6 +86,7 @@
 .uk-margin-small-left {
   margin-left: 8px !important;
 }
+
 .uk-button:disabled {
   cursor: not-allowed !important;
   color: var(--color-bg-emphasis);
@@ -105,6 +120,10 @@
 
 .ui.dropdown:not(.button)>.default.text {
   color: var(--color-text-muted);
+}
+
+.dp__input {
+  border-color: var(--color-text-muted);
 }
 // Default color classes override 
 

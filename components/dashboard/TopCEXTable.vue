@@ -20,6 +20,7 @@ interface TopTradersTable {
 
 const props = defineProps<TopTradersTable>()
 const store = useMainStore()
+const colorMode = useColorMode()
 
 const sortby: Ref<{ by : "dst_address" | "src_address" | "created_at" | "deposit_amount" | "dst_label" | "withdrawal_amount" | "src_label", order_desc: boolean}> = ref({
     by: 'created_at',
@@ -118,17 +119,17 @@ onMounted(async () => {
         <Loader :ratio="2"/>
     </div>
     <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom" style="justify-content: space-between; gap: 0.4rem; max-width: 600px; padding: 0 12px">
-        <div class="uk-margin-remove-vertical" style=" white-space: nowrap;">
+        <div class="uk-margin-remove-vertical uk-text-muted" style=" white-space: nowrap;">
             {{ $t('ton.from') }}
         </div>
-        <VueDatePicker :min-date="new Date(firstDate)" :max-date="interval.to ? new Date(interval.to) : new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="interval.from"/>
-        <div class="uk-margin-remove" style="white-space: nowrap;">
+        <VueDatePicker :min-date="new Date(firstDate)" :max-date="interval.to ? new Date(interval.to) : new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="interval.from" :dark="colorMode.value === 'dark'"/>
+        <div class="uk-margin-remove uk-text-muted" style="white-space: nowrap;">
             {{ $t('ton.to') }}
         </div>
-        <VueDatePicker :min-date="interval.from ? new Date(interval.from) : new Date(firstDate)" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="interval.to"/>
+        <VueDatePicker :min-date="interval.from ? new Date(interval.from) : new Date(firstDate)" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="interval.to" :dark="colorMode.value === 'dark'"/>
     </div> 
     <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right" :class="{'uk-width-1-3' : !isMobile()}" style="padding: 0 12px">
-        <label class="uk-margin-right" for="cex_search">Search</label>
+        <label class="uk-margin-right uk-text-muted" for="cex_search">Search</label>
         <input class="uk-input uk-background-primary" v-model="filter" id="cex_search" type="text" placeholder="Anything..." aria-label="Search top CEX">
     </div>
     <div v-if="!loading && finalData.length === 0" class="uk-flex uk-flex-center">

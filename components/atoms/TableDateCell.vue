@@ -6,6 +6,7 @@ const props = defineProps<Props>()
 
 const passedTime = () => {
     if (!props.dateTime) return null
+    if (props.dateTime === '0001-01-01T00:00:00Z') return 'just now'
     const time = Math.abs(new Date(props.dateTime ?? '').getTime() - new Date().getTime())
     if (time > (1000 * 60 * 60 * 24 * 365)) {
         return Math.round(time / (1000 * 60 * 60 * 24 * 365)).toString() + 'y ago'

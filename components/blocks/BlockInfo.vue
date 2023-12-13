@@ -46,10 +46,10 @@ const reloadInfo = async() => {
 }
 
 const routes = computed(() => {
-    const output: { route: string, t: string }[] = []
-    if (block.value.shard_keys?.length > 0) output.push({ route: 'shards', t: 'ton.shards'})
-    if (trKeys.value.length > 0) output.push({ route: 'transactions', t: 'route.transactions'})
-    if (loadedAccountKeys.value.length + unloadedAccountKeys.value.length  > 0) output.push({ route: 'accounts', t: 'route.accounts'})
+    const output: { route: string, t: string, selected: boolean }[] = []
+    if (block.value.shard_keys?.length > 0) output.push({ route: 'shards', t: 'ton.shards', selected: route.hash === '#shards' })
+    if (trKeys.value.length > 0) output.push({ route: 'transactions', t: 'route.transactions', selected: route.hash === '#transactions' })
+    if (loadedAccountKeys.value.length + unloadedAccountKeys.value.length  > 0) output.push({ route: 'accounts', t: 'route.accounts', selected: route.hash === '#accounts' })
     return output
 })
 
@@ -90,7 +90,7 @@ watch(props, async() => await reloadInfo())
                 </select>
                 <div v-if="!isMobile()" class="category-wrapper">
                     <div class="uk-flex uk-flex-middle uk-margin-remove-top">
-                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{'selected': (route.hash === `#${item.route}`)}">
+                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{'selected': item.selected}">
                             {{ $t(item.t)}}
                         </NuxtLink>
                     </div>
