@@ -1064,7 +1064,7 @@ export const useMainStore = defineStore('tonexp', {
           }
           const query = getQueryArrayString(fullReq, true);
           // get latest account state
-            const { data } = await apiRequest(`/metadata?${query}`, 'GET', {}, `https://anton.tools/api/v1/`)
+            const { data } = await apiRequest(`/metadata?${query}`, 'GET', {}, useRuntimeConfig().public.tonMeta)
             const parsed = parseJson<MetadataAPIData>(data, (key, value, context) => (
                 (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
             if (parsed.results && parsed.results.length > 0)
@@ -1200,7 +1200,7 @@ export const useMainStore = defineStore('tonexp', {
         return out
       },
       async loadDashboards(slug: dashboardName) {
-        const { data } = await apiRequest(`/dashboard/${slug}/charts`, 'GET', {}, `https://superset.anton.tools/api/v1`)
+        const { data } = await apiRequest(`/dashboard/${slug}/charts`, 'GET', {}, useRuntimeConfig().public.tonSuperset)
         const parsed = parseJson<DashboardAPIData>(data, (key, value, context) => value)
         parsed.result.forEach(item => {
           this.chartXs[item.form_data.slice_id.toString()] = item.form_data.x_axis ?? 'timestamp' 
@@ -1230,7 +1230,7 @@ export const useMainStore = defineStore('tonexp', {
                 "val": "3000"
               }
             ]
-            const { data } = await apiRequest(`/chart/data`, 'POST', {}, `https://superset.anton.tools/api/v1`, req.req)
+            const { data } = await apiRequest(`/chart/data`, 'POST', {}, useRuntimeConfig().public.tonSuperset, req.req)
             const parsed = parseJson<ChartAPIData>(data, (key, value, context) => value);
             const result: StoredChartData = {
               slice_id: req.req.form_data.slice_id.toString(),

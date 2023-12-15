@@ -2,7 +2,9 @@
 export default defineNuxtConfig({
   runtimeConfig : {
     public : {
-      tonUrl : 'https://anton.tools/api/v0/'
+      tonUrl : 'https://anton.tools/api/v0/',
+      tonMeta : 'https://anton.tools/api/v1/',
+      tonSuperset: 'https://superset.anton.tools/api/v1'
     }
   },
   build: {
