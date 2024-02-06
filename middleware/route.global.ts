@@ -1,6 +1,12 @@
 import { useMainStore } from "~/store/TONExp"
 
 export default defineNuxtRouteMiddleware((to, from) => {
+    const runtimeConfig = useRuntimeConfig()
+
+    if (to.name?.toString().includes('dashboard') && !runtimeConfig.public.dashboard) {
+        return abortNavigation()
+    }
+
     if (to.fullPath === from.fullPath) return
     const store = useMainStore()
 

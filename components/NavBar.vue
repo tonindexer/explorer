@@ -9,8 +9,10 @@ watch(showMobileNav, () => {
     showMobileNav.value ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'auto' 
 }, { deep: true })
 
-const routes = [
-    {
+const runtimeConfing = useRuntimeConfig()
+
+const routes = computed(() => [
+{
         name: 'transactions',
         link: '/transactions',
         icon: `<svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -35,17 +37,18 @@ const routes = [
             <path d="M21 11.5V11C20.885 8.91565 20.0052 6.94696 18.5291 5.47086C17.053 3.99476 15.0843 3.11499 13 3H12.5C11.1801 2.99656 9.87812 3.30493 8.7 3.9C7.28825 4.60557 6.10083 5.69025 5.27072 7.03255C4.44061 8.37485 4.00061 9.92176 4 11.5C3.99656 12.8199 4.30493 14.1219 4.9 15.3L3 21L8.7 19.1C9.57904 19.544 10.5271 19.8284 11.5 19.9427" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M23 16.611H16.7C13.1 16.611 13.1 21.5 16.7 21.5M23 16.611L19.85 13.5M23 16.611L19.85 19.722" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>`
-    },
+    }
+].concat(runtimeConfing.public.dashboard ? [
     {
         name: 'dashboard',
         link: '/dashboard',
         icon: `<svg class="nav-icon-special" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 5V19C3 19.5523 4.44772 20 5 20H20.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M18 9L13 13.9999L10.5 11.4998L7 14.9998" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                `
+                <path d="M3 5V19C3 19.5523 4.44772 20 5 20H20.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18 9L13 13.9999L10.5 11.4998L7 14.9998" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            `
     }
-] as const
+] : []))
 
 const external = [
     {
@@ -96,14 +99,6 @@ const external = [
 <template>
     <nav v-if="!isMobile()" class="uk-background-primary uk-width-auto" style="padding: 12px; height: fit-content; border-radius: 12px; width: min-content; position: relative;">
         <div class="main-nav" style="align-items: center; min-width: max-content;">
-                <!-- <NuxtLink class="nav-logo uk-flex-center uk-flex" aria-label="main_page" style="align-items: baseline; max-height: 40px;" :to="'/'">
-                    <div class="uk-text-primary" style="font-size: 40px;">Ant</div>
-                    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="13" cy="13" r="13"/>
-                        <rect x="12" y="6" width="8" height="8" rx="2"/>
-                    </svg>
-                    <div class="uk-text-primary" style="font-size: 40px;">n</div>
-                </NuxtLink> -->
                 <NuxtLink class="nav-logo uk-flex-center uk-flex" aria-label="main_page" :style="showFullMenu ? 'align-items: end; max-height: 40px' : ''" :to="'/'">
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="20" cy="20" r="20"/>
@@ -144,7 +139,7 @@ const external = [
                 <a class="locale" :class="{ 'active' : locale === 'en' }" @click.prevent.stop="setLocale('en')" style="cursor: pointer; line-height: 40px;">En</a>
                 <a class="locale" :class="{ 'active' : locale === 'ru' }" @click.prevent.stop="setLocale('ru')" style="cursor: pointer; line-height: 40px;">Ru</a>
             </div>
-            <div style="position: absolute; top: 346px; right: -20px" @click="showFullMenu = !showFullMenu">
+            <div :style="`position: absolute; top: ${runtimeConfing.public.dashboard ? 346 : 298}px; right: -20px`" @click="showFullMenu = !showFullMenu">
                 <svg class="knob" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="20" cy="20" r="20" fill="white"/>
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M14.5762 15.7699C14.8413 16.0881 14.7983 16.561 14.4801 16.8262L10.6715 20L14.4801 23.1739C14.7983 23.439 14.8413 23.9119 14.5762 24.2302C14.311 24.5484 13.8381 24.5914 13.5199 24.3262L9.01986 20.5762C8.84887 20.4337 8.75 20.2226 8.75 20C8.75 19.7774 8.84887 19.5663 9.01986 19.4239L13.5199 15.6739C13.8381 15.4087 14.311 15.4517 14.5762 15.7699Z"/>

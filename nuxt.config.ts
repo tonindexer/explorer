@@ -4,7 +4,8 @@ export default defineNuxtConfig({
     public : {
       tonUrl : 'https://anton.tools/api/v0/',
       tonMeta : 'https://anton.tools/api/v1/',
-      tonSuperset: 'https://superset.anton.tools/api/v1'
+      tonSuperset: 'https://superset.anton.tools/api/v1',
+      dashboard: true
     }
   },
   build: {
