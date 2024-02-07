@@ -20,7 +20,7 @@ const chartOptions = computed(() => { return{
         type: 'column',
         animation: false,
         backgroundColor: 'none',
-        height: isMobile() ? '200px' : null,
+        height: '185px',
         zooming: {
             type: 'x'
         },

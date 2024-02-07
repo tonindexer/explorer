@@ -69,7 +69,7 @@ const chartOptions = computed(() => { return {
     chart: {
         type: 'areaspline',
         backgroundColor: 'none',
-        height: isMobile() ? '200px' : null,
+        height: '185px',
         zooming: {
             type: 'x'
         },
