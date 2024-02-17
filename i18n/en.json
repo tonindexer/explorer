@@ -108,7 +108,11 @@
         "top_profit": "TOP Profit Traders",
         "deposits": "Recent Large Deposits",
         "withdrawals": "Recent Large Withdrawals",
-        "money_flow": "Money flow"
+        "money_flow": "Money flow",
+        "active_accounts": "Active accounts",
+        "ton_count": "TON count",
+        "msg_count": "Msg count",
+        "tx_count": "Transactions count"
     },
     "route" : {
         "explorer" : "Main Page",
@@ -135,7 +139,8 @@
         "dashboard": "Dashboard",
         "telemint": "Telemint",
         "cex" : "TON CEX Activity",
-        "bridge" : "TON Bridge Activity"
+        "bridge" : "TON Bridge Activity",
+        "info": "Info"
     },
     "stats" : {
         "account_count": "Accounts",

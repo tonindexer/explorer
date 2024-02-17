@@ -85,16 +85,10 @@ watch(props, async() => await reloadInfo())
         </AtomsTile>
         <AtomsTile v-if="routes.length > 0" :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
             <template #top>
-                <select v-if="isMobile()" :value="selectedRoute" aria-label="Select" @change="($event: any) => selectedRoute = $event.target.value" class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary">
-                    <option v-for="option in routes" :value="option.route">{{ $t(option.t) }}</option>
-                </select>
-                <div v-if="!isMobile()" class="category-wrapper">
-                    <div class="uk-flex uk-flex-middle uk-margin-remove-top">
-                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{'selected': item.selected}">
-                            {{ $t(item.t)}}
-                        </NuxtLink>
-                    </div>
-                </div>
+                <AtomsCategorySelector
+                    v-model:selected="selectedRoute"
+                    :routes="routes"
+                />
             </template>
             <template #body>
                 <div v-if="(route.hash === '#shards' )&& block.shard_keys.length > 0" id="shards">

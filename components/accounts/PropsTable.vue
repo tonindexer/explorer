@@ -18,6 +18,8 @@ const externalLink = computed(() : MockType=> {
         'dton': `https://dton.io/a/${props.acc.address.base64}`
     }
 })
+
+const showFull = ref(false)
 </script>
 
 <template>
@@ -105,7 +107,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
-            <tr v-if="acc.minter_address">
+            <tr v-if="acc.minter_address && showFull">
                 <AtomsPropLine>
                     <template #name>
                         {{ $t(`ton.minter`) }}
@@ -117,7 +119,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
-            <tr v-if="acc.owner_address">
+            <tr v-if="acc.owner_address && showFull">
                 <AtomsPropLine>
                     <template #name>
                         {{ $t(`ton.owner`) }}
@@ -129,7 +131,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
-            <tr>
+            <tr v-if="showFull">
                 <AtomsPropLine>
                     <template #name>
                         {{ $t(`ton.block`) }}
@@ -143,7 +145,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
-            <tr v-if="acc.last_tx_hash">
+            <tr v-if="acc.last_tx_hash && showFull">
                 <AtomsPropLine>
                     <template #name>
                         {{ $t(`ton.last_tx_hash`) }}
@@ -157,7 +159,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>    
             </tr>
-            <tr v-if="acc.data">
+            <tr v-if="acc.data && showFull">
                 <AtomsPropLine>
                     <template #name>
                         {{ $t(`ton.data`) }}
@@ -169,7 +171,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
-            <tr v-if="acc.data_hash">
+            <tr v-if="acc.data_hash && showFull">
                 <AtomsPropLine>
                     <template #name>
                         {{ $t(`ton.data_hash`) }}
@@ -181,7 +183,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
-            <tr v-if="acc.code">
+            <tr v-if="acc.code && showFull">
                 <AtomsPropLine>
                     <template #name>
                         {{ $t(`ton.code`) }}
@@ -193,7 +195,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
-            <tr v-if="acc.code_hash">
+            <tr v-if="acc.code_hash && showFull">
                 <AtomsPropLine>
                     <template #name>
                         {{ $t(`ton.code_hash`) }}
@@ -205,7 +207,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
-            <tr v-if="acc.label?.categories && acc.label.categories.length > 0">
+            <tr v-if="acc.label?.categories && acc.label.categories.length > 0 && showFull">
                 <AtomsPropLine :wrap="true">
                     <template #name>
                         {{ $t(`general.categories`) }}
@@ -217,7 +219,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>  
-            <tr>
+            <tr v-if="showFull">
                 <AtomsPropLine :wrap="true">
                     <template #name>
                         {{ $t(`general.external`) }}
@@ -231,7 +233,7 @@ const externalLink = computed(() : MockType=> {
                     </template>
                 </AtomsPropLine>
             </tr>
-            <tr>
+            <tr style="position: relative;">
                 <AtomsPropLine>
                     <template #name>
                         {{ $t(`ton.updated_at`) }}
@@ -240,8 +242,34 @@ const externalLink = computed(() : MockType=> {
                         {{ new Date(acc.updated_at).toLocaleString() }}
                     </template>
                 </AtomsPropLine>
+                <div class="show-full_button" @click="showFull = !showFull">
+                    <svg width="32" height="32" :class="{ 'open' : showFull }" viewBox="0 0 20 20">
+                        <polyline fill="none" stroke-width="2" points="16 7 10 13 4 7"></polyline>
+                    </svg>
+                </div>
             </tr>
         </tbody>
     </table>
         
 </template>
+
+<style scoped lang="scss">
+.show-full_button {
+    position: absolute;
+    cursor: pointer;
+    right: 0; 
+    margin-right: 12px;
+    height: 32px;
+    width: 32px;
+    top: 12px;
+    background: var(--color-text-emphasis);
+    border-radius: 39px;
+    transform: rotate(0deg);
+    .open {
+        transform: rotate(180deg);
+    }
+    polyline {
+        stroke: var(--color-bg-emphasis);
+    }
+}
+</style>

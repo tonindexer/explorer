@@ -20,12 +20,12 @@ const minterMeta = computed(() => props.minter in store.metadata ?
 onMounted(async () => {
     if (props.keys.length === 0)
         await store.loadTopHolders(props.minter, itemCount.value)
-    store.fetchBareAccounts(props.keys.map(item => item.owner_address.hex))
+    store.fetchBareAccounts(props.keys.map(item => item.owner_address?.hex ?? null))
 })
 
 watch(itemCount, async() => {
     await store.loadTopHolders(props.minter, itemCount.value)
-    store.fetchBareAccounts(props.keys.map(item => item.owner_address.hex))
+    store.fetchBareAccounts(props.keys.map(item => item.owner_address?.hex ?? null))
 }, {deep : true})
 
 </script>
@@ -98,13 +98,11 @@ watch(itemCount, async() => {
                     <td>
                         <AtomsAddressField :addr="acc.wallet_address" :break_word="true"/>
                     </td>
-                    <td class="uk-text-right uk-text-nowrap"> 
-                        <div>
-                            {{ `${formatTons(Number(acc.balance ?? 0), minterMeta.decimals)} ${minterMeta.symbol}` }}
-                        </div>
+                    <td class="uk-text-right uk-text-nowrap">
+                        <AtomsBalanceCell :balance="acc.balance" :place="'end'"/>
                     </td>
                     <td class="uk-padding-remove-left">
-                        <div v-if="acc.owner_address.hex in store.accounts">
+                        <div v-if="acc.owner_address?.hex in store.accounts">
                             <AtomsTableDateCell :date-time="store.accounts[acc.owner_address.hex].updated_at"/>
                         </div>
                         <div v-else>

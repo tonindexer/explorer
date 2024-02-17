@@ -108,7 +108,11 @@
         "top_profit": "MAX Прибыль Трейдеры",
         "deposits": "Крупные Депозиты",
         "withdrawals": "Крупные Выводы Средств",
-        "money_flow": "Поток средств"
+        "money_flow": "Поток средств",
+        "active_accounts": "Активные аккаунты",
+        "ton_count": "Кол-во TON",
+        "msg_count": "Кол-во сообщений",
+        "tx_count": "Кол-во транзакций"
     },
     "route" : {
         "explorer" : "Главная страница",
@@ -135,7 +139,8 @@
         "dashboard": "Dashboard",
         "telemint": "Telemint",
         "cex" : "TON СЕХ Активы",
-        "bridge" : "TON Bridge Активы"
+        "bridge" : "TON Bridge Активы",
+        "info": "Инфо"
     },
     "stats" : {
         "account_count": "Аккаунтов",

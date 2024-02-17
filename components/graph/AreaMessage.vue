@@ -65,7 +65,7 @@ const dataParser = computed(() : Graph => {
 
 const interrupter = ref(false)
 
-const chartType: Ref<'message_count' | 'message_amount_sum'> = ref('message_count')
+const chartType: Ref<'message_count' | 'message_amount_sum'> = ref('message_amount_sum')
 
 const requestTimes = computed(() => {  return {
     'from': msToISO(filterInterval.value.from),
@@ -184,7 +184,6 @@ const requestData = async (reset: boolean, setLast: boolean = false) => {
     graph.value?.chart.xAxis[0].setExtremes(0, dataParser.value.times.length - 1)
 }
 
-
 const slideValues = ref({
     minValue: limits.value.to - 86400000 * 31 * 6,
     maxValue: limits.value.to
@@ -232,6 +231,13 @@ const setInterval = (setLast: boolean = false) => {
     requestData(true, setLast)
 }
 
+const tabs = computed<RouteLink[]>(() => {
+    const output: RouteLink[] = []
+    output.push({ route: 'message_amount_sum', t: 'general.ton_count', selected: chartType.value === 'message_amount_sum' })
+    output.push({ route: 'message_count', t: 'general.msg_count', selected: chartType.value === 'message_count' })
+    return output
+})
+
 watch(filterInterval, () => {
     setInterval()
 }, {deep: true})
@@ -251,16 +257,11 @@ onMounted(async () => {
 
 <template>
     <div class="uk-flex uk-flex-column uk-width-1-1 uk-margin-small">
-        <div class="category-wrapper">
-            <div class="uk-flex uk-flex-middle uk-margin-remove-top" style="justify-content: space-between;">
-                <button class="uk-button category" @click="chartType = 'message_amount_sum'" :class="{'selected': chartType === 'message_amount_sum'}">
-                    TON amount
-                </button>
-                <button class="uk-button category" @click="chartType = 'message_count'" :class="{'selected': chartType === 'message_count'}">
-                    Msg count
-                </button>
-            </div>
-        </div>
+        <AtomsCategorySelector
+            v-model:selected="chartType"
+            :routes="tabs"
+            :set-route="false"
+        />
         <div class="uk-width-1-1" style="position: relative; margin-top: 32px;">
             <ClientOnly fallback="Loading graph...">
                 <Chart :options="chartOptions" ref="graph"/>

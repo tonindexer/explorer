@@ -89,4 +89,10 @@ declare global {
     type NullableNumRef = Ref<number | null>
     type NullableStrRef = Ref<string | null>
     type NullableBigRef = Ref<bigint | null>
+
+    type RouteLink = {
+        route: string
+        t: string
+        selected: boolean
+    }
 }

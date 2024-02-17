@@ -22,20 +22,78 @@ const ownerKeys = computed(() => account.value?.owned_nfts?.length > 0 ? account
 const getMethods = computed(() => account.value?.executed_get_methods && Object.keys(account.value.executed_get_methods).length > 0 ? account.value.executed_get_methods : {} as {[key: string] : GetMethod[]})
 const sankeyType = ref("count")
 
-const routes = computed(() => {
-    const output: { route: string, t: string, selected: boolean }[] = []
-    if (account.value.transaction_amount > 0) output.push({ route: 'transactions', t: 'route.transactions', selected: route.hash === '#transactions' || route.hash === '#overview'})
-    if (account.value.transaction_amount > 0) output.push({ route: 'money_flow', t: 'general.money_flow', selected: route.hash === '#jettons' })
-    if (account.value.jetton_amount > 0) output.push({ route: 'jettons', t: 'route.jettons', selected: route.hash === '#jettons' })
-    if (account.value.types?.includes('jetton_minter')) output.push({ route: 'jetton_holders', t: 'ton.jetton_holders', selected: route.hash === '#jetton_holders' })
-    if (account.value.nft_amount > 0) output.push({ route: 'nfts', t: 'route.nfts', selected: route.hash === '#nfts' })
-    if (account.value.types?.includes('nft_collection')) output.push({ route: 'minter', t: 'ton.minter', selected: route.hash === '#minter' })
-    if (account.value.types?.includes('nft_collection')) output.push({ route: 'nft_holders', t: 'ton.nft_holders', selected: route.hash === '#nft_holders' })
-    if (Object.keys(getMethods.value).length > 0) output.push({ route: 'get_methods', t: 'ton.get_methods', selected: route.hash === '#get_methods' })
+const parentMap = {
+    transactions: [ 'transactions', 'money_flow' ],
+    jettons: [ 'jettons', 'jetton_holders' ],
+    jetton_holders: [ 'jettons', 'jetton_holders' ],
+    nfts: [ 'nfts', 'nft_holders', 'minter' ],
+    nft_holders: [ 'nfts', 'nft_holders', 'minter' ]
+}
+
+const childMap = {
+    transactions: { parent: 'transactions', t: 'route' },
+    overview: { parent: 'transactions', t: 'general' },
+    money_flow: { parent: 'transactions', t: 'general' },
+    jettons: { parent: 'jettons', t: 'route' },
+    jetton_holders: { parent: 'jettons', t: 'ton' },
+    nfts: { parent: 'nfts', t: 'route' },
+    nft_holders: { parent: 'nfts', t: 'ton' },
+    minter: { parent: 'nfts', t: 'ton' }
+} as { [key: string] : { parent: string, t: string } }
+
+type ParentChildRoutes = {
+    [key: string]: 'transactions' | 'jettons' | 'nfts'
+}
+
+// Routes as their names and parents for further conversion
+const allRoutes = computed<ParentChildRoutes>(() => {
+    const output: ParentChildRoutes = {}
+    if (account.value.transaction_amount > 0) output['transactions'] = 'transactions'
+    if (account.value.transaction_amount > 0) output['money_flow'] = 'transactions'
+    if (account.value.jetton_amount > 0) output['jettons'] = 'jettons'
+    if (account.value.types?.includes('jetton_minter')) output['jetton_holders'] = 'jettons'
+    if (account.value.nft_amount > 0) output['nfts'] = 'nfts'
+    if (account.value.types?.includes('nft_collection')) output['nft_holders'] = 'nfts'
+    if (account.value.types?.includes('nft_collection')) output['minter'] = 'nfts'
+    return output
+})
+
+const categories = computed(() => {
+    const output: RouteLink[] = []
+    const walkedRoutes = { 'transactions': false, 'jettons': false, 'nfts': false }
+    Object.keys(allRoutes.value).forEach(item => {
+        if (!walkedRoutes[allRoutes.value[item]]) { 
+            output.push({ route: item, t: `${childMap[allRoutes.value[item]].t}.${allRoutes.value[item]}`, selected: parentMap[allRoutes.value[item]].includes(selectedCategory.value)})
+            walkedRoutes[allRoutes.value[item]] = true
+        }
+    })
+    return output
+})
+
+const children = computed(() => {
+    const output: RouteLink[] = []
+    Object.keys(allRoutes.value).forEach(item => {
+        if (allRoutes.value[item] === selectedCategory.value) {
+            if (item === 'transactions') {
+                output.push({ route: item, t: `${childMap[item].t}.${item}`, selected: route.hash === `#${item}` || route.hash === `#overview`})
+            } else {
+                output.push({ route: item, t: `${childMap[item].t}.${item}`, selected: route.hash === `#${item}`})
+            }
+        }
+    })
+    return output
+})
+
+const tabs = computed<RouteLink[]>(() => {
+    const output: RouteLink[] = []
+    output.push({ route: 'info', t: 'route.info', selected: selectedTab.value === 'info' })
+    if (Object.keys(getMethods.value).length > 0) output.push({ route: 'get_methods', t: 'ton.get_methods', selected: selectedTab.value === 'get_methods'  })
     return output
 })
 
 const selectedRoute = ref('')
+const selectedTab = ref('info')
+const selectedCategory = ref('')
 
 const reloadInfo = async() => {
     error.value = false
@@ -47,7 +105,8 @@ const reloadInfo = async() => {
     if (!route.hash) router.replace({ hash: '#overview'})
 
     selectedRoute.value = (!route.hash || route.hash.slice(1,) === 'overview') ? 'transactions' : route.hash.slice(1,)
-                
+    selectedCategory.value = selectedRoute.value in childMap ? childMap[selectedRoute.value].parent : 'transactions'
+
     loading.value = false
     if (!account.value) {
         error.value = true
@@ -77,23 +136,31 @@ watch(() => props.hex, async() => await reloadInfo())
         </div>
     </template>
     <template v-else-if="account">
-        <AtomsTile :body="true" :tile-style="'margin-top: 32px'">
+        <AtomsTile :body="true" :top="true" :tile-style="'margin-top: 32px'">
+            <template #top>
+                <AtomsCategorySelector
+                    v-model:selected="selectedTab"
+                    :set-route="false"
+                    :routes="tabs"
+                />
+            </template>
             <template #body>
                 <AccountsPropsTable :acc="account"/>
             </template>
         </AtomsTile>
-        <AtomsTile v-if="routes.length" :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
+        <AtomsTile v-if="categories.length" :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
             <template #top>
-                <select v-if="isMobile()" :value="selectedRoute" aria-label="Select" @change="($event: any) => selectedRoute = $event.target.value" class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary">
-                    <option v-for="option in routes" :value="option.route">{{ $t(option.t) }}</option>
-                </select>
-                <div v-if="!isMobile()" class="category-wrapper">
-                    <div class="uk-flex uk-flex-middle uk-margin-remove-top">
-                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item.route}`, query: route.query}" :class="{ selected: item.selected }">
-                            {{ $t(item.t)}}
-                        </NuxtLink>
-                    </div>
-                </div>
+                <AtomsCategorySelector
+                    v-if="!isMobile()"
+                    v-model:selected="selectedCategory"
+                    :routes="categories"
+                />
+                <AtomsCategorySelector
+                    v-model:selected="selectedRoute"
+                    :routes="children"
+                    :secondary="true"
+                    style="margin-top: 16px;"
+                />
             </template>
             <template #body>
                 <div v-if="(route.hash === '#transactions' || route.hash === '#overview')" id="transactions">

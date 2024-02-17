@@ -12,12 +12,15 @@ const parsedReqs: Ref<StoredRequests> = ref([])
 const topTraders = computed(() => parsedReqs.value.length ? parsedReqs.value.filter(item => item.type === 'table' && item.req.form_data.slice_id == 53)[0] as StoredTableReq : null)
 const topProfit = computed(() => parsedReqs.value.length ? parsedReqs.value.filter(item => item.type === 'table' && item.req.form_data.slice_id == 61)[0] as StoredTableReq : null)
 
-const routes = [ 'charts', 'top_traders', 'top_profit' ]
-
 const selectedRoute = ref('charts')
 
-watch(selectedRoute,() => router.replace({ hash: '#' + selectedRoute.value, query: route.query}))
+const routes = computed<RouteLink[]>(() => [
+    { route: 'charts', t: 'general.charts', selected: selectedRoute.value === 'charts' },
+    { route: 'top_traders', t: 'general.top_traders', selected: selectedRoute.value === 'top_traders' },
+    { route: 'top_profit', t: 'general.top_profit', selected: selectedRoute.value === 'top_profit' }
+])
 
+watch(selectedRoute,() => router.replace({ hash: '#' + selectedRoute.value, query: route.query}))
 
 onMounted(async() => {
     try {
@@ -41,16 +44,10 @@ onMounted(async() => {
     <template v-else>
         <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
             <template #top>
-                <select v-if="isMobile()" :value="selectedRoute" aria-label="Select" @change="($event: any) => selectedRoute = $event.target.value" class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary">
-                    <option v-for="option in routes" :value="option">{{ $t(`general.${option}`) }}</option>
-                </select>
-                <div v-if="!isMobile()" class="category-wrapper">
-                    <div class="uk-flex uk-flex-middle uk-margin-remove-top">
-                        <NuxtLink v-for="item in routes" class="category" :to="{ hash: `#${item}`, query: route.query}" :class="{'selected': (route.hash === `#${item}`)}">
-                            {{ $t(`general.${item}`) }}
-                        </NuxtLink>
-                    </div>
-                </div>
+                <AtomsCategorySelector
+                    v-model:selected="selectedRoute"
+                    :routes="routes"
+                />
             </template>
             <template #body>
                 <div class="grid" v-if="route.hash === '#charts'">

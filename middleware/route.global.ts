@@ -19,7 +19,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
         return
     }
     if (to.name === 'accounts' && from.name !== 'accounts') {
-        store.updateAccounts(20, null, null)
+        store.updateAccounts(20, null, {interface: to.query?.contract ?? null},)
         return
     }
   })

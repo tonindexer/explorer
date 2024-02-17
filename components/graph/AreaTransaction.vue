@@ -220,6 +220,14 @@ const setInterval = (setLast: boolean = false) => {
     requestData(true, setLast)
 }
 
+const tabs = computed<RouteLink[]>(() => {
+    const output: RouteLink[] = []
+    output.push({ route: 'tx_count', t: 'general.tx_count', selected: selectedTab.value === 'tx_count' })
+    return output
+})
+
+const selectedTab = ref('tx_count')
+
 watch(() => filterInterval.value, () => {
     setInterval()
 }, {deep: true})
@@ -235,13 +243,11 @@ onMounted(async () => {
 
 <template>
     <div class="uk-flex uk-flex-column uk-width-1-1 uk-margin-small">
-        <div class="category-wrapper">
-            <div class="uk-flex uk-flex-middle uk-margin-remove-top" style="justify-content: space-between;">
-                <button class="uk-button category selected" id="8h">
-                    Transactions count
-                </button>
-            </div>
-        </div>
+        <AtomsCategorySelector
+            v-model:selected="selectedTab"
+            :routes="tabs"
+            :set-route="false"
+        />
         <div class="uk-width-1-1" style="position: relative; margin-top: 32px">
             <ClientOnly fallback="Loading graph...">
                 <Chart :options="chartOptions" ref="graph"/>
