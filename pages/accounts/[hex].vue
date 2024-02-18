@@ -17,7 +17,7 @@ onMounted(() => {
     </template>
     <template v-else>
         <div class="uk-flex uk-flex-column">
-            <LazyAccountsAccountInfo :hex="hex" @set-hex="(e) => hex = e"/>
+            <LazyAccountsAccountInfo v-model:hex="hex"/>
         </div>
     </template>
 </template>

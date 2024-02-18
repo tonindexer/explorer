@@ -58,11 +58,9 @@ const itemCount = ref(props.defaultLength)
     </table>
     <div v-if="!hidden" class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle" style="justify-content: flex-end;">
             <AtomsPageArrows    
-                :page="pageNum" 
+                v-model:page="pageNum" 
                 :left-disabled="pageNum === 0" 
                 :right-disabled="(pageNum+1)*itemCount >= keys.length"
-                @increase="pageNum += 1"
-                @decrease="pageNum -= 1"
             />
         </div>
 </template>

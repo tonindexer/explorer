@@ -17,7 +17,7 @@ onMounted(() => {
     </template>
     <template v-else>
         <div class="uk-flex uk-flex-column">
-            <LazyTransactionsTransactionInfo :hash="hash" @set-hash="(e) => hash = e"/>
+            <LazyTransactionsTransactionInfo v-model:hash="hash"/>
         </div>
     </template>
 </template>

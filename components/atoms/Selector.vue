@@ -7,12 +7,12 @@ interface Props {
     options: Array<number | string>
 }
 defineProps<Props>()
-defineEmits(['setValue'])
+defineEmits(['update:itemCount'])
 </script>
 
 <template>
     <p v-if="startLine !== null" class="uk-margin-remove uk-text-muted">{{ $t(startLine ?? 'general.show')}}</p>
-    <select :value="itemCount" @change="$event => $emit('setValue', $event.target)" class="uk-select uk-text-muted uk-background-primary" :class="{'custom' : !def}">
+    <select :value="itemCount" @change="($event: Event) => $emit('update:itemCount', ($event.target as HTMLSelectElement).value)" class="uk-select uk-text-muted uk-background-primary" :class="{'custom' : !def}">
         <option v-for="option in options">{{ option }}</option>
     </select>
     <template v-if="amount && isNumeric(itemCount)">

@@ -10,7 +10,7 @@ const error = ref(false)
 const loading = ref(true)
 const store = useMainStore()
 const props = defineProps<Props>()
-const emits = defineEmits(['setHex'])
+const emits = defineEmits(['update:hex'])
 
 const route = useRoute()
 
@@ -100,7 +100,7 @@ const reloadInfo = async() => {
     loading.value = true
     if (!(props.hex in store.accounts) || !store.accounts[props.hex].loaded) {
         const res = await store.fetchAccount(props.hex)
-        if (props.hex != res) emits('setHex', res)
+        if (props.hex != res) emits('update:hex', res)
     }
     if (!route.hash) router.replace({ hash: '#overview'})
 

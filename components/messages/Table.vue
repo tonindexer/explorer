@@ -264,12 +264,11 @@ onMounted(() => {
                 </div>
                 <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small">
                     <AtomsSelector 
-                        :item-count="filterFields.src_contract_mobile"
+                        v-model:item-count="filterFields.src_contract_mobile"
                         :def="true"
                         :amount="null"
                         :start-line="null"
                         :options="optionsMobile"
-                        @set-value="(e: any) => filterFields.src_contract_mobile = e.value"
                     />
                 </div>
                 <div class="red uk-icon-button" v-if="Object.keys(filterFields.src_contract_desktop).length > 0 && selectedOptions.src_contract" uk-icon="icon: close;ratio: 1.2" @click="reset('src_contract')"></div>
@@ -286,12 +285,11 @@ onMounted(() => {
                 </div>
                 <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small">
                     <AtomsSelector 
-                        :item-count="filterFields.dst_contract_mobile"
+                        v-model:item-count="filterFields.dst_contract_mobile"
                         :def="true"
                         :amount="null"
                         :start-line="null"
                         :options="optionsMobile"
-                        @set-value="(e: any) => filterFields.dst_contract_mobile = e.value"
                     />
                 </div>
                 <div class="red uk-icon-button" v-if="Object.keys(filterFields.dst_contract_desktop).length > 0 && selectedOptions.dst_contract" uk-icon="icon: close;ratio: 1.2" @click="reset('dst_contract')"></div>
@@ -319,12 +317,11 @@ onMounted(() => {
             </div>
             <div v-else-if="isMobile()" class="uk-width-2-3 uk-text-small">
                 <AtomsSelector 
-                    :item-count="filterFields.op_name_mobile"
+                    v-model:item-count="filterFields.op_name_mobile"
                     :def="true"
                     :amount="null"
                     :start-line="null"
                     :options="opOptionsMobile"
-                    @set-value="(e: any) => filterFields.op_name_mobile = e.value"
                 />
             </div>
             <div class="red uk-icon-button" v-if="Object.keys(filterFields.op_name_desktop).length > 0 && selectedOptions.operation_name" uk-icon="icon: close;ratio: 1.2" @click="reset('operation_name')"></div>
@@ -385,18 +382,15 @@ onMounted(() => {
     <div v-if="!emptyTable && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end; padding-right: 12px;">
         <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
             <AtomsSelector 
-                :item-count="itemCount"
+                v-model:item-count="itemCount"
                 :amount="store.totalQueryMessages"
                 :options="[5, 10, 20, 50]"
-                @set-value="(e: any) => itemCount = e.value"
             />
         </div>
         <AtomsPageArrows    
-            :page="pageNum" 
+            v-model:page="pageNum" 
             :left-disabled="pageNum === 0" 
             :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
-            @increase="pageNum += 1"
-            @decrease="pageNum -= 1"
         />            
     </div>
 </template>

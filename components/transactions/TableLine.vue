@@ -10,8 +10,6 @@ const props = defineProps<Props>()
 const store = useMainStore()
 
 const messageKeys = computed(() => store.getMessageKeys([props.trn.hash], true, true).filter(key => key in store.messages))
-
-defineEmits(['toggleMsg'])
 </script>
 
 <template>

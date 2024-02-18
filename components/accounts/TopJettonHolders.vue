@@ -34,10 +34,9 @@ watch(itemCount, async() => {
     <div v-if="keys.length >= 10" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
         <div class="uk-flex uk-flex-middle">
             <AtomsSelector 
-                :item-count="itemCount"
+                v-model:item-count="itemCount"
                 :amount="null"
                 :options="[10, 25, 50, 100]"
-                @set-value="(e: any) => itemCount = e.value"
             />
         </div>
     </div>

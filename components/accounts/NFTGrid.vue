@@ -98,18 +98,15 @@ onMounted(async () => {
     <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-small-top uk-margin-remove-bottom" style="justify-content: flex-end;">
         <div class="uk-flex uk-flex-middle" v-if="!isMobile()">
             <AtomsSelector 
-                :item-count="itemCount"
+                v-model:item-count="itemCount"
                 :amount="minterFlag ? store.accounts[account].minted_amount : store.accounts[account].nft_amount"
                 :options="[12, 18, 24, 48]"
-                @set-value="(e: any) => itemCount = e.value"
             />
         </div>
         <AtomsPageArrows    
-            :page="pageNum" 
+            v-model:page="pageNum" 
             :left-disabled="pageNum === 0" 
             :right-disabled="lastPageFlag"
-            @increase="pageNum += 1"
-            @decrease="pageNum -= 1"
         />
         </div>
 </template>

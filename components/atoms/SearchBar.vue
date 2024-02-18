@@ -135,13 +135,13 @@ onMounted(async () => {
         </NuxtLink>
         <input 
             :value="search" 
-            @input="($event: any) => search = $event.target.value" 
+            @input="($event: Event) => search = ($event.target as HTMLInputElement).value" 
             :placeholder="$t('general.search' + (isMobile() ? '_mobile' : ''))" 
             class="uk-search-input uk-text-muted" 
             type="search" 
             id="searchbar" 
             aria-label="Search" 
-            @focus="($event: any) => parse($event.target.value)"
+            @focus="($event: Event) => parse(($event.target as HTMLInputElement).value)"
             :style="isMobile() ? 'height: 40px; padding-left: 40px;' : 'height: 56px; padding-left: 48px;'"
         >
         <table v-if="status !== 'EMPTY' && route.path !== '/search'" class="uk-table results-table uk-position-absolute uk-position-bottom uk-width-1-1 uk-margin-remove-vertical uk-table-divider">

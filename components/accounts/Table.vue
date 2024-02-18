@@ -121,12 +121,11 @@ onMounted(() => {
     <div v-if="isMobile() && route.path === '/accounts'" class="uk-flex uk-flex-right" style="padding: 16px 16px 0;">
         <div class="uk-width-1-1 uk-text-small">
             <AtomsSelector 
-                :item-count="selectedContract"
+                v-model:item-count="selectedContract"
                 :def="true"
                 :amount="null"
                 :start-line="null"
                 :options="optionsContract"
-                @set-value="(e: any) => selectedContract = e.value"
             />
         </div>
         <a v-if="selectedContract !== 'All'" uk-icon="icon: close" @click="selectedContract = 'All'" style="align-self: center; margin-left: 0.5rem;"></a>
@@ -181,19 +180,16 @@ onMounted(() => {
         <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
             <ClientOnly>
                 <AtomsSelector 
-                    :item-count="itemCount"
+                    v-model:item-count="itemCount"
                     :amount="store.totalQueryAccounts"
                     :options="[5, 10, 20, 50]"
-                    @set-value="(e: any) => itemCount = e.value"
                 />
             </ClientOnly>
         </div>
         <AtomsPageArrows    
-            :page="pageNum" 
+            v-model:page="pageNum" 
             :left-disabled="pageNum === 0" 
             :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
-            @increase="pageNum += 1"
-            @decrease="pageNum -= 1"
         />
     </div>
 </template>

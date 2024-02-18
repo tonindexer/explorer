@@ -73,11 +73,9 @@ watch(itemCount, async() => {
     </table>
     <div class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end;">
         <AtomsPageArrows    
-            :page="pageNum" 
+            v-model:page="pageNum" 
             :left-disabled="pageNum === 0" 
             :right-disabled="lastPageFlag"
-            @increase="pageNum += 1"
-            @decrease="pageNum -= 1"
         />            
     </div>
 </template>

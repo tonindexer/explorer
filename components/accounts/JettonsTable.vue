@@ -136,18 +136,15 @@ onMounted(async () => {
     <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
         <div class="uk-flex uk-flex-middle" v-if="!isMobile()">
             <AtomsSelector 
-                :item-count="itemCount"
+                v-model:item-count="itemCount"
                 :amount="store.accounts[owner].jetton_amount"
                 :options="[5, 10, 20, 50]"
-                @set-value="(e: any) => itemCount = e.value"
             />
         </div>
         <AtomsPageArrows    
-            :page="pageNum" 
+            v-model:page="pageNum" 
             :left-disabled="pageNum === 0" 
             :right-disabled="lastPageFlag"
-            @increase="pageNum += 1"
-            @decrease="pageNum -= 1"
         />
     </div>
 </template>

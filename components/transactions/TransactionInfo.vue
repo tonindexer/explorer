@@ -10,7 +10,7 @@ const error = ref(false)
 const loading = ref(true)
 const store = useMainStore()
 const props = defineProps<Props>()
-const emits = defineEmits(['setHash'])
+const emits = defineEmits(['update:hash'])
 const route = useRoute()
 
 const transaction = computed(() => store.transactions[props.hash] ?? null)
@@ -24,7 +24,7 @@ const reloadInfo = async() => {
     loading.value = true
     if (!transaction.value) {
         const key = await store.fetchTransaction(toBase64Rfc(props.hash))
-        if (props.hash != key) emits('setHash', key)
+        if (props.hash != key) emits('update:hash', key)
     }
     if (unloadedAccountKeys.value.length > 0)
         await store.fetchBareAccounts(unloadedAccountKeys.value)
