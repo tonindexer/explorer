@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { useMainStore } from '@/store/TONExp';
 
-interface DBCell {
+const props = defineProps<{
     slice_id: string
     request: StoredMetricReq | StoredChartReq | StoredTableReq
-}
+}>()
 
 type MetricData = {
     name: string
@@ -13,8 +12,6 @@ type MetricData = {
         value: number
     }
 }
-
-const props = defineProps<DBCell>()
 
 const data: Ref<Series[]> = ref([])
 const times: Ref<number[]> = ref([])

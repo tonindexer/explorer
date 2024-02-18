@@ -1,8 +1,8 @@
 <script setup lang="ts">
-interface Props {
+
+const props = defineProps<{
     method: MockType
-}
-const props = defineProps<Props>()
+}>()
 
 interface FirstLevel {
     title: string

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface Props {
+
+defineProps<{
     block: Block
     linkBlock?: boolean
-}
+}>()
 
-defineProps<Props>()
 </script>
 
 <template>

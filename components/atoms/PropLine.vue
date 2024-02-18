@@ -1,11 +1,12 @@
 <script setup lang="ts">
-interface Props {
+
+defineProps<{
     wrap?: boolean
     bold?: boolean
     third?: string
     fourth?: string
-}
-defineProps<Props>()
+}>()
+
 </script>
 
 <template>

@@ -13,7 +13,9 @@ const props = withDefaults(defineProps<Props>(), {
     secondary: false
 })
 
-defineEmits(['update:selected'])
+defineEmits<{
+    'update:selected': [selected: string]
+}>()
 
 const component = computed(() => {
   if (props.setRoute) return defineNuxtLink({})
@@ -39,7 +41,7 @@ const component = computed(() => {
                 :to="{ hash: `#${item.route}`, query: route.query}"
                 :class="{ selected: item.selected }"
                 :data-value="item.route"
-                @click="($event: Event) => $emit('update:selected', ($event.target as HTMLElement).dataset.value)"
+                @click="($event: Event) => $emit('update:selected', ($event.target as HTMLElement).dataset?.value ?? '')"
             >
                 {{ $t(item.t) }}
             </component>

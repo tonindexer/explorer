@@ -1,35 +1,36 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
-const route = useRoute()
-const router = useRouter()
 
-interface TransactionTable {
+const props = defineProps<{
     keys: string[]
     update: boolean
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
     account: AccountKey | null
-}
-
-const props = defineProps<TransactionTable>()
+}>()
 
 const store = useMainStore()
+const route = useRoute()
+const router = useRouter()
+
 const pageNum = ref(0)
+const itemCount = ref(props.defaultLength)
 const maxExploredPage = ref(0)
 
 const workchain = ref<'main' | 'base' | null>(null)
 const sortby = ref({
     order_desc: true
 })
-const itemCount = ref(props.defaultLength)
+
 const firstLT: NullableBigRef = ref(0n)
 const lastLT: NullableBigRef = ref(0n)
+
 const lastPageFlag = computed(() => props.update ? 
     (props.account ? 
         ((itemCount.value * (pageNum.value+1)) >= store.accounts[props.account ?? '']?.transaction_amount)
         : store.nextPageFlag(itemCount.value * (pageNum.value+1), 'trn'))
     : false)
+
 const toggleMsg = (key: TransactionKey) => store.transactionMsgFlag[key] = !store.transactionMsgFlag[key]
 
 const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
@@ -45,6 +46,7 @@ const setExtraFields = () => {
         }
     }
 }
+
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     emptyTable.value = false

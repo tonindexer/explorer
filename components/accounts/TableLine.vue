@@ -1,9 +1,8 @@
 <script setup lang="ts">
-interface Props {
-    acc: Account
-}
 
-defineProps<Props>()
+defineProps<{
+    acc: Account
+}>()
 
 const showWallets = ref(false)
 

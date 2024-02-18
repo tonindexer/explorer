@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 import { blockKeyDegen } from '~/utils/filters';
 
 const route = useRoute()

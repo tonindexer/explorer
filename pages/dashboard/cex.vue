@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useMainStore } from '@/store/TONExp';
-
 const store = useMainStore()
 const loading = ref(true)
 const error = ref(false)
@@ -56,10 +54,10 @@ onMounted(async() => {
                     </template>
                 </div>
                 <div v-else-if="route.hash === '#deposits'">
-                    <DashboardTopCEXTable v-if="deposits" :slice_id="'28'" :request="deposits" :type="'deposit'"/>
+                    <DashboardTopCexTable v-if="deposits" :slice_id="'28'" :request="deposits" :type="'deposit'"/>
                 </div>
                 <div v-else-if="route.hash === '#withdrawals'">
-                    <DashboardTopCEXTable v-if="withdrawals" :slice_id="'15'" :request="withdrawals" :type="'withdrawal'"/>
+                    <DashboardTopCexTable v-if="withdrawals" :slice_id="'15'" :request="withdrawals" :type="'withdrawal'"/>
                 </div>
             </template>
         </AtomsTile>

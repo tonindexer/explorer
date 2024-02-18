@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 
-interface Props {
+const props = defineProps<{
     trn: Transaction
     msgShow: boolean
-}
+}>()
 
-const props = defineProps<Props>()
 const store = useMainStore()
 
 const messageKeys = computed(() => store.getMessageKeys([props.trn.hash], true, true).filter(key => key in store.messages))

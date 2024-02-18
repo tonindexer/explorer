@@ -1,5 +1,3 @@
-import { useMainStore } from "~/store/TONExp"
-
 export default defineNuxtRouteMiddleware((to, from) => {
     const runtimeConfig = useRuntimeConfig()
 

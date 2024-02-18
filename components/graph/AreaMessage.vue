@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Chart } from 'highcharts-vue'
-import { useMainStore } from '~/store/TONExp';
 
 interface Graph {
     series: {

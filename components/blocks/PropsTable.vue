@@ -1,10 +1,8 @@
 <script setup lang="ts">
-const { t } = useI18n()
-interface Props {
-    block: Block
-}
 
-const props = defineProps<Props>()
+const props = defineProps<{
+    block: Block
+}>()
 
 const externalLink = computed(() : MockType=> {
     return {
@@ -13,6 +11,7 @@ const externalLink = computed(() : MockType=> {
         'Ton.sh': `https://ton.sh/block/${props.block.workchain}/${props.block.seq_no}`
     }
 })
+
 </script>
 
 <template>

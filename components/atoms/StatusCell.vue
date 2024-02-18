@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface Props {
-    status: AccountStatus | MessageType | 'UPDATE'
-}
 
-defineProps<Props>()
+defineProps<{
+    status: AccountStatus | MessageType | 'UPDATE'
+}>()
+
 </script>
 
 

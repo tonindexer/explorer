@@ -1,12 +1,15 @@
 <script setup lang="ts">
-interface Props {
+
+defineProps<{
     page: number
     leftDisabled: boolean
     rightDisabled: boolean
-}
+}>()
 
-defineProps<Props>()
-defineEmits(['update:page'])
+defineEmits<{
+    'update:page': [page: number]
+}>()
+
 </script>
 
 <template>

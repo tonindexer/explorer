@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { Chart } from 'highcharts-vue'
-import { useMainStore } from '~/store/TONExp';
 // @ts-ignore
 import Highcharts from 'highcharts'
 import Sankey from 'highcharts/modules/sankey'
 
-interface GraphData {
+const props = defineProps<{
     hex: AccountKey
     count: boolean
-}
+}>()
 
-const props = defineProps<GraphData>()
 const store = useMainStore()
 const data = computed(() => props.hex in store.sankeyCount ? (props.count ? store.sankeyCount[props.hex] : store.sankeyAmount[props.hex]) : null)
 

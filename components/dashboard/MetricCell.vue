@@ -1,13 +1,13 @@
 <script setup lang="ts">
-interface MetricData {
+
+defineProps<{
     name: string
     request_id: string
     data: {
         value : number | bigint
     }
-}
+}>()
 
-defineProps<MetricData>()
 </script>
 
 
@@ -17,5 +17,4 @@ defineProps<MetricData>()
             {{ toCompact(data.value) }}
         </div>
     </div>
-
 </template>

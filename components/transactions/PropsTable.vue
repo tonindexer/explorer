@@ -1,9 +1,8 @@
 <script setup lang="ts">
-interface Props {
-    trn: Transaction
-}
 
-const props = defineProps<Props>()
+const props = defineProps<{
+    trn: Transaction
+}>()
 
 const dateForDton = computed(() => {
     const d = new Date(props.trn.created_at)

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-interface Props {
+
+const props = defineProps<{
     dateTime: string | number | null
-}
-const props = defineProps<Props>()
+}>()
 
 const passedTime = () => {
     if (!props.dateTime) return null

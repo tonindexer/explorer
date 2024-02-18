@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 import VueDatePicker from '@vuepic/vue-datepicker';
+
+const props = defineProps<{
+    slice_id: string
+    type: 'withdrawal' | 'deposit'
+    request: StoredTableReq
+}>()
 
 type TableLine = {
     dst_address: AccountKey
@@ -12,13 +17,6 @@ type TableLine = {
     src_label: string | null
 }
 
-interface TopTradersTable {
-    slice_id: string
-    type: 'withdrawal' | 'deposit'
-    request: StoredTableReq
-}
-
-const props = defineProps<TopTradersTable>()
 const store = useMainStore()
 const colorMode = useColorMode()
 

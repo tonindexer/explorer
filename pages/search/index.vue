@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
-
 const store = useMainStore()
 const route = useRoute()
 
 const searchq = computed(() => route.query.search? route.query.search.toString() : null)
-
 </script>
 
 <template>

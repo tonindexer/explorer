@@ -1,33 +1,31 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 
-const route = useRoute()
-const router = useRouter()
-
-interface AccountTable {
+const props = defineProps<{
     keys: AccountKey[]
     update: boolean
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
-}
+}>()
 
-const props = defineProps<AccountTable>()
-
+const route = useRoute()
+const router = useRouter()
 const store = useMainStore()
+
+const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+const emptyTable = ref(false)
+
 const pageNum = ref(0)
+const maxExploredPage = ref(0)
+const selectedContract = ref('All')
 const itemCount = ref(props.defaultLength)
+
 const firstTX: NullableBigRef = ref(0n)
 const lastTX: NullableBigRef = ref(0n)
 const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'acc') : false)
 
-const maxExploredPage = ref(0)
-const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
-const emptyTable = ref(false)
-
 const contract = computed(() => route.query.contract? route.query.contract.toString() : null)
 
-const selectedContract = ref('All')
 const sortby = ref({
     order_desc: true
 })
@@ -48,7 +46,6 @@ const setExtraFields = () => {
         }
     } else emptyTable.value = true
 }
-
 
 const setRoute = () => {
     if (route.path !== '/accounts') return

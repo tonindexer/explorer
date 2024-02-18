@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 
-interface SearchTable {
+const props = defineProps<{
     keys: Search
     search: string | null
     defaultLength: number
-}
-
-const props = defineProps<SearchTable>()
+}>()
 
 const store = useMainStore()
+const emptyTable = ref(false)
+
 const pageNum = ref(0)
+const maxExploredPage = ref(0)
 const itemCount = ref(props.defaultLength)
 
 const lastPageFlag = computed(() => store.nextPageFlag(itemCount.value * (pageNum.value+1), 'src'))
-const maxExploredPage = ref(0)
-const emptyTable = ref(false)
 
 const updateValues = async () => {
     emptyTable.value = false

@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { Clipboard } from 'v-clipboard'
 
-interface Props {
+const props = defineProps<{
     text: string
     customDeskWidth?: string
     customMobileWidth?: string
-}
+}>()
 
-const props = defineProps<Props>()
 const status = ref('neutral')
 
 const success = () => {
@@ -19,7 +18,9 @@ const error = () => {
     status.value = 'error'
     setTimeout(() => status.value = 'neutral', 1800);
 }
+
 const copy = () => Clipboard.copy(props.text).then(success).catch(error)
+
 const itemProp = computed(() => {
     switch (status.value) {
         case 'neutral': return {icon: undefined, class: 'copy'};
@@ -28,8 +29,8 @@ const itemProp = computed(() => {
         default: return  {icon: 'icon: copy', class: 'uk-icon-link'};
     }
 })
-
 </script>
+
 <template>
     <div class="uk-margin-remove uk-text-left uk-text-truncate" :style="`max-width: ${isMobile() ? 'calc(' + (customMobileWidth ? customMobileWidth : '85vw') + ' - 20px)' : 'calc(' + (customDeskWidth ? customDeskWidth : '75vw * 0.8') + ' - 20px)'}`">
         <slot />
@@ -56,8 +57,6 @@ const itemProp = computed(() => {
 </template>
 
 <style scoped lang="scss">
-
-
 .black {
   path {
     fill: var(--color-text-muted);

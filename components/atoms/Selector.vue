@@ -1,13 +1,17 @@
 <script setup lang="ts">
-interface Props {
+
+defineProps<{
+    amount: number | null
+    itemCount: number | string
+    options: Array<number | string>
     startLine?: string | null
     def?: boolean
-    amount: number | null
-    itemCount: number | string,
-    options: Array<number | string>
-}
-defineProps<Props>()
-defineEmits(['update:itemCount'])
+}>()
+
+defineEmits<{
+    'update:itemCount': [item: number | string]
+}>()
+
 </script>
 
 <template>

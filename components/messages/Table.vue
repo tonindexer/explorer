@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 import { ModelSelect } from 'vue-search-select'
 
-interface MessageTable {
+const props = defineProps<{
     keys: string[]
     update: boolean
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
     showLink: boolean
-}
+}>()
 
 type Filter = 'src_address' | 'src_contract' | 'dst_address' | 'dst_contract' | 'operation_id' | 'operation_name'
 
@@ -20,6 +19,7 @@ type SelectItem = {
 
 const route = useRoute()
 const router = useRouter()
+const store = useMainStore()
 
 const filterFlag = ref(false)
 
@@ -35,9 +35,7 @@ const filterFields = ref({
     'op_name_mobile': 'All'
 })
 
-const props = defineProps<MessageTable>()
 
-const store = useMainStore()
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
 const maxExploredPage = ref(0)

@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 
-interface NFTGrid {
+const props = defineProps<{
     keys: AccountKey[]
     account: AccountKey
     minterFlag: boolean
     defaultLength: number
-}
+}>()
 
-const props = defineProps<NFTGrid>()
 const store = useMainStore()
+
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
 const maxExploredPage = ref(0)

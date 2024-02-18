@@ -1,10 +1,9 @@
 <script setup lang="ts">
-interface Props {
+
+defineProps<{
     msg: Message | null
     showLink: boolean
-}
-
-defineProps<Props>()
+}>()
 
 const showData = ref(false)
 </script>

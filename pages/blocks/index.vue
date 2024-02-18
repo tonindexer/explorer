@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
-
 const store = useMainStore()
-
 const filteredKeys = computed(() => store.getBlockKeys(store.exploredBlocks, false))
 </script>
 

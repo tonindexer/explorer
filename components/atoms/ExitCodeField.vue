@@ -1,9 +1,8 @@
 <script setup lang="ts">
-interface Props {
-    code: number
-}
 
-defineProps<Props>()
+defineProps<{
+    code: number
+}>()
 
 const codeMap : { [key: number | string]: string} = {
     0: 'Success',

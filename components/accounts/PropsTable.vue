@@ -1,9 +1,8 @@
 <script setup lang="ts">
-interface Props {
-    acc: Account
-}
 
-const props = defineProps<Props>()
+const props = defineProps<{
+    acc: Account
+}>()
 
 const externalLink = computed(() : MockType=> {
     return {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 const store = useMainStore()
 const route = useRoute()
 

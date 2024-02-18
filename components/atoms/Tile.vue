@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-interface Props {
+
+defineProps<{
     top?: boolean
     body?: boolean
     tileStyle?: string
     topStyle?: string
     bodyStyle?: string
-}
+}>()
 
-defineProps<Props>()
 </script>
 
 <template>

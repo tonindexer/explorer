@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 
-interface NFTHoldersTable {
+const props = defineProps<{
     keys: NFTOwnerCell[]
     minter: string
     defaultLength: number
-}
-
-const props = defineProps<NFTHoldersTable>()
+}>()
 
 const store = useMainStore()
 

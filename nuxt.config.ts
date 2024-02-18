@@ -28,8 +28,11 @@ export default defineNuxtConfig({
   pinia: {
     autoImports: [
       'defineStore', 
-      ['defineStore', 'definePiniaStore'],
-    ],
+      ['defineStore', 'definePiniaStore']
+    ]
+  },
+  imports: {
+    dirs: ['store']
   },
   googleFonts: {
     families: {

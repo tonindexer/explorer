@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { type NuxtError } from 'nuxt/app';
 
-interface Props {
+defineProps<{
     error: NuxtError
-}
-defineProps<Props>()
+}>()
 
 const handleError = () => clearError({ redirect: '/' })
 </script>

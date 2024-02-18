@@ -1,9 +1,8 @@
 <script setup lang="ts">
-interface Props {
-    vertical: boolean
-}
 
-defineProps<Props>()
+defineProps<{
+    vertical: boolean
+}>()
 
 const colorMode = useColorMode()
 const activeDark = computed(() => colorMode.value === 'dark')

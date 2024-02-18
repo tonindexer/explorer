@@ -1,31 +1,29 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 
-interface BlockTable {
+const props = defineProps<{
     keys: BlockKey[]
     update: boolean
     defaultLength: number
     itemSelector: boolean
     hidden: boolean
     lineLink: boolean
-}
-
-const props = defineProps<BlockTable>()
+}>()
 
 const sortby = ref({
     order_desc: true
 })
 
 const store = useMainStore()
+
+const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'block'): false)
+
 const pageNum = ref(0)
+const maxExploredPage = ref(0)
 const itemCount = ref(props.defaultLength)
 
 const firstMC = ref(0)
 const lastMC = ref(0)
-const maxExploredPage = ref(0)
-const lastPageFlag = computed(() => props.update ? store.nextPageFlag(itemCount.value * (pageNum.value+1), 'block'): false)
-
-const loading = computed(() => props.update && props.keys.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
 
 const displayedKeys = computed(() => {
     const out = [] as BlockKey[]

@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 
-interface JettonHoldersTable {
+const props = defineProps<{
     keys: JettonOwnerCell[]
     minter: AccountKey
     defaultLength: number
-}
-
-const props = defineProps<JettonHoldersTable>()
+}>()
 
 const store = useMainStore()
 

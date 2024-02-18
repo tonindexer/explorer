@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
+
+const props = defineProps<{
+    slice_id: string
+    request: StoredTableReq
+}>()
 
 type TableLine = {
     trader: AccountKey
@@ -7,13 +11,15 @@ type TableLine = {
     total_loss: number
 }
 
-interface TopTradersTable {
-    slice_id: string
-    request: StoredTableReq
-}
-
-const props = defineProps<TopTradersTable>()
 const store = useMainStore()
+const error = ref(false)
+
+const pageNum = ref(0)
+const itemCount = ref(10)
+const maxExploredPage = ref(0)
+
+const loading = computed(() => data.value.length === 0 && finalData.value.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
+const lastPageFlag = computed(() => itemCount.value * (pageNum.value+1) >= finalData.value.length)
 
 const sortby: Ref<{ by : "trader" | "total_profit" | "total_loss", order_desc: boolean}> = ref({
     by: 'total_profit',
@@ -34,14 +40,6 @@ const setSort = (by: "trader" | "total_profit" | "total_loss" ) => {
         order_desc: true
     }
 }
-
-const pageNum = ref(0)
-const itemCount = ref(10)
-const maxExploredPage = ref(0)
-const error = ref(false)
-const loading = computed(() => data.value.length === 0 && finalData.value.slice(pageNum.value*itemCount.value, (pageNum.value+1)*itemCount.value).length === 0)
-
-const lastPageFlag = computed(() => itemCount.value * (pageNum.value+1) >= finalData.value.length)
 
 const topAccs = computed(() => finalData.value.slice(pageNum.value*itemCount.value, (pageNum.value + 1)*itemCount.value).map(item => item.trader))
 

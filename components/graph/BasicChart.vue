@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { Chart } from 'highcharts-vue'
 
-interface GraphData {
+const props = defineProps<{
     series: {
         name: string
         data: number[]
     }[]
     times: number[]
-}
+}>()
 
-const props = defineProps<GraphData>()
 const graphColors = reactive(useGraphColors())
 
 const chartOptions = computed(() => { return {

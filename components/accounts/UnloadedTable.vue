@@ -1,11 +1,10 @@
 <script setup lang="ts">
-interface UnloadedAccountTable {
+
+const props = defineProps<{
     keys: AccountKey[]
     defaultLength: number
     hidden: boolean
-}
-
-const props = defineProps<UnloadedAccountTable>()
+}>()
 
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)

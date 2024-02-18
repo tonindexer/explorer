@@ -2,16 +2,14 @@
 import { VueFlow } from '@vue-flow/core'
 import { MiniMap } from '@vue-flow/minimap'
 import { Background } from '@vue-flow/background'
-import { useMainStore } from '~/store/TONExp';
 
-interface Props {
+const props = defineProps<{
     hash: TransactionKey
-}
+}>()
 
-const props = defineProps<Props>()
 const store = useMainStore()
-const isLoaded = ref(false)
 
+const isLoaded = ref(false)
 const key = ref<string | null>(null)
 
 const positionMap = ref<{[key: string] : { x: number, y: number}}>({})

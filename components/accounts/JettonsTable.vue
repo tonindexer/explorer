@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/TONExp';
 
-interface JettonTable {
+const props = defineProps<{
     keys: AccountKey[]
     owner: AccountKey
     defaultLength: number
-}
+}>()
 
-const props = defineProps<JettonTable>()
 const store = useMainStore()
 
 const pageNum = ref(0)
 const itemCount = ref(props.defaultLength)
 const maxExploredPage = ref(0)
+
 const firstLT: NullableBigRef = ref(0n)
 const lastLT: NullableBigRef = ref(0n)
 

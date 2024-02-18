@@ -1,8 +1,8 @@
 <script setup lang="ts">
-interface Props {
+
+const props = defineProps<{
     methods: {[key: string] : GetMethod[]}
-}
-const props = defineProps<Props>()
+}>()
 
 interface MethodValue {
     key: string
