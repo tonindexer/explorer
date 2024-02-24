@@ -23,7 +23,7 @@ const messageKeys = computed(() => store.getMessageKeys([props.trn.hash], true, 
                     {{ $t('route.account') }}
                 </div>
                 <div class="uk-margin-remove uk-text-right">
-                    <NuxtLink :to="{name: 'accounts-hex', params: { hex: trn.address.hex}, hash: '#overview'}" class="uk-text-emphasis"> {{ trn.address.hex in badAddresses ? badAddresses[trn.address.hex].name : truncString(trn.address.base64, 7) }}</NuxtLink>
+                    <NuxtLink :to="{name: 'accounts-hex', params: { hex: trn.address.hex}, hash: '#overview'}" class="uk-text-emphasis"> {{ trn.address.hex in specialAccounts ? specialAccounts[trn.address.hex].name : truncString(trn.address.base64, 7) }}</NuxtLink>
                 </div>
             </div>
             <div class="uk-flex" style="justify-content: space-between;">
@@ -113,7 +113,7 @@ const messageKeys = computed(() => store.getMessageKeys([props.trn.hash], true, 
             <td></td>
             <td class="uk-text-truncate uk-text-right">
                 <NuxtLink :to="{name: 'accounts-hex', params: { hex: trn.address.hex}, hash: '#overview'}" class="uk-text-emphasis">
-                    {{ trn.address.hex in badAddresses ? badAddresses[trn.address.hex].name : truncString(trn.address.base64, 7) }}
+                    {{ trn.address.hex in specialAccounts ? specialAccounts[trn.address.hex].name : truncString(trn.address.base64, 7) }}
                 </NuxtLink>
             </td>
             <td></td>

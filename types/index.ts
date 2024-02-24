@@ -90,6 +90,14 @@ declare global {
     type NullableStrRef = Ref<string | null>
     type NullableBigRef = Ref<bigint | null>
 
+    type SpecialAccList = {
+        [key: string] : {
+            name: string
+            hex: string
+            base64: string
+        }
+    }
+
     type RouteLink = {
         route: string
         t: string

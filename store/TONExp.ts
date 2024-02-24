@@ -121,22 +121,9 @@ export const useMainStore = defineStore('tonexp', {
       },
       isLoaded: (state) => (module: 'search') => {
         return state.isLoading[module]
-      },
+      }
     },
     actions: {
-      convertBase64ToHex: (value: string) => {
-        if (process.server) {
-          return Buffer.from(value, 'base64').toString('hex');
-        } else {
-          const raw = atob(value);
-          let result = '';
-          for (let i = 0; i < raw.length; i++) {
-            const hex = raw.charCodeAt(i).toString(16);
-            result += (hex.length === 2 ? hex : '0' + hex);
-          }
-          return result
-        }
-      },
       processAccount(account: AccountAPI) {
         const accountKey = account.address.hex
 
@@ -211,7 +198,7 @@ export const useMainStore = defineStore('tonexp', {
         if (transactionKey in this.transactions) return transactionKey
 
         const mappedTransaction = <Transaction>{}
-        mappedTransaction.hex = this.convertBase64ToHex(transactionKey)
+        mappedTransaction.hex = convertBase64ToHex(transactionKey)
         this.transactionHexes[mappedTransaction.hex] = transactionKey
         mappedTransaction.out_msg_keys = []
         mappedTransaction.delta = 0n + BigInt(transaction.in_amount ?? 0n) - BigInt(transaction.out_amount ?? 0n)
@@ -388,10 +375,8 @@ export const useMainStore = defineStore('tonexp', {
         }
         if (Object.keys(this.interfaces).length === 0) {
           try {
-            const { data } = await apiRequest(`/contracts/interfaces`, 'GET')
-            const parsed = parseJson<ContractInterfaceAPI>(data, (key, value, context) => (
-                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            for (const inter of parsed.results) {
+            const { data } = await useApiRequest<ContractInterfaceAPI>(`/contracts/interfaces`, 'GET')
+            for (const inter of data.results) {
               this.interfaces[inter.name] = inter
             }
           } catch (error) {
@@ -400,10 +385,9 @@ export const useMainStore = defineStore('tonexp', {
         }
         if (Object.keys(this.operations).length === 0) {
           try {
-            const { data } = await apiRequest(`/contracts/operations`, 'GET')
-            const parsed = parseJson<ContractOperationAPI>(data, (key, value, context) => (
-                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            for (const oper of parsed.results) {
+            const { data } = await useApiRequest<ContractOperationAPI>(`/contracts/operations`, 'GET')
+            
+            for (const oper of data.results) {
               this.operations[oper.operation_name] = oper
             }
           } catch (error) {
@@ -424,13 +408,11 @@ export const useMainStore = defineStore('tonexp', {
 
         const query = getQueryString(fullReq, false)
         try {
-          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
-          const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          const { data } = await useApiRequest<BlockAPIData>(`/blocks?${query}`, 'GET')
           
-          this.totalQueryBlocks = parsed.total
-          for (const key in parsed.results) {
-            const block = this.processBlock(parsed.results[key])
+          this.totalQueryBlocks = data.total
+          for (const key in data.results) {
+            const block = this.processBlock(data.results[key])
             this.exploredBlocks.push(block)
           }
         } catch (error) {
@@ -446,15 +428,13 @@ export const useMainStore = defineStore('tonexp', {
         if (seqOffset) fullReq.after = seqOffset
         if (!seqOffset) this.exploredMessages = []
         const query = getQueryString(fullReq, true)
-        try {
-          const { data } = await apiRequest(`/messages?${query}`, 'GET')
-          const parsed = parseJson<MessageAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+        try {          
+          const { data } = await useApiRequest<MessageAPIData>(`/messages?${query}`, 'GET')
           
-          this.totalQueryMessages = parsed.total
+          this.totalQueryMessages = data.total
           if (!seqOffset) this.exploredMessages = []
-          if (parsed.results && parsed.results.length > 0)
-            for (const msg of parsed.results) {
+          if (data.results && data.results.length > 0)
+            for (const msg of data.results) {
               const key = this.processMessage(msg, null, null)
               this.exploredMessages.push(key)
             }
@@ -473,11 +453,10 @@ export const useMainStore = defineStore('tonexp', {
         let newArr: GraphCell[] = reset ? [] : [...this.messageGraphData]
         const query = getQueryString(fullReq, true)
         try {
-          const { data } = await apiRequest(`/messages/aggregated/history?${query}`, 'GET')
-          const parsed = parseJson<GraphAPI>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
-          if (parsed.sum_results) newArr = [...newArr, ...parsed.sum_results]
+          const { data } = await useApiRequest<GraphAPI>(`/messages/aggregated/history?${query}`, 'GET')
+
+          if (data.count_results) newArr = [...newArr, ...data.count_results]
+          if (data.sum_results) newArr = [...newArr, ...data.sum_results]
           this.messageGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
           if (setEnd && newArr.length) this.lastAvailableTimestamp = new Date(this.messageGraphData[this.messageGraphData.length - 1].Timestamp).getTime()
         } catch (error) {
@@ -495,12 +474,10 @@ export const useMainStore = defineStore('tonexp', {
         if (workchain) fullReq.workchain = workchain === 'base' ? '0' : '-1'
         const query = getQueryString(fullReq, true)
         try {
-          const { data } = await apiRequest(`/transactions?${query}`, 'GET')
-          const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          this.totalQueryTransactions = parsed.total
-          for (const key in parsed.results) {
-            const trn = this.processTransaction(parsed.results[key], false)
+          const { data } = await useApiRequest<TransactionAPIData>(`/transactions?${query}`, 'GET')
+          this.totalQueryTransactions = data.total
+          for (const key in data.results) {
+            const trn = this.processTransaction(data.results[key], false)
             this.exploredTransactions.push(trn)
           }
           if (account) {
@@ -523,10 +500,9 @@ export const useMainStore = defineStore('tonexp', {
         let newArr: GraphCell[] = reset ? [] : [...this.transactionGraphData]
         const query = getQueryString(fullReq, true)
         try {
-          const { data } = await apiRequest(`/transactions/aggregated/history?${query}`, 'GET')
-          const parsed = parseJson<GraphAPI>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
+          const { data } = await useApiRequest<GraphAPI>(`/transactions/aggregated/history?${query}`, 'GET')
+
+          if (data.count_results) newArr = [...newArr, ...data.count_results]
           this.transactionGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
           if (setEnd && newArr.length) this.lastAvailableTimestamp = new Date(this.transactionGraphData[this.transactionGraphData.length - 1].Timestamp).getTime()
         } catch (error) {
@@ -545,13 +521,12 @@ export const useMainStore = defineStore('tonexp', {
 
         const query = getQueryString(fullReq, false)
         try {
-          const { data } = await apiRequest(`/accounts?${query}`, 'GET')
-          const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          this.totalQueryAccounts = parsed.total
+          const { data } = await useApiRequest<AccountAPIData>(`/accounts?${query}`, 'GET')
+
+          this.totalQueryAccounts = data.total
           if (!seqOffset) this.exploredAccounts = []
-          for (const key in parsed.results) {
-            const acc = this.processAccount(parsed.results[key])
+          for (const key in data.results) {
+            const acc = this.processAccount(data.results[key])
             this.exploredAccounts.push(acc)
           }
         } catch (error) {
@@ -570,10 +545,9 @@ export const useMainStore = defineStore('tonexp', {
         let newArr: GraphCell[] = reset ? [] : [...this.accountsGraphData]
         const query = getQueryString(fullReq, true)
         try {
-          const { data } = await apiRequest(`/accounts/aggregated/history?${query}`, 'GET')
-          const parsed = parseJson<GraphAPI>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (parsed.count_results) newArr = [...newArr, ...parsed.count_results]
+          const { data } = await useApiRequest<GraphAPI>(`/accounts/aggregated/history?${query}`, 'GET')
+
+          if (data.count_results) newArr = [...newArr, ...data.count_results]
           this.accountsGraphData = this.removeDuplicates(newArr).sort((a, b) => a.Timestamp > b.Timestamp ? 1 : -1)
           if (setEnd && newArr.length) this.lastAvailableTimestamp = new Date(this.accountsGraphData[this.accountsGraphData.length - 1].Timestamp).getTime()
         } catch (error) {
@@ -589,11 +563,10 @@ export const useMainStore = defineStore('tonexp', {
         }
         const query = getQueryString(fullReq, false);
         try {
-          const { data } = await apiRequest(`/blocks?${query}`, 'GET')
-          const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (parsed.results && parsed.results.length > 0) {
-            const key = this.processBlock(parsed.results[0], full)
+          const { data } = await useApiRequest<BlockAPIData>(`/blocks?${query}`, 'GET')
+
+          if (data.results && data.results.length > 0) {
+            const key = this.processBlock(data.results[0], full)
             this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys(this.deepTransactionKeys(key), true, true), false))
             return key
           } else return null
@@ -607,12 +580,11 @@ export const useMainStore = defineStore('tonexp', {
         else fullReq = { hash }
         const query = getQueryString(fullReq, true);
         try {
-          const { data } = await apiRequest(`/transactions?${query}`, 'GET')
-          const parsed = parseJson<TransactionAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (parsed.results && parsed.results.length > 0) {
-            this.processTransaction(parsed.results[0])
-            if (hash !== parsed.results[0].hash) hash = parsed.results[0].hash
+          const { data } = await useApiRequest<TransactionAPIData>(`/transactions?${query}`, 'GET')
+
+          if (data.results && data.results.length > 0) {
+            this.processTransaction(data.results[0])
+            if (hash !== data.results[0].hash) hash = data.results[0].hash
             await this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys([hash], true, true), false))
             return hash
           } else return null
@@ -643,6 +615,7 @@ export const useMainStore = defineStore('tonexp', {
           // default letter width for roboto mono 16px
           const letterWidth: number = 9.6
           const letterHeight: number = 16
+
           function widthCounter (key: string, value: string, index: number, objLength: number, depth: number) {
             let append = (isNumeric(value) ? 4 : 6) + (index !== objLength - 1 ? 1 : 0) + (depth * 4)
             if (value.length <= 49 - depth*4 ) {
@@ -651,6 +624,7 @@ export const useMainStore = defineStore('tonexp', {
               if (key.length + 49 - depth*4 + 3 + append > width) width = key.length + 49 - depth*4 + 3 + append
             }
           }
+
           if (addData && Object.keys(addData).length > 0) {
             height += 2
             for (const [index, key] of Object.keys(addData).entries()) {
@@ -779,16 +753,15 @@ export const useMainStore = defineStore('tonexp', {
           }
           const query = getQueryArrayString(fullReq, true);
           // get latest account state
-            const { data } = await apiRequest(`/accounts?${query}`, 'GET')
-            const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
-                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            if (parsed.results && parsed.results.length > 0)
-              parsed.results.forEach((acc: AccountAPI) => {
-                this.processAccount(acc)
-              })
-          } catch (error) {
-            console.log(error)
+          const { data } = await useApiRequest<AccountAPIData>(`/accounts?${query}`, 'GET')
+          if (data.results && data.results.length > 0) {
+            data.results.forEach((acc) => {
+              this.processAccount(acc)
+            })
           }
+        } catch (error) {
+          console.log(error)
+        }
         return hex
       },
       async loadSankeyDiagram(hex: string) {
@@ -803,54 +776,54 @@ export const useMainStore = defineStore('tonexp', {
             }
             const query = getQueryString(fullReq, true);
             // get aggregated message data for account
-              const { data } = await apiRequest(`/messages/aggregated?${query}`, 'GET')
-              const parsed = parseJson<SankeyAPI>(data, (key, value, context) => value);
-              if (parsed) {
-                let receivedCount = [] as SankeyCell[]
-                let receivedAmount = [] as SankeyCell[]
-                if (parsed.received_count > 0 && parsed.received_from_address) {
-                  parsed.received_from_address.filter(item => item.sender).forEach(item => {
-                    if (!(truncString(item.sender.base64) in this.sankeyAddressMap)) this.sankeyAddressMap[truncString(item.sender.base64, 5, 4)] = item.sender.hex
-                    receivedCount.push([ truncString(item.sender.base64, 5, 4), "This account", item.count])
-                    receivedAmount.push([ truncString(item.sender.base64, 5, 4), "This account", Number(shortTON(item.amount))])
-                  })
-                }
-                let sentCount = [] as SankeyCell[]
-                let sentAmount = [] as SankeyCell[]
-                if (parsed.sent_count > 0 && parsed.sent_to_address) {
-                  parsed.sent_to_address.filter(item => item.receiver).forEach(item => {
-                    if (!(truncString(item.receiver.base64) in this.sankeyAddressMap)) this.sankeyAddressMap[truncString(item.receiver.base64, 5, 5)] = item.receiver.hex
-                    sentCount.push([ "This account", truncString(item.receiver.base64, 5), item.count])
-                    sentAmount.push([ "This account", truncString(item.receiver.base64, 5), Number(shortTON(item.amount))])
-                  })
-                }
-                if (receivedCount.length > 0) receivedCount = receivedCount.sort((a, b) => b[2] - a[2]).slice(0, 10)
-                if (sentCount.length > 0) sentCount = sentCount.sort((a, b) => b[2] - a[2]).slice(0, 10)
-       
-                this.sankeyCount[hex] = {
-                  data: [...receivedCount,...sentCount],
-                  sentTotal: parsed.sent_count,
-                  sentTop: sentCount.length > 0 ? sentCount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0) : 0,
-                  receivedTotal: parsed.received_count,
-                  receivedTop: receivedCount.length > 0 ? receivedCount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0) : 0
-                } 
+            const { data } = await useApiRequest<SankeyAPI>(`/messages/aggregated?${query}`, 'GET')
+
+            if (data) {
+              let receivedCount = [] as SankeyCell[]
+              let receivedAmount = [] as SankeyCell[]
+              if (data.received_count > 0 && data.received_from_address) {
+                data.received_from_address.filter(item => item.sender).forEach(item => {
+                  if (!(truncString(item.sender.base64) in this.sankeyAddressMap)) this.sankeyAddressMap[truncString(item.sender.base64, 5, 4)] = item.sender.hex
+                  receivedCount.push([ truncString(item.sender.base64, 5, 4), "This account", item.count])
+                  receivedAmount.push([ truncString(item.sender.base64, 5, 4), "This account", Number(shortTON(item.amount))])
+                })
+              }
+              let sentCount = [] as SankeyCell[]
+              let sentAmount = [] as SankeyCell[]
+              if (data.sent_count > 0 && data.sent_to_address) {
+                data.sent_to_address.filter(item => item.receiver).forEach(item => {
+                  if (!(truncString(item.receiver.base64) in this.sankeyAddressMap)) this.sankeyAddressMap[truncString(item.receiver.base64, 5, 5)] = item.receiver.hex
+                  sentCount.push([ "This account", truncString(item.receiver.base64, 5), item.count])
+                  sentAmount.push([ "This account", truncString(item.receiver.base64, 5), Number(shortTON(item.amount))])
+                })
+              }
+              if (receivedCount.length > 0) receivedCount = receivedCount.sort((a, b) => b[2] - a[2]).slice(0, 10)
+              if (sentCount.length > 0) sentCount = sentCount.sort((a, b) => b[2] - a[2]).slice(0, 10)
+      
+              this.sankeyCount[hex] = {
+                data: [...receivedCount,...sentCount],
+                sentTotal: data.sent_count,
+                sentTop: sentCount.length > 0 ? sentCount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0) : 0,
+                receivedTotal: data.received_count,
+                receivedTop: receivedCount.length > 0 ? receivedCount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0) : 0
+              } 
 
 
-                if (receivedAmount.length > 0) receivedAmount = receivedAmount.sort((a, b) => b[2] - a[2]).slice(0, 10)
-                if (sentAmount.length > 0) sentAmount = sentAmount.sort((a, b) => b[2] - a[2]).slice(0, 10)
-                
-                this.sankeyAmount[hex] = { 
-                  data : [...receivedAmount, ...sentAmount],
-                  sentTotal: Number(fullTON(parsed.sent_ton_amount)),
-                  sentTop: sentAmount.length > 0 ? sentAmount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0) : 0,
-                  receivedTotal: Number(fullTON(parsed.received_ton_amount)),
-                  receivedTop: receivedAmount.length > 0 ? receivedAmount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0) : 0
-                }
+              if (receivedAmount.length > 0) receivedAmount = receivedAmount.sort((a, b) => b[2] - a[2]).slice(0, 10)
+              if (sentAmount.length > 0) sentAmount = sentAmount.sort((a, b) => b[2] - a[2]).slice(0, 10)
+              
+              this.sankeyAmount[hex] = { 
+                data : [...receivedAmount, ...sentAmount],
+                sentTotal: Number(fullTON(data.sent_ton_amount)),
+                sentTop: sentAmount.length > 0 ? sentAmount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0) : 0,
+                receivedTotal: Number(fullTON(data.received_ton_amount)),
+                receivedTop: receivedAmount.length > 0 ? receivedAmount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0) : 0
+              }
 
-              } else return null
-            } catch (error) {
-              console.log(error)
-            }
+            } else return null
+          } catch (error) {
+            console.log(error)
+          }
           if (loadAmountFlag) {
             try {
               const fullReq: MockType = {
@@ -860,18 +833,18 @@ export const useMainStore = defineStore('tonexp', {
               }
               const query = getQueryString(fullReq, true);
               // get aggregated message data for account
-              const { data } = await apiRequest(`/messages/aggregated?${query}`, 'GET')
-              const parsed = parseJson<SankeyAPI>(data, (key, value, context) => value);
-              if (parsed) {
+              const { data } = await useApiRequest<SankeyAPI>(`/messages/aggregated?${query}`, 'GET')
+
+              if (data) {
                 let receivedAmount = [] as SankeyCell[]
-                if (parsed.received_count > 0 && parsed.received_from_address) {
-                  parsed.received_from_address.filter(item => item.sender).forEach(item => {
+                if (data.received_count > 0 && data.received_from_address) {
+                  data.received_from_address.filter(item => item.sender).forEach(item => {
                     receivedAmount.push([ truncString(item.sender.base64, 5, 4), "This account", Number(shortTON(item.amount))])
                   })
                 }
                 let sentAmount = [] as SankeyCell[]
-                if (parsed.sent_count > 0 && parsed.sent_to_address) {
-                  parsed.sent_to_address.filter(item => item.receiver).forEach(item => {
+                if (data.sent_count > 0 && data.sent_to_address) {
+                  data.sent_to_address.filter(item => item.receiver).forEach(item => {
                     sentAmount.push([ "This account", truncString(item.receiver.base64, 5), Number(shortTON(item.amount))])
                   })
                 }
@@ -881,11 +854,10 @@ export const useMainStore = defineStore('tonexp', {
 
                 this.sankeyAmount[hex] = { 
                   data : [...receivedAmount, ...sentAmount],
-                  sentTotal: Number(fullTON(parsed.sent_ton_amount)),
+                  sentTotal: Number(fullTON(data.sent_ton_amount)),
                   sentTop: sentAmount.length > 0 ? sentAmount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0) : 0,
-                  receivedTotal: Number(fullTON(parsed.received_ton_amount)),
-                  receivedTop: receivedAmount.length > 0 ? receivedAmount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0) : 0,
-                  
+                  receivedTotal: Number(fullTON(data.received_ton_amount)),
+                  receivedTop: receivedAmount.length > 0 ? receivedAmount.reduce((accumulator, object) => { return accumulator + object[2]; }, 0) : 0
                 }
 
               } else return null
@@ -899,23 +871,22 @@ export const useMainStore = defineStore('tonexp', {
         this.loadNextNFTFlag = false
         if (hex in this.accountBases) hex = this.accountBases[hex]
         if (!(hex in this.accounts))
-          try {
+        try {
           const fullReq: MockType = {
             address: hex,
             latest: true
           }
           const query = getQueryString(fullReq, true);
           // get latest account state
-            const { data } = await apiRequest(`/accounts?${query}`, 'GET')
-            const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
-                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            if (parsed.results && parsed.results.length > 0) {
-              this.processAccount(parsed.results[0])
-              if (hex !== parsed.results[0].address.hex) hex = parsed.results[0].address.hex
-            } else return null
-          } catch (error) {
-            console.log(error)
-          }
+          const { data } = await useApiRequest<AccountAPIData>(`/accounts?${query}`, 'GET')
+
+          if (data.results && data.results.length > 0) {
+            this.processAccount(data.results[0])
+            if (hex !== data.results[0].address.hex) hex = data.results[0].address.hex
+          } else return null
+        } catch (error) {
+          console.log(error)
+        }
         if (this.accounts[hex]?.loaded || !preload) return hex
 
         // load account statistics
@@ -926,18 +897,17 @@ export const useMainStore = defineStore('tonexp', {
           }
           const query = getQueryString(fullReq, true);
           // get latest account state
-          const { data } = await apiRequest(`/accounts/aggregated?${query}`, 'GET')
-          const parsed = parseJson<AccountAPIStats>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (Object.keys(parsed).length !== 0) {
-            if (parsed.transactions_count) {
-              this.accounts[hex].transaction_amount = parsed.transactions_count
+          const { data } = await useApiRequest<AccountAPIStats>(`/accounts/aggregated?${query}`, 'GET')
+
+          if (Object.keys(data).length !== 0) {
+            if (data.transactions_count) {
+              this.accounts[hex].transaction_amount = data.transactions_count
             }
-            if (parsed.owned_jetton_wallets) {
-              this.accounts[hex].jetton_amount = parsed.owned_jetton_wallets
+            if (data.owned_jetton_wallets) {
+              this.accounts[hex].jetton_amount = data.owned_jetton_wallets
             }
-            if (parsed.owned_nft_items) {
-              this.accounts[hex].nft_amount = parsed.owned_nft_items
+            if (data.owned_nft_items) {
+              this.accounts[hex].nft_amount = data.owned_nft_items
             }
           }
         } catch (error) {
@@ -955,22 +925,21 @@ export const useMainStore = defineStore('tonexp', {
             limit
           }
           const query = getQueryString(fullReq, true);
-          const { data } = await apiRequest(`/accounts/aggregated?${query}`, 'GET')
-          const parsed = parseJson<HoldersAPI>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-          if (parsed.items && parsed.owned_items) {
+          const { data } = await useApiRequest<HoldersAPI>(`/accounts/aggregated?${query}`, 'GET')
+
+          if (data.items && data.owned_items) {
             this.nftHolders[hex] = {
-              items: parsed.items,
-              owned_items: parsed.owned_items,
-              owners_count: parsed.owners_count
+              items: data.items,
+              owned_items: data.owned_items,
+              owners_count: data.owners_count
             }
           }
 
-          if (parsed.wallets) {
+          if (data.wallets) {
             this.jettonHolders[hex] = {
-              wallets: parsed.wallets,
-              total_supply: parsed.total_supply,
-              owned_balance: parsed.owned_balance
+              wallets: data.wallets,
+              total_supply: data.total_supply,
+              owned_balance: data.owned_balance
             }
           }
 
@@ -992,16 +961,14 @@ export const useMainStore = defineStore('tonexp', {
 
           const query = getQueryString(req, true);
           // get latest account state
-          const { data } = await apiRequest(`/accounts?${query}`, 'GET')
-          const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          const { data } = await useApiRequest<AccountAPIData>(`/accounts?${query}`, 'GET')
 
-          this.accounts[account].jetton_amount = parsed.total
+          this.accounts[account].jetton_amount = data.total
           if (!seqOffset) this.accounts[account].jetton_wallets = []
 
-          if (parsed.results && parsed.results.length > 0) {
+          if (data.results && data.results.length > 0) {
             const metaReq = [] as AccountKey[]
-            parsed.results.forEach((acc: AccountAPI) => {
+            data.results.forEach((acc: AccountAPI) => {
               const acc_key = this.processAccount(acc)
 
               const minter = acc.minter_address
@@ -1031,16 +998,14 @@ export const useMainStore = defineStore('tonexp', {
 
           const query = getQueryString(req, true);
           // get latest account state
-          const { data } = await apiRequest(`/accounts?${query}`, 'GET')
-          const parsed = parseJson<AccountAPIData>(data, (key, value, context) => (
-              (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
+          const { data } = await useApiRequest<AccountAPIData>(`/accounts?${query}`, 'GET')
 
-          minterFlag ? this.accounts[account].minted_amount = parsed.total : this.accounts[account].nft_amount = parsed.total
+          minterFlag ? this.accounts[account].minted_amount = data.total : this.accounts[account].nft_amount = data.total
           if (!seqOffset) minterFlag ? this.accounts[account].minted_nfts = [] : this.accounts[account].owned_nfts = []
 
-          if (parsed.results && parsed.results.length > 0) {
+          if (data.results && data.results.length > 0) {
             const metaReq = [] as AccountKey[]
-            parsed.results.forEach((acc: AccountAPI) => {
+            data.results.forEach((acc: AccountAPI) => {
               const acc_key = this.processAccount(acc)
 
               const minter = acc.minter_address
@@ -1063,32 +1028,32 @@ export const useMainStore = defineStore('tonexp', {
             address: [...new Set(hex)]
           }
           const query = getQueryArrayString(fullReq, true);
-          // get latest account state
-            const { data } = await apiRequest(`/metadata?${query}`, 'GET', {}, useRuntimeConfig().public.tonMeta)
-            const parsed = parseJson<MetadataAPIData>(data, (key, value, context) => (
-                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            if (parsed.results && parsed.results.length > 0)
-              parsed.results.forEach((meta: MetadataAPI) => {
-                this.metadata[meta.address.hex] = {
-                  name: meta.name ?? truncString(meta.address.base64, 5),
-                  symbol: meta.symbol ?? meta.name ?? '',
-                  image_url: meta.server_error ? "" : (meta.image_url ?? ''),
-                  decimals: meta.decimals ?? 9,
-                  description: meta.description ?? 'No description'
-                }
-              })
-              hex.filter(item => !(item in this.metadata)).forEach(item => {
-                this.metadata[item] = {
-                  name: "Not found",
-                  symbol:'',
-                  image_url: "",
-                  decimals: 9,
-                  description: "Not found"
-                }
-              })
-          } catch (error) {
-            console.log(error)
+          // rare v1 api call
+          const { data } = await useApiRequest<MetadataAPIData>(`/metadata?${query}`, 'GET', {}, useRuntimeConfig().public.tonMeta)
+
+          if (data.results && data.results.length > 0) {
+            data.results.forEach((meta: MetadataAPI) => {
+              this.metadata[meta.address.hex] = {
+                name: meta.name ?? truncString(meta.address.base64, 5),
+                symbol: meta.symbol ?? meta.name ?? '',
+                image_url: meta.server_error ? "" : (meta.image_url ?? ''),
+                decimals: meta.decimals ?? 9,
+                description: meta.description ?? 'No description'
+              }
+            })
           }
+          hex.filter(item => !(item in this.metadata)).forEach(item => {
+            this.metadata[item] = {
+              name: "Not found",
+              symbol:'',
+              image_url: "",
+              decimals: 9,
+              description: "Not found"
+            }
+          })
+        } catch (error) {
+          console.log(error)
+        }
         return hex
       },
       async search(req: BlockSearch | TxSearch | AccSearch | LabelSearch | null, limit : number = 20, useLastSearch: boolean = false, offset? : number): Promise<Search> {
@@ -1110,14 +1075,12 @@ export const useMainStore = defineStore('tonexp', {
               offset
             }
             const query = getQueryString(fullReq, true);
-              // get latest account state
-            const { data } = await apiRequest(`/labels?${query}`, 'GET')
-            const parsed = parseJson<SearchAPIData>(data, (key, value, context) => (
-                (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-            this.totalQuerySearch = parsed.total
+            const { data } = await useApiRequest<SearchAPIData>(`/labels?${query}`, 'GET')
+
+            this.totalQuerySearch = data.total
             if (this.lastSearch?.value !== req.value) out = []
-            if (parsed.results && parsed.results.length > 0) {
-              parsed.results.forEach((acc: SearchAPI) => {
+            if (data.results && data.results.length > 0) {
+              data.results.forEach((acc: SearchAPI) => {
                 out.push({
                   type: 'label',
                   value: acc.address.hex,
@@ -1200,15 +1163,16 @@ export const useMainStore = defineStore('tonexp', {
         return out
       },
       async loadDashboards(slug: dashboardName) {
-        const { data } = await apiRequest(`/dashboard/${slug}/charts`, 'GET', {}, useRuntimeConfig().public.tonSuperset)
-        const parsed = parseJson<DashboardAPIData>(data, (key, value, context) => value)
-        parsed.result.forEach(item => {
+
+        const { data } = await useApiRequest<DashboardAPIData>(`/dashboard/${slug}/charts`, 'GET', {}, useRuntimeConfig().public.tonSuperset)
+            
+        data.result.forEach(item => {
           this.chartXs[item.form_data.slice_id.toString()] = item.form_data.x_axis ?? 'timestamp' 
           this.chartNames[item.form_data.slice_id.toString()] = item.slice_name 
         })
-        if (slug === 'telemint') this.telemintDashboard = [...parsed.result]
-        else if (slug === 'cex') this.cexDashboard = [...parsed.result]
-        else this.bridgeDashboard = [...parsed.result]
+        if (slug === 'telemint') this.telemintDashboard = [...data.result]
+        else if (slug === 'cex') this.cexDashboard = [...data.result]
+        else this.bridgeDashboard = [...data.result]
       },
       async fetchChart(req: StoredMetricReq | StoredChartReq | StoredTableReq) {
         try {
@@ -1230,13 +1194,13 @@ export const useMainStore = defineStore('tonexp', {
                 "val": "3000"
               }
             ]
-            const { data } = await apiRequest(`/chart/data`, 'POST', {}, useRuntimeConfig().public.tonSuperset, req.req)
-            const parsed = parseJson<ChartAPIData>(data, (key, value, context) => value);
+            const { data } = await useApiRequest<ChartAPIData>(`/chart/data`, 'POST', {}, useRuntimeConfig().public.tonSuperset, req.req)
+        
             const result: StoredChartData = {
               slice_id: req.req.form_data.slice_id.toString(),
               type: req.type,
-              colnames: parsed.result[0].colnames,
-              data: parsed.result[0].data
+              colnames: data.result[0].colnames,
+              data: data.result[0].data
             }
             return result
         } catch (err) {

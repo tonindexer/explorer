@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { blockKeyDegen } from '~/utils/filters';
 
 const route = useRoute()
 const store = useMainStore()

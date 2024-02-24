@@ -21,7 +21,7 @@ const itemCount = ref(props.defaultLength)
         </thead>
         <tbody>
             <template v-for="acc in keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <template v-if="!(acc in badAddresses)">
+                <template v-if="!(acc in specialAccounts)">
                     <tr v-if="!isMobile()">
                         <td> 
                             <NuxtLink :to="{ name: 'accounts-hex', params: { hex: acc }, hash: '#overview'}" class="uk-text-primary">
@@ -39,17 +39,17 @@ const itemCount = ref(props.defaultLength)
                         </td>
                     </tr>
                 </template>
-                <template v-else-if="acc in badAddresses">
+                <template v-else-if="acc in specialAccounts">
                     <tr v-if="!isMobile()">
                         <td style="text-wrap: nowrap;"> 
-                            <AtomsAddressField :addr="{ hex: badAddresses[acc].hex, base64: badAddresses[acc].base64 }" :break_word="false"/>
+                            <AtomsAddressField :addr="{ hex: specialAccounts[acc].hex, base64: specialAccounts[acc].base64 }" :break_word="false"/>
                         </td>
                         
                         <td class="uk-text-right">Unloaded</td>
                         <td class="uk-text-right">-</td>
                     </tr>
                     <tr v-else>
-                        <AtomsAddressField :addr="{ hex: badAddresses[acc].hex, base64: badAddresses[acc].base64 }" :break_word="false"/>
+                        <AtomsAddressField :addr="{ hex: specialAccounts[acc].hex, base64: specialAccounts[acc].base64 }" :break_word="false"/>
                     </tr>
                 </template>
             </template>

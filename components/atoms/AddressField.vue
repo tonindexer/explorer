@@ -23,9 +23,9 @@ const accName = computed(() => {
             {{ $t('general.empty') }}
         </div> 
     </template>
-    <template v-else-if="addr.hex in badAddresses"> 
+    <template v-else-if="addr.hex in specialAccounts"> 
         <NuxtLink class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: addr.base64 }, hash: '#overview'} " :style="(link_style ? link_style : '') + ';' + (break_word ? 'word-break: break-all;': '')">
-            {{ badAddresses[addr.hex].name }}
+            {{ specialAccounts[addr.hex].name }}
         </NuxtLink>
     </template>
     <template v-else> 

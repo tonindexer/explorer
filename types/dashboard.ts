@@ -28,11 +28,11 @@ declare global {
         }
     }
 
-    interface MetricQueryAPIRequest extends BaseQueryAPIRequest {
+    type MetricQueryAPIRequest = BaseQueryAPIRequest & {
         metrics: Object[] // [form_data.metric]
     }
 
-    interface ChartQueryAPIRequest extends BaseQueryAPIRequest {
+    type ChartQueryAPIRequest = BaseQueryAPIRequest & {
         metrics: Array<Object | string> // form_data.metrics
         orderby: Array<string | Object | boolean>[] // ...form_data.metrics then append false and wrap into array
         row_limit: number // form_data.row_limit
@@ -41,7 +41,7 @@ declare global {
         filters?: Object[]
     }
 
-    interface TableQueryAPIRequest extends BaseQueryAPIRequest {
+    type TableQueryAPIRequest = BaseQueryAPIRequest & {
         orderby: Array<string | Object | boolean>[]
         row_limit: number // form_data.row_limit
         row_offset: number
@@ -54,11 +54,11 @@ declare global {
         dashboardId: number // 3 for 'telemint', 2 for 'cex', 6 for 'bridge'
     }
 
-    interface MetricFormDataAPIRequest extends BaseFormDataAPIRequest {
+    type MetricFormDataAPIRequest = BaseFormDataAPIRequest & {
         metric: Object // form_data.metric
     }
 
-    interface ChartFormDataAPIRequest extends BaseFormDataAPIRequest {
+    type ChartFormDataAPIRequest = BaseFormDataAPIRequest & {
         metrics: Array<Object | string> // form_data.metrics
         groupby: Array<ChartColumnObject | string> | string // form_data.groupby
         row_limit: number // form_data.row_limit
@@ -67,7 +67,7 @@ declare global {
         show_empty_columns: boolean // form_data.show_empty_columns
     }
 
-    interface TableFormDataAPIRequest extends BaseFormDataAPIRequest {
+    type TableFormDataAPIRequest = BaseFormDataAPIRequest & {
         groupby: Array<ChartColumnObject | string> // form_data.groupby
         all_columns: Array<ChartColumnObject | string> // form_data.all_column
         row_limit: number // form_data.row_limit

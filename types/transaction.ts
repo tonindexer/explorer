@@ -51,7 +51,7 @@ declare global {
         created_lt: bigint
     }
 
-    interface TransactionAPI extends Omit<Transaction, 'account_key' | 'in_msg_key' | 'out_msg_keys' | 'base64' | 'full_fees' | 'msg_fees'> {
+    type TransactionAPI = Omit<Transaction, 'account_key' | 'in_msg_key' | 'out_msg_keys' | 'base64' | 'full_fees' | 'msg_fees'> & {
         account?: Account | null // '?' for mapping the interface
         in_msg?: MessageAPI | null // '?' for mapping the interface
         out_msg?: MessageAPI[] | null

@@ -30,7 +30,7 @@ declare global {
         loaded: boolean
     }
 
-    interface BlockAPI extends Omit<Block, 'master_key' | 'shard_keys' | 'transaction_keys' | 'loaded'> {
+    type BlockAPI = Omit<Block, 'master_key' | 'shard_keys' | 'transaction_keys' | 'loaded'> & {
         master?: BlockID | null
         shards?: BlockAPI[] | null
         transactions?: TransactionAPI[] | null

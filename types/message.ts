@@ -60,7 +60,7 @@ declare global {
         created_lt: bigint
     }
 
-    interface MessageAPI extends Omit<Message, 'src_state_key' | 'dst_state_key' | 'src_tx_key' | 'dst_tx_key' | 'direction'> {
+    type MessageAPI = Omit<Message, 'src_state_key' | 'dst_state_key' | 'src_tx_key' | 'dst_tx_key' | 'direction'> & {
         src_state?: Account | null // '?' for mapping the interface
         dst_state?: Account | null // '?' for mapping the interface
     }

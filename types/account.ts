@@ -38,7 +38,7 @@ declare global {
         jetton_balance?: bigint
     }
 
-    interface Account extends NFTContentData, FTWalletData {
+    type Account = NFTContentData & FTWalletData & {
 
         address: Address
         label?: AddressLabel
@@ -89,15 +89,14 @@ declare global {
         loaded: boolean
     }
 
-    interface AccountAPI extends Omit<Account, 'jetton_wallets' | 
-        'minted_nfts' | 'transaction_keys' | 'jetton_amount' | 'nft_amount' | 'minted_amount' | 'transaction_amount'> {}
+    type AccountAPI = Omit<Account, 'jetton_wallets' | 'minted_nfts' | 'transaction_keys' | 'jetton_amount' | 'nft_amount' | 'minted_amount' | 'transaction_amount'>
 
     type AccountAPIData = {
         total: number
         results: AccountAPI[]
     }
 
-    interface AccountAPIStats extends HoldersAPI {
+    type AccountAPIStats = HoldersAPI & {
         owned_jetton_wallets?: number
         owned_nft_collections?: number
         owned_nft_items?: number
@@ -185,7 +184,7 @@ declare global {
         [key: AccountKey] : JettonHolder
     }
 
-    interface HoldersAPI extends NFTHolder, JettonHolder {}
+    type HoldersAPI = NFTHolder & JettonHolder
 
     // Sankey
     type SankeyCell = [ string, string, number ] // from, to, size
