@@ -24,7 +24,7 @@ const getMethods = computed(() => account.value?.executed_get_methods && Object.
 const sankeyType = ref("count")
 
 const selectedRoute = ref('')
-const selectedTab = ref('info')
+const selectedTab = ref<'info' | 'get_methods'>('info')
 const selectedCategory = ref('')
 
 const parentMap = {
@@ -142,10 +142,12 @@ watch(() => props.hex, async() => await reloadInfo())
                     v-model:selected="selectedTab"
                     :set-route="false"
                     :routes="tabs"
+                    :keep-desktop="true"
                 />
             </template>
             <template #body>
-                <AccountsPropsTable :acc="account"/>
+                <AccountsPropsTable v-if="selectedTab === 'info'" :acc="account"/>
+                <AccountsGetMethods v-else-if="selectedTab === 'get_methods'" :methods="getMethods"/>
             </template>
         </AtomsTile>
         <AtomsTile v-if="categories.length" :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">

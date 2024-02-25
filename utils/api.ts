@@ -10,10 +10,9 @@ type QueryArray = {
 export function getQueryString (query: Query, caseSensitive: boolean) {
     if (!query) return ''
     return Object.keys(query).reduce((acc, key) => {
-      if (query[key]=== null && key === 'is_active') return acc
-      if ((!query[key] && !isNumeric(query[key])) && !['is_active','broadcast'].includes(key)) return acc
+      if (!query[key] && !isNumeric(query[key])) return acc
       const queryStr = caseSensitive ? String(query[key]) : String(query[key]).toLowerCase()
-      const res = key === 'search_fields' ? queryStr : encodeURIComponent(queryStr)
+      const res = encodeURIComponent(queryStr)
       if (!res) return acc
       acc = acc ? acc + '&' : acc
       return acc + key + '=' + res
@@ -23,8 +22,7 @@ export function getQueryString (query: Query, caseSensitive: boolean) {
 export function getQueryArrayString (query: QueryArray, caseSensitive: boolean) {
   if (!query) return ''
   return Object.keys(query).reduce((acc, key) => {
-    if (query[key]=== null && key === 'is_active') return acc
-    if ((!query[key] && !isNumeric(query[key])) && !['is_active','broadcast'].includes(key)) return acc
+    if (!query[key] && !isNumeric(query[key])) return acc
     if (query[key] instanceof Array) {
       const arr = query[key]
       if (Array.isArray(arr)) {
@@ -39,7 +37,7 @@ export function getQueryArrayString (query: QueryArray, caseSensitive: boolean) 
       return ""
     } else {
       const queryStr = caseSensitive ? String(query[key]) : String(query[key]).toLowerCase()
-      const res = key === 'search_fields' ? queryStr : encodeURIComponent(queryStr)
+      const res = encodeURIComponent(queryStr)
       if (!res) return acc
       acc = acc ? acc + '&' : acc
       return acc + key + '=' + res

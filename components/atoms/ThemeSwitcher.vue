@@ -39,7 +39,6 @@ const setColorTheme = () => colorMode.preference = colorMode.value !== 'dark' ? 
 <style scoped lang="scss">
 .theme-switcher {
     margin-top: 32px;
-    margin-left: 2px;
     background-color: var(--color-bg-hovered);
     border-radius: 30px;
     display: flex;
@@ -47,6 +46,7 @@ const setColorTheme = () => colorMode.preference = colorMode.value !== 'dark' ? 
     cursor: pointer;
     position: relative;
     &.vertical {
+        margin-left: 2px;
         flex-direction: column;
         &:not(.dark) {
             &::before {

@@ -1,17 +1,3 @@
-export const convertBase64ToHex = (value: string) => {
-    if (process.server) {
-        return Buffer.from(value, 'base64').toString('hex');
-    } else {
-        const raw = atob(value);
-        let result = '';
-        for (let i = 0; i < raw.length; i++) {
-            const hex = raw.charCodeAt(i).toString(16);
-            result += (hex.length === 2 ? hex : '0' + hex);
-        }
-        return result
-    }
-}
-
 export const blockKeyGen = (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`
 
 export const blockKeyDegen = (key: string) : { workchain: number, shard: bigint, seq_no: number } | null => {
@@ -35,3 +21,5 @@ export const blockKeyDegen = (key: string) : { workchain: number, shard: bigint,
     else return null
     return out
 }
+
+export const colorAmount = (ton : bigint) => BigInt(ton) > 0n ? 'green' : BigInt(ton) === 0n ? '' : 'red'

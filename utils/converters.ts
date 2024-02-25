@@ -65,7 +65,18 @@ export const formatTons = function formatNanoTonsLimitNumberLength(value: number
 
 export const opToHex = (op: number) => `0x${op.toString(16)}`
 
-export const colorAmount = (ton : bigint) => BigInt(ton) > 0n ? 'green' : BigInt(ton) === 0n ? '' : 'red'
-
 export const CEXAddress = (input: string) => input[0] === 'f' ? ('-1:' + input.substring(2)) : input.substring(0, 1) + ':' + input.substring(2)
 
+export const convertBase64ToHex = (value: string) => {
+    if (process.server) {
+        return Buffer.from(value, 'base64').toString('hex');
+    } else {
+        const raw = atob(value);
+        let result = '';
+        for (let i = 0; i < raw.length; i++) {
+            const hex = raw.charCodeAt(i).toString(16);
+            result += (hex.length === 2 ? hex : '0' + hex);
+        }
+        return result
+    }
+}

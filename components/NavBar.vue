@@ -179,9 +179,11 @@ const external = [
                 <AtomsThemeSwitcher :vertical="false"/>
             </ClientOnly>
 
-            <a class="locale" :class="{ 'active' : locale === 'en' }" @click.prevent.stop="setLocale('en')" style="cursor: pointer; line-height: 40px;">En</a>
-            {{ ' | ' }}
-            <a class="locale" :class="{ 'active' : locale === 'ru' }" @click.prevent.stop="setLocale('ru')" style="cursor: pointer; line-height: 40px;">Ru</a>
+            <div class="uk-text-center">
+                <a class="locale" :class="{ 'active' : locale === 'en' }" @click.prevent.stop="setLocale('en')" style="cursor: pointer; line-height: 40px;">En</a>
+                {{ ' | ' }}
+                <a class="locale" :class="{ 'active' : locale === 'ru' }" @click.prevent.stop="setLocale('ru')" style="cursor: pointer; line-height: 40px;">Ru</a>
+            </div>
         </div>
     </nav>
 </template>

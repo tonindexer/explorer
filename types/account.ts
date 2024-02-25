@@ -129,14 +129,16 @@ declare global {
         results: MetadataAPI[] | null
     }
 
+    type Metadata = {
+        description: string
+        decimals: number
+        name: string
+        image_url: string
+        symbol: string
+    }
+
     type MetadataMap = {
-        [key: AccountKey] : {
-            description: string
-            decimals: number
-            name: string
-            image_url: string
-            symbol: string
-        }
+        [key: AccountKey] : Metadata
     }
 
     type MetadataRelations = {

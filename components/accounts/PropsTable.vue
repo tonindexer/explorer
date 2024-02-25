@@ -22,7 +22,7 @@ const showFull = ref(false)
 </script>
 
 <template>
-    <table class="uk-table uk-table-middle uk-margin-remove-top uk-table-striped">
+    <table class="uk-table uk-table-middle uk-margin-remove-vertical uk-table-striped">
         <tbody class="uk-table-divider">
             <tr v-if="acc.label && acc.label.name">
                 <AtomsPropLine :bold="true">

@@ -24,6 +24,12 @@ const nftMap = computed(() => store.getMetaItems(props.keys.slice(pageNum.value*
 const nftRelationsMap = computed(() => store.getMetaRelations(props.keys.slice(pageNum.value*itemCount.value, (pageNum.value + 1)*itemCount.value)))
 const loading = computed(() => props.keys.length === 0 && Object.keys(nftMap.value).length === 0)
 
+const parent = (accountKey: string | number) => {
+    if (store.metadata[nftRelationsMap.value[accountKey]?.minter?.hex]) {
+        return store.metadata[nftRelationsMap.value[accountKey].minter.hex]
+    } else return null
+}
+
 const setExtraFields = () => {
     if (props.keys.length > 0) {
         if (props.keys[0] in store.accounts) {
@@ -80,15 +86,18 @@ onMounted(async () => {
             <div class="uk-card">
                 <div class="uk-card-media-top">
                     <img style="border-radius: 8px;" v-if="nft.image_url" :src="nft.image_url" width="500" height="500" alt="">
-                    <img style="border-radius: 8px;" v-else src="@/assets/images/default.png" width="250" height="250" alt="">
-                    <div v-if="store.accounts[key]?.fake" class="uk-position-top-left uk-overlay uk-margin-small-top uk-margin-small-left uk-background-muted uk-text-danger uk-text-large uk-text-bold" style="padding: 0 5px">Fake</div>
+                    <div v-else class="uk-width-1-1 empty-image uk-background-default" style="border-radius: 8px;"/>
+                    <div v-if="store.accounts[key]?.fake" class="uk-position-top-left uk-overlay uk-margin-small-top uk-margin-small-left uk-background-transparent uk-text-danger uk-text-large uk-text-bold" style="padding: 0 5px">Fake</div>
                 </div>
-                <div class="uk-card-body uk-text-truncate uk-padding-small">
+                <div class="uk-card-body uk-text-truncate uk-padding-small uk-flex uk-flex-column">
                     <NuxtLink :to="{name: 'accounts-hex', params: {hex: key}, hash: '#overview'}" :uk-tooltip=" nft.name ? nft.name : 'No name'" class="uk-text-primary">
                         {{ nft.name ? nft.name : "No name" }}
                     </NuxtLink>
-                    <h4 class="uk-margin-remove-top uk-text-truncate" :uk-tooltip="store.metadata[nftRelationsMap[key]?.minter.hex]?.name ? store.metadata[nftRelationsMap[key].minter.hex].name : 'No collection'"> 
-                        {{ store.metadata[nftRelationsMap[key]?.minter.hex]?.name ? store.metadata[nftRelationsMap[key].minter.hex].name : 'No collection' }}
+                    <NuxtLink v-if="nftRelationsMap[key]?.minter?.hex" class="uk-h4 uk-margin-remove uk-text-truncate" :to="{name: 'accounts-hex', params: {hex: nftRelationsMap[key].minter.hex}, hash: '#overview'}" :uk-tooltip="parent(key)?.name ?? 'No collection'">
+                        {{ parent(key)?.name ?? 'No collection' }}
+                    </NuxtLink>
+                    <h4 v-else class="uk-text-truncate uk-margin-remove" :uk-tooltip="parent(key)?.name ?? 'No collection'"> 
+                        {{ parent(key)?.name ?? 'No collection' }}
                     </h4>
                 </div>
             </div>
@@ -107,5 +116,5 @@ onMounted(async () => {
             :left-disabled="pageNum === 0" 
             :right-disabled="lastPageFlag"
         />
-        </div>
+    </div>
 </template>

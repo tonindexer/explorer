@@ -1,8 +1,6 @@
-import { parseJson } from '@ton.js/json-parser';
-
 export const useMainStore = defineStore('tonexp', {
     state: () => ({
-      // Maps to store blocks / messages / transactions / accounts efficiently
+      // Objects to store blocks / messages / transactions / accounts
       blocks: {} as BlockMap,
       messages: {} as MessageMap,
       transactions: {} as TransactionMap,
@@ -1036,7 +1034,7 @@ export const useMainStore = defineStore('tonexp', {
               this.metadata[meta.address.hex] = {
                 name: meta.name ?? truncString(meta.address.base64, 5),
                 symbol: meta.symbol ?? meta.name ?? '',
-                image_url: meta.server_error ? "" : (meta.image_url ?? ''),
+                image_url: meta.server_error || meta.image_url === 'https://anton.tools/static/images/' ? '' : (meta.image_url ?? ''),
                 decimals: meta.decimals ?? 9,
                 description: meta.description ?? 'No description'
               }
