@@ -24,7 +24,7 @@ useSeoMeta({
 </script>
 
 <template>
-    <div v-if="!isMobile()" uk-grid class="uk-width-1-1 uk-height-1-1 uk-grid uk-margin-remove uk-background-default" style="column-gap: 24px; padding: 16px; position: relative;">
+    <div v-if="!isMobile()" uk-grid class="uk-width-1-1 uk-height-1-1 uk-grid uk-margin-remove uk-background-default uk-padding" style="column-gap: 24px; position: relative;">
         <NavBar />
         <main class="uk-padding-remove uk-margin-remove uk-flex uk-flex-column uk-width-expand">
             <AtomsSearchBar/>
@@ -32,7 +32,7 @@ useSeoMeta({
             <slot />
         </main>
     </div>
-    <div v-if="isMobile()" class="uk-width-1-1 uk-height-1-1 uk-flex uk-flex-column" style="column-gap: 24px; padding: 16px">
+    <div v-if="isMobile()" class="uk-width-1-1 uk-height-1-1 uk-flex uk-flex-column uk-padding" style="column-gap: 24px">
         <div class="uk-flex" style="align-items: center; column-gap: 16px;">
             <AtomsSearchBar/>
             <NavBar />

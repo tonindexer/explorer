@@ -12,7 +12,7 @@ const messageKeys = computed(() => store.getMessageKeys([props.trn.hash], true, 
 
 <template>
     <tr v-if="isMobile()">
-        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 16px">
+        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical uk-padding">
             <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
                 <NuxtLink :to="{ name: 'transactions-hash', params: { hash: toBase64Web(trn.hash) }, hash: '#overview'}" class="uk-text-emphasis">
                     {{ truncString(trn.hash, 5) }}

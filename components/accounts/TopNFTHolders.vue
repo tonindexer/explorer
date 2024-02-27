@@ -26,7 +26,7 @@ watch(itemCount, async() => {
 
 <template>
     <div v-if="keys.length >= 10" class="uk-flex uk-width-1-1 uk-align-left uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end;">
-        <div class="uk-flex uk-flex-middle">
+        <div class="uk-flex uk-flex-middle uk-margin-small-top uk-margin-small-right">
             <AtomsSelector 
                 v-model:item-count="itemCount"
                 :amount="null"
@@ -46,9 +46,9 @@ watch(itemCount, async() => {
         <tbody>
             <template v-for="acc in keys">
                 <tr v-if="isMobile()">
-                    <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 0;">
+                    <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical">
                         <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem" v-if="acc.owner_address">
-                            <NuxtLink :to="{ name: 'accounts-hex', params: { hex: toBase64Web(acc.owner_address.hex) }, hash: '#overview'}" class="uk-text-primary">
+                            <NuxtLink :to="{ name: 'accounts-hex', params: { hex: toBase64Web(acc.owner_address.hex) }, hash: '#overview'}" class="uk-text-emphasis">
                                 <div uk-icon="icon: link"></div>{{ truncString(acc.owner_address.base64, 25,0) }}
                             </NuxtLink>
                         </div>

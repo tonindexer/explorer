@@ -141,13 +141,13 @@ onMounted(() => {
                 <th class="uk-flex" style="position: relative; width: fit-content;" :class="{'dropdown-text filter-icon hover-header' : update && (route.path === '/transactions' || route.path === '/'), 'active' : workchain}">
                     {{ $t('ton.type')}}
                     <div class="dropdown-filter">
-                        <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary" style="padding: 8px 16px;">
+                        <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary uk-padding-small-vertical uk-padding-horizontal">
                             <label><input type="radio" :value="null" v-model="workchain" class="uk-radio uk-margin-small-right">{{ $t('options.both') }}</label>
                         </div>
-                        <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary" style="padding: 8px 16px;">
+                        <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary uk-padding-small-vertical uk-padding-horizontal">
                             <label><input type="radio" :value="'base'" v-model="workchain" class="uk-radio uk-margin-small-right">{{ $t('options.basechain') }}</label>
                         </div>
-                        <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary" style="padding: 8px 16px;">
+                        <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary uk-padding-small-vertical uk-padding-horizontal">
                             <label><input type="radio" :value="'main'" v-model="workchain" class="uk-radio uk-margin-small-right">{{ $t('options.masterchain') }}</label>
                         </div>
                     </div>
@@ -181,7 +181,7 @@ onMounted(() => {
                 </tbody>
         </template>
     </table>
-    <div v-show="!emptyTable && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end; padding-right: 12px;">
+    <div v-show="!emptyTable && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-vertical uk-padding-medium-right" style="justify-content: flex-end">
         <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile() && !hidden">
             <AtomsSelector 
                 v-model:item-count="itemCount"

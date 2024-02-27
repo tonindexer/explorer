@@ -132,7 +132,7 @@ declare global {
     type Metadata = {
         description: string
         decimals: number
-        name: string
+        name: string | null
         image_url: string
         symbol: string
     }

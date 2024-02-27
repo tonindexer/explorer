@@ -28,7 +28,13 @@ const component = computed(() => {
 
 
 <template>
-    <select v-if="isMobile() && !keepDesktop" :value="selected" aria-label="Select" @change="($event: Event) => $emit('update:selected', ($event.target as HTMLSelectElement).value)" class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary">
+    <select 
+        v-if="isMobile() && !keepDesktop" 
+        :value="selected" 
+        aria-label="Select" 
+        @change="($event: Event) => $emit('update:selected', ($event.target as HTMLSelectElement).value)" 
+        class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary"
+    >
         <option v-for="option in routes" :value="option.route">{{ $t(option.t) }}</option>
     </select>
     <div v-else

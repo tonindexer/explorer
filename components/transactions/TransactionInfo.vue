@@ -87,8 +87,8 @@ watch(() => props.hash, async() => await reloadInfo())
                 />
             </template>
             <template #body>
-                <div v-if="route.hash === '#messages' || route.hash === '#overview'" id="messages" style="padding: 0 12px">
-                    <h3 v-if="inMessageKeys.length > 0" class="uk-margin-remove uk-text-primary">
+                <div v-if="route.hash === '#messages' || route.hash === '#overview'" id="messages">
+                    <h3 v-if="inMessageKeys.length > 0" class="uk-margin-remove uk-text-primary uk-padding-remove-vertical uk-padding-medium-horizontal">
                         {{ $t('general.in_msg') + ` (${inMessageKeys.length})` }}
                     </h3>
                     <MessagesTable :show-link="true" :item-selector="false" :default-length="10" :update="false" :keys="inMessageKeys" :hidden="inMessageKeys.length === 0"/>
@@ -97,17 +97,17 @@ watch(() => props.hash, async() => await reloadInfo())
                     </h3>
                     <MessagesTable :show-link="true" :item-selector="false" :default-length="10" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
                 </div>
-                <div v-else-if="route.hash === '#accounts' && (loadedAccountKeys.length + unloadedAccountKeys.length > 0)" id="accounts" style="padding: 0 12px">
-                    <h3 v-if="loadedAccountKeys.length > 0" class="uk-margin-remove uk-text-primary">
+                <div v-else-if="route.hash === '#accounts' && (loadedAccountKeys.length + unloadedAccountKeys.length > 0)" id="accounts">
+                    <h3 v-if="loadedAccountKeys.length > 0" class="uk-margin-remove uk-text-primary uk-padding-remove-vertical uk-padding-medium-horizontal">
                         {{ $t('general.loaded_accs') + ` (${loadedAccountKeys.length})` }}
                     </h3>
                     <AccountsTable :default-length="10" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false"/>
-                    <h3 v-if="unloadedAccountKeys.length > 0" class="uk-margin-remove uk-text-primary">
+                    <h3 v-if="unloadedAccountKeys.length > 0" class="uk-margin-remove uk-text-primary uk-padding-remove-vertical uk-padding-medium-horizontal">
                         {{ $t('general.unloaded_accs') + ` (${unloadedAccountKeys.length})` }}
                     </h3>
                     <AccountsUnloadedTable :default-length="5" :keys="unloadedAccountKeys" :hidden="unloadedAccountKeys.length === 0"/>
                 </div>
-                <div v-else-if="route.hash === '#tree'" id="tx_tree" style="padding: 0 12px">
+                <div v-else-if="route.hash === '#tree'" id="tx_tree" class="uk-padding-remove-vertical uk-padding-medium-horizontal">
                     <GraphMessageTree :hash="hash"/>
                 </div>
             </template>

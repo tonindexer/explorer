@@ -8,7 +8,7 @@ defineProps<{
 
 
 <template>
-    <div class="uk-flex status-cell uk-text-primary uk-margin-remove" :class="status" style="gap: 4px; padding: 4px 8px; width: fit-content; border-radius: 8px;">
+    <div class="uk-flex status-cell uk-text-primary uk-margin-remove uk-padding-xsmall-vertical uk-padding-small-horizontal" :class="status" style="gap: 4px; width: fit-content; height: fit-content; border-radius: 8px;">
         <svg v-if="status === 'ACTIVE'" uk-svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M13.3307 4L5.9974 11.3333L2.66406 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -24,13 +24,13 @@ defineProps<{
         <svg v-else-if="status === 'NON_EXIST'" uk-svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
         </svg>
-        <div v-if="status === 'ACTIVE' || status === 'FROZEN' || status === 'UNINIT' || status === 'NON_EXIST'" class="uk-margin-remove uk-padding-remove" style="font-size: 16px;">
+        <div v-if="status === 'ACTIVE' || status === 'FROZEN' || status === 'UNINIT' || status === 'NON_EXIST'" class="uk-margin-remove uk-padding-remove">
             {{ status[0] + status.slice(1,).toLowerCase() }}
         </div>
-        <div v-else-if="status === 'EXTERNAL_IN' || status === 'EXTERNAL_OUT'" class="uk-margin-remove uk-padding-remove uk-text-nowrap" style="font-size: 16px;">
+        <div v-else-if="status === 'EXTERNAL_IN' || status === 'EXTERNAL_OUT'" class="uk-margin-remove uk-padding-remove uk-text-nowrap">
             {{ status.replaceAll('_', ' ').toLowerCase() }}
         </div>
-        <div v-else class="uk-margin-remove uk-padding-remove" style="font-size: 16px;">
+        <div v-else class="uk-margin-remove uk-padding-remove">
             {{ status.toLowerCase() }}
         </div>
     </div>

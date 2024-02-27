@@ -86,6 +86,7 @@
         "page" : "Page",
         "field" : "Field",
         "value": "Value",
+        "pie": "Pie",
         "items": "items of",
         "show" : "Showing",
         "in_msg" : "Messages In",
@@ -172,5 +173,14 @@
     "warning" : {
         "nothing_found" : "Nothing found",
         "first_tx": "None - This TX is first in the chain"
+    },
+    "time_ago": {
+        "just_now": "just now",
+        "s": "s ago",
+        "m": " min ago",
+        "h": "h ago",
+        "d": "d ago",
+        "mo": "mo ago",
+        "y": "y ago"
     }
 }

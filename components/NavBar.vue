@@ -97,7 +97,7 @@ const external = [
 </script>
 
 <template>
-    <nav v-if="!isMobile()" class="uk-background-primary uk-width-auto" style="padding: 12px; height: fit-content; border-radius: 12px; width: min-content; position: relative;">
+    <nav v-if="!isMobile()" class="uk-background-primary uk-width-auto uk-padding-medium" style="height: fit-content; border-radius: 12px; width: min-content; position: relative;">
         <div class="main-nav" style="align-items: center; min-width: max-content;">
                 <NuxtLink class="nav-logo uk-flex-center uk-flex" aria-label="main_page" :style="showFullMenu ? 'align-items: end; max-height: 40px' : ''" :to="'/'">
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -111,7 +111,7 @@ const external = [
             <div class="uk-flex uk-flex-column" style="row-gap: 8px; margin-top: 48px">
                 <div v-for="link of routes" style="height: 40px">
                     <NuxtLink :to="link.link" class="link uk-flex" :class="{ 'active' : route.name?.toString().includes(link.name)}">
-                        <div v-html="link.icon" style="padding: 8px"></div>
+                        <div class="uk-padding-small" v-html="link.icon"></div>
                         <Transition name="fade">
                             <div style="margin-left: 4px; margin-right: 8px;" v-show="showFullMenu">
                                 {{ $t(`route.${link.name}`) }}
@@ -123,7 +123,7 @@ const external = [
             <div class="uk-flex uk-flex-column" style="row-gap: 8px; margin-top: 150px;">
                 <div v-for="link of external" style="height: 40px">
                     <NuxtLink target="_blank" class="link uk-flex" :rel="link.name" :aria-label="link.name" :to="link.link"> 
-                        <div v-html="link.icon" style="padding: 8px"></div>
+                        <div class="uk-padding-small" v-html="link.icon"></div>
                         <Transition name="fade">
                             <div style="margin-left: 4px; margin-right: 8px;" v-show="showFullMenu">
                                 {{ link.name }}

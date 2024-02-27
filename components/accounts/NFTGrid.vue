@@ -87,16 +87,29 @@ onMounted(async () => {
                 <div class="uk-card-media-top">
                     <img style="border-radius: 8px;" v-if="nft.image_url" :src="nft.image_url" width="500" height="500" alt="">
                     <div v-else class="uk-width-1-1 empty-image uk-background-default" style="border-radius: 8px;"/>
-                    <div v-if="store.accounts[key]?.fake" class="uk-position-top-left uk-overlay uk-margin-small-top uk-margin-small-left uk-background-transparent uk-text-danger uk-text-large uk-text-bold" style="padding: 0 5px">Fake</div>
+                    <div v-if="store.accounts[key]?.fake" class="uk-position-top-left uk-overlay uk-margin-small-top uk-margin-small-left uk-background-transparent uk-padding-small-left uk-padding-xsmall-top  uk-text-danger uk-text-large uk-text-bold">Fake</div>
                 </div>
-                <div class="uk-card-body uk-text-truncate uk-padding-small uk-flex uk-flex-column">
-                    <NuxtLink :to="{name: 'accounts-hex', params: {hex: key}, hash: '#overview'}" :uk-tooltip=" nft.name ? nft.name : 'No name'" class="uk-text-primary">
+                <div class="uk-card-body uk-padding-remove uk-flex uk-flex-column">
+                    <NuxtLink 
+                        :to="{name: 'accounts-hex', params: {hex: key}, hash: '#overview'}" 
+                        :uk-tooltip="nft.name ? `title: ${nft.name}`: undefined" 
+                        class="uk-h4 uk-margin-remove uk-padding-medium-top uk-text-emphasis uk-text-truncate"
+                    >
                         {{ nft.name ? nft.name : "No name" }}
                     </NuxtLink>
-                    <NuxtLink v-if="nftRelationsMap[key]?.minter?.hex" class="uk-h4 uk-margin-remove uk-text-truncate" :to="{name: 'accounts-hex', params: {hex: nftRelationsMap[key].minter.hex}, hash: '#overview'}" :uk-tooltip="parent(key)?.name ?? 'No collection'">
+                    <NuxtLink 
+                        v-if="nftRelationsMap[key]?.minter?.hex" 
+                        :to="{name: 'accounts-hex', params: {hex: nftRelationsMap[key].minter.hex}, hash: '#overview'}" 
+                        :uk-tooltip="parent(key)?.name ? `title: ${parent(key)?.name}` : undefined"
+                        class="uk-h4 uk-text-primary uk-margin-remove uk-padding-small-top uk-text-truncate" 
+                    >
                         {{ parent(key)?.name ?? 'No collection' }}
                     </NuxtLink>
-                    <h4 v-else class="uk-text-truncate uk-margin-remove" :uk-tooltip="parent(key)?.name ?? 'No collection'"> 
+                    <h4 
+                        v-else 
+                        :uk-tooltip="parent(key)?.name ? `title: ${parent(key)?.name}` : undefined"
+                        class="uk-text-truncate uk-text-primary uk-padding-small-top uk-margin-remove" 
+                    > 
                         {{ parent(key)?.name ?? 'No collection' }}
                     </h4>
                 </div>

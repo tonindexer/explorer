@@ -32,7 +32,7 @@ const itemCount = ref(props.defaultLength)
                         <td class="uk-text-right">-</td>
                     </tr>
                     <tr v-else>
-                        <td style="padding: 0.5rem 0;"> 
+                        <td class="uk-padding-small-vertical uk-padding-remove-horizontal"> 
                             <NuxtLink :to="{ name: 'accounts-hex', params: { hex: acc }, hash: '#overview'}" class="uk-text-primary">
                                 {{ truncString(acc, 15) }}
                             </NuxtLink>

@@ -401,7 +401,7 @@ export default {
   position: relative;
   border: none !important;
   box-shadow: none !important;
-  padding: 20px 10px;
+  padding: 10px;
   flex-direction: column;
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */

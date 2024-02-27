@@ -90,7 +90,7 @@ onMounted(async () => {
     <div v-if="loading && data.length === 0" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right" :class="{'uk-width-1-3' : !isMobile()}" style="justify-content: end; padding-left: 12px;">
+    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right uk-padding-medium-left" :class="{'uk-width-1-3' : !isMobile()}" style="justify-content: end;">
         <label class="uk-margin-right uk-text-muted" for="profit_search">Search</label>
         <input class="uk-input uk-background-primary" v-model="filter" id="profit_search" type="text" placeholder="Anything..." aria-label="Search top profit traders">
     </div>
@@ -109,7 +109,7 @@ onMounted(async () => {
         <tbody>
             <tr v-for="tline of finalData.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                 <template v-if="isMobile()">
-                    <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
+                    <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical uk-padding-small-vertical uk-padding-medium-horizontal">
                         <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
                             <AtomsAddressField v-if="tline.trader in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader)"/>
                             <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.trader }, hash: '#overview'}">
@@ -155,7 +155,7 @@ onMounted(async () => {
             </tr>
         </tbody>
     </table>
-    <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
+    <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom uk-padding-medium-right" style="justify-content: flex-end;">
         <div class="uk-flex uk-flex-middle" v-if="!isMobile() && finalData.length > 0">
             <AtomsSelector 
                 v-model:item-count="itemCount"

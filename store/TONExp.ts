@@ -907,6 +907,9 @@ export const useMainStore = defineStore('tonexp', {
             if (data.owned_nft_items) {
               this.accounts[hex].nft_amount = data.owned_nft_items
             }
+            if (this.accounts[hex].types?.includes('jetton_minter') || this.accounts[hex].types?.includes('nft_collection')) {
+              await this.requestMetaBulk([hex])
+            }
           }
         } catch (error) {
           console.log(error)
@@ -1032,7 +1035,7 @@ export const useMainStore = defineStore('tonexp', {
           if (data.results && data.results.length > 0) {
             data.results.forEach((meta: MetadataAPI) => {
               this.metadata[meta.address.hex] = {
-                name: meta.name ?? truncString(meta.address.base64, 5),
+                name: meta.name ?? null,
                 symbol: meta.symbol ?? meta.name ?? '',
                 image_url: meta.server_error || meta.image_url === 'https://anton.tools/static/images/' ? '' : (meta.image_url ?? ''),
                 decimals: meta.decimals ?? 9,
@@ -1042,7 +1045,7 @@ export const useMainStore = defineStore('tonexp', {
           }
           hex.filter(item => !(item in this.metadata)).forEach(item => {
             this.metadata[item] = {
-              name: "Not found",
+              name: null,
               symbol:'',
               image_url: "",
               decimals: 9,

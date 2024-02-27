@@ -49,7 +49,7 @@ watch(itemCount, async() => {
         </thead>
         <tbody>
             <tr v-for="res of keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <td class="uk-flex uk-flex-column" style="padding: 0.3rem 0; max-width: 90vw;">
+                <td class="uk-flex uk-flex-column uk-padding-small-vertical uk-padding-remove-horizontal" style="max-width: 90vw;">
                     <NuxtLink v-if="res.type === 'account'" :to="{name: 'accounts-hex', params: { hex: res.value.hex}, hash: '#overview'}" class="uk-text-primary">
                         {{ res.show ?? res.value.hex }}
                     </NuxtLink>

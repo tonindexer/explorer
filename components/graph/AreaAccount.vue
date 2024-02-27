@@ -69,6 +69,7 @@ const chartOptions = computed(() => { return {
         type: 'areaspline',
         backgroundColor: 'none',
         height: '185px',
+        spacing: [10, 0, 15, 10],
         zooming: {
             type: 'x'
         },
@@ -242,7 +243,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="uk-flex uk-flex-column uk-width-1-1 uk-margin-small">
+    <div class="uk-flex uk-flex-column uk-width-1-1">
         <AtomsCategorySelector
             v-model:selected="selectedTab"
             :routes="tabs"
@@ -257,8 +258,8 @@ onMounted(() => {
             </ClientOnly>
         </div>
         <div style="justify-content: space-between; font-size: 12px;" uk-grid :style="isMobile() ? 'flex-direction: column-reverse' : ''">
-            <div class="interval-group uk-flex uk-flex-middle uk-margin-remove-top" :class="isMobile() ? 'uk-width-expand' : 'uk-width-auto'" style="justify-content: space-between;">
-                <div v-if="!isMobile()" class="uk-margin-remove-vertical uk-text-default uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
+            <div class="interval-group uk-flex uk-flex-middle" :class="isMobile() ? 'uk-width-expand uk-margin-small-top' : 'uk-width-auto uk-margin-remove-top'" style="justify-content: space-between;">
+                <div v-if="!isMobile()" class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
                     Group Interval
                 </div>
                 <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from > 86400000 * 14) : false" id="15m" @click="pickGroup('15m')" :class="{'selected': selection==='15m'}">
@@ -277,7 +278,7 @@ onMounted(() => {
                     Day
                 </button>
             </div>
-            <div :class="isMobile() ? 'uk-width-1-1' : 'uk-width-expand'" @mouseup="sliderEndEvent" @touchend="sliderEndEvent" style="padding-right: 16px;">
+            <div class="uk-padding-right" :class="isMobile() ? 'uk-width-1-1' : 'uk-width-expand'" @mouseup="sliderEndEvent" @touchend="sliderEndEvent">
                 <AtomsMultiRangeSlider
                     :baseClassName="'multi-range-slider'"
                     :min="limits.from"

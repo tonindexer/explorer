@@ -69,6 +69,7 @@ const chartOptions = computed(() => { return {
         type: 'areaspline',
         backgroundColor: 'none',
         height: '185px',
+        spacing: [10, 0, 15, 10],
         zooming: {
             type: 'x'
         },
@@ -241,7 +242,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="uk-flex uk-flex-column uk-width-1-1 uk-margin-small">
+    <div class="uk-flex uk-flex-column uk-width-1-1">
         <AtomsCategorySelector
             v-model:selected="selectedTab"
             :routes="tabs"
@@ -256,7 +257,7 @@ onMounted(async () => {
             </ClientOnly>
         </div>
         <div style="justify-content: space-between;" uk-grid :style="isMobile() ? 'flex-direction: column-reverse' : ''">
-            <div class="interval-group uk-flex uk-flex-middle uk-margin-remove-top" :class="isMobile() ? 'uk-width-expand' : 'uk-width-auto'" style="justify-content: space-between;">
+            <div class="interval-group uk-flex uk-flex-middle" :class="isMobile() ? 'uk-width-expand uk-margin-small-top' : 'uk-width-auto uk-margin-remove-top'" style="justify-content: space-between;">
                 <div v-if="!isMobile()" class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
                     Group Interval
                 </div>
@@ -276,7 +277,7 @@ onMounted(async () => {
                     Day
                 </button>
             </div>
-            <div :class="isMobile() ? 'uk-width-1-1' : 'uk-width-expand'" @mouseup="sliderEndEvent" @touchend="sliderEndEvent" style="padding-right: 16px;">
+            <div class="uk-padding-right" :class="isMobile() ? 'uk-width-1-1' : 'uk-width-expand'" @mouseup="sliderEndEvent" @touchend="sliderEndEvent">
                 <AtomsMultiRangeSlider
                     :baseClassName="'multi-range-slider'"
                     :min="limits.from"

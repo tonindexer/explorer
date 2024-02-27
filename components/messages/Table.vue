@@ -220,12 +220,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <div v-if="route.path === '/messages'" class="uk-flex" style="padding: 12px 16px" :class="{ 'uk-text-muted' : filterFlag}">
+    <div v-if="route.path === '/messages'" class="uk-flex uk-padding-medium-vertical uk-padding-horizontal" :class="{ 'uk-text-muted' : filterFlag}">
         <div :uk-icon="`icon: ${filterFlag ? 'chevron-down' : 'chevron-right'}; ratio: 1.2`" @click="filterFlag = !filterFlag" style="cursor: pointer;"></div>
         <div @click="filterFlag = !filterFlag" style="cursor: pointer;">{{ $t('options.filter') }}</div>
     </div>
 
-    <div v-if="filterFlag" class="uk-child-width-1-1 uk-child-width-1-2@m uk-child-width-1-3@xl" style="padding: 0 16px 12px " uk-grid>
+    <div v-if="filterFlag" class="uk-child-width-1-1 uk-child-width-1-2@m uk-child-width-1-3@xl uk-padding-vertical uk-padding-remove-top uk-padding-madium-bottom" uk-grid>
         <div class="uk-flex uk-flex-middle uk-margin-small-top" style="justify-content: space-between; gap: 1rem">
             <div class="uk-text-muted">   
                 {{ $t('ton.src_address') }}
@@ -326,7 +326,7 @@ onMounted(() => {
         </div>  
     </div>
 
-    <div class="uk-flex uk-flex-wrap" :style="isMobile() ? 'font-size: small' : ''" style="padding: 0 16px 12px">
+    <div class="uk-flex uk-flex-wrap uk-padding-vertical uk-padding-remove-top uk-padding-madium-bottom" :style="isMobile() ? 'font-size: small' : ''">
         <template v-for="(option, key) in selectedOptions">
             <div v-if="option" class="uk-flex uk-background-emphasis uk-margin-small-right uk-margin-small-top uk-border-rounded white" style="padding: 0.3rem 0.7rem ; text-wrap: nowrap">
                 <div style="max-width: 90%;">
@@ -377,7 +377,7 @@ onMounted(() => {
             </tbody>
         </template>
     </table>
-    <div v-if="!emptyTable && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-vertical" style="justify-content: flex-end; padding-right: 12px;">
+    <div v-if="!emptyTable && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-vertical uk-padding-medium-right" style="justify-content: flex-end;">
         <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
             <AtomsSelector 
                 v-model:item-count="itemCount"

@@ -115,7 +115,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div v-if="isMobile() && route.path === '/accounts'" class="uk-flex uk-flex-right" style="padding: 16px 16px 0;">
+    <div v-if="isMobile() && route.path === '/accounts'" class="uk-flex uk-flex-right uk-padding-top uk-padding-vertical uk-padding-remove-bottom">
         <div class="uk-width-1-1 uk-text-small">
             <AtomsSelector 
                 v-model:item-count="selectedContract"
@@ -173,7 +173,7 @@ onMounted(() => {
             </tbody>
         </template>
     </table>
-    <div v-show="!(emptyTable && store.totalQueryAccounts === 0) && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
+    <div v-show="!(emptyTable && store.totalQueryAccounts === 0) && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom uk-padding-medium-right" style="justify-content: flex-end">
         <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
             <ClientOnly>
                 <AtomsSelector 

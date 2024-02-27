@@ -116,6 +116,11 @@ const reloadInfo = async() => {
 
 onMounted(async() => reloadInfo())
 
+watch(selectedCategory, (to, from) => {
+    if (isMobile() && to !== from)
+        router.replace({ hash: '#' + selectedCategory.value, query: route.query})
+})
+
 watch(selectedRoute, (to, from) => {
     if (to !== from)
         router.replace({ hash: '#' + selectedRoute.value, query: route.query})
@@ -150,10 +155,9 @@ watch(() => props.hex, async() => await reloadInfo())
                 <AccountsGetMethods v-else-if="selectedTab === 'get_methods'" :methods="getMethods"/>
             </template>
         </AtomsTile>
-        <AtomsTile v-if="categories.length" :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
+        <AtomsTile v-if="categories.length" :top="true" :body="true" :divider="true" :tile-style="'margin-top: 32px; padding-bottom: 16px;'">
             <template #top>
                 <AtomsCategorySelector
-                    v-if="!isMobile()"
                     v-model:selected="selectedCategory"
                     :routes="categories"
                 />
@@ -161,6 +165,7 @@ watch(() => props.hex, async() => await reloadInfo())
                     v-model:selected="selectedRoute"
                     :routes="children"
                     :secondary="true"
+                    :keep-desktop="true"
                     style="margin-top: 16px;"
                 />
             </template>
@@ -168,7 +173,7 @@ watch(() => props.hex, async() => await reloadInfo())
                 <div v-if="(route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
                     <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :account="hex"/>
                 </div>
-                <div v-else-if="route.hash === '#money_flow'" id="money_flow" style="padding: 0 16px">
+                <div v-else-if="route.hash === '#money_flow'" class="uk-padding-vertical uk-padding-medium-horizontal" id="money_flow">
                     <div class="uk-form-controls uk-text-primary">
                         <label><input class="uk-radio" type="radio" v-model="sankeyType" value="count" name="radio1"> {{ $t('options.count') }} </label><br>
                         <label><input class="uk-radio" type="radio" v-model="sankeyType" value="amount" name="radio1"> {{ $t('options.amount') }} </label>
@@ -179,19 +184,16 @@ watch(() => props.hex, async() => await reloadInfo())
                     <LazyAccountsJettonsTable :owner="hex" :keys="jtKeys" :default-length="10" />
                 </div>
                 <div v-else-if="route.hash === '#jetton_holders' && account.types?.includes('jetton_minter')" id="jetton_holders">
-                    <AccountsTopJettonHolders :minter="hex" :keys="store.jettonHolders[account.address.hex]?.owned_balance ?? []" :default-length="10" />
+                    <AccountsTopJettonHolders :minter="hex" :keys="store.jettonHolders[account.address.hex]?.owned_balance ?? []" :default-length="10"/>
                 </div>
-                <div v-else-if="route.hash === '#nfts'" id="nfts" style="padding: 0 16px;">
+                <div v-else-if="route.hash === '#nfts'" class="uk-padding-large-vertical uk-padding-horizontal" id="nfts">
                     <LazyAccountsNftGrid :minter-flag="false" :keys="ownerKeys" :default-length="18" :account="hex" />
                 </div>
-                <div v-else-if="route.hash === '#minter' && account.types?.includes('nft_collection')" id="minter" style="padding: 0 16px;">
+                <div v-else-if="route.hash === '#minter' && account.types?.includes('nft_collection')" class="uk-padding-large-vertical uk-padding-horizontal" id="minter">
                     <LazyAccountsNftGrid :minter-flag="true" :keys="minterKeys" :default-length="18" :account="hex" />
                 </div>
-                <div v-else-if="route.hash === '#nft_holders' && account.types?.includes('nft_collection')" id="nft_holders" style="padding: 0 16px;">
+                <div v-else-if="route.hash === '#nft_holders' && account.types?.includes('nft_collection')" id="nft_holders">
                     <AccountsTopNftHolders :keys="store.nftHolders[account.address.hex]?.owned_items ?? []" :minter="hex" :default-length="10" />
-                </div>
-                <div v-else-if="route.hash === '#get_methods'" id="get_methods" style="padding: 0 16px">
-                    <AccountsGetMethods :methods="getMethods"/>
                 </div>
             </template>
         </AtomsTile>

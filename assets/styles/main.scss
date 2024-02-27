@@ -10,7 +10,6 @@ $global-primary-background: $color-bg-emphasis;
 $global-muted-color: $color-text;
 $text-primary-color: $color-text-emphasis;
 
-
 $global-font-family: 'Roboto Mono', sans-serif;
 
 @font-face {
@@ -113,6 +112,15 @@ html {
     &:hover {
       color: var(--color-text-emphasis);
     }
+  }
+}
+
+.last-row-radius tr:last-child {
+  td:first-child {
+    border-bottom-left-radius: 12px;
+  }
+  td:last-child {
+    border-bottom-right-radius: 12px;
   }
 }
 

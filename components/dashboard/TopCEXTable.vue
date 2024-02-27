@@ -116,7 +116,7 @@ onMounted(async () => {
     <div v-if="loading && data.length === 0" class="uk-flex uk-flex-center">
         <Loader :ratio="2"/>
     </div>
-    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom" style="justify-content: space-between; gap: 0.4rem; max-width: 600px; padding: 0 12px">
+    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-padding-remove-vertical uk-padding-medium-horizontal" style="justify-content: space-between; gap: 0.4rem; max-width: 600px;">
         <div class="uk-margin-remove-vertical uk-text-muted" style=" white-space: nowrap;">
             {{ $t('ton.from') }}
         </div>
@@ -126,7 +126,7 @@ onMounted(async () => {
         </div>
         <VueDatePicker :min-date="interval.from ? new Date(interval.from) : new Date(firstDate)" :max-date="new Date()" :format="'yyyy-MM-dd HH:mm'" v-model="interval.to" :dark="colorMode.value === 'dark'"/>
     </div> 
-    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right" :class="{'uk-width-1-3' : !isMobile()}" style="padding: 0 12px">
+    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right uk-padding-remove-vertical uk-padding-medium-horizontal" :class="{'uk-width-1-3' : !isMobile()}">
         <label class="uk-margin-right uk-text-muted" for="cex_search">Search</label>
         <input class="uk-input uk-background-primary" v-model="filter" id="cex_search" type="text" placeholder="Anything..." aria-label="Search top CEX">
     </div>
@@ -155,7 +155,7 @@ onMounted(async () => {
         <tbody>
             <tr v-for="tline of finalData.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                 <template v-if="isMobile()">
-                    <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
+                    <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical uk-padding-small-vertical uk-padding-medium-horizontal">
                         <div class="uk-flex diamond uk-text-primary" style="padding: 3px;">
                             {{ type === 'deposit' ? (tline.deposit_amount ?? 0).toFixed(2) : (tline.withdrawal_amount ?? 0).toFixed(2)  }}
                         </div>

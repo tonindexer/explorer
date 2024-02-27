@@ -86,7 +86,7 @@ onMounted(async () => {
             <template template v-for="key of currentBatch.filter(item => item in jtList)">
                 <tr>
                     <template v-if="isMobile()">
-                        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem 12px;">
+                        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical uk-padding-small-vertical uk-padding-medium-horizontal">
                             <div class="uk-flex uk-flex-row" style="gap: 0.5rem">
                                 {{ `${formatTons(Number(store.accounts[key]?.jetton_balance ?? 0), jtList[key].decimals)}` }}
                                 <NuxtLink :to="{ name: 'accounts-hex', params: { hex: jtRelations[key].minter.hex }, hash: '#overview'}" class="uk-text-primary">
@@ -105,7 +105,7 @@ onMounted(async () => {
                         </td>
                     </template>
                     <template v-else>
-                        <td class="uk-flex uk-flex-row" style="gap: 0.5rem">
+                        <td>
                             <NuxtLink :to="{ name: 'accounts-hex', params: { hex: jtRelations[key].minter.hex }, hash: '#overview'}" class="uk-text-primary">
                                 {{ store.metadata[jtRelations[key].minter.hex]?.name }}
                             </NuxtLink>
@@ -127,7 +127,7 @@ onMounted(async () => {
             </template>
         </tbody>
     </table>
-    <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom" style="justify-content: flex-end; padding-right: 12px;">
+    <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom uk-padding-medium-right" style="justify-content: flex-end;">
         <div class="uk-flex uk-flex-middle" v-if="!isMobile()">
             <AtomsSelector 
                 v-model:item-count="itemCount"

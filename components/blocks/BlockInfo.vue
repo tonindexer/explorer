@@ -90,7 +90,7 @@ watch(props, async() => await reloadInfo())
             </template>
             <template #body>
                 <div v-if="(route.hash === '#shards' )&& block.shard_keys.length > 0" id="shards">
-                    <LazyBlocksTable :item-selector="true" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block.shard_keys.length === 0" :line-link="false"/>
+                    <LazyBlocksTable :item-selector="false" :default-length="5" :update="false" :keys="block.shard_keys" :hidden="block.shard_keys.length === 0" :line-link="false"/>
                 </div>
                 <div v-else-if="(route.hash === '#transactions') && block?.transaction_keys.length" id="transactions">
                     <div class="uk-child-width-auto uk-text-left uk-margin-remove-top uk-margin-small-left" v-if="block.shard_keys.length > 0">

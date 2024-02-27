@@ -11,12 +11,12 @@ const showData = ref(false)
 <template>
     <template v-if="msg">
         <tr v-if="isMobile()">
-            <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 16px">
+            <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical uk-padding">
                 <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
                     <div class="uk-flex uk-flex-right diamond uk-text-primary uk-text-large">
                         {{ roundTON(msg.amount ?? 0n) }}
                     </div>
-                    <div class="uk-flex uk-text-left uk-text-primary">
+                    <div class="uk-flex uk-text-left uk-text-primary" style="align-items: center;">
                         <AtomsStatusCell :status="msg.type"></AtomsStatusCell>
                     </div>
                 </div>
@@ -70,7 +70,7 @@ const showData = ref(false)
                     </div>
                 </div>
 
-                <div class="divider" style="display: flex; margin: 8px 0">
+                <div class="divider uk-flex uk-margin-small-vertical uk-margin-remove-horizontal">
                     <div class="uk-width-1-1" style="height: 1px;">
                     </div>
                 </div>

@@ -9,7 +9,7 @@ defineProps<{
 
 <template>
     <tr v-if="isMobile()">
-        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical" style="padding: 0.5rem;">
+        <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical uk-padding-small">
             <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
                 <NuxtLink :to="{ name: 'blocks-key', params: {key : `${block.workchain}:${block.shard}:${block.seq_no}` }}" class="uk-text-primary">
                     {{ truncString(`${block.workchain}:${block.shard}:${block.seq_no}`, 8, 12) }}

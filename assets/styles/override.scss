@@ -1,3 +1,9 @@
+$xsmall: 0.25rem;
+$small: 0.5rem;
+$medium: 0.75rem;
+$default: 1rem;
+$large: 1.5rem;
+
 .uk-icon-button { 
   background-color: transparent;
   cursor: pointer;
@@ -29,12 +35,6 @@
     background-color: var(--color-text-emphasis);
     color: var(--color-bg-emphasis);
   }
-}
-
-.uk-table-striped > tr:nth-of-type(odd), .uk-table-striped tbody tr:nth-of-type(odd) {
-  border-top: none;
-  border-bottom: none;
-  background-color: transparent;
 }
 
 .uk-radio:checked, .uk-checkbox:checked, .uk-checkbox:indeterminate {
@@ -74,17 +74,70 @@
   border-color: var(--color-text-muted);
 }
 
-.uk-table-striped > tr:nth-of-type(even), .uk-table-striped tbody tr:nth-of-type(even) {
+.uk-table-striped > tr:nth-of-type(odd), .uk-table-striped tbody tr:nth-of-type(odd) {
+  border-top: none;
+  border-bottom: none;
+  background-color: transparent;
+}
+
+.uk-table-striped > tr:nth-of-type(even):not(:last-child), .uk-table-striped tbody tr:nth-of-type(even):not(:last-child) {
   background-color: var(--color-bg-muted);
   border-top: none;
 }
 
+
 .uk-table-striped > tr:nth-of-type(even):last-child, .uk-table-striped tbody tr:nth-of-type(even):last-child {
   border-bottom: none;
+  border-top: none;
+  td {
+    background-color: var(--color-bg-muted);
+  }
 }
 
-.uk-margin-small-left {
-  margin-left: 8px !important;
+// Margins & paddings
+@function selectorName($type, $attr) {
+  @if $attr == default {
+    @return '.uk-#{$type}';
+  }
+  @else {
+    @return '.uk-#{$type}-#{$attr}';
+  }
+}
+
+@each $type in padding, margin {
+  @each $attr, $size in (xsmall: $xsmall, small: $small, medium: $medium, default: $default, large: $large) {
+    #{selectorName($type, $attr)} {
+      @if $type == padding {
+        #{$type}: $size !important; 
+      }
+      @else {
+        #{$type}-bottom: $size !important; 
+      }
+    }
+    #{selectorName($type, $attr)}-horizontal {
+      #{$type}-left: $size !important; 
+      #{$type}-right: $size !important; 
+    }
+    #{selectorName($type, $attr)}-vertical {
+      #{$type}-top: $size !important; 
+      #{$type}-bottom: $size !important; 
+    }
+    @each $direction in top, left, bottom, right {
+      #{selectorName($type, $attr)}-#{$direction} {
+        #{$type}-#{$direction}: $size !important; 
+      }
+    }
+  }
+}
+
+.uk-tooltip {
+  background-color: var(--color-bg-emphasis);
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 20px 0px var(--color-bg-shadow);
+  font-size: 1rem;
+  color: var(--color-text-emphasis);
+  word-wrap: break-word;
 }
 
 .uk-button:disabled {

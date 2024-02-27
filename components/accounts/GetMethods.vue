@@ -73,7 +73,7 @@ const parseData = computed((): TableSection[] => {
 </script>
 
 <template>
-    <div class="uk-flex uk-flex-column" style="padding: 16px 12px 0;">
+    <div class="uk-flex uk-flex-column uk-padding-top uk-padding-remove-bottom uk-padding-medium-horizontal">
         <template v-for="section of parseData">
             <h4 class="uk-flex uk-margin-remove-vertical">
                 <NuxtLink :to="`/accounts?contract=${section.title}`" class="uk-text-bold uk-text-primary" uk-icon="icon:link" style="line-height: 1.5;">
@@ -81,7 +81,7 @@ const parseData = computed((): TableSection[] => {
                 </NuxtLink>
             </h4>
             <ul uk-accordion="multiple: false">
-                <li class="uk-padding-small uk-border-rounded uk-background-muted" v-for="method of section.methods" >
+                <li class="uk-padding uk-border-rounded uk-background-muted" v-for="method of section.methods" >
                     <a class="uk-accordion-title uk-text-truncate uk-text-primary" href="#">
                         {{ method.name }}
                     </a>
