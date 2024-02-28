@@ -25,6 +25,7 @@
     "typescript": "^5.2.2",
     "uikit": "^3.17.1",
     "v-clipboard": "^3.0.0-next.1",
+    "vue-load-image": "^1.1.0",
     "vue-search-select": "^3.2.0"
   },
   "dependencies": {

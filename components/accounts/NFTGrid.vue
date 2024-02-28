@@ -85,8 +85,7 @@ onMounted(async () => {
         <div v-for="nft, key in nftMap">
             <div class="uk-card">
                 <div class="uk-card-media-top">
-                    <img style="border-radius: 8px;" v-if="nft.image_url" :src="nft.image_url" width="500" height="500" alt="">
-                    <div v-else class="uk-width-1-1 empty-image uk-background-default" style="border-radius: 8px;"/>
+                    <AtomsImageLoader :src="nft.image_url" />
                     <div v-if="store.accounts[key]?.fake" class="uk-position-top-left uk-overlay uk-margin-small-top uk-margin-small-left uk-background-transparent uk-padding-small-left uk-padding-xsmall-top  uk-text-danger uk-text-large uk-text-bold">Fake</div>
                 </div>
                 <div class="uk-card-body uk-padding-remove uk-flex uk-flex-column">
