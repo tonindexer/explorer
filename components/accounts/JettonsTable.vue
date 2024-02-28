@@ -115,7 +115,7 @@ onMounted(async () => {
                             <Loader :ratio="1" v-else />
                         </td>
                         <td class="uk-text-right">
-                            <div class="jetton uk-flex uk-flex-right uk-text-primary" style="gap: 0.5rem">
+                            <div class="jetton uk-flex uk-flex-right uk-text-primary uk-text-nowrap" style="gap: 0.5rem">
                                 {{ `${formatTons(Number(store.accounts[key]?.jetton_balance ?? 0), jtList[key].decimals)} ${store.metadata[jtRelations[key].minter.hex]?.symbol ?? ''}`}}
                                 <span v-if="store.accounts[key]?.fake" class="uk-margin-remove uk-text-danger">
                                     {{ $t('ton.fake') }}

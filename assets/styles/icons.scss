@@ -1,8 +1,7 @@
 
 .diamond {
-  line-height: 1;
   &::after {
-    content: url('data:image/svg+xml,%3Csvg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M4.0026 1.3335L1.33594 5.3335L8.0026 14.6668L14.6693 5.3335L12.0026 1.3335H4.0026Z" fill="black"/%3E%3C/svg%3E');
+    content: url('data:image/svg+xml,%3Csvg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M4.0026 1.3335L1.33594 5.3335L8.0026 14.6668L14.6693 5.3335L12.0026 1.3335H4.0026Z" fill="black"/%3E%3C/svg%3E');
     margin-left: 4px;
   }
 }
@@ -39,7 +38,7 @@
     content: url('data:image/svg+xml,%3Csvg style="min-width: 24px" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="13.5" cy="12.5" r="7" stroke="white"/%3E%3Cpath d="M6.39241 6.5C4.35958 7.7249 3 9.95367 3 12.5C3 15.0463 4.35958 17.2751 6.39241 18.5" stroke="white" stroke-linecap="round"/%3E%3C/svg%3E');
   }
   .diamond::after {
-    content: url('data:image/svg+xml,%3Csvg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M4.0026 1.3335L1.33594 5.3335L8.0026 14.6668L14.6693 5.3335L12.0026 1.3335H4.0026Z" fill="white"/%3E%3C/svg%3E');
+    content: url('data:image/svg+xml,%3Csvg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M4.0026 1.3335L1.33594 5.3335L8.0026 14.6668L14.6693 5.3335L12.0026 1.3335H4.0026Z" fill="white"/%3E%3C/svg%3E');
   }
   .empty-image {
     content: url('data:image/svg+xml,%3Csvg height="32" fill="white" viewBox="-32 -32 96 96" width="32" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="m30 3.4141-1.4141-1.4141-26.5859 26.5859 1.4141 1.4141 2-2h20.5859a2.0027 2.0027 0 0 0 2-2v-20.5859zm-4 22.5859h-18.5859l7.7929-7.793 2.3788 2.3787a2 2 0 0 0 2.8284 0l1.5858-1.5857 4 3.9973zm0-5.8318-2.5858-2.5859a2 2 0 0 0 -2.8284 0l-1.5858 1.5859-2.377-2.3771 9.377-9.377z"/%3E%3Cpath d="m6 22v-3l5-4.9966 1.3733 1.3733 1.4159-1.416-1.375-1.375a2 2 0 0 0 -2.8284 0l-3.5858 3.5859v-10.1716h16v-2h-16a2.002 2.002 0 0 0 -2 2v16z"/%3E%3Cpath d="m0 0h32v32h-32z" fill="none"/%3E%3C/svg%3E');

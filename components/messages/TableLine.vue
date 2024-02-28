@@ -65,7 +65,7 @@ const showData = ref(false)
                     <div>   
                         {{ $t('ton.fwd_fee') }}
                     </div>
-                    <div class="uk-flex uk-flex-right diamond uk-text-primary" style="max-width: 60vw; padding: 3px 0;">
+                    <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove" style="max-width: 60vw;">
                         {{ msg.fwd_fee ? tinyTON(msg.fwd_fee) : 0 }}
                     </div>
                 </div>
@@ -184,10 +184,10 @@ const showData = ref(false)
             </td>
             <td>
                 <div class="uk-flex uk-flex-column" style="gap: 24px">
-                    <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                    <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
                         {{ roundTON(msg.amount ?? 0n) }}
                     </div>
-                    <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                    <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
                         {{ msg.fwd_fee ? tinyTON(msg.fwd_fee) : 0 }}
                     </div>
                 </div>

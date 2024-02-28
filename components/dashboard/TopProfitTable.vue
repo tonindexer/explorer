@@ -120,7 +120,7 @@ onMounted(async () => {
                             <div>   
                                 Total Profit
                             </div>
-                            <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                            <div class="uk-flex uk-flex-right diamond uk-text-primary">
                                 {{ tline.total_profit.toFixed(2) }}
                             </div>
                         </div>
@@ -128,7 +128,7 @@ onMounted(async () => {
                             <div>   
                                 Total Loss
                             </div>
-                            <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                            <div class="uk-flex uk-flex-right diamond uk-text-primary">
                                 {{ tline.total_loss.toFixed(2) }}
                             </div>
                         </div>
@@ -142,12 +142,12 @@ onMounted(async () => {
                         </NuxtLink>
                     </td>
                     <td class="uk-text-right" style="text-wrap: nowrap">
-                        <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                        <div class="uk-flex uk-flex-right diamond uk-text-primary">
                             {{ tline.total_profit.toFixed(2) }}
                         </div>
                     </td>
                     <td class="uk-text-right" style="text-wrap: nowrap">
-                        <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                        <div class="uk-flex uk-flex-right diamond uk-text-primary">
                             {{ tline.total_loss.toFixed(2) }}
                         </div>
                     </td>

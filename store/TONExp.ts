@@ -573,22 +573,31 @@ export const useMainStore = defineStore('tonexp', {
         }
       },
       async fetchTransaction(hash: string) {
-        let fullReq: MockType = {}
-        if (hash.includes('~')) fullReq = { address: toBase64Web(hash.split('~')[0]), created_lt: hash.split('~')[1]}
-        else fullReq = { hash }
-        const query = getQueryString(fullReq, true);
-        try {
-          const { data } = await useApiRequest<TransactionAPIData>(`/transactions?${query}`, 'GET')
 
-          if (data.results && data.results.length > 0) {
-            this.processTransaction(data.results[0])
-            if (hash !== data.results[0].hash) hash = data.results[0].hash
-            await this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys([hash], true, true), false))
-            return hash
-          } else return null
-        } catch (error) {
-          console.log(error)
+        if (hash in this.transactionComboKeys) {
+          hash = this.transactionComboKeys[hash]
         }
+        if (!(hash in this.transactions)) {
+          let fullReq: MockType = {}
+
+          if (hash.includes('~')) fullReq = { address: toBase64Web(hash.split('~')[0]), created_lt: hash.split('~')[1]}
+          else fullReq = { hash }
+          const query = getQueryString(fullReq, true);
+          try {
+            const { data } = await useApiRequest<TransactionAPIData>(`/transactions?${query}`, 'GET')
+
+            if (data.results && data.results.length > 0) {
+              this.processTransaction(data.results[0])
+              if (hash !== data.results[0].hash) hash = data.results[0].hash
+              return hash
+            } else return null
+          } catch (error) {
+            console.log(error)
+          }
+        }
+
+        if (hash in this.transactions) await this.fetchBareAccounts(this.getAccountKeys(this.getMessageKeys([hash], true, true), false))
+
         return hash
       },
       async composeTreeNodes (hash: string, treeKey: string) {
@@ -868,22 +877,23 @@ export const useMainStore = defineStore('tonexp', {
       async fetchAccount(hex: string, preload: boolean = true) {
         this.loadNextNFTFlag = false
         if (hex in this.accountBases) hex = this.accountBases[hex]
-        if (!(hex in this.accounts))
-        try {
-          const fullReq: MockType = {
-            address: hex,
-            latest: true
-          }
-          const query = getQueryString(fullReq, true);
-          // get latest account state
-          const { data } = await useApiRequest<AccountAPIData>(`/accounts?${query}`, 'GET')
+        if (!(hex in this.accounts)) {
+          try {
+            const fullReq: MockType = {
+              address: hex,
+              latest: true
+            }
+            const query = getQueryString(fullReq, true);
+            // get latest account state
+            const { data } = await useApiRequest<AccountAPIData>(`/accounts?${query}`, 'GET')
 
-          if (data.results && data.results.length > 0) {
-            this.processAccount(data.results[0])
-            if (hex !== data.results[0].address.hex) hex = data.results[0].address.hex
-          } else return null
-        } catch (error) {
-          console.log(error)
+            if (data.results && data.results.length > 0) {
+              this.processAccount(data.results[0])
+              if (hex !== data.results[0].address.hex) hex = data.results[0].address.hex
+            } else return null
+          } catch (error) {
+            console.log(error)
+          }
         }
         if (this.accounts[hex]?.loaded || !preload) return hex
 
@@ -908,7 +918,8 @@ export const useMainStore = defineStore('tonexp', {
               this.accounts[hex].nft_amount = data.owned_nft_items
             }
             if (this.accounts[hex].types?.includes('jetton_minter') || this.accounts[hex].types?.includes('nft_collection')) {
-              await this.requestMetaBulk([hex])
+              if (!(hex in this.metadata)) await this.requestMetaBulk([hex])
+              if (!(hex in this.nftHolders)) await this.loadTopHolders(hex, 10)
             }
           }
         } catch (error) {

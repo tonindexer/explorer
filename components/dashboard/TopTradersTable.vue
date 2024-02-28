@@ -125,7 +125,7 @@ onMounted(async () => {
                             <div>   
                                 Buy Volume
                             </div>
-                            <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px 0;">
+                            <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
                                 {{ tline.buy_volume.toFixed(2) }}
                             </div>
                         </div>
@@ -141,7 +141,7 @@ onMounted(async () => {
                             <div>   
                                 Sale Volume
                             </div>
-                            <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px 0;">
+                            <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
                                 {{ tline.sale_volume.toFixed(2) }}
                             </div>
                         </div>
@@ -163,7 +163,7 @@ onMounted(async () => {
                         </NuxtLink>
                     </td>
                     <td>
-                        <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                        <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
                             {{ tline.buy_volume.toFixed(2) }}
                         </div>
                     </td>
@@ -171,7 +171,7 @@ onMounted(async () => {
                         {{ tline.buy_count }}
                     </td>
                     <td>
-                        <div class="uk-flex uk-flex-right diamond uk-text-primary" style="padding: 3px;">
+                        <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
                             {{ tline.sale_volume.toFixed(2) }}
                         </div>
                     </td>

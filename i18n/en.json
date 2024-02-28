@@ -172,7 +172,8 @@
     },
     "warning" : {
         "nothing_found" : "Nothing found",
-        "first_tx": "None - This TX is first in the chain"
+        "first_tx": "None - This TX is first in the chain",
+        "pick_method": "Pick any method from the listed"
     },
     "time_ago": {
         "just_now": "just now",

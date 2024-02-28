@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 const props = defineProps<{
     hex: string
 }>()
@@ -21,7 +20,9 @@ const jtKeys = computed(() => account.value?.jetton_wallets?.length > 0 ? accoun
 const minterKeys = computed(() => account.value?.minted_nfts?.length > 0 ? account.value.minted_nfts : [] as AccountKey[])
 const ownerKeys = computed(() => account.value?.owned_nfts?.length > 0 ? account.value.owned_nfts : [] as AccountKey[])
 const getMethods = computed(() => account.value?.executed_get_methods && Object.keys(account.value.executed_get_methods).length > 0 ? account.value.executed_get_methods : {} as {[key: string] : GetMethod[]})
+
 const sankeyType = ref("count")
+const sankeyOptions = ref({ 'count': 'count', 'amount': 'amount' })
 
 const selectedRoute = ref('')
 const selectedTab = ref<'info' | 'get_methods'>('info')
@@ -30,10 +31,8 @@ const selectedCategory = ref('')
 const parentMap = {
     transactions: [ 'transactions', 'money_flow' ],
     jettons: [ 'jettons', 'jetton_holders' ],
-    jetton_holders: [ 'jettons', 'jetton_holders' ],
     nfts: [ 'nfts', 'nft_holders', 'minter' ],
-    nft_holders: [ 'nfts', 'nft_holders', 'minter' ]
-}
+} as { [key: string]: string[] }
 
 const childMap = {
     transactions: { parent: 'transactions', t: 'route' },
@@ -44,31 +43,41 @@ const childMap = {
     nfts: { parent: 'nfts', t: 'route' },
     nft_holders: { parent: 'nfts', t: 'ton' },
     minter: { parent: 'nfts', t: 'ton' }
-} as { [key: string] : { parent: string, t: string } }
+} as { [key: string]: { parent: string, t: string } }
 
 type ParentChildRoutes = {
-    [key: string]: 'transactions' | 'jettons' | 'nfts'
+    parents: Array<'transactions' | 'jettons' | 'nfts'>
+    children: Array<'transactions' | 'overview' | 'money_flow' | 'jettons' | 'jetton_holders' | 'nfts' | 'nft_holders' | 'minter'>
 }
 
 const allRoutes = computed<ParentChildRoutes>(() => {
-    const output: ParentChildRoutes = {}
-    if (account.value.transaction_amount > 0) output['transactions'] = 'transactions'
-    if (account.value.transaction_amount > 0) output['money_flow'] = 'transactions'
-    if (account.value.jetton_amount > 0) output['jettons'] = 'jettons'
-    if (account.value.types?.includes('jetton_minter')) output['jetton_holders'] = 'jettons'
-    if (account.value.nft_amount > 0) output['nfts'] = 'nfts'
-    if (account.value.types?.includes('nft_collection')) output['nft_holders'] = 'nfts'
-    if (account.value.types?.includes('nft_collection')) output['minter'] = 'nfts'
+    const output: ParentChildRoutes = {
+        parents: [],
+        children: []
+    }
+    if (account.value.transaction_amount > 0) { output.parents.push('transactions'); output.children.push('transactions') }
+    if (account.value.transaction_amount > 0) { output.children.push('money_flow') }
+    if (account.value.jetton_amount > 0) { output.parents.push('jettons'); output.children.push('jettons') }
+    if (account.value.types?.includes('jetton_minter')) { output.parents.push('jettons'); output.children.push('jetton_holders') }
+    if (account.value.nft_amount > 0) { output.parents.push('nfts'); output.children.push('nfts') }
+    if (store.nftHolders[props.hex]) { output.parents.push('nfts'); output.children.push('nft_holders') }
+    if (account.value.types?.includes('nft_collection')) { output.parents.push('nfts'); output.children.push('minter') }
+    output.parents = [...new Set(output.parents)]
     return output
 })
 
 const categories = computed(() => {
     const output: RouteLink[] = []
     const walkedRoutes = { 'transactions': false, 'jettons': false, 'nfts': false }
-    Object.keys(allRoutes.value).forEach(item => {
-        if (!walkedRoutes[allRoutes.value[item]]) { 
-            output.push({ route: item, t: `${childMap[allRoutes.value[item]].t}.${allRoutes.value[item]}`, selected: parentMap[allRoutes.value[item]].includes(selectedCategory.value)})
-            walkedRoutes[allRoutes.value[item]] = true
+    allRoutes.value.parents.forEach(item => {
+        if (!walkedRoutes[item]) {
+            for (const child of parentMap[item]) {
+                if (allRoutes.value.children.some(cat => cat === child)) {
+                    output.push({ route: child, t: `${childMap[item].t}.${item}`, selected: parentMap[item].some(parent => parent === selectedCategory.value)})
+                    walkedRoutes[item] = true
+                    break
+                }
+            }
         }
     })
     return output
@@ -76,8 +85,8 @@ const categories = computed(() => {
 
 const children = computed(() => {
     const output: RouteLink[] = []
-    Object.keys(allRoutes.value).forEach(item => {
-        if (allRoutes.value[item] === selectedCategory.value) {
+    allRoutes.value.children.forEach(item => {
+        if (childMap[item].parent === selectedCategory.value) {
             if (item === 'transactions') {
                 output.push({ route: item, t: `${childMap[item].t}.${item}`, selected: route.hash === `#${item}` || route.hash === `#overview`})
             } else {
@@ -114,12 +123,14 @@ const reloadInfo = async() => {
     }
 }
 
-onMounted(async() => reloadInfo())
-
-watch(selectedCategory, (to, from) => {
-    if (isMobile() && to !== from)
+const setCategory = (value: string) => {
+    if (selectedCategory.value !== value) {
+        selectedCategory.value = value
         router.replace({ hash: '#' + selectedCategory.value, query: route.query})
-})
+    }
+}
+
+onMounted(async() => reloadInfo())
 
 watch(selectedRoute, (to, from) => {
     if (to !== from)
@@ -158,8 +169,9 @@ watch(() => props.hex, async() => await reloadInfo())
         <AtomsTile v-if="categories.length" :top="true" :body="true" :divider="true" :tile-style="'margin-top: 32px; padding-bottom: 16px;'">
             <template #top>
                 <AtomsCategorySelector
-                    v-model:selected="selectedCategory"
+                    :selected="selectedCategory"
                     :routes="categories"
+                    @update:selected="value => setCategory(value)"
                 />
                 <AtomsCategorySelector
                     v-model:selected="selectedRoute"
@@ -173,12 +185,16 @@ watch(() => props.hex, async() => await reloadInfo())
                 <div v-if="(route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
                     <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :account="hex"/>
                 </div>
-                <div v-else-if="route.hash === '#money_flow'" class="uk-padding-vertical uk-padding-medium-horizontal" id="money_flow">
-                    <div class="uk-form-controls uk-text-primary">
-                        <label><input class="uk-radio" type="radio" v-model="sankeyType" value="count" name="radio1"> {{ $t('options.count') }} </label><br>
-                        <label><input class="uk-radio" type="radio" v-model="sankeyType" value="amount" name="radio1"> {{ $t('options.amount') }} </label>
+                <div v-else-if="route.hash === '#money_flow'" class="uk-padding-horizontal uk-padding-top" id="money_flow" uk-grid>
+                    <div class="uk-width-1-1 uk-width-1-5@m uk-margin-small" style="min-width: 250px;">
+                        <AtomsRadioButtons v-model:selected="sankeyType" :options="sankeyOptions" :layered="false" />
                     </div>
-                    <GraphSankey :hex="hex" :count="sankeyType === 'count'"></GraphSankey>
+                    <div 
+                        class="uk-width-1-1 uk-width-expand@m uk-margin-remove-top"
+                        :class="{ 'divider': !isMobile()}"
+                    >
+                        <GraphSankey :hex="hex" :count="sankeyType === 'count'"></GraphSankey>
+                    </div>
                 </div>
                 <div v-else-if="route.hash === '#jettons'" id="jettons">
                     <LazyAccountsJettonsTable :owner="hex" :keys="jtKeys" :default-length="10" />
@@ -199,3 +215,9 @@ watch(() => props.hex, async() => await reloadInfo())
         </AtomsTile>
     </template>
 </template>
+
+<style scoped lang="scss">
+.divider {
+    border-left: 1px solid var(--color-bg-shadow);
+}
+</style>

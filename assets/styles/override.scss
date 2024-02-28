@@ -37,6 +37,11 @@ $large: 1.5rem;
   }
 }
 
+.uk-radio {
+  width: 12px;
+  height: 12px;
+}
+
 .uk-radio:checked, .uk-checkbox:checked, .uk-checkbox:indeterminate {
   background-color: var(--color-text-emphasis) !important;
   background-image: none;
@@ -56,8 +61,11 @@ $large: 1.5rem;
   }
 }
 
-.uk-table > thead {
+.uk-table:not(.uk-table-striped):not(.uk-table-striped-inverse) > thead {
   border-bottom: 1px solid var(--color-bg-muted);
+}
+
+.uk-table > thead {
   tr {
     background-color: transparent !important;
   }
@@ -69,24 +77,47 @@ $large: 1.5rem;
   }
 }
 
+
 .uk-table-divider > tr:not(:first-child), .uk-table-divider > :not(:first-child) > tr, 
 .uk-table-divider > :first-child > tr:not(:first-child) {
   border-color: var(--color-text-muted);
 }
 
-.uk-table-striped > tr:nth-of-type(odd), .uk-table-striped tbody tr:nth-of-type(odd) {
+.uk-table-striped > tr:nth-of-type(odd):not(:first-child), .uk-table-striped tbody tr:nth-of-type(odd):not(:first-child) { 
+  background: var(--color-bg-hovered);
   border-top: none;
   border-bottom: none;
+}
+
+.uk-table-striped > tr:first-child, .uk-table-striped tbody tr:first-child {
+  background: var(--color-bg-hovered);
+  border-top: 1px solid var(--color-bg-shadow);
+  border-bottom: none;
+}
+
+.uk-table-divider > tr:not(:first-child), .uk-table-divider > :not(:first-child) > tr, 
+.uk-table-divider > :first-child > tr:not(:first-child) { 
+  border-top: none;
+}
+
+.uk-table-striped > tr:nth-of-type(even):last-child, .uk-table-striped tbody tr:nth-of-type(even):last-child {
+  border-bottom: 1px solid var(--color-bg-shadow);
+}
+
+.uk-table-striped-inverse > thead {
+  border-bottom: 1px solid var(--color-bg-shadow);
+}
+
+.uk-table-striped-inverse > tr:nth-of-type(odd), .uk-table-striped-inverse tbody tr:nth-of-type(odd) {
   background-color: transparent;
 }
 
-.uk-table-striped > tr:nth-of-type(even):not(:last-child), .uk-table-striped tbody tr:nth-of-type(even):not(:last-child) {
+.uk-table-striped-inverse > tr:nth-of-type(even):not(:last-child), .uk-table-striped-inverse tbody tr:nth-of-type(even):not(:last-child) {
   background-color: var(--color-bg-muted);
   border-top: none;
 }
 
-
-.uk-table-striped > tr:nth-of-type(even):last-child, .uk-table-striped tbody tr:nth-of-type(even):last-child {
+.uk-table-striped-inverse > tr:nth-of-type(even):last-child, .uk-table-striped-inverse tbody tr:nth-of-type(even):last-child {
   border-bottom: none;
   border-top: none;
   td {
@@ -138,6 +169,7 @@ $large: 1.5rem;
   font-size: 1rem;
   color: var(--color-text-emphasis);
   word-wrap: break-word;
+  max-width: 400px;
 }
 
 .uk-button:disabled {

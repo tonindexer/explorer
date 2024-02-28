@@ -156,7 +156,7 @@ onMounted(async () => {
             <tr v-for="tline of finalData.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
                 <template v-if="isMobile()">
                     <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical uk-padding-small-vertical uk-padding-medium-horizontal">
-                        <div class="uk-flex diamond uk-text-primary" style="padding: 3px;">
+                        <div class="uk-flex diamond uk-text-primary">
                             {{ type === 'deposit' ? (tline.deposit_amount ?? 0).toFixed(2) : (tline.withdrawal_amount ?? 0).toFixed(2)  }}
                         </div>
                         <div class="uk-flex" style="justify-content: space-between;">

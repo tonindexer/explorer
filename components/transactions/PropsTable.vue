@@ -22,7 +22,7 @@ const externalLink = computed(() : MockType=> {
 </script>
 
 <template>
-    <table class="uk-table uk-table-middle uk-margin-remove-vertical uk-table-striped last-row-radius">
+    <table class="uk-table uk-table-middle uk-margin-remove-vertical uk-table-striped-inverse last-row-radius">
         <tbody class="uk-table-divider">
             <tr>
                 <AtomsPropLine>

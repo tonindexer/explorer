@@ -19,12 +19,18 @@ const chartOptions = computed(() => { return {
     chart: {
         type: 'sankey',
         backgroundColor: 'none',
-        animation: true,
+        animation: true
     },
     series: [{
         name: props.count ? 'Message count' : "TON Volume",
         keys: ['from', 'to', 'weight'],
         data: data.value?.data ?? [],
+        linkOpacity: 0.2,
+        states: {
+            hover: {
+                linkOpacity: 0.5
+            }
+        }
     }],
     plotOptions: {
         series: {
@@ -70,12 +76,50 @@ onMounted(() => store.loadSankeyDiagram(props.hex))
 <template>
     <div v-if="data" class="uk-flex uk-width-1-1 uk-margin-small-top uk-text-primary" style="justify-content: space-between;" >
         <div class="uk-flex uk-flex-column">
-            <div class="uk-flex uk-text-primary" :class="{'diamond' : !count}" style="white-space: nowrap; padding: 3px;"> {{  "Recieved Total: " + data.receivedTotal }} </div>
-            <div v-if="Math.floor(data.receivedTotal) !== Math.floor(data.receivedTop) " class="uk-flex uk-text-primary" :class="{'diamond' : !count}" style="white-space: nowrap; padding: 3px;"> {{ "Top10: " + Math.round(data.receivedTop) }} </div>
+            <div 
+                class="uk-flex uk-text-blend" 
+                :class="{'diamond' : !count}" 
+                style="white-space: nowrap;"
+            > 
+                {{  "Recieved Total: " }}
+                <span class="uk-margin-xsmall-left uk-text-primary">
+                    {{  Math.round(data.receivedTotal) }}
+                </span> 
+            </div>
+            <div 
+                v-if="Math.floor(data.receivedTotal) !== Math.floor(data.receivedTop)" 
+                class="uk-flex uk-text-blend" 
+                :class="{'diamond' : !count}" 
+                style="white-space: nowrap;"
+            > 
+                {{ "Top10: " }}
+                <span class="uk-margin-xsmall-left uk-text-primary">
+                    {{ Math.round(data.receivedTop) }}
+                </span> 
+            </div>
         </div>
         <div class="uk-flex uk-flex-column">
-            <div class="uk-flex uk-flex-right uk-text-primary" :class="{'diamond' : !count}" style="white-space: nowrap; padding: 3px;"> {{ "Sent Total: " + Math.round(data.sentTotal) }} </div>
-            <div v-if="Math.floor(data.sentTotal) !== Math.floor(data.sentTop)" class="uk-flex uk-flex-right uk-text-primary" :class="{'diamond' : !count}" style="white-space: nowrap; padding: 3px;"> {{ "Top10: " + Math.round(data.sentTop) }} </div>
+            <div 
+                class="uk-flex uk-flex-right uk-text-blend" 
+                :class="{'diamond' : !count}" 
+                style="white-space: nowrap;"
+            > 
+                {{ "Sent Total: " }}
+                    <span class="uk-margin-xsmall-left uk-text-primary">
+                        {{ Math.round(data.receivedTotal) }}
+                    </span> 
+            </div>
+            <div 
+                v-if="Math.floor(data.sentTotal) !== Math.floor(data.sentTop)" 
+                class="uk-flex uk-flex-right uk-text-blend" 
+                :class="{'diamond' : !count}" 
+                style="white-space: nowrap;"
+            > 
+                {{ "Top10: " }}
+                <span class="uk-margin-xsmall-left uk-text-primary">
+                    {{ Math.round(data.sentTop) }}
+                </span> 
+            </div>
         </div>
     </div>
     <div v-else class="uk-flex uk-flex-center">

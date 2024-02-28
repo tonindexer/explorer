@@ -15,7 +15,7 @@ const externalLink = computed(() : MockType=> {
 </script>
 
 <template>
-    <table class="uk-table uk-margin-remove-vertical last-row-radius" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
+    <table class="uk-table uk-margin-remove-vertical last-row-radius" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped-inverse': !isMobile()}">
         <tbody class="uk-table-divider">
             <tr>
                 <AtomsPropLine>
