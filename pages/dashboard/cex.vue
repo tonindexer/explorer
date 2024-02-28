@@ -54,10 +54,10 @@ onMounted(async() => {
                     </template>
                 </div>
                 <div v-else-if="route.hash === '#deposits'">
-                    <DashboardTopCexTable v-if="deposits" :slice_id="'28'" :request="deposits" :type="'deposit'"/>
+                    <DashboardTopCEXTable v-if="deposits" :slice_id="'28'" :request="deposits" :type="'deposit'"/>
                 </div>
                 <div v-else-if="route.hash === '#withdrawals'">
-                    <DashboardTopCexTable v-if="withdrawals" :slice_id="'15'" :request="withdrawals" :type="'withdrawal'"/>
+                    <DashboardTopCEXTable v-if="withdrawals" :slice_id="'15'" :request="withdrawals" :type="'withdrawal'"/>
                 </div>
             </template>
         </AtomsTile>

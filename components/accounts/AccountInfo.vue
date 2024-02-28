@@ -203,13 +203,13 @@ watch(() => props.hex, async() => await reloadInfo())
                     <AccountsTopJettonHolders :minter="hex" :keys="store.jettonHolders[account.address.hex]?.owned_balance ?? []" :default-length="10"/>
                 </div>
                 <div v-else-if="route.hash === '#nfts'" class="uk-padding-large-vertical uk-padding-horizontal" id="nfts">
-                    <LazyAccountsNftGrid :minter-flag="false" :keys="ownerKeys" :default-length="18" :account="hex" />
+                    <LazyAccountsNFTGrid :minter-flag="false" :keys="ownerKeys" :default-length="18" :account="hex" />
                 </div>
                 <div v-else-if="route.hash === '#minter' && account.types?.includes('nft_collection')" class="uk-padding-large-vertical uk-padding-horizontal" id="minter">
-                    <LazyAccountsNftGrid :minter-flag="true" :keys="minterKeys" :default-length="18" :account="hex" />
+                    <LazyAccountsNFTGrid :minter-flag="true" :keys="minterKeys" :default-length="18" :account="hex" />
                 </div>
                 <div v-else-if="route.hash === '#nft_holders' && account.types?.includes('nft_collection')" id="nft_holders">
-                    <AccountsTopNftHolders :keys="store.nftHolders[account.address.hex]?.owned_items ?? []" :minter="hex" :default-length="10" />
+                    <AccountsTopNFTHolders :keys="store.nftHolders[account.address.hex]?.owned_items ?? []" :minter="hex" :default-length="10" />
                 </div>
             </template>
         </AtomsTile>
