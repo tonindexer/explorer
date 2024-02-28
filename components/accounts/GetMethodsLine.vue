@@ -24,7 +24,7 @@ defineProps<{
         </td>
     </template>
     <template v-else>
-        <td class="uk-padding-large-left">
+        <td class="uk-padding-large-left uk-text-truncate">
             {{ name }}
         </td>
         <td>

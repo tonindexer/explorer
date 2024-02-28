@@ -44,8 +44,8 @@ watch(itemCount, async() => {
             <tr>
                 <th class="uk-width-1-3">{{ $t('ton.id')}}</th>
                 <th class="uk-width-1-3">{{ $t('ton.wallet')}}</th>
-                <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
-                <th class="uk-width-1-6 uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.pie')}}</th>
+                <th class="uk-width-1-5 uk-text-right">{{ $t('ton.balance')}}</th>
+                <th class="uk-table-shink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.pie')}}</th>
             </tr>
         </thead>
         <tbody>
@@ -90,11 +90,11 @@ watch(itemCount, async() => {
                     </td>
                 </tr>
                 <tr v-else>
-                    <td> 
-                        <AtomsAddressField :addr="acc.owner_address" :break_word="true"/>
+                    <td class="uk-text-truncate"> 
+                        <AtomsAddressField :addr="acc.owner_address" :break_word="false" :full="true"/>
                     </td>
-                    <td>
-                        <AtomsAddressField :addr="acc.wallet_address" :break_word="true"/>
+                    <td class="uk-text-truncate">
+                        <AtomsAddressField :addr="acc.wallet_address" :break_word="false" :full="true"/>
                     </td>
                     <td class="uk-text-right uk-text-nowrap">
                         {{ `${formatTons(Number(acc.balance ?? 0), minterMeta.decimals, true)} ${minterMeta.symbol}` }}

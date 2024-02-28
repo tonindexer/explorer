@@ -52,7 +52,9 @@ $large: 1.5rem;
 }
 
 .uk-table {
-  margin-bottom: 12px;
+  margin-bottom: 12px;  
+  table-layout:fixed;
+  width: 100%;
   td {
     color: var(--color-text-emphasis)
   }

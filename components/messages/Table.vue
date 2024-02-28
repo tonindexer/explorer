@@ -340,23 +340,23 @@ onMounted(() => {
     </div>
     <table v-show="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <colgroup v-if="!isMobile()">
-            <col width="13%" />
-            <col width="13%" />
+            <col width="10%" />
+            <col width="16%" />
             <col width="25%" />
             <col width="13%" />
             <col width="13%" />
             <col width="13%" />
-            <col width="10%" />
+            <col width="13%" />
         </colgroup>
         <thead v-if="!isMobile()">
             <tr>
-                <th style="width:13%; min-width: 20px">{{ $t('general.tx_names') }}</th>
-                <th style="width:13%;">{{ $t('ton.type')}}</th>
-                <th class="uk-table-expand" style="width:25%;">{{ $t('ton.operation_name') }}</th>
-                <th style="width:13%;">{{ $t('general.sender')}}</th>
-                <th style="width:13%;">{{ $t('general.receiver')}}</th>
-                <th class="uk-text-right" style="width:13%;">{{ $t('general.amount')}}</th>
-                <th class="uk-text-right uk-text-nowrap" style="width:10%;" :class="{'hover-header' : update}" @click="sortby.order_desc = !sortby.order_desc">
+                <th style="min-width: 20px">{{ $t('general.tx_names') }}</th>
+                <th>{{ $t('ton.type')}}</th>
+                <th class="uk-table-expand">{{ $t('ton.operation_name') }}</th>
+                <th>{{ $t('general.sender')}}</th>
+                <th>{{ $t('general.receiver')}}</th>
+                <th class="uk-text-right">{{ $t('general.amount')}}</th>
+                <th class="uk-text-right uk-text-nowrap" :class="{'hover-header' : update}" @click="sortby.order_desc = !sortby.order_desc">
                     {{ $t('general.created') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
                 </th>
             </tr>

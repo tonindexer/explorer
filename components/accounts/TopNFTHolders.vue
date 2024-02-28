@@ -38,9 +38,9 @@ watch(itemCount, async() => {
         <thead v-if="!isMobile()">
             <tr>
                 <th class="uk-width-1-2">{{ $t('ton.id')}}</th>
-                <th class="uk-table-shrink">{{ $t('ton.items')}}</th>
-                <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
-                <th class="uk-table-shrink uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
+                <th class="uk-width-1-6">{{ $t('ton.items')}}</th>
+                <th class="uk-width-1-6 uk-text-right">{{ $t('ton.balance')}}</th>
+                <th class="uk-width-1-6 uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.updated')}}</th>
             </tr>
         </thead>
         <tbody>
@@ -92,8 +92,8 @@ watch(itemCount, async() => {
                     </td>
                 </tr>
                 <tr v-else>
-                    <td v-if="acc.owner_address"> 
-                        <AtomsAddressField :addr="acc.owner_address" :break_word="true"/>
+                    <td v-if="acc.owner_address" class="uk-text-truncate"> 
+                        <AtomsAddressField :addr="acc.owner_address" :break_word="true" :full="true"/>
                     </td>
                     <td v-else>
                         {{ $t('general.noone') }}

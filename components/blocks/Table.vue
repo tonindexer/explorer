@@ -90,7 +90,7 @@ onMounted(() => {
             <thead v-if="!isMobile()">
                 <tr>
                     <th class="uk-width-1-6">{{ $t('ton.workchain')}}</th>
-                    <th class="uk-width-1-6">{{ $t('ton.shard')}}</th>
+                    <th class="uk-width-1-4">{{ $t('ton.shard')}}</th>
                     <th class="uk-text-nowrap uk-width-1-6" :class="{'hover-header' : update}" @click="sortby.order_desc = !sortby.order_desc">
                         {{ $t('ton.block') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
                     </th>

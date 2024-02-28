@@ -79,7 +79,7 @@ onMounted(async () => {
             <tr>
                 <th class="uk-width-1-4">{{ $t('ton.name')}}</th>
                 <th class="uk-width-1-2">{{ $t('ton.wallet')}}</th>
-                <th class="uk-table-expand uk-text-right">{{ $t('ton.balance')}}</th>
+                <th class="uk-width-1-4 uk-text-right">{{ $t('ton.balance')}}</th>
             </tr>
         </thead>
         <tbody>
@@ -111,12 +111,12 @@ onMounted(async () => {
                             </NuxtLink>
                         </td>
                         <td class="uk-text-truncate">
-                            <AtomsAddressField v-if="key in store.accounts" :break_word="true" :addr="store.accounts[key].address" :full="true"/>
+                            <AtomsAddressField v-if="key in store.accounts" :break_word="false" :addr="store.accounts[key].address" :full="true"/>
                             <Loader :ratio="1" v-else />
                         </td>
                         <td class="uk-text-right">
-                            <div class="jetton uk-flex uk-flex-right uk-text-primary uk-text-nowrap" style="gap: 0.5rem">
-                                {{ `${formatTons(Number(store.accounts[key]?.jetton_balance ?? 0), jtList[key].decimals)} ${store.metadata[jtRelations[key].minter.hex]?.symbol ?? ''}`}}
+                            <div class="jetton uk-flex uk-flex-right uk-text-primary" style="gap: 0.5rem">
+                                {{ `${formatTons(Number(store.accounts[key]?.jetton_balance ?? 0), jtList[key].decimals, true)} ${store.metadata[jtRelations[key].minter.hex]?.symbol ?? ''}`}}
                                 <span v-if="store.accounts[key]?.fake" class="uk-margin-remove uk-text-danger">
                                     {{ $t('ton.fake') }}
                                 </span>

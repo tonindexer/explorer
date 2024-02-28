@@ -127,13 +127,13 @@ onMounted(() => {
 <template>
     <table v-show="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <colgroup v-if="!isMobile()">
+            <col width="15%" />
+            <col width="13%" />
+            <col width="23%" />
+            <col width="9%" />
             <col width="13%" />
             <col width="13%" />
-            <col width="25%" />
             <col width="13%" />
-            <col width="13%" />
-            <col width="13%" />
-            <col width="10%" />
         </colgroup>
         <thead v-if="!isMobile()">
             <tr>

@@ -92,7 +92,11 @@ onBeforeMount(() => {
         :class="{ 'uk-margin-remove': isMobile() }"
         uk-grid
     >
-        <div class="uk-width-1-1 uk-width-1-5@m uk-margin-small" style="min-width: 250px;">
+        <div 
+            class="uk-width-1-1 uk-width-1-5@m uk-margin-small uk-margin-small-right" 
+            :class="{ 'uk-padding-remove': isMobile() }"
+            style="min-width: 250px; width: fit-content;"
+        >
             <AtomsRadioButtons v-model:selected="method" v-model:selected-layer="methodPair" :options-layers="allMethods" :layered="true" />
         </div>
         <div 
@@ -131,7 +135,7 @@ onBeforeMount(() => {
                             
                             <AccountsGetMethodsLine :name="value.key" :third="value.type" :fourth="value.format">
                                 <template #value>
-                                    <AtomsCopyableText :text="(value.value ?? '').toString()" :custom-desk-width="'30vw'" :custom-mobile-width="'85vw'">
+                                    <AtomsCopyableText :text="(value.value ?? '').toString()" :custom-desk-width="'100%'" :custom-mobile-width="'85vw'">
                                         <p v-if="!(value.addr && value.value !== 'NONE') && !value.content" class="uk-text-truncate uk-margin-remove">
                                             {{ value.value ?? $t('general.empty') }}
                                         </p>
