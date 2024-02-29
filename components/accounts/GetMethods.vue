@@ -54,11 +54,11 @@ const parseData = computed((): TableSection => {
                     const value = (!method.error && (method.returns[index] || method.returns[index] === 0)) ? method.returns[index] : ''
                     methodOut.returns.push({
                         key: arg.name,
-                        value: typeof value === 'object' ? value.URI : value,
+                        value: value,
                         type: arg.stack_type,
                         format: arg.format ? arg.format.toString(): '',
                         addr: arg.format && (arg.format === "addr") ? true : false,
-                        content: arg.format && (arg.format === "content") ? true : false,
+                        content: arg.format && (arg.format === "content" && !(typeof value === 'object')) ? true : false,
                     })
                 }
             output[key][method.name] = methodOut
@@ -179,7 +179,8 @@ onBeforeMount(() => {
                         <tr v-for="value of shownMethod.returns" style="position: relative;">
                             <AccountsGetMethodsLine :name="value.key" :third="value.type" :fourth="value.format">
                                 <template #value>
-                                    <AtomsCopyableText :text="(value.value ?? '').toString()" :custom-desk-width="'30vw'" :custom-mobile-width="'85vw'">
+                                    <pre class="pre-wrapper" v-if="typeof value.value === 'object' && isMobile()">{{ JSON.stringify(value, null, 4) }}</pre>
+                                    <AtomsCopyableText v-else :text="(value.value ?? '').toString()" :custom-desk-width="'100%'" :custom-mobile-width="'85vw'">
                                         <p v-if="!(value.addr && value.value !== 'NONE') && !value.content" class="uk-text-truncate uk-margin-remove">
                                             {{ value.value ?? $t('general.empty') }}
                                         </p>
@@ -207,5 +208,13 @@ onBeforeMount(() => {
 <style scoped lang="scss">
 .divider {
     border-left: 1px solid var(--color-bg-shadow);
+}
+
+.pre-wrapper {
+    color: var(--color-text-emphasis);
+    padding: 0;
+    border: none;
+    background: transparent;
+    margin-bottom: 0;
 }
 </style>

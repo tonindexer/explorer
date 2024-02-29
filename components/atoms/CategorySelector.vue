@@ -5,6 +5,7 @@ interface Props {
     selected: String
     routes: RouteLink[]
     setRoute?: boolean
+    useParent?: boolean
     secondary?: boolean
     keepDesktop?: boolean
 }
@@ -12,6 +13,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     setRoute: true,
     secondary: false,
+    useParent: false,
     keepDesktop: false
 })
 
@@ -35,7 +37,7 @@ const component = computed(() => {
         @change="($event: Event) => $emit('update:selected', ($event.target as HTMLSelectElement).value)" 
         class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary"
     >
-        <option v-for="option in routes" :value="option.route">{{ $t(option.t) }}</option>
+        <option v-for="option in routes" :value="useParent? option.parent: option.route">{{ $t(option.t) }}</option>
     </select>
     <div v-else
         class="category-wrapper"
@@ -48,7 +50,7 @@ const component = computed(() => {
                 class="category" 
                 :to="{ hash: `#${item.route}`, query: route.query}"
                 :class="{ selected: item.selected }"
-                :data-value="item.route"
+                :data-value="useParent ? item.parent : item.route"
                 @click="($event: Event) => $emit('update:selected', ($event.target as HTMLElement).dataset?.value ?? '')"
             >
                 {{ $t(item.t) }}
@@ -63,6 +65,9 @@ const component = computed(() => {
     justify-content: space-between; 
     width: fit-content;
     cursor: pointer;
+    ::placeholder {
+        color: var(--color-text-emphasis);
+    }
     .category {
         line-height: 24px;
         font-size: 16px;

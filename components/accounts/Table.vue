@@ -115,7 +115,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div v-if="isMobile() && route.path === '/accounts'" class="uk-flex uk-flex-right uk-padding-top uk-padding-vertical uk-padding-remove-bottom">
+    <div v-if="isMobile() && route.path === '/accounts'" class="uk-flex uk-flex-right uk-padding-top uk-padding-horizontal uk-padding-remove-bottom">
         <div class="uk-width-1-1 uk-text-small">
             <AtomsSelector 
                 v-model:item-count="selectedContract"

@@ -66,34 +66,26 @@ const allRoutes = computed<ParentChildRoutes>(() => {
     return output
 })
 
-const categories = computed(() => {
-    const output: RouteLink[] = []
-    const walkedRoutes = { 'transactions': false, 'jettons': false, 'nfts': false }
+const links = computed(() => {
+    const output = { categories: {} as { [key: string] : RouteLink }, children: {} as { [key: string] : RouteLink[] }}
     allRoutes.value.parents.forEach(item => {
-        if (!walkedRoutes[item]) {
-            for (const child of parentMap[item]) {
+        for (const child of parentMap[item]) {
+            if (allRoutes.value.children.some(cat => cat === child)) {
+                output.categories[item] = { parent: item, route: child, t: `${childMap[item].t}.${item}`, selected: parentMap[item].some(parent => parent === selectedCategory.value)}
+                break
+            }
+        }
+    })
+    for (const cat of Object.values(output.categories)) {
+        if (cat.parent) {
+            output.children[cat.parent] = []
+            for (const child of parentMap[cat.parent]) {
                 if (allRoutes.value.children.some(cat => cat === child)) {
-                    output.push({ route: child, t: `${childMap[item].t}.${item}`, selected: parentMap[item].some(parent => parent === selectedCategory.value)})
-                    walkedRoutes[item] = true
-                    break
+                    output.children[cat.parent].push({ parent: cat.route, route: child, t: `${childMap[child].t}.${child}`, selected: child === selectedRoute.value })
                 }
             }
         }
-    })
-    return output
-})
-
-const children = computed(() => {
-    const output: RouteLink[] = []
-    allRoutes.value.children.forEach(item => {
-        if (childMap[item].parent === selectedCategory.value) {
-            if (item === 'transactions') {
-                output.push({ route: item, t: `${childMap[item].t}.${item}`, selected: route.hash === `#${item}` || route.hash === `#overview`})
-            } else {
-                output.push({ route: item, t: `${childMap[item].t}.${item}`, selected: route.hash === `#${item}`})
-            }
-        }
-    })
+    }
     return output
 })
 
@@ -124,9 +116,12 @@ const reloadInfo = async() => {
 }
 
 const setCategory = (value: string) => {
-    if (selectedCategory.value !== value) {
-        selectedCategory.value = value
-        router.replace({ hash: '#' + selectedCategory.value, query: route.query})
+    if (selectedCategory.value !== value && value in links.value.categories) {
+        const parent = links.value.categories[value].parent
+        if (parent) {
+            selectedCategory.value = value
+            selectedRoute.value = links.value.categories[value].route
+        }
     }
 }
 
@@ -166,16 +161,18 @@ watch(() => props.hex, async() => await reloadInfo())
                 <AccountsGetMethods v-else-if="selectedTab === 'get_methods'" :methods="getMethods"/>
             </template>
         </AtomsTile>
-        <AtomsTile v-if="categories.length" :top="true" :body="true" :divider="true" :tile-style="'margin-top: 32px; padding-bottom: 16px;'">
+        <AtomsTile v-if="Object.keys(links.categories).length" :top="true" :body="true" :divider="true" :tile-style="'margin-top: 32px; padding-bottom: 16px;'">
             <template #top>
                 <AtomsCategorySelector
                     :selected="selectedCategory"
-                    :routes="categories"
+                    :routes="Object.values(links.categories)"
+                    :set-route="false"
+                    :use-parent="true"
                     @update:selected="value => setCategory(value)"
                 />
                 <AtomsCategorySelector
                     v-model:selected="selectedRoute"
-                    :routes="children"
+                    :routes="links.children[selectedCategory]"
                     :secondary="true"
                     :keep-desktop="true"
                     style="margin-top: 16px;"
@@ -191,7 +188,7 @@ watch(() => props.hex, async() => await reloadInfo())
                     </div>
                     <div 
                         class="uk-width-1-1 uk-width-expand@m uk-margin-remove-top"
-                        :class="{ 'divider': !isMobile()}"
+                        :class="{ 'divider': !isMobile}"
                     >
                         <GraphSankey :hex="hex" :count="sankeyType === 'count'"></GraphSankey>
                     </div>

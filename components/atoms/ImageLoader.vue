@@ -7,6 +7,19 @@ defineProps({
         type: [String, null]
     }
 })
+
+const colorMode = useColorMode()
+
+
+const random_pastel = computed(() => {
+    return colorMode.value === 'dark' ?
+        "hsl(" + 360 * Math.random() + ',' +
+            (25 + 70 * Math.random()) + '%,' + 
+            (10 + 5 * Math.random()) + '%)'
+       :"hsl(" + 360 * Math.random() + ',' +
+            (25 + 70 * Math.random()) + '%,' + 
+            (92 + 5 * Math.random()) + '%)'
+})
 </script>
 
 <template>
@@ -22,12 +35,13 @@ defineProps({
             <Loader />
         </template>
         <template #error>
-            <div class="empty-image uk-background-default"/>
+            <div class="empty-image" :style="`background-color: ${random_pastel}`"/>
         </template>
     </VueLoadImage>
     <div 
         v-else 
-        class="empty-image uk-background-default"
+        class="empty-image"
+        :style="`background-color: ${random_pastel}`"
     />
   </template>
 

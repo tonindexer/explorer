@@ -51,7 +51,7 @@ watch(itemCount, async() => {
         <tbody>
             <template v-for="acc in keys">
                 <tr v-if="isMobile()">
-                    <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical uk-padding-small-vertical uk-padding-remove-horizontal">
+                    <td class="uk-flex uk-flex-column uk-align-center uk-padding-horizontal uk-width-1-1 uk-margin-remove-vertical uk-padding-small-vertical uk-padding-remove-horizontal">
                         <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem">
                             {{ `${formatTons(Number(acc.balance ?? 0), minterMeta.decimals)} ${minterMeta.symbol}` }}
                         </div>

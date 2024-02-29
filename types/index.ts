@@ -99,6 +99,7 @@ declare global {
     }
 
     type RouteLink = {
+        parent?: string
         route: string
         t: string
         selected: boolean
