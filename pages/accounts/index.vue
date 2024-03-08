@@ -14,9 +14,7 @@ const store = useMainStore()
 
     <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 20px; padding-bottom: 12px'">
         <template #top>
-            <GraphAreaAccount
-                :contract="null"
-            />
+            <GraphAreaAccount/>
         </template>
     </AtomsTile>
 

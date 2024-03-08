@@ -86,7 +86,7 @@ onMounted(() => {
         </div>
     </template>
     <template v-else>
-        <table v-if="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
+        <table v-if="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile()}">
             <thead v-if="!isMobile()">
                 <tr>
                     <th class="uk-width-1-6">{{ $t('ton.workchain')}}</th>
@@ -100,13 +100,7 @@ onMounted(() => {
             </thead>
             <tbody>
                 <template v-for="block in displayedKeys">
-                    <BlocksTableLine 
-                        v-if="lineLink"
-                        :class="{'hover' : lineLink}" 
-                        :block="store.blocks[block]" 
-                        @click="navigateTo({ name: 'blocks-key', params: {key : block }})" 
-                        style="cursor: pointer;"/>
-                    <BlocksTableLine v-else :block="store.blocks[block]" :link-block="true"/>
+                    <BlocksTableLine :block="store.blocks[block]"/>
                 </template>
             </tbody>
         </table>

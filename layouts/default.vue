@@ -24,7 +24,7 @@ useSeoMeta({
 </script>
 
 <template>
-    <div v-if="!isMobile()" uk-grid class="uk-width-1-1 uk-height-1-1 uk-grid uk-margin-remove uk-background-default uk-padding" style="column-gap: 24px; position: relative;">
+    <div v-if="!isMobile()" class="uk-width-1-1 uk-height-1-1 uk-flex uk-margin-remove uk-background-default uk-padding" style="column-gap: 24px; position: relative;">
         <NavBar />
         <main class="uk-padding-remove uk-margin-remove uk-flex uk-flex-column uk-width-expand">
             <AtomsSearchBar/>

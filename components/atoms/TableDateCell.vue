@@ -29,7 +29,7 @@ const passedTime = () => {
         }
     } else if (time > (1000 * 55)) {
         return {
-            time: Math.round(time / (1000 * 60)).toString(),
+            time: Math.round(time / (1000 * 60)).toString() + ' ',
             t: 'm'
         }
     } else if (time > (1000 * 15)) {
@@ -48,10 +48,12 @@ const passedTime = () => {
 </script>
 
 <template>
-    <div v-if="passedTime()" class="uk-text-primary uk-text-right uk-text-nowrap">
-        {{ (passedTime()?.time ?? '') + $t(`time_ago.${passedTime()?.t}`) }}
-    </div>
-    <div v-else>
-        {{ 'Error' }}
-    </div>
+    <ClientOnly :fallback="$t('time.just_now')">
+        <div v-if="passedTime()" class="uk-text-primary uk-text-right uk-text-nowrap">
+            {{ (passedTime()?.time ?? '') + $t(`time.${passedTime()?.t}`) + (passedTime()?.t !== 'just_now' ? ' ' + $t('time.ago') : '') }}
+        </div>
+        <div v-else>
+            {{ 'Error' }}
+        </div>
+    </ClientOnly>
 </template>

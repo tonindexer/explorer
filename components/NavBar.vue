@@ -11,6 +11,7 @@ watch(showMobileNav, () => {
 
 const runtimeConfing = useRuntimeConfig()
 
+const langOpen = ref(false)
 const routes = computed(() => [
 {
         name: 'transactions',
@@ -135,10 +136,51 @@ const external = [
             <ClientOnly>
                 <AtomsThemeSwitcher :vertical="true"/>
             </ClientOnly>
-            <div class="uk-flex uk-flex-column" style="row-gap: 8px; margin-top: 32px; margin-left:8px">
-                <a class="locale" :class="{ 'active' : locale === 'en' }" @click.prevent.stop="setLocale('en')" style="cursor: pointer; line-height: 40px;">En</a>
-                <a class="locale" :class="{ 'active' : locale === 'ru' }" @click.prevent.stop="setLocale('ru')" style="cursor: pointer; line-height: 40px;">Ru</a>
-            </div>
+            <AtomsDropdownTile
+                as-element="div"
+                :hover-trigger="false"
+                :filter-icon="false"
+                :noDropdown="false"
+                :show-dropdown="langOpen"
+                inner-padding="small"
+                offset="bottom"
+                style="margin-top: 32px;"
+            >
+                <template #trigger>
+                    <div
+                        :class="['uk-text-primary']"
+                        @click="langOpen = !langOpen"
+                        style="line-height: 1.5;"
+                    >
+                        <span>
+                            {{ showFullMenu ? $t(`misc.${locale}`) : capitalize(locale) }}
+                        </span>
+                        <span
+                            :class="[
+                                'uk-icon',
+                                showFullMenu ? 'uk-margin-small-left' : ''
+                            ]"
+                            :uk-icon="`icon: chevron-${langOpen ? 'up' : 'down'}`"
+                        />
+                    </div>
+                </template>
+                <template #dropdown>
+                    <div 
+                        v-for="item of ['en', 'ru']"
+                        :class="[
+                            'filter-item',
+                            {'selected-filter': locale === item},
+                            'uk-flex uk-padding-left uk-padding-small-vertical'
+                        ]"
+                        :style="[
+                            'padding-right: 48px'
+                        ]"
+                        @click="setLocale(item); langOpen = !langOpen"
+                    >
+                        {{ showFullMenu ? $t(`misc.${item}`) : capitalize(item) }}
+                    </div>
+                </template>
+            </AtomsDropdownTile>
             <div :style="`position: absolute; top: ${runtimeConfing.public.dashboard ? 346 : 298}px; right: -20px`" @click="showFullMenu = !showFullMenu">
                 <svg class="knob" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="20" cy="20" r="20" fill="white"/>

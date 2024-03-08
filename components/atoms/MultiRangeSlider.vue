@@ -21,8 +21,8 @@
       />
       <div
         class="thumb thumb-left"
-        @mousedown="onLeftThumbMousedown"
-        @touchstart="onLeftThumbMousedown"
+        @mousedown.prevent="onLeftThumbMousedown"
+        @touchstart.prevent="onLeftThumbMousedown"
       >
         <div class="caption">
           <span class="min-caption">{{ minCaption || barMinVal }}</span>
@@ -44,8 +44,8 @@
 
       <div
         class="thumb thumb-right"
-        @mousedown="onRightThumbMousedown"
-        @touchstart="onRightThumbMousedown"
+        @mousedown.prevent="onRightThumbMousedown"
+        @touchstart.prevent="onRightThumbMousedown"
       >
         <div class="caption">
           <span class="max-caption">{{ maxCaption || barMaxVal }}</span>
@@ -171,7 +171,6 @@ export default {
       }
     },
     onLeftThumbMousedown(e) {
-      e.preventDefault();
       this.startX = e.clientX;
       if (e.type === "touchstart") {
         if (e.touches.length === 1) {
@@ -213,7 +212,6 @@ export default {
       document.removeEventListener("touchend", this.onLeftThumbMouseup);
     },
     onRightThumbMousedown(e) {
-      e.preventDefault();
       this.startX = e.clientX;
       if (e.type === "touchstart") {
         if (e.touches.length === 1) {
@@ -463,6 +461,7 @@ export default {
   margin: -10px;
   cursor: pointer;
 }
+
 .multi-range-slider .input-type-range:focus + .thumb::after {
   content: "";
   position: absolute;

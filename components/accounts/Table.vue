@@ -138,14 +138,31 @@ onMounted(() => {
         <thead v-if="!isMobile()">
             <tr>
                 <th class="uk-width-1-5">{{ $t('ton.id')}}</th>
-                <th class="uk-width-1-5 uk-flex" style="position: relative; width: fit-content;" :class="{'dropdown-text filter-icon hover-header' : update}">
-                    {{ $t('ton.contract')}}
-                    <div class="dropdown-filter">
-                        <div v-for="item of optionsContract" class="filter-item" :class="{'selected-filter': selectedContract === item}" @click="selectedContract = item">
+                <AtomsDropdownTile
+                    as-element="th"
+                    :hover-trigger="true"
+                    :filter-icon="true"
+                    :noDropdown="!update"
+                    offset="top"
+                    :class="{ 'active': selectedContract !== 'All' }"
+                >
+                    <template #trigger>
+                        {{ $t('ton.contract')}}
+                    </template>
+                    <template #dropdown>
+                        <div 
+                            v-for="item of optionsContract" 
+                            :class="[
+                                'filter-item',
+                                {'selected-filter': selectedContract === item},
+                                'uk-flex uk-padding-small-vertical uk-padding-horizontal'
+                            ]" 
+                            @click="selectedContract = item"
+                        >
                             {{ item }}
                         </div>
-                    </div>
-                </th>
+                    </template>
+                </AtomsDropdownTile>
                 <th class="uk-width-1-5 uk-text-right">{{ $t('ton.balance')}}</th>
                 <th class="uk-width-1-5 uk-text-right uk-margin-small-right">{{ $t('ton.status')}}</th>
                 <th class="uk-width-1-5 uk-text-right" :class="{'hover-header' : update}" @click="sortby.order_desc = !sortby.order_desc">

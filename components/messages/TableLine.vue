@@ -160,37 +160,25 @@ const showData = ref(false)
                 {{ msg.operation_name? msg.operation_name : 
                 ( msg.operation_id? `${opToHex(msg.operation_id ?? 0)}` : "&#8203") }}
             </td>
-            <td class="uk-text-truncate"> 
-                <div class="uk-flex uk-flex-column" style="gap: 24px">
-                    <AtomsAddressField :addr="msg.src_address ?? null" :break_word="false"/>
-                    <div class="uk-text-nowrap" v-if="msg.src_contract">   
-                        {{ msg.src_contract }}
-                    </div>
-                    <div v-else>
-                        {{ "&#8203" }}
-                    </div>
-                </div>
-            </td>
-            <td class="uk-text-truncate"> 
-                <div class="uk-flex uk-flex-column" style="gap: 24px">
-                    <AtomsAddressField :addr="msg.dst_address ?? null" :break_word="false"/>
-                    <div class="uk-text-nowrap" v-if="msg.dst_contract">   
-                        {{ msg.dst_contract }}
-                    </div>
-                    <div v-else>
-                        {{ "&#8203" }}
-                    </div>
-                </div>
+            <td>
+                {{ chainTitle(Number(msg.src_workchain))}}
             </td>
             <td>
-                <div class="uk-flex uk-flex-column" style="gap: 24px">
-                    <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
-                        {{ roundTON(msg.amount ?? 0n) }}
-                    </div>
-                    <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
-                        {{ msg.fwd_fee ? tinyTON(msg.fwd_fee) : 0 }}
-                    </div>
-                </div>
+                <AtomsBalanceCell :balance="msg.amount ?? 0n" :place="'end'"/>
+            </td>
+            <td class="uk-text-truncate"> 
+                <AtomsAddressField 
+                    :addr="msg.src_address ?? null" 
+                    :break_word="false" 
+                    :tooltip="msg.src_contract ?? undefined"
+                />
+            </td>
+            <td class="uk-text-truncate"> 
+                <AtomsAddressField 
+                    :addr="msg.dst_address ?? null" 
+                    :break_word="false" 
+                    :tooltip="msg.dst_contract ?? undefined"
+                />
             </td>
             <td>
                 <AtomsTableDateCell :date-time="msg.created_at"/>

@@ -57,8 +57,8 @@ const messageKeys = computed(() => store.getMessageKeys([props.trn.hash], true, 
     </tr>
     <tr v-else>
         <template v-if="messageKeys.length > 0">
-            <td>
-                <NuxtLink class="uk-text-truncate uk-text-emphasis" aria-label="transaction_link" :to="{ name: 'transactions-hash', params: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
+            <td class="uk-text-truncate">
+                <NuxtLink class="uk-text-emphasis" aria-label="transaction_link" :to="{ name: 'transactions-hash', params: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
                     {{ truncString(trn.hash, 5) }}
                 </NuxtLink>
             </td>
@@ -76,6 +76,9 @@ const messageKeys = computed(() => store.getMessageKeys([props.trn.hash], true, 
                 </div>
             </td>
             <td>
+                {{ chainTitle(trn.workchain)}}
+            </td>
+            <td>
                 <div class="uk-flex uk-flex-column" style="gap: 24px">
                     <AtomsBalanceCell 
                         v-for="msg in messageKeys" 
@@ -88,12 +91,24 @@ const messageKeys = computed(() => store.getMessageKeys([props.trn.hash], true, 
             </td>
             <td class="uk-text-truncate"> 
                 <div class="uk-flex uk-flex-column" style="gap: 24px">
-                    <AtomsAddressField v-for="msg in messageKeys" class="uk-text-right" :addr="store.messages[msg].src_address ?? null" :break_word="false" :link_style="'overflow: hidden'"/>
+                    <AtomsAddressField 
+                        v-for="msg in messageKeys" 
+                        class="uk-text-right" 
+                        :addr="store.messages[msg].src_address ?? null" 
+                        :break_word="false" :link_style="'overflow: hidden'"
+                        :tooltip="store.messages[msg].src_contract ?? undefined"
+                    />
                 </div>
             </td>
             <td class="uk-text-truncate"> 
                 <div class="uk-flex uk-flex-column" style="gap: 24px">
-                    <AtomsAddressField v-for="msg in messageKeys" class="uk-text-right" :addr="store.messages[msg].dst_address ?? null" :break_word="false" :link_style="'overflow: hidden'"/>
+                    <AtomsAddressField 
+                        v-for="msg in messageKeys" 
+                        class="uk-text-right" 
+                        :addr="store.messages[msg].dst_address ?? null" 
+                        :break_word="false"
+                        :tooltip="store.messages[msg].dst_contract ?? undefined"
+                    />
                 </div>
             </td>
             <td>
@@ -101,7 +116,7 @@ const messageKeys = computed(() => store.getMessageKeys([props.trn.hash], true, 
             </td>   
         </template>
         <template v-else-if="messageKeys.length === 0">
-            <td>
+            <td class="uk-text-truncate">
                 <NuxtLink class="uk-text-emphasis" aria-label="transaction_link" :to="{ name: 'transactions-hash', params: { hash: toBase64Web(trn.hash) }, hash: '#overview'}">
                     {{ truncString(trn.hash, 5) }}
                 </NuxtLink>
@@ -110,6 +125,9 @@ const messageKeys = computed(() => store.getMessageKeys([props.trn.hash], true, 
                 <AtomsStatusCell :status="'UPDATE'"></AtomsStatusCell>
             </td>
             <td></td>
+            <td>
+                {{ chainTitle(trn.workchain)}}
+            </td>
             <td></td>
             <td class="uk-text-truncate uk-text-right">
                 <NuxtLink :to="{name: 'accounts-hex', params: { hex: trn.address.hex}, hash: '#overview'}" class="uk-text-emphasis">

@@ -78,48 +78,26 @@ html {
   text-decoration: underline !important;
 }
 
-.dropdown-text:hover .dropdown-filter {
-  display: flex;
-}
-
-.dropdown-filter {
-  position: absolute;
-  display: none;
-  top: 48px;
-  width: fit-content;
-  padding: 16px 0;
-  flex-direction: column;
-  gap: 8px;
-  backface-visibility: hidden;
-  background-color: var(--color-bg-emphasis);
-  color: var(--color-text-default);
-  border-radius: 8px;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);
-  max-height: 16rem;
-  overflow-y: auto;
-  .filter-item {
-    display: flex;
-    padding: 8px 16px;
-    align-items: center;
-    gap: 8px;
-    align-self: stretch;
-    &.selected-filter {
-      color: var(--color-text-emphasis);
-    }
-    &.selected-filter::before {
-      content: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"%3E%3Ccircle cx="6" cy="6" r="6" fill="black"/%3E%3C/svg%3E')
-    }
-    &:hover {
-      color: var(--color-text-emphasis);
-    }
+.filter-item {
+  align-items: center;
+  color: var(--color-text-muted);
+  &.selected-filter {
+    color: var(--color-text-emphasis);
+  }
+  &.selected-filter::before {
+    margin-right: 0.5rem;
+    content: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"%3E%3Ccircle cx="6" cy="6" r="6" fill="black"/%3E%3C/svg%3E')
+  }
+  &:hover {
+    color: var(--color-text-emphasis);
   }
 }
 
-.last-row-radius tr:last-child {
-  td:first-child {
+.last-row-radius tr:last-of-type {
+  td:first-of-type {
     border-bottom-left-radius: 12px;
   }
-  td:last-child {
+  td:last-of-type {
     border-bottom-right-radius: 12px;
   }
 }
@@ -156,24 +134,11 @@ html {
   grid-row: span 2;
 }
 
-@media screen and (min-width: 1200px) {
-  .interval-group {
-      font-size: 16px;
-      .uk-button {
-        padding: 16px 24px;
-        line-height: 24px;
-        font-size: 16px;
-      }
+.address-tooltip {
+  .title {
+    color: var(--color-text-muted);;
   }
-}
-
-@media screen and (max-width: 1199px) {
-  .interval-group {
-      font-size: 12px;
-      .uk-button {
-        padding: 4px 16px;
-        line-height: 16px;
-        font-size: 12px;
-      }
+  .body {
+    color: vat(--color-text-emphasis);
   }
 }

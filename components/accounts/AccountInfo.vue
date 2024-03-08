@@ -190,7 +190,7 @@ watch(() => props.hex, async() => await reloadInfo())
                         class="uk-width-1-1 uk-width-expand@m uk-margin-remove-top"
                         :class="{ 'divider': !isMobile}"
                     >
-                        <GraphSankey :hex="hex" :count="sankeyType === 'count'"></GraphSankey>
+                        <GraphSankey :hex="hex" :count="sankeyType === 'count'"/>
                     </div>
                 </div>
                 <div v-else-if="route.hash === '#jettons'" id="jettons">

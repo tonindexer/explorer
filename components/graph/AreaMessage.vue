@@ -270,27 +270,17 @@ onMounted(async () => {
                 </div>
             </ClientOnly>
         </div>
-        <div style="justify-content: space-between;" uk-grid :style="isMobile() ? 'flex-direction: column-reverse' : ''">
-            <div class="interval-group uk-flex uk-flex-middle" :class="isMobile() ? 'uk-width-expand uk-margin-small-top' : 'uk-width-auto uk-margin-remove-top'" style="justify-content: space-between;">
-                <div v-if="!isMobile()" class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove uk-text-primary" style="white-space: nowrap;">
-                    Group Interval
-                </div>
-                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from > 86400000 * 14) : false" id="15m" @click="pickGroup('15m')" :class="{'selected': selection==='15m'}">
-                    15min
-                </button>
-                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from  > 86400000 * 31 * 2) : false" id="1h" @click="pickGroup('1h')" :class="{'selected': selection==='1h'}">
-                    1h
-                </button>
-                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from  > 86400000 * 31 * 12) : false" id="4h" @click="pickGroup('4h')" :class="{'selected': selection==='4h'}">
-                    4h
-                </button>
-                <button class="uk-margin-small-left uk-button" id="8h" @click="pickGroup('8h')" :class="{'selected': selection==='8h'}">
-                    8h
-                </button>
-                <button class="uk-margin-small-left uk-button" id="24h" @click="pickGroup('24h')" :class="{'selected': selection==='24h'}">
-                    Day
-                </button>
-            </div>
+        <div 
+            class="uk-flex uk-flex-middle"
+            style="justify-content: space-between;" 
+            :style="isMobile() ? 'flex-direction: column-reverse' : ''"
+        >
+            <GraphPickGroup 
+                :from="filterInterval.from" 
+                :to="filterInterval.to" 
+                :selected="selection"
+                @set-interval="value => pickGroup(value)"
+            />
             <div class="uk-padding-right" :class="isMobile() ? 'uk-width-1-1' : 'uk-width-expand'" @mouseup="sliderEndEvent" @touchend="sliderEndEvent">
                 <AtomsMultiRangeSlider
                     :baseClassName="'multi-range-slider'"

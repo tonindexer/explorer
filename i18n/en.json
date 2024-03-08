@@ -175,13 +175,20 @@
         "first_tx": "None - This TX is first in the chain",
         "pick_method": "Pick any method from the listed"
     },
-    "time_ago": {
+    "time": {
+        "group_interval": "Group interval",
         "just_now": "just now",
-        "s": "s ago",
-        "m": " min ago",
-        "h": "h ago",
-        "d": "d ago",
-        "mo": "mo ago",
-        "y": "y ago"
+        "ago": "ago",
+        "s": "s",
+        "m": "min",
+        "h": "h",
+        "d": "d",
+        "day": "Day",
+        "mo": "mo",
+        "y": "y"
+    },
+    "misc": {
+        "ru": "Russian",
+        "en": "English"
     }
 }

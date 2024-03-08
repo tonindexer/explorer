@@ -2,7 +2,6 @@
 
 defineProps<{
     block: Block
-    linkBlock?: boolean
 }>()
 
 </script>
@@ -41,16 +40,16 @@ defineProps<{
             </div>
         </td>
     </tr>
-    <tr v-else>
+    <tr 
+        v-else
+        :class="{ 'uk-background-muted': block.workchain === -1 }"
+    >
         <td class="uk-text-primary">{{ chainTitle(block.workchain) }}</td>
         <td class="uk-text-primary">{{ block.shard.toString() }}</td>
-        <td v-if="linkBlock" >
+        <td>
             <NuxtLink :to="{ name: 'blocks-key', params: {key : `${block.workchain}:${block.shard}:${block.seq_no}` }}" class="uk-text-emphasis">
                 {{ block.seq_no}}
             </NuxtLink>
-        </td>
-        <td class="uk-text-primary" v-else>
-            {{ block.seq_no}}
         </td>
         <td class="uk-text-primary">{{ block.transactions_count }}</td>
         <td class="uk-text-primary">    

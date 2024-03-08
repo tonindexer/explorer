@@ -10,6 +10,7 @@ interface Graph {
     }[]
     times: number[]
 }
+
 const store = useMainStore()
 const workchain = computed(() => 'workchain' in route.query? (route.query.workchain?.toString() ?? null) : null)
 const graphColors = reactive(useGraphColors())
@@ -248,35 +249,30 @@ onMounted(async () => {
             :routes="tabs"
             :set-route="false"
         />
-        <div class="uk-width-1-1" style="position: relative; margin-top: 32px">
-            <ClientOnly fallback="Loading graph...">
+        <div class="uk-width-1-1" style="position: relative; margin-top: 32px; min-height: 185px;">
+            <ClientOnly>
+                <template #fallback>
+                    <div class="uk-width-1-1 uk-flex uk-flex-center uk-flex-middle">
+                        <Loader :ratio="2" />
+                    </div>
+                </template>
                 <Chart :options="chartOptions" ref="graph"/>
                 <div v-if="dataParser.series[0].data.length === 0" class="uk-position-center uk-text-center uk-overlay uk-text-bold">
                     {{ $t('warning.nothing_found') + ` ${$t('ton.from').toLowerCase()} ${requestTimes.from} ` + (requestTimes.to ?  ` ${$t('ton.to').toLowerCase()} ${requestTimes.to} ` : '') }}
                 </div>
             </ClientOnly>
         </div>
-        <div style="justify-content: space-between;" uk-grid :style="isMobile() ? 'flex-direction: column-reverse' : ''">
-            <div class="interval-group uk-flex uk-flex-middle" :class="isMobile() ? 'uk-width-expand uk-margin-small-top' : 'uk-width-auto uk-margin-remove-top'" style="justify-content: space-between;">
-                <div v-if="!isMobile()" class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove" style="white-space: nowrap;">
-                    Group Interval
-                </div>
-                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from > 86400000 * 14) : false" id="15m" @click="pickGroup('15m')" :class="{'selected': selection==='15m'}">
-                    15min
-                </button>
-                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from  > 86400000 * 31 * 2) : false" id="1h" @click="pickGroup('1h')" :class="{'selected': selection==='1h'}">
-                    1h
-                </button>
-                <button class="uk-margin-small-left uk-button" :disabled="filterInterval.from ? ((filterInterval.to ? filterInterval.to : store.lastAvailableTimestamp) - filterInterval.from  > 86400000 * 31 * 12) : false" id="4h" @click="pickGroup('4h')" :class="{'selected': selection==='4h'}">
-                    4h
-                </button>
-                <button class="uk-margin-small-left uk-button" id="8h" @click="pickGroup('8h')" :class="{'selected': selection==='8h'}">
-                    8h
-                </button>
-                <button class="uk-margin-small-left uk-button" id="24h" @click="pickGroup('24h')" :class="{'selected': selection==='24h'}">
-                    Day
-                </button>
-            </div>
+        <div 
+            class="uk-flex uk-flex-middle"
+            style="justify-content: space-between;" 
+            :style="isMobile() ? 'flex-direction: column-reverse' : ''"
+        >
+            <GraphPickGroup 
+                :from="filterInterval.from" 
+                :to="filterInterval.to" 
+                :selected="selection"
+                @set-interval="value => pickGroup(value)"
+            />
             <div class="uk-padding-right" :class="isMobile() ? 'uk-width-1-1' : 'uk-width-expand'" @mouseup="sliderEndEvent" @touchend="sliderEndEvent">
                 <AtomsMultiRangeSlider
                     :baseClassName="'multi-range-slider'"

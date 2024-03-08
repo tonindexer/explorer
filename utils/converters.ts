@@ -80,3 +80,5 @@ export const convertBase64ToHex = (value: string) => {
         return result
     }
 }
+
+export const capitalize = (word: string) => word.charAt(0).toUpperCase() + word.slice(1)

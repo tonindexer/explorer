@@ -18,6 +18,8 @@ const itemCount = ref(props.defaultLength)
 const maxExploredPage = ref(0)
 
 const workchain = ref<'main' | 'base' | null>(null)
+const chainOptions = [null, 'main', 'base'] as const
+
 const sortby = ref({
     order_desc: true
 })
@@ -127,36 +129,58 @@ onMounted(() => {
 <template>
     <table v-show="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
         <colgroup v-if="!isMobile()">
-            <col width="15%" />
-            <col width="13%" />
-            <col width="23%" />
-            <col width="9%" />
-            <col width="13%" />
-            <col width="13%" />
-            <col width="13%" />
+            <col width="12.5%" />
+            <col width="10%" />
+            <col width="17.5%" />
+            <col width="10%" />
+            <col width="12.5%" />
+            <col width="12.5%" />
+            <col width="12.5%" />
+            <col width="12.5%" />
         </colgroup>
         <thead v-if="!isMobile()">
             <tr>
-                <th style="width:13%; min-width: 20px">{{ $t('ton.id') }}</th>
-                <th class="uk-flex" style="position: relative; width: fit-content;" :class="{'dropdown-text filter-icon hover-header' : update && (route.path === '/transactions' || route.path === '/'), 'active' : workchain}">
-                    {{ $t('ton.type')}}
-                    <div class="dropdown-filter">
-                        <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary uk-padding-small-vertical uk-padding-horizontal">
-                            <label><input type="radio" :value="null" v-model="workchain" class="uk-radio uk-margin-small-right">{{ $t('options.both') }}</label>
+                <th>{{ $t('ton.id') }}</th>
+                <th>{{ $t('ton.type') }}</th>
+                <th>{{ $t('ton.operation_name') }}</th>
+                <AtomsDropdownTile
+                    as-element="th"
+                    :hover-trigger="true"
+                    :filter-icon="true"
+                    :noDropdown="!update || !(route.path === '/transactions' || route.path === '/')"
+                    offset="top"
+                    :class="[
+                        'uk-text-nowrap',
+                        { 'active': workchain }
+                    ]"
+                >
+                    <template #trigger>
+                        {{ $t('ton.workchain') }}
+                    </template>
+                    <template #dropdown>
+                        <div 
+                            v-for="item of chainOptions" 
+                            :class="[
+                                'filter-item',
+                                {'selected-filter': workchain === item},
+                                'uk-flex uk-padding-small-vertical uk-padding-horizontal uk-text-nowrap'
+                            ]" 
+                            @click="workchain = item"
+                        >
+                            {{ $t(item === 'base' ? 'options.basechain' 
+                                : (item === 'main' ? 'options.masterchain' 
+                                    : 'options.both')) }}
                         </div>
-                        <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary uk-padding-small-vertical uk-padding-horizontal">
-                            <label><input type="radio" :value="'base'" v-model="workchain" class="uk-radio uk-margin-small-right">{{ $t('options.basechain') }}</label>
-                        </div>
-                        <div class="uk-child-width-auto uk-text-left uk-text-nowrap uk-text-primary uk-padding-small-vertical uk-padding-horizontal">
-                            <label><input type="radio" :value="'main'" v-model="workchain" class="uk-radio uk-margin-small-right">{{ $t('options.masterchain') }}</label>
-                        </div>
-                    </div>
-                </th>
-                <th class="uk-table-expand" style="width:25%;">{{ $t('ton.operation_name') }}</th>
-                <th class="uk-text-right" style="width:13%;">{{ $t('general.amount')}}</th>
-                <th class="uk-text-right" style="width:13%;">{{ $t('general.sender')}}</th>
-                <th class="uk-text-right" style="width:13%;">{{ $t('general.receiver')}}</th>
-                <th class="uk-text-right uk-text-nowrap" style="width:10%;" :class="{'hover-header' : update}" @click="sortby.order_desc = !sortby.order_desc">
+                    </template>
+                </AtomsDropdownTile>
+                <th class="uk-text-right">{{ $t('general.amount')}}</th>
+                <th class="uk-text-right">{{ $t('general.sender')}}</th>
+                <th class="uk-text-right">{{ $t('general.receiver')}}</th>
+                <th 
+                    class="uk-text-right uk-text-nowrap" 
+                    :class="{'hover-header' : update}" 
+                    @click="sortby.order_desc = !sortby.order_desc"
+                >
                     {{ $t('general.created') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
                 </th>
             </tr>
@@ -168,7 +192,7 @@ onMounted(() => {
         </template>
         <template v-else-if="loading && !hidden">
             <tr class="uk-text-center">
-                <td colspan="7">
+                <td colspan="8">
                     <Loader />
                 </td>
             </tr>

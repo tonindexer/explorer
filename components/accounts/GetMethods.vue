@@ -95,9 +95,14 @@ onBeforeMount(() => {
         <div 
             class="uk-width-1-1 uk-width-1-5@m uk-margin-small uk-margin-small-right" 
             :class="{ 'uk-padding-remove': isMobile() }"
-            style="min-width: 250px; width: fit-content;"
+            style="min-width: 250px; padding-left: 46px ;width: fit-content;"
         >
-            <AtomsRadioButtons v-model:selected="method" v-model:selected-layer="methodPair" :options-layers="allMethods" :layered="true" />
+            <AtomsRadioButtons 
+                v-model:selected="method" 
+                v-model:selected-layer="methodPair" 
+                :options-layers="allMethods" 
+                :layered="true"
+            />
         </div>
         <div 
             class="uk-width-1-1 uk-width-expand@m uk-margin-remove-top uk-padding-remove"
