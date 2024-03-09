@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Chart } from 'highcharts-vue'
+const route = useRoute()
 
 interface Graph {
     series: {
@@ -10,18 +11,9 @@ interface Graph {
     times: number[]
 }
 
-const route = useRoute()
 const store = useMainStore()
+const contract = computed(() => route.query.contract? route.query.contract.toString() : null)
 const graphColors = reactive(useGraphColors())
-
-const filter = computed(() => { return {
-    'src_address': route.query.src_address?.toString() ?? null,
-    'src_contract': route.query.src_contract?.toString() ?? null,
-    'dst_address': route.query.dst_address?.toString() ?? null,
-    'dst_contract': route.query.dst_contract?.toString() ?? null,
-    'operation_id': route.query.operation_id?.toString() ?? '',
-    'operation_name': route.query.operation_name?.toString() ?? null
-}})
 
 const filterInterval = ref({
     from: store.startupTime - 86400000 * 31 * 6 as number,
@@ -37,7 +29,7 @@ const graph = ref<Chart | null>(null)
 const dataParser = computed(() : Graph => {
     const output : Graph = {
         series: [{
-            name: chartType.value === 'message_count' ? 'messages' : 'volume',
+            name: 'active',
             data: [],
             fillColor : {
                 linearGradient : {
@@ -54,8 +46,8 @@ const dataParser = computed(() : Graph => {
         }],
         times: []
     }
-    store.messageGraphData.slice(1,).forEach(item => {
-        output.series[0].data.push(chartType.value === 'message_amount_sum' ? Math.round(item.Value / 1000000000) : item.Value)
+    store.accountsGraphData.slice(1,).forEach((item, index) => {
+        output.series[0].data.push(item.Value)
         output.times.push(new Date(item.Timestamp).getTime())
     })
 
@@ -63,8 +55,6 @@ const dataParser = computed(() : Graph => {
 })
 
 const interrupter = ref(false)
-
-const chartType: Ref<'message_count' | 'message_amount_sum'> = ref('message_amount_sum')
 
 const requestTimes = computed(() => {  return {
     'from': msToISO(filterInterval.value.from),
@@ -141,7 +131,7 @@ const chartOptions = computed(() => { return {
         lineColor: graphColors.colors.xAxisColor,
         labels: {
             // @ts-ignore
-            formatter: function() { return new Date(this.value).toLocaleDateString("en-US", { month: 'short', day: 'numeric' }) },
+            formatter: function() { return new Date(this.value).toLocaleDateString("en-US",  { month: 'short', day: 'numeric' }) },
             style : {
                 'color': graphColors.colors.axisLabelsColor
             }
@@ -180,7 +170,7 @@ const dayMaxCaption = computed(() => {
 const selection: Ref<IntervalAPI> = ref('24h')
 
 const requestData = async (reset: boolean, setLast: boolean = false) => {
-    await store.getMessagesChart(chartType.value, selection.value, { ...filter.value, ...requestTimes.value }, reset, setLast)
+    await store.getAccountsChart(selection.value, contract.value, requestTimes.value.from, requestTimes.value.to, reset, setLast)
     graph.value?.chart.xAxis[0].setExtremes(0, dataParser.value.times.length - 1)
 }
 
@@ -233,24 +223,21 @@ const setInterval = (setLast: boolean = false) => {
 
 const tabs = computed<RouteLink[]>(() => {
     const output: RouteLink[] = []
-    output.push({ route: 'message_amount_sum', t: 'general.ton_count', selected: chartType.value === 'message_amount_sum' })
-    output.push({ route: 'message_count', t: 'general.msg_count', selected: chartType.value === 'message_count' })
+    output.push({ route: 'active_accounts', t: 'general.active_accounts', selected: selectedTab.value === 'active_accounts' })
     return output
 })
+
+const selectedTab = ref('active_accounts')
 
 watch(filterInterval, () => {
     setInterval()
 }, {deep: true})
 
-watch(filter, () => {
-    requestData(true)
-}, { deep: true })
-
-watch(chartType, () => {
+watch(contract, () => {
     requestData(true)
 })
 
-onMounted(async () => {
+onMounted(() => {
     setInterval(true)
 })
 </script>
@@ -258,12 +245,17 @@ onMounted(async () => {
 <template>
     <div class="uk-flex uk-flex-column uk-width-1-1">
         <AtomsCategorySelector
-            v-model:selected="chartType"
+            v-model:selected="selectedTab"
             :routes="tabs"
             :set-route="false"
         />
-        <div class="uk-width-1-1" style="position: relative; margin-top: 32px;">
-            <ClientOnly fallback="Loading graph...">
+        <div class="uk-width-1-1" style="position: relative; margin-top: 32px; min-height: 185px;">
+            <ClientOnly>
+                <template #fallback>
+                    <div class="uk-width-1-1 uk-flex uk-flex-center uk-flex-middle">
+                        <Loader :ratio="2" />
+                    </div>
+                </template>
                 <Chart :options="chartOptions" ref="graph"/>
                 <div v-if="dataParser.series[0].data.length === 0" class="uk-position-center uk-text-center uk-overlay uk-text-bold">
                     {{ $t('warning.nothing_found') + ` ${$t('ton.from').toLowerCase()} ${requestTimes.from} ` + (requestTimes.to ?  ` ${$t('ton.to').toLowerCase()} ${requestTimes.to} ` : '') }}
@@ -293,6 +285,7 @@ onMounted(async () => {
                     :minValue="slideValues.minValue"
                     :maxValue="slideValues.maxValue"
                     @input="UpdateValues"
+                    :rangeMargin="Math.abs(limits.to - limits.from)/8"
                 />
             </div>
         </div>

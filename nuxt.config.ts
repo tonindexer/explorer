@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  srcDir: 'src/',
   runtimeConfig : {
     public : {
       tonUrl : 'https://anton.tools/api/v0/',
@@ -32,7 +33,7 @@ export default defineNuxtConfig({
     ]
   },
   imports: {
-    dirs: ['store']
+    dirs: ['stores']
   },
   googleFonts: {
     families: {

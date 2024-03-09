@@ -147,7 +147,7 @@ onMounted(() => {
                     :class="{ 'active': selectedContract !== 'All' }"
                 >
                     <template #trigger>
-                        {{ $t('ton.contract')}}
+                        {{ $t('ton.contract') }}
                     </template>
                     <template #dropdown>
                         <div 
