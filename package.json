@@ -7,9 +7,12 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
+    "@nuxt/eslint-config": "^0.2.0",
     "@nuxtjs/color-mode": "^3.3.2",
     "@nuxtjs/device": "^3.1.1",
     "@nuxtjs/google-fonts": "^3.0.2",
@@ -17,6 +20,7 @@
     "@ton.js/json-parser": "^0.0.0-beta.0",
     "@types/json-bigint": "^1.0.1",
     "@types/node": "^18",
+    "eslint": "^8.57.0",
     "highcharts": "^11.1.0",
     "highcharts-vue": "^1.4.3",
     "node-sass": "^9.0.0",

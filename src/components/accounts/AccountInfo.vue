@@ -136,81 +136,161 @@ watch(() => props.hex, async() => await reloadInfo())
 </script>
 
 <template>
-    <template v-if="error">
-        <NuxtLink :to="{ name: 'accounts' }">
-            {{ 'An error occured while loading account! Go to overview page..' }}
-        </NuxtLink>
-    </template>
-    <template v-else-if="loading">
-        <div class="uk-flex uk-flex-center">
-            <Loader />
+  <template v-if="error">
+    <NuxtLink :to="{ name: 'accounts' }">
+      {{ 'An error occured while loading account! Go to overview page..' }}
+    </NuxtLink>
+  </template>
+  <template v-else-if="loading">
+    <div class="uk-flex uk-flex-center">
+      <Loader />
+    </div>
+  </template>
+  <template v-else-if="account">
+    <AtomsTile
+      :body="true"
+      :top="true"
+      :tile-style="'margin-top: 32px'"
+    >
+      <template #top>
+        <AtomsCategorySelector
+          v-model:selected="selectedTab"
+          :set-route="false"
+          :routes="tabs"
+          :keep-desktop="true"
+        />
+      </template>
+      <template #body>
+        <AccountsPropsTable
+          v-if="selectedTab === 'info'"
+          :acc="account"
+        />
+        <AccountsGetMethods
+          v-else-if="selectedTab === 'get_methods'"
+          :methods="getMethods"
+        />
+      </template>
+    </AtomsTile>
+    <AtomsTile
+      v-if="Object.keys(links.categories).length"
+      :top="true"
+      :body="true"
+      :divider="true"
+      :tile-style="'margin-top: 32px; padding-bottom: 16px;'"
+    >
+      <template #top>
+        <AtomsCategorySelector
+          :selected="selectedCategory"
+          :routes="Object.values(links.categories)"
+          :set-route="false"
+          :use-parent="true"
+          @update:selected="value => setCategory(value)"
+        />
+        <AtomsCategorySelector
+          v-model:selected="selectedRoute"
+          :routes="links.children[selectedCategory]"
+          :secondary="true"
+          :keep-desktop="true"
+          style="margin-top: 16px;"
+        />
+      </template>
+      <template #body>
+        <div
+          v-if="(route.hash === '#transactions' || route.hash === '#overview')"
+          id="transactions"
+        >
+          <LazyTransactionsTable
+            :keys="trKeys"
+            :default-length="10"
+            :hidden="trKeys.length === 0"
+            :update="true"
+            :item-selector="true"
+            :account="hex"
+          />
         </div>
-    </template>
-    <template v-else-if="account">
-        <AtomsTile :body="true" :top="true" :tile-style="'margin-top: 32px'">
-            <template #top>
-                <AtomsCategorySelector
-                    v-model:selected="selectedTab"
-                    :set-route="false"
-                    :routes="tabs"
-                    :keep-desktop="true"
-                />
-            </template>
-            <template #body>
-                <AccountsPropsTable v-if="selectedTab === 'info'" :acc="account"/>
-                <AccountsGetMethods v-else-if="selectedTab === 'get_methods'" :methods="getMethods"/>
-            </template>
-        </AtomsTile>
-        <AtomsTile v-if="Object.keys(links.categories).length" :top="true" :body="true" :divider="true" :tile-style="'margin-top: 32px; padding-bottom: 16px;'">
-            <template #top>
-                <AtomsCategorySelector
-                    :selected="selectedCategory"
-                    :routes="Object.values(links.categories)"
-                    :set-route="false"
-                    :use-parent="true"
-                    @update:selected="value => setCategory(value)"
-                />
-                <AtomsCategorySelector
-                    v-model:selected="selectedRoute"
-                    :routes="links.children[selectedCategory]"
-                    :secondary="true"
-                    :keep-desktop="true"
-                    style="margin-top: 16px;"
-                />
-            </template>
-            <template #body>
-                <div v-if="(route.hash === '#transactions' || route.hash === '#overview')" id="transactions">
-                    <LazyTransactionsTable :keys="trKeys" :default-length="10" :hidden="trKeys.length === 0" :update="true" :item-selector="true" :account="hex"/>
-                </div>
-                <div v-else-if="route.hash === '#money_flow'" class="uk-padding-horizontal uk-padding-top" id="money_flow" uk-grid>
-                    <div class="uk-width-1-1 uk-width-1-5@m uk-margin-small" style="min-width: 250px;">
-                        <AtomsRadioButtons v-model:selected="sankeyType" :options="sankeyOptions" :layered="false" />
-                    </div>
-                    <div 
-                        class="uk-width-1-1 uk-width-expand@m uk-margin-remove-top"
-                        :class="{ 'divider': !isMobile}"
-                    >
-                        <GraphSankey :hex="hex" :count="sankeyType === 'count'"/>
-                    </div>
-                </div>
-                <div v-else-if="route.hash === '#jettons'" id="jettons">
-                    <LazyAccountsJettonsTable :owner="hex" :keys="jtKeys" :default-length="10" />
-                </div>
-                <div v-else-if="route.hash === '#jetton_holders' && account.types?.includes('jetton_minter')" id="jetton_holders">
-                    <AccountsTopJettonHolders :minter="hex" :keys="store.jettonHolders[account.address.hex]?.owned_balance ?? []" :default-length="10"/>
-                </div>
-                <div v-else-if="route.hash === '#nfts'" class="uk-padding-large-vertical uk-padding-horizontal" id="nfts">
-                    <LazyAccountsNFTGrid :minter-flag="false" :keys="ownerKeys" :default-length="18" :account="hex" />
-                </div>
-                <div v-else-if="route.hash === '#minter' && account.types?.includes('nft_collection')" class="uk-padding-large-vertical uk-padding-horizontal" id="minter">
-                    <LazyAccountsNFTGrid :minter-flag="true" :keys="minterKeys" :default-length="18" :account="hex" />
-                </div>
-                <div v-else-if="route.hash === '#nft_holders' && account.types?.includes('nft_collection')" id="nft_holders">
-                    <AccountsTopNFTHolders :keys="store.nftHolders[account.address.hex]?.owned_items ?? []" :minter="hex" :default-length="10" />
-                </div>
-            </template>
-        </AtomsTile>
-    </template>
+        <div
+          v-else-if="route.hash === '#money_flow'"
+          id="money_flow"
+          class="uk-padding-horizontal uk-padding-top"
+          uk-grid
+        >
+          <div
+            class="uk-width-1-1 uk-width-1-5@m uk-margin-small"
+            style="min-width: 250px;"
+          >
+            <AtomsRadioButtons
+              v-model:selected="sankeyType"
+              :options="sankeyOptions"
+              :layered="false"
+            />
+          </div>
+          <div 
+            class="uk-width-1-1 uk-width-expand@m uk-margin-remove-top"
+            :class="{ 'divider': !isMobile}"
+          >
+            <GraphSankey
+              :hex="hex"
+              :count="sankeyType === 'count'"
+            />
+          </div>
+        </div>
+        <div
+          v-else-if="route.hash === '#jettons'"
+          id="jettons"
+        >
+          <LazyAccountsJettonsTable
+            :owner="hex"
+            :keys="jtKeys"
+            :default-length="10"
+          />
+        </div>
+        <div
+          v-else-if="route.hash === '#jetton_holders' && account.types?.includes('jetton_minter')"
+          id="jetton_holders"
+        >
+          <AccountsTopJettonHolders
+            :minter="hex"
+            :keys="store.jettonHolders[account.address.hex]?.owned_balance ?? []"
+            :default-length="10"
+          />
+        </div>
+        <div
+          v-else-if="route.hash === '#nfts'"
+          id="nfts"
+          class="uk-padding-large-vertical uk-padding-horizontal"
+        >
+          <LazyAccountsNFTGrid
+            :minter-flag="false"
+            :keys="ownerKeys"
+            :default-length="18"
+            :account="hex"
+          />
+        </div>
+        <div
+          v-else-if="route.hash === '#minter' && account.types?.includes('nft_collection')"
+          id="minter"
+          class="uk-padding-large-vertical uk-padding-horizontal"
+        >
+          <LazyAccountsNFTGrid
+            :minter-flag="true"
+            :keys="minterKeys"
+            :default-length="18"
+            :account="hex"
+          />
+        </div>
+        <div
+          v-else-if="route.hash === '#nft_holders' && account.types?.includes('nft_collection')"
+          id="nft_holders"
+        >
+          <AccountsTopNFTHolders
+            :keys="store.nftHolders[account.address.hex]?.owned_items ?? []"
+            :minter="hex"
+            :default-length="10"
+          />
+        </div>
+      </template>
+    </AtomsTile>
+  </template>
 </template>
 
 <style scoped lang="scss">

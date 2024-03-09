@@ -48,9 +48,9 @@ const setExtraFields = () => {
 const updateValues = async (next: boolean = true) => {
     if (!props.update) return
     if (props.keys.length === 0 || pageNum.value === 0)
-        await store.updateBlockValues('main', itemCount.value, null, undefined, sortby.value.order_desc ? 'DESC' : 'ASC')
+        await store.updateBlockValues('main', itemCount.value, null, sortby.value.order_desc ? 'DESC' : 'ASC')
     else {
-        await store.updateBlockValues('main', itemCount.value, next ? lastMC.value : firstMC.value, pageNum.value, sortby.value.order_desc ? 'DESC' : 'ASC')
+        await store.updateBlockValues('main', itemCount.value, next ? lastMC.value : firstMC.value, sortby.value.order_desc ? 'DESC' : 'ASC')
     }
     setExtraFields()
 }
@@ -80,43 +80,71 @@ onMounted(() => {
 </script>
 
 <template>
-    <template v-if="loading">
-        <div class="uk-flex uk-flex-center">
-            <Loader />
-        </div>
-    </template>
-    <template v-else>
-        <table v-if="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile()}">
-            <thead v-if="!isMobile()">
-                <tr>
-                    <th class="uk-width-1-6">{{ $t('ton.workchain')}}</th>
-                    <th class="uk-width-1-4">{{ $t('ton.shard')}}</th>
-                    <th class="uk-text-nowrap uk-width-1-6" :class="{'hover-header' : update}" @click="sortby.order_desc = !sortby.order_desc">
-                        {{ $t('ton.block') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
-                    </th>
-                    <th class="uk-width-1-6">{{ $t('ton.transactions-count')}}</th>
-                    <th class="uk-table-expand uk-text-right" style="margin-right: 0.3rem;">{{ $t('general.scanned')}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <template v-for="block in displayedKeys">
-                    <BlocksTableLine :block="store.blocks[block]"/>
-                </template>
-            </tbody>
-        </table>
-        <div v-if="!hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom uk-padding-medium-right" style="justify-content: flex-end;">
-            <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
-                <AtomsSelector 
-                    v-model:item-count="itemCount"
-                    :amount="update ? store.totalQueryBlocks : keys.length"
-                    :options="[5, 10, 20, 50]"
-                />
-            </div>
-            <AtomsPageArrows    
-                v-model:page="pageNum" 
-                :left-disabled="pageNum === 0" 
-                :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
-            />
-        </div>
-    </template>
+  <template v-if="loading">
+    <div class="uk-flex uk-flex-center">
+      <Loader />
+    </div>
+  </template>
+  <template v-else>
+    <table
+      v-if="!hidden"
+      class="uk-table uk-margin-remove-top"
+      :class="{'uk-table-divider' : isMobile()}"
+    >
+      <thead v-if="!isMobile()">
+        <tr>
+          <th class="uk-width-1-6">
+            {{ $t('ton.workchain') }}
+          </th>
+          <th class="uk-width-1-4">
+            {{ $t('ton.shard') }}
+          </th>
+          <th
+            class="uk-text-nowrap uk-width-1-6"
+            :class="{'hover-header' : update}"
+            @click="sortby.order_desc = !sortby.order_desc"
+          >
+            {{ $t('ton.block') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
+          </th>
+          <th class="uk-width-1-6">
+            {{ $t('ton.transactions-count') }}
+          </th>
+          <th
+            class="uk-table-expand uk-text-right"
+            style="margin-right: 0.3rem;"
+          >
+            {{ $t('general.scanned') }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <BlocksTableLine 
+          v-for="block in displayedKeys"
+          :key="block + '_blocks_t'"
+          :block="store.blocks[block]" 
+        />
+      </tbody>
+    </table>
+    <div
+      v-if="!hidden"
+      class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom uk-padding-medium-right"
+      style="justify-content: flex-end;"
+    >
+      <div
+        v-if="itemSelector && !isMobile()"
+        class="uk-flex uk-flex-middle"
+      >
+        <AtomsSelector 
+          v-model:item-count="itemCount"
+          :amount="update ? store.totalQueryBlocks : keys.length"
+          :options="[5, 10, 20, 50]"
+        />
+      </div>
+      <AtomsPageArrows    
+        v-model:page="pageNum" 
+        :left-disabled="pageNum === 0" 
+        :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
+      />
+    </div>
+  </template>
 </template>

@@ -15,120 +15,136 @@ const externalLink = computed(() : MockType=> {
 </script>
 
 <template>
-    <table class="uk-table uk-margin-remove-vertical last-row-radius" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped-inverse': !isMobile()}">
-        <tbody class="uk-table-divider">
-            <tr>
-                <AtomsPropLine>
-                    <template #name>
-                        {{ $t(`ton.workchain`) }}
-                    </template>
-                    <template #value>
-                        {{ chainTitle(block.workchain) }}
-                    </template>
-                </AtomsPropLine>
-            </tr>
-            <tr>
-                <AtomsPropLine>
-                    <template #name>
-                        {{ $t(`ton.shard`) }}
-                    </template>
-                    <template #value>
-                        {{ block.shard }}
-                    </template>
-                </AtomsPropLine>
-            </tr>
-            <tr>
-                <AtomsPropLine>
-                    <template #name>
-                        {{ $t(`ton.seq_no`) }}
-                    </template>
-                    <template #value>
-                        {{ block.seq_no }}
-                    </template>
-                </AtomsPropLine>
-            </tr>
-            <tr v-if="block.master_key">
-                <AtomsPropLine>
-                    <template #name>
-                        {{ $t(`ton.master_key`) }}
-                    </template>
-                    <template #value>
-                        <AtomsCopyableText :text="block.master_key">
-                            <NuxtLink :to="{ name: 'blocks-key', params: {key : block.master_key }}" class="uk-text-primary">
-                                {{ block.master_key }}
-                            </NuxtLink>
-                        </AtomsCopyableText>
-                    </template>
-                </AtomsPropLine>
-            </tr>
-            <tr v-if="!block.master_key">
-                <AtomsPropLine>
-                    <template #name>
-                        {{ $t(`ton.shard_keys`) }}
-                    </template>
-                    <template #value>
-                        {{ block.shard_keys.length }}
-                    </template>
-                </AtomsPropLine>
-            </tr>
-            <tr>
-                <AtomsPropLine>
-                    <template #name>
-                        {{ $t(`ton.transaction_keys`) }}
-                    </template>
-                    <template #value>
-                        {{ block.transaction_keys.length }}
-                    </template>
-                </AtomsPropLine>
-            </tr>
-            <tr>
-                <AtomsPropLine>
-                    <template #name>
-                        {{ $t(`ton.root_hash`) }}
-                    </template>
-                    <template #value>
-                        <AtomsCopyableText :text="block.root_hash">
-                            {{ block.root_hash }}
-                        </AtomsCopyableText>
-                    </template>
-                </AtomsPropLine>
-            </tr>
-            <tr>
-                <AtomsPropLine>
-                    <template #name>
-                        {{ $t(`ton.file_hash`) }}
-                    </template>
-                    <template #value>
-                        <AtomsCopyableText :text="block.file_hash">
-                            {{ block.file_hash }}
-                        </AtomsCopyableText>
-                    </template>
-                </AtomsPropLine>
-            </tr>
-            <tr>
-                <AtomsPropLine :wrap="true">
-                    <template #name>
-                        {{ $t(`general.external`) }}
-                    </template>
-                    <template #value>
-                        <template v-for="key of Object.keys(externalLink)">
-                            <NuxtLink v-if="externalLink[key]" :to="externalLink[key]" class="uk-margin-right uk-text-primary" uk-icon="icon:link" target="_blank" style="line-height: 1.5;">
-                                {{ key }}
-                            </NuxtLink>
-                        </template>
-                    </template>
-                </AtomsPropLine>
-            </tr>
-            <tr>
-                <AtomsPropLine>
-                    <template #name>
-                        {{ $t(`ton.scanned_at`) }}
-                    </template>
-                    <template #value>
-                        {{ new Date(block.scanned_at).toLocaleString() }}
-                    </template>
-                </AtomsPropLine>
-            </tr>
-        </tbody>
-    </table>        
+  <table
+    class="uk-table uk-margin-remove-vertical last-row-radius"
+    :class="{'uk-table-divider' : isMobile(), 'uk-table-striped-inverse': !isMobile()}"
+  >
+    <tbody class="uk-table-divider">
+      <tr>
+        <AtomsPropLine>
+          <template #name>
+            {{ $t(`ton.workchain`) }}
+          </template>
+          <template #value>
+            {{ chainTitle(block.workchain) }}
+          </template>
+        </AtomsPropLine>
+      </tr>
+      <tr>
+        <AtomsPropLine>
+          <template #name>
+            {{ $t(`ton.shard`) }}
+          </template>
+          <template #value>
+            {{ block.shard }}
+          </template>
+        </AtomsPropLine>
+      </tr>
+      <tr>
+        <AtomsPropLine>
+          <template #name>
+            {{ $t(`ton.seq_no`) }}
+          </template>
+          <template #value>
+            {{ block.seq_no }}
+          </template>
+        </AtomsPropLine>
+      </tr>
+      <tr v-if="block.master_key">
+        <AtomsPropLine>
+          <template #name>
+            {{ $t(`ton.master_key`) }}
+          </template>
+          <template #value>
+            <AtomsCopyableText :text="block.master_key">
+              <NuxtLink
+                :to="{ name: 'blocks-key', params: {key : block.master_key }}"
+                class="uk-text-primary"
+              >
+                {{ block.master_key }}
+              </NuxtLink>
+            </AtomsCopyableText>
+          </template>
+        </AtomsPropLine>
+      </tr>
+      <tr v-if="!block.master_key">
+        <AtomsPropLine>
+          <template #name>
+            {{ $t(`ton.shard_keys`) }}
+          </template>
+          <template #value>
+            {{ block.shard_keys.length }}
+          </template>
+        </AtomsPropLine>
+      </tr>
+      <tr>
+        <AtomsPropLine>
+          <template #name>
+            {{ $t(`ton.transaction_keys`) }}
+          </template>
+          <template #value>
+            {{ block.transaction_keys.length }}
+          </template>
+        </AtomsPropLine>
+      </tr>
+      <tr>
+        <AtomsPropLine>
+          <template #name>
+            {{ $t(`ton.root_hash`) }}
+          </template>
+          <template #value>
+            <AtomsCopyableText :text="block.root_hash">
+              {{ block.root_hash }}
+            </AtomsCopyableText>
+          </template>
+        </AtomsPropLine>
+      </tr>
+      <tr>
+        <AtomsPropLine>
+          <template #name>
+            {{ $t(`ton.file_hash`) }}
+          </template>
+          <template #value>
+            <AtomsCopyableText :text="block.file_hash">
+              {{ block.file_hash }}
+            </AtomsCopyableText>
+          </template>
+        </AtomsPropLine>
+      </tr>
+      <tr>
+        <AtomsPropLine :wrap="true">
+          <template #name>
+            {{ $t(`general.external`) }}
+          </template>
+          <template #value>
+            <template 
+              v-for="key of Object.keys(externalLink)"
+              :key="key"
+            >
+              <NuxtLink
+                v-if="externalLink[key]"
+                :to="externalLink[key]"
+                class="uk-margin-right uk-text-primary"
+                uk-icon="icon:link"
+                target="_blank"
+                style="line-height: 1.5;"
+              >
+                {{ key }}
+              </NuxtLink>
+            </template>
+          </template>
+        </AtomsPropLine>
+      </tr>
+      <tr>
+        <AtomsPropLine>
+          <template #name>
+            {{ $t(`ton.scanned_at`) }}
+          </template>
+          <template #value>
+            {{ new Date(block.scanned_at).toLocaleString() }}
+          </template>
+        </AtomsPropLine>
+      </tr>
+    </tbody>
+  </table>        
 </template>

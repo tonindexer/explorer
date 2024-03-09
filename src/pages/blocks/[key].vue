@@ -20,14 +20,21 @@ onMounted(() => {
 </script>
 
 <template>
-    <template v-if="!key">
-        <NuxtLink :to="{ name: 'blocks' }">
-            {{ 'An error occured while parsing query parameters! Go back..' }}
-        </NuxtLink>
-    </template>
-    <template v-else>
-        <div v-if="(workchain || workchain === 0) && shard && seq_no" class="uk-flex uk-flex-column">
-            <LazyBlocksBlockInfo :shard="shard" :seq_no="seq_no" :workchain="workchain"/>
-        </div>
-    </template>
+  <template v-if="!key">
+    <NuxtLink :to="{ name: 'blocks' }">
+      {{ 'An error occured while parsing query parameters! Go back..' }}
+    </NuxtLink>
+  </template>
+  <template v-else>
+    <div
+      v-if="(workchain || workchain === 0) && shard && seq_no"
+      class="uk-flex uk-flex-column"
+    >
+      <LazyBlocksBlockInfo
+        :shard="shard"
+        :seq-no="seq_no"
+        :workchain="workchain"
+      />
+    </div>
+  </template>
 </template>

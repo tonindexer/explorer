@@ -28,7 +28,10 @@ const codeMap : { [key: number | string]: string} = {
 </script>
 
 <template>
-    <p class="uk-margin-remove-vertical" :uk-tooltip="`title: ${code in codeMap ? codeMap[code] : 'Unknown error'}; pos: top-left`">
-        {{ (code === 0 || code === 1 ? '✅' : '❌')+ ' ' + code }}
-    </p>
+  <p
+    class="uk-margin-remove-vertical"
+    :uk-tooltip="`title: ${code in codeMap ? codeMap[code] : 'Unknown error'}; pos: top-left`"
+  >
+    {{ (code === 0 || code === 1 ? '✅' : '❌')+ ' ' + code }}
+  </p>
 </template>

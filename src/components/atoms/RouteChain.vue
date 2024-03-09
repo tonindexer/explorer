@@ -38,9 +38,23 @@ const showRoute = computed(() => {
 </script>
 
 <template>
-    <div class="uk-text-left uk-flex uk-width-1-1 uk-text-nowrap" style="height: 24px; max-width: 100%;" v-if="showRoute && routeType" :style="isMobile() ? 'margin-top: 16px' : 'margin-top: 24px'">
-        <NuxtLink :to="`/${routeType}`" class="uk-inline uk-text-muted uk-text-light">{{$t(`route.${routeType}`)}}</NuxtLink>
-        <div class="uk-inline uk-margin-small-left uk-text-muted uk-margin-small-right uk-text-light">{{ '/' }}</div>
-        <div class="uk-text-primary uk-inline uk-text-truncate uk-text-light">{{ showRoute }}</div>
+  <div
+    v-if="showRoute && routeType"
+    class="uk-text-left uk-flex uk-width-1-1 uk-text-nowrap"
+    style="height: 24px; max-width: 100%;"
+    :style="isMobile() ? 'margin-top: 16px' : 'margin-top: 24px'"
+  >
+    <NuxtLink
+      :to="`/${routeType}`"
+      class="uk-inline uk-text-muted uk-text-light"
+    >
+      {{ $t(`route.${routeType}`) }}
+    </NuxtLink>
+    <div class="uk-inline uk-margin-small-left uk-text-muted uk-margin-small-right uk-text-light">
+      {{ '/' }}
     </div>
+    <div class="uk-text-primary uk-inline uk-text-truncate uk-text-light">
+      {{ showRoute }}
+    </div>
+  </div>
 </template>

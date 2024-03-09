@@ -5,12 +5,12 @@ defineProps<{
 </script>
 
 <template>
-    <div 
-        v-if="isLoading"
-        class="skeleton"
-        :style="['height: 1.5em', `width: ${30 + 40 * Math.random()}%`]"
-    />
-    <slot v-else/>
+  <div 
+    v-if="isLoading"
+    class="skeleton"
+    :style="['height: 1.5em', `width: ${30 + 40 * Math.random()}%`]"
+  />
+  <slot v-else />
 </template>
 
 <style>

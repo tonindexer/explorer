@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 const props = defineProps<{
-    slice_id: string
+    sliceId: string
     request: StoredTableReq
 }>()
 
@@ -92,108 +92,185 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div v-if="loading && data.length === 0" class="uk-flex uk-flex-center">
-        <Loader :ratio="2"/>
-    </div>
-    <div v-if="!loading || data.length > 0" class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right uk-padding-remove-vertical uk-padding-horizontal" :class="{'uk-width-1-3' : !isMobile()}" style="justify-content: flex-end;">
-        <label class="uk-margin-right uk-text-muted" for="profit_search">Search</label>
-        <input class="uk-input uk-background-primary" v-model="filter" id="profit_search" type="text" placeholder="Anything..." aria-label="Search top profit traders">
-    </div>
-    <div v-if="!loading && finalData.length === 0" class="uk-flex uk-flex-center">
-        {{ $t('warning.nothing_found') }}
-    </div>
-    <table v-if="!loading && finalData.length > 0" class="uk-table uk-table-middle uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
-        <thead v-if="!isMobile()">
-            <th class="uk-width-1-3 hover-text" @click="setSort('trader_address')">
-                {{ 'trader_address' + (sortby.by === 'trader_address' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
-            </th>
-            <th v-for="header of (['buy_volume', 'buy_count', 'sale_volume', 'sale_count'] as const)" class="uk-width-1-6 hover-text uk-text-right" @click="setSort(header)" style="white-space: nowrap;">
-                {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
-            </th>
-        </thead>
-        <tbody>
-            <tr v-for="tline of finalData.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                <template v-if="isMobile()">
-                    <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical uk-padding-small-vertical uk-padding-medium-horizontal">
-                        <div class="uk-flex uk-margin-small-bottom" style="gap: 0.5rem; max-width: 80vw;">
-                            <AtomsAddressField v-if="tline.trader_address in store.accounts" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader_address)"/>
-                            <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.trader_address }, hash: '#overview'}">
-                                {{ truncString(tline.trader_address, 5) }}
-                            </NuxtLink>
-                        </div>
-                        <div class="uk-flex" style="justify-content: space-between;" >
-                            <div>   
-                                Buy Volume
-                            </div>
-                            <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
-                                {{ tline.buy_volume.toFixed(2) }}
-                            </div>
-                        </div>
-                        <div class="uk-flex" style="justify-content: space-between;" >
-                            <div>   
-                                Buy Count
-                            </div>
-                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate">
-                                {{ tline.buy_count }}
-                            </div>
-                        </div>
-                        <div class="uk-flex" style="justify-content: space-between;" >
-                            <div>   
-                                Sale Volume
-                            </div>
-                            <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
-                                {{ tline.sale_volume.toFixed(2) }}
-                            </div>
-                        </div>
-                        <div class="uk-flex" style="justify-content: space-between;" >
-                            <div>   
-                                Sale Count
-                            </div>
-                            <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate">
-                                {{ tline.sale_count }}
-                            </div>
-                        </div>
-                    </td>
-                </template>
-                <template v-else>
-                    <td class="uk-text-truncate">
-                        <AtomsAddressField v-if="tline.trader_address in store.accounts" :full="true" :show-hex="true" :break_word="true" :addr="composeAddress(tline.trader_address)"/>
-                        <NuxtLink v-else class="uk-text-emphasis" :to="{ name: 'accounts-hex', params: { hex: tline.trader_address }, hash: '#overview'}">
-                            {{ truncString(tline.trader_address, 5) }}
-                        </NuxtLink>
-                    </td>
-                    <td>
-                        <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
-                            {{ tline.buy_volume.toFixed(2) }}
-                        </div>
-                    </td>
-                    <td class="uk-text-right uk-text-primary">
-                        {{ tline.buy_count }}
-                    </td>
-                    <td>
-                        <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
-                            {{ tline.sale_volume.toFixed(2) }}
-                        </div>
-                    </td>
-                    <td class="uk-text-right uk-text-primary">
-                        {{ tline.sale_count }}
-                    </td>
-                </template>
-            </tr>
-        </tbody>
-    </table>
-    <div class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom uk-padding-medium-right" style="justify-content: flex-end;">
-        <div class="uk-flex uk-flex-middle" v-if="!isMobile() && finalData.length > 0">
-            <AtomsSelector 
-                v-model:item-count="itemCount"
-                :amount="finalData.length"
-                :options="[5, 10, 20, 50]"
+  <div
+    v-if="loading && data.length === 0"
+    class="uk-flex uk-flex-center"
+  >
+    <Loader :ratio="2" />
+  </div>
+  <div
+    v-if="!loading || data.length > 0"
+    class="uk-flex uk-flex-middle uk-margin-small-bottom uk-text-right uk-padding-remove-vertical uk-padding-horizontal"
+    :class="{'uk-width-1-3' : !isMobile()}"
+    style="justify-content: flex-end;"
+  >
+    <label
+      class="uk-margin-right uk-text-muted"
+      for="profit_search"
+    >Search</label>
+    <input
+      id="profit_search"
+      v-model="filter"
+      class="uk-input uk-background-primary"
+      type="text"
+      placeholder="Anything..."
+      aria-label="Search top profit traders"
+    >
+  </div>
+  <div
+    v-if="!loading && finalData.length === 0"
+    class="uk-flex uk-flex-center"
+  >
+    {{ $t('warning.nothing_found') }}
+  </div>
+  <table
+    v-if="!loading && finalData.length > 0"
+    class="uk-table uk-table-middle uk-margin-remove-top"
+    :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}"
+  >
+    <thead v-if="!isMobile()">
+      <th
+        class="uk-width-1-3 hover-text"
+        @click="setSort('trader_address')"
+      >
+        {{ 'trader_address' + (sortby.by === 'trader_address' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+      </th>
+      <th
+        v-for="header of (['buy_volume', 'buy_count', 'sale_volume', 'sale_count'] as const)"
+        :key="header + 'trader'"
+        class="uk-width-1-6 hover-text uk-text-right"
+        style="white-space: nowrap;"
+        @click="setSort(header)"
+      >
+        {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+      </th>
+    </thead>
+    <tbody>
+      <tr 
+        v-for="tline of finalData.slice(pageNum*itemCount, (pageNum+1)*itemCount)"
+        :key="tline.trader_address + 'trader'"
+      >
+        <template v-if="isMobile()">
+          <td class="uk-flex uk-flex-column uk-align-center uk-width-1-1 uk-margin-remove-vertical uk-padding-small-vertical uk-padding-medium-horizontal">
+            <div
+              class="uk-flex uk-margin-small-bottom"
+              style="gap: 0.5rem; max-width: 80vw;"
+            >
+              <AtomsAddressField
+                v-if="tline.trader_address in store.accounts"
+                :show-hex="true"
+                :break-word="true"
+                :addr="composeAddress(tline.trader_address)"
+              />
+              <NuxtLink
+                v-else
+                class="uk-text-emphasis"
+                :to="{ name: 'accounts-hex', params: { hex: tline.trader_address }, hash: '#overview'}"
+              >
+                {{ truncString(tline.trader_address, 5) }}
+              </NuxtLink>
+            </div>
+            <div
+              class="uk-flex"
+              style="justify-content: space-between;"
+            >
+              <div>   
+                Buy Volume
+              </div>
+              <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
+                {{ tline.buy_volume.toFixed(2) }}
+              </div>
+            </div>
+            <div
+              class="uk-flex"
+              style="justify-content: space-between;"
+            >
+              <div>   
+                Buy Count
+              </div>
+              <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate">
+                {{ tline.buy_count }}
+              </div>
+            </div>
+            <div
+              class="uk-flex"
+              style="justify-content: space-between;"
+            >
+              <div>   
+                Sale Volume
+              </div>
+              <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
+                {{ tline.sale_volume.toFixed(2) }}
+              </div>
+            </div>
+            <div
+              class="uk-flex"
+              style="justify-content: space-between;"
+            >
+              <div>   
+                Sale Count
+              </div>
+              <div class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate">
+                {{ tline.sale_count }}
+              </div>
+            </div>
+          </td>
+        </template>
+        <template v-else>
+          <td class="uk-text-truncate">
+            <AtomsAddressField
+              v-if="tline.trader_address in store.accounts"
+              :full="true"
+              :show-hex="true"
+              :break-word="true"
+              :addr="composeAddress(tline.trader_address)"
             />
-        </div>
-        <AtomsPageArrows    
-            v-model:page="pageNum" 
-            :left-disabled="pageNum === 0" 
-            :right-disabled="lastPageFlag"
-        />
+            <NuxtLink
+              v-else
+              class="uk-text-emphasis"
+              :to="{ name: 'accounts-hex', params: { hex: tline.trader_address }, hash: '#overview'}"
+            >
+              {{ truncString(tline.trader_address, 5) }}
+            </NuxtLink>
+          </td>
+          <td>
+            <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
+              {{ tline.buy_volume.toFixed(2) }}
+            </div>
+          </td>
+          <td class="uk-text-right uk-text-primary">
+            {{ tline.buy_count }}
+          </td>
+          <td>
+            <div class="uk-flex uk-flex-right diamond uk-text-primary uk-padding-remove">
+              {{ tline.sale_volume.toFixed(2) }}
+            </div>
+          </td>
+          <td class="uk-text-right uk-text-primary">
+            {{ tline.sale_count }}
+          </td>
+        </template>
+      </tr>
+    </tbody>
+  </table>
+  <div
+    class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom uk-padding-medium-right"
+    style="justify-content: flex-end;"
+  >
+    <div
+      v-if="!isMobile() && finalData.length > 0"
+      class="uk-flex uk-flex-middle"
+    >
+      <AtomsSelector 
+        v-model:item-count="itemCount"
+        :amount="finalData.length"
+        :options="[5, 10, 20, 50]"
+      />
     </div>
+    <AtomsPageArrows    
+      v-model:page="pageNum" 
+      :left-disabled="pageNum === 0" 
+      :right-disabled="lastPageFlag"
+    />
+  </div>
 </template>

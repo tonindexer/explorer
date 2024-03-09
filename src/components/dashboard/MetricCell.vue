@@ -2,7 +2,7 @@
 
 defineProps<{
     name: string
-    request_id: string
+    requestId: string
     data: {
         value : number | bigint
     }
@@ -12,9 +12,9 @@ defineProps<{
 
 
 <template>
-    <div class="uk-padding-small">
-        <div class="uk-text-large uk-text-primary">
-            {{ toCompact(data.value) }}
-        </div>
+  <div class="uk-padding-small">
+    <div class="uk-text-large uk-text-primary">
+      {{ toCompact(data.value) }}
     </div>
+  </div>
 </template>

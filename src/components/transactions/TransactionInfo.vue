@@ -63,54 +63,108 @@ watch(() => props.hash, async() => await reloadInfo())
 </script>
 
 <template>
-    <template v-if="error">
-        <NuxtLink :to="{ name: 'transactions' }">
-            {{ 'An error occured while loading transaction! Go to overview page..' }}
-        </NuxtLink>
-    </template>
-    <template v-else-if="loading">
-        <div class="uk-flex uk-flex-center">
-            <Loader />
+  <template v-if="error">
+    <NuxtLink :to="{ name: 'transactions' }">
+      {{ 'An error occured while loading transaction! Go to overview page..' }}
+    </NuxtLink>
+  </template>
+  <template v-else-if="loading">
+    <div class="uk-flex uk-flex-center">
+      <Loader />
+    </div>
+  </template>
+  <template v-else-if="transaction">
+    <AtomsTile
+      :body="true"
+      :tile-style="'margin-top: 32px'"
+    >
+      <template #body>
+        <TransactionsPropsTable :trn="transaction" />
+      </template>
+    </AtomsTile>
+    <AtomsTile
+      v-if="inMessageKeys.length + outMessageKeys.length > 0"
+      :top="true"
+      :body="true"
+      :tile-style="'margin-top: 32px; padding-bottom: 16px'"
+    >
+      <template #top>
+        <AtomsCategorySelector
+          v-model:selected="selectedRoute"
+          :routes="routes"
+        />
+      </template>
+      <template #body>
+        <div
+          v-if="route.hash === '#messages' || route.hash === '#overview'"
+          id="messages"
+        >
+          <h3
+            v-if="inMessageKeys.length > 0"
+            class="uk-margin-remove uk-text-primary uk-padding-remove-vertical uk-padding-medium-horizontal"
+          >
+            {{ $t('general.in_msg') + ` (${inMessageKeys.length})` }}
+          </h3>
+          <MessagesTable
+            :show-link="true"
+            :item-selector="false"
+            :default-length="10"
+            :update="false"
+            :keys="inMessageKeys"
+            :hidden="inMessageKeys.length === 0"
+          />
+          <h3
+            v-if="outMessageKeys.length > 0"
+            class="uk-margin-remove uk-text-primary"
+          >
+            {{ $t('general.out_msg') + ` (${outMessageKeys.length})` }}
+          </h3>
+          <MessagesTable
+            :show-link="true"
+            :item-selector="false"
+            :default-length="10"
+            :update="false"
+            :keys="outMessageKeys"
+            :hidden="outMessageKeys.length === 0"
+          />
         </div>
-    </template>
-    <template v-else-if="transaction">
-        <AtomsTile :body="true" :tile-style="'margin-top: 32px'">
-            <template #body>
-                <TransactionsPropsTable :trn="transaction"/>
-            </template>
-        </AtomsTile>
-        <AtomsTile v-if="inMessageKeys.length + outMessageKeys.length > 0" :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
-            <template #top>
-                <AtomsCategorySelector
-                    v-model:selected="selectedRoute"
-                    :routes="routes"
-                />
-            </template>
-            <template #body>
-                <div v-if="route.hash === '#messages' || route.hash === '#overview'" id="messages">
-                    <h3 v-if="inMessageKeys.length > 0" class="uk-margin-remove uk-text-primary uk-padding-remove-vertical uk-padding-medium-horizontal">
-                        {{ $t('general.in_msg') + ` (${inMessageKeys.length})` }}
-                    </h3>
-                    <MessagesTable :show-link="true" :item-selector="false" :default-length="10" :update="false" :keys="inMessageKeys" :hidden="inMessageKeys.length === 0"/>
-                    <h3 v-if="outMessageKeys.length > 0" class="uk-margin-remove uk-text-primary">
-                        {{ $t('general.out_msg') + ` (${outMessageKeys.length})` }}
-                    </h3>
-                    <MessagesTable :show-link="true" :item-selector="false" :default-length="10" :update="false" :keys="outMessageKeys" :hidden="outMessageKeys.length === 0"/>
-                </div>
-                <div v-else-if="route.hash === '#accounts' && (loadedAccountKeys.length + unloadedAccountKeys.length > 0)" id="accounts">
-                    <h3 v-if="loadedAccountKeys.length > 0" class="uk-margin-remove uk-text-primary uk-padding-remove-vertical uk-padding-medium-horizontal">
-                        {{ $t('general.loaded_accs') + ` (${loadedAccountKeys.length})` }}
-                    </h3>
-                    <AccountsTable :default-length="10" :keys="loadedAccountKeys" :hidden="loadedAccountKeys.length === 0" :update="false" :item-selector="false"/>
-                    <h3 v-if="unloadedAccountKeys.length > 0" class="uk-margin-remove uk-text-primary uk-padding-remove-vertical uk-padding-medium-horizontal">
-                        {{ $t('general.unloaded_accs') + ` (${unloadedAccountKeys.length})` }}
-                    </h3>
-                    <AccountsUnloadedTable :default-length="5" :keys="unloadedAccountKeys" :hidden="unloadedAccountKeys.length === 0"/>
-                </div>
-                <div v-else-if="route.hash === '#tree'" id="tx_tree" class="uk-padding-remove-vertical uk-padding-medium-horizontal">
-                    <GraphMessageTree :hash="hash"/>
-                </div>
-            </template>
-        </AtomsTile>
-    </template>
+        <div
+          v-else-if="route.hash === '#accounts' && (loadedAccountKeys.length + unloadedAccountKeys.length > 0)"
+          id="accounts"
+        >
+          <h3
+            v-if="loadedAccountKeys.length > 0"
+            class="uk-margin-remove uk-text-primary uk-padding-remove-vertical uk-padding-medium-horizontal"
+          >
+            {{ $t('general.loaded_accs') + ` (${loadedAccountKeys.length})` }}
+          </h3>
+          <AccountsTable
+            :default-length="10"
+            :keys="loadedAccountKeys"
+            :hidden="loadedAccountKeys.length === 0"
+            :update="false"
+            :item-selector="false"
+          />
+          <h3
+            v-if="unloadedAccountKeys.length > 0"
+            class="uk-margin-remove uk-text-primary uk-padding-remove-vertical uk-padding-medium-horizontal"
+          >
+            {{ $t('general.unloaded_accs') + ` (${unloadedAccountKeys.length})` }}
+          </h3>
+          <AccountsUnloadedTable
+            :default-length="5"
+            :keys="unloadedAccountKeys"
+            :hidden="unloadedAccountKeys.length === 0"
+          />
+        </div>
+        <div
+          v-else-if="route.hash === '#tree'"
+          id="tx_tree"
+          class="uk-padding-remove-vertical uk-padding-medium-horizontal"
+        >
+          <GraphMessageTree :hash="hash" />
+        </div>
+      </template>
+    </AtomsTile>
+  </template>
 </template>

@@ -11,31 +11,31 @@ defineProps<{
 </script>
 
 <template>
-    <component
-        :is="asElement"
-        :class="[
-            'uk-position-relative',
-            { 'dropdown-text' : !noDropdown },
-            { 'filter-icon' : !noDropdown && filterIcon },
-            { 'hoverable' : !noDropdown && hoverTrigger }
-        ]"
+  <component
+    :is="asElement"
+    :class="[
+      'uk-position-relative',
+      { 'dropdown-text' : !noDropdown },
+      { 'filter-icon' : !noDropdown && filterIcon },
+      { 'hoverable' : !noDropdown && hoverTrigger }
+    ]"
+  >
+    <slot name="trigger" />
+    <div 
+      :class="[
+        'dropdown-filter',
+        `uk-padding${innerPadding ? ('-' + innerPadding) : ''}-vertical`,
+        'uk-position-absolute uk-flex-column uk-background-primary',
+        { 'dropdown-filter_on': !hoverTrigger && showDropdown }
+      ]"
+      :style="[
+        `gap: ${innerPadding === 'small' ? 0 : 8}px`,
+        `${offset}:${innerPadding === 'small' ? 24 : 50}px`
+      ]"
     >
-        <slot name="trigger" />
-        <div 
-            :class="[
-                'dropdown-filter',
-                `uk-padding${innerPadding ? ('-' + innerPadding) : ''}-vertical`,
-                'uk-position-absolute uk-flex-column uk-background-primary',
-                { 'dropdown-filter_on': !hoverTrigger && showDropdown }
-            ]"
-            :style="[
-                `gap: ${innerPadding === 'small' ? 0 : 8}px`,
-                `${offset}:${innerPadding === 'small' ? 24 : 50}px`
-            ]"
-        >
-            <slot name="dropdown" />
-        </div>
-    </component>
+      <slot name="dropdown" />
+    </div>
+  </component>
 </template>
 
 <style scoped lang="scss">

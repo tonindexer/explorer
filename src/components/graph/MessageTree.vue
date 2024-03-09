@@ -25,14 +25,14 @@ const findNext = (start: string) : string[] => {
 }
 
 const recursiveSearch = (prevIndex: string) => {
-    let newEnds = findNext(prevIndex)
+    const newEnds = findNext(prevIndex)
     if (newEnds.length) {
         // forks variables
         const n = newEnds.length
         const x0 = positionMap.value[prevIndex].x
         const a = store.messageTreeDataMap[prevIndex].nodeWidth
-        let x_delta = 750
-        let y0 = x0 - (x_delta * n - a) / 2
+        const x_delta = 750
+        const y0 = x0 - (x_delta * n - a) / 2
         for (let i = 0; i < newEnds.length; i++) {
             const c = store.messageTreeDataMap[newEnds[i]].nodeWidth
             const x_fin = y0 + i * x_delta - (c - x_delta) / 2
@@ -89,25 +89,32 @@ onMounted(async() => {
 </script>
 
 <template>
-    <div v-if="isLoaded" class="uk-width-1-1" style="height: 600px;">
-        <ClientOnly fallback="Loading graph...">
-            <VueFlow v-model="elements" :fit-view-on-init="true">
-                <template #node-custom="{ id, data }">
-                    <GraphTreeNode 
-                        :id="id" 
-                        :top="hasTop.includes(id)" 
-                        :bottom="hasBottom.includes(id)"
-                        :contract="data.contract ?? null"
-                        :op_name="data.op_name ?? null"
-                        :op_type="data.op_type ?? null"
-                        :add_data="data.add_data ?? null"
-                    />
-                </template>
-                <MiniMap/>
-                <Background/>
-            </VueFlow>
-        </ClientOnly>
-    </div>
+  <div
+    v-if="isLoaded"
+    class="uk-width-1-1"
+    style="height: 600px;"
+  >
+    <ClientOnly fallback="Loading graph...">
+      <VueFlow
+        v-model="elements"
+        :fit-view-on-init="true"
+      >
+        <template #node-custom="{ id, data }">
+          <GraphTreeNode 
+            :id="id" 
+            :top="hasTop.includes(id)" 
+            :bottom="hasBottom.includes(id)"
+            :contract="data.contract ?? null"
+            :op-name="data.op_name ?? null"
+            :op-type="data.op_type ?? null"
+            :add-data="data.add_data ?? null"
+          />
+        </template>
+        <MiniMap />
+        <Background />
+      </VueFlow>
+    </ClientOnly>
+  </div>
 </template>
 
 <style lang="scss">

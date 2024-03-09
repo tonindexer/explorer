@@ -62,7 +62,10 @@ const chartOptions = computed(() => { return{
 </script>
 
 <template>
-    <div class="uk-width-1-1">
-        <Chart :options="chartOptions" ref="graph"/>
-    </div>
+  <div class="uk-width-1-1">
+    <Chart
+      ref="graph"
+      :options="chartOptions"
+    />
+  </div>
 </template>

@@ -23,27 +23,30 @@ const random_pastel = computed(() => {
 </script>
 
 <template>
-    <VueLoadImage v-if="src">
-        <template #image>
-            <div
-                class="cover"
-                :data-src="src"
-                :style="`background-image: url('${src}')`"
-            />
-        </template>
-        <template #preloader>
-            <Loader />
-        </template>
-        <template #error>
-            <div class="empty-image" :style="`background-color: ${random_pastel}`"/>
-        </template>
-    </VueLoadImage>
-    <div 
-        v-else 
+  <VueLoadImage v-if="src">
+    <template #image>
+      <div
+        class="cover"
+        :data-src="src"
+        :style="`background-image: url('${src}')`"
+      />
+    </template>
+    <template #preloader>
+      <Loader />
+    </template>
+    <template #error>
+      <div
         class="empty-image"
         :style="`background-color: ${random_pastel}`"
-    />
-  </template>
+      />
+    </template>
+  </VueLoadImage>
+  <div 
+    v-else 
+    class="empty-image"
+    :style="`background-color: ${random_pastel}`"
+  />
+</template>
 
 <style scoped>
 .cover {

@@ -15,13 +15,33 @@ defineEmits<{
 </script>
 
 <template>
-    <p v-if="startLine !== null" class="uk-margin-remove uk-text-muted">{{ $t(startLine ?? 'general.show')}}</p>
-    <select :value="itemCount" @change="($event: Event) => $emit('update:itemCount', ($event.target as HTMLSelectElement).value)" class="uk-select uk-text-muted uk-background-primary" :class="{'custom' : !def}">
-        <option v-for="option in options">{{ option }}</option>
-    </select>
-    <template v-if="amount && isNumeric(itemCount)">
-        <p class="uk-margin-remove-vertical uk-text-muted" style="white-space: nowrap; height: 24px; margin-left: 8px">{{ $t('general.items') + ' ' + amount}}</p>
-    </template>
+  <p
+    v-if="startLine !== null"
+    class="uk-margin-remove uk-text-muted"
+  >
+    {{ $t(startLine ?? 'general.show') }}
+  </p>
+  <select
+    :value="itemCount"
+    class="uk-select uk-text-muted uk-background-primary"
+    :class="{'custom' : !def}"
+    @change="($event: Event) => $emit('update:itemCount', ($event.target as HTMLSelectElement).value)"
+  >
+    <option 
+      v-for="option, key in options"
+      :key="option + key.toString()"
+    >
+      {{ option }}
+    </option>
+  </select>
+  <template v-if="amount && isNumeric(itemCount)">
+    <p
+      class="uk-margin-remove-vertical uk-text-muted"
+      style="white-space: nowrap; height: 24px; margin-left: 8px"
+    >
+      {{ $t('general.items') + ' ' + amount }}
+    </p>
+  </template>
 </template>
 
 <style scoped lang="scss">

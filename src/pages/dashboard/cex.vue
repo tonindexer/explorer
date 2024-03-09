@@ -34,32 +34,52 @@ onMounted(async() => {
 </script>
 
 <template>
-    <template v-if="loading">
-        <div class="uk-flex uk-flex-center">
-            <Loader />
+  <template v-if="loading">
+    <div class="uk-flex uk-flex-center">
+      <Loader />
+    </div>
+  </template>
+  <template v-else>
+    <AtomsTile
+      :top="true"
+      :body="true"
+      :tile-style="'margin-top: 32px; padding-bottom: 16px'"
+    >
+      <template #top>
+        <AtomsCategorySelector
+          v-model:selected="selectedRoute"
+          :routes="routes"
+        />
+      </template>
+      <template #body>
+        <div
+          v-if="route.hash === '#charts'"
+          class="grid"
+        >
+          <DashboardDbCell
+            v-for="req in parsedReqs.filter(item => item.type === 'chart')"
+            :key="req.req.form_data.slice_id.toString()"
+            :request="req"
+            :slice-id="req.req.form_data.slice_id.toString()"
+          />
         </div>
-    </template>
-    <template v-else>
-        <AtomsTile :top="true" :body="true" :tile-style="'margin-top: 32px; padding-bottom: 16px'">
-            <template #top>
-                <AtomsCategorySelector
-                    v-model:selected="selectedRoute"
-                    :routes="routes"
-                />
-            </template>
-            <template #body>
-                <div class="grid" v-if="route.hash === '#charts'">
-                    <template v-for="req in parsedReqs.filter(item => item.type === 'chart')">
-                        <DashboardDbCell :request="req" :slice_id="req.req.form_data.slice_id.toString()"/>
-                    </template>
-                </div>
-                <div v-else-if="route.hash === '#deposits'">
-                    <DashboardTopCEXTable v-if="deposits" :slice_id="'28'" :request="deposits" :type="'deposit'"/>
-                </div>
-                <div v-else-if="route.hash === '#withdrawals'">
-                    <DashboardTopCEXTable v-if="withdrawals" :slice_id="'15'" :request="withdrawals" :type="'withdrawal'"/>
-                </div>
-            </template>
-        </AtomsTile>
-    </template>
+        <div v-else-if="route.hash === '#deposits'">
+          <DashboardTopCEXTable
+            v-if="deposits"
+            :slice-id="'28'"
+            :request="deposits"
+            :type="'deposit'"
+          />
+        </div>
+        <div v-else-if="route.hash === '#withdrawals'">
+          <DashboardTopCEXTable
+            v-if="withdrawals"
+            :slice-id="'15'"
+            :request="withdrawals"
+            :type="'withdrawal'"
+          />
+        </div>
+      </template>
+    </AtomsTile>
+  </template>
 </template>

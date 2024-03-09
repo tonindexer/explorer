@@ -9,7 +9,7 @@
         class="bar-left"
         :style="{ width: barMin + '%' }"
         @click="onBarLeftClick"
-      ></div>
+      />
       <input
         class="input-type-range input-type-range-min"
         type="range"
@@ -18,7 +18,7 @@
         :step="step"
         :value="valueMin"
         @input.stop.prevent="onInputMinChange"
-      />
+      >
       <div
         class="thumb thumb-left"
         @mousedown.prevent="onLeftThumbMousedown"
@@ -29,8 +29,14 @@
         </div>
       </div>
       <div class="bar-inner">
-        <div class="bar-inner-left" @click="onInnerBarLeftClick"></div>
-        <div class="bar-inner-right" @click="onInnerBarRightClick"></div>
+        <div
+          class="bar-inner-left"
+          @click="onInnerBarLeftClick"
+        />
+        <div
+          class="bar-inner-right"
+          @click="onInnerBarRightClick"
+        />
       </div>
       <input
         class="input-type-range input-type-range-max"
@@ -40,7 +46,7 @@
         :step="step"
         :value="valueMax"
         @input.stop.prevent="onInputMaxChange"
-      />
+      >
 
       <div
         class="thumb thumb-right"
@@ -55,18 +61,39 @@
         class="bar-right"
         :style="{ width: barMax + '%' }"
         @click="onBarRightClick"
-      ></div>
+      />
     </div>
-    <div class="ruler" v-if="ruler">
-      <div v-for="n in stepCount" :key="n" class="ruler-rule"></div>
+    <div
+      v-if="ruler"
+      class="ruler"
+    >
+      <div
+        v-for="n in stepCount"
+        :key="n"
+        class="ruler-rule"
+      />
     </div>
-    <div class="sub-ruler" v-if="subStepCount">
-      <div v-for="n in subStepCount" :key="n" class="ruler-sub-rule"></div>
+    <div
+      v-if="subStepCount"
+      class="sub-ruler"
+    >
+      <div
+        v-for="n in subStepCount"
+        :key="n"
+        class="ruler-sub-rule"
+      />
     </div>
 
-    <div class="labels" v-if="label">
-      <div class="label" v-for="label in scaleLabels" :key="label">
-        {{ label }}
+    <div
+      v-if="label"
+      class="labels"
+    >
+      <div
+        v-for="scaleLabel in scaleLabels"
+        :key="scaleLabel"
+        class="label"
+      >
+        {{ scaleLabel }}
       </div>
     </div>
   </div>
@@ -80,24 +107,25 @@ export default {
       type: String,
       default: "multi-range-slider"
     },
-    min: { type: Number },
-    max: { type: Number },
-    minValue: { type: Number },
-    maxValue: { type: Number },
+    min: { type: Number, default: 0 },
+    max: { type: Number, default: 100 },
+    minValue: { type: Number, default: 25 },
+    maxValue: { type: Number, default: 75 },
     step: { type: Number, default: 1 },
     preventWheel: { type: Boolean, default: false },
     ruler: { type: Boolean, default: true },
     label: { type: Boolean, default: true },
-    labels: { type: Array },
-    minCaption: { type: String },
-    maxCaption: { type: String },
-    rangeMargin: { type: Number }
+    labels: { type: Array, default: () => [] },
+    minCaption: { type: String, default: '' },
+    maxCaption: { type: String, default: '' },
+    rangeMargin: { type: Number, default: 100 }
   },
+  emits: ['input'],
   data() {
-    let _labels = this.labels || [];
-    let _minimum = this.min === undefined ? 0 : this.min;
-    let max = _labels.length ? _labels.length - 1 : 100;
-    let _maximum = this.max === undefined ? max : this.max;
+    const _labels = this.labels || [];
+    const _minimum = this.min === undefined ? 0 : this.min;
+    const max = _labels.length ? _labels.length - 1 : 100;
+    const _maximum = this.max === undefined ? max : this.max;
     let _minValue = this.minValue === undefined ? 25 : this.minValue;
     if (_labels.length && this.minValue === undefined) {
       _minValue = 1;
@@ -115,7 +143,7 @@ export default {
     let _rangeMargin =
       this.rangeMargin === undefined ? this.step : this.rangeMargin;
 
-    let m = _rangeMargin % this.step;
+    const m = _rangeMargin % this.step;
     m && (_rangeMargin = _rangeMargin + this.step - m);
 
     return {
@@ -129,6 +157,80 @@ export default {
       rangeMarginValue: _rangeMargin
     };
   },
+  computed: {
+    minimum() {
+      return this.min === undefined ? 0 : this.min;
+    },
+    maximum() {
+      const _labels = this.labels || [];
+      const max = _labels.length ? _labels.length - 1 : 100;
+      return this.max === undefined ? max : this.max;
+    },
+    stepCount() {
+      const _labels = this.labels || [];
+      if (_labels.length) {
+        return _labels.length - 1;
+      }
+      return Math.floor((this.maximum - this.minimum) / this.step);
+    },
+    subStepCount() {
+      const _labels = this.labels || [];
+      if (_labels.length && this.step > 1) {
+        return (this.maximum - this.minimum) / this.step;
+      }
+      return 0;
+    },
+    barMin() {
+      const per =
+        ((this.valueMin - this.minimum) / (this.maximum - this.minimum)) * 100;
+      return per;
+    },
+    barMax() {
+      const per =
+        100 -
+        ((this.valueMax - this.minimum) / (this.maximum - this.minimum)) * 100;
+      return per;
+    },
+    barMinVal() {
+      let fixed = 0;
+      if (this.step.toString().includes(".")) {
+        fixed = 2;
+      }
+      return (this.valueMin || 0).toFixed(fixed);
+    },
+    barMaxVal() {
+      let fixed = 0;
+      if (this.step.toString().includes(".")) {
+        fixed = 2;
+      }
+      return (this.valueMax || 100).toFixed(fixed);
+    },
+    scaleLabels() {
+      let _labels = this.labels || [];
+      if (_labels.length === 0) {
+        _labels = [];
+        _labels.push(this.minimum);
+        _labels.push(this.maximum);
+      }
+
+      return _labels;
+    }
+  },
+  watch: {
+    valueMin() {
+      this.triggerInput();
+    },
+    valueMax() {
+      this.triggerInput();
+    },
+    minValue(newValue) {
+      this.valueMin = newValue < this.minimum ? this.minimum : newValue;
+    },
+    maxValue(newValue) {
+      this.valueMax = newValue > this.maximum ? this.maximum : newValue;
+    }
+  },
+  mounted() {},
   methods: {
     onBarLeftClick() {
       if (this.valueMin - this.step >= this.minimum) {
@@ -155,7 +257,7 @@ export default {
       }
     },
     onInputMinChange(e) {
-      let val = parseFloat(e.target.value);
+      const val = parseFloat(e.target.value);
       if (val <= this.valueMax - this.rangeMarginValue && val >= this.minimum) {
         this.valueMin = val;
       } else {
@@ -163,7 +265,7 @@ export default {
       }
     },
     onInputMaxChange(e) {
-      let val = parseFloat(e.target.value);
+      const val = parseFloat(e.target.value);
       if (val >= this.valueMin + this.rangeMarginValue && val <= this.maximum) {
         this.valueMax = val;
       } else {
@@ -193,10 +295,10 @@ export default {
       if (e.type === "touchmove") {
         clientX = e.touches[0].clientX;
       }
-      let dx = clientX - this.startX;
-      let per = dx / this.barBox.width;
+      const dx = clientX - this.startX;
+      const per = dx / this.barBox.width;
       let val = this.barValue + (this.maximum - this.minimum) * per;
-      let mod = val % this.step;
+      const mod = val % this.step;
       val -= mod;
       if (val < this.minimum) {
         val = this.minimum;
@@ -235,10 +337,10 @@ export default {
       if (e.type === "touchmove") {
         clientX = e.touches[0].clientX;
       }
-      let dx = clientX - this.startX;
-      let per = dx / this.barBox.width;
+      const dx = clientX - this.startX;
+      const per = dx / this.barBox.width;
       let val = this.barValue + (this.maximum - this.minimum) * per;
-      let mod = val % this.step;
+      const mod = val % this.step;
       val -= mod;
 
       if (val < this.valueMin + this.rangeMarginValue) {
@@ -301,7 +403,7 @@ export default {
         fixed = 2;
       }
 
-      let retObj = {
+      const retObj = {
         min: this.minimum,
         max: this.maximum,
         minValue: parseFloat(this.valueMin.toFixed(fixed)),
@@ -309,81 +411,7 @@ export default {
       };
       this.$emit("input", retObj);
     }
-  },
-  computed: {
-    minimum() {
-      return this.min === undefined ? 0 : this.min;
-    },
-    maximum() {
-      let _labels = this.labels || [];
-      let max = _labels.length ? _labels.length - 1 : 100;
-      return this.max === undefined ? max : this.max;
-    },
-    stepCount() {
-      let _labels = this.labels || [];
-      if (_labels.length) {
-        return _labels.length - 1;
-      }
-      return Math.floor((this.maximum - this.minimum) / this.step);
-    },
-    subStepCount() {
-      let _labels = this.labels || [];
-      if (_labels.length && this.step > 1) {
-        return (this.maximum - this.minimum) / this.step;
-      }
-      return 0;
-    },
-    barMin() {
-      let per =
-        ((this.valueMin - this.minimum) / (this.maximum - this.minimum)) * 100;
-      return per;
-    },
-    barMax() {
-      let per =
-        100 -
-        ((this.valueMax - this.minimum) / (this.maximum - this.minimum)) * 100;
-      return per;
-    },
-    barMinVal() {
-      let fixed = 0;
-      if (this.step.toString().includes(".")) {
-        fixed = 2;
-      }
-      return (this.valueMin || 0).toFixed(fixed);
-    },
-    barMaxVal() {
-      let fixed = 0;
-      if (this.step.toString().includes(".")) {
-        fixed = 2;
-      }
-      return (this.valueMax || 100).toFixed(fixed);
-    },
-    scaleLabels() {
-      let _labels = this.labels || [];
-      if (_labels.length === 0) {
-        _labels = [];
-        _labels.push(this.minimum);
-        _labels.push(this.maximum);
-      }
-
-      return _labels;
-    }
-  },
-  watch: {
-    valueMin() {
-      this.triggerInput();
-    },
-    valueMax() {
-      this.triggerInput();
-    },
-    minValue(newValue) {
-      this.valueMin = newValue < this.minimum ? this.minimum : newValue;
-    },
-    maxValue(newValue) {
-      this.valueMax = newValue > this.maximum ? this.maximum : newValue;
-    }
-  },
-  mounted() {}
+  }
 };
 </script>
 

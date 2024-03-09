@@ -115,95 +115,127 @@ onMounted(() => {
 </script>
 
 <template>
-    <div v-if="isMobile() && route.path === '/accounts'" class="uk-flex uk-flex-right uk-padding-top uk-padding-horizontal uk-padding-remove-bottom">
-        <div class="uk-width-1-1 uk-text-small">
-            <AtomsSelector 
-                v-model:item-count="selectedContract"
-                :def="true"
-                :amount="null"
-                :start-line="null"
-                :options="optionsContract"
-            />
-        </div>
-        <a v-if="selectedContract !== 'All'" uk-icon="icon: close" @click="selectedContract = 'All'" style="align-self: center; margin-left: 0.5rem;"></a>
+  <div
+    v-if="isMobile() && route.path === '/accounts'"
+    class="uk-flex uk-flex-right uk-padding-top uk-padding-horizontal uk-padding-remove-bottom"
+  >
+    <div class="uk-width-1-1 uk-text-small">
+      <AtomsSelector 
+        v-model:item-count="selectedContract"
+        :def="true"
+        :amount="null"
+        :start-line="null"
+        :options="optionsContract"
+      />
     </div>
-    <table v-show="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
-        <colgroup v-if="!isMobile()">
-            <col width="20%" />
-            <col width="20%" />
-            <col width="20%" />
-            <col width="20%" />
-            <col width="20%" />
-        </colgroup>
-        <thead v-if="!isMobile()">
-            <tr>
-                <th class="uk-width-1-5">{{ $t('ton.id')}}</th>
-                <AtomsDropdownTile
-                    as-element="th"
-                    :hover-trigger="true"
-                    :filter-icon="true"
-                    :noDropdown="!update"
-                    offset="top"
-                    :class="{ 'active': selectedContract !== 'All' }"
-                >
-                    <template #trigger>
-                        {{ $t('ton.contract') }}
-                    </template>
-                    <template #dropdown>
-                        <div 
-                            v-for="item of optionsContract" 
-                            :class="[
-                                'filter-item',
-                                {'selected-filter': selectedContract === item},
-                                'uk-flex uk-padding-small-vertical uk-padding-horizontal'
-                            ]" 
-                            @click="selectedContract = item"
-                        >
-                            {{ item }}
-                        </div>
-                    </template>
-                </AtomsDropdownTile>
-                <th class="uk-width-1-5 uk-text-right">{{ $t('ton.balance')}}</th>
-                <th class="uk-width-1-5 uk-text-right uk-margin-small-right">{{ $t('ton.status')}}</th>
-                <th class="uk-width-1-5 uk-text-right" :class="{'hover-header' : update}" @click="sortby.order_desc = !sortby.order_desc">
-                    {{ $t('general.updated') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
-                </th>
-            </tr>
-        </thead>
-        <template v-if="emptyTable && store.totalQueryAccounts === 0">
-            <div class="uk-flex uk-margin-top">
-                {{ $t('warning.nothing_found') }}
+    <a
+      v-if="selectedContract !== 'All'"
+      uk-icon="icon: close"
+      style="align-self: center; margin-left: 0.5rem;"
+      @click="selectedContract = 'All'"
+    />
+  </div>
+  <table
+    v-show="!hidden"
+    class="uk-table uk-margin-remove-top"
+    :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}"
+  >
+    <colgroup v-if="!isMobile()">
+      <col width="20%">
+      <col width="20%">
+      <col width="20%">
+      <col width="20%">
+      <col width="20%">
+    </colgroup>
+    <thead v-if="!isMobile()">
+      <tr>
+        <th class="uk-width-1-5">
+          {{ $t('ton.id') }}
+        </th>
+        <AtomsDropdownTile
+          as-element="th"
+          :hover-trigger="true"
+          :filter-icon="true"
+          :no-dropdown="!update"
+          offset="top"
+          :class="{ 'active': selectedContract !== 'All' }"
+        >
+          <template #trigger>
+            {{ $t('ton.contract') }}
+          </template>
+          <template #dropdown>
+            <div 
+              v-for="item of optionsContract"
+              :key="item + 'contract'"
+              :class="[
+                'filter-item',
+                {'selected-filter': selectedContract === item},
+                'uk-flex uk-padding-small-vertical uk-padding-horizontal'
+              ]" 
+              @click="selectedContract = item"
+            >
+              {{ item }}
             </div>
-        </template>
-        <template v-else-if="loading">
-            <tr class="uk-text-center">
-                <td colspan="5">
-                    <Loader />
-                </td>
-            </tr>
-        </template>
-        <template v-else>
-            <tbody>
-                <template v-for="acc in keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                    <AccountsTableLine :acc="store.accounts[acc]"/>
-                </template>
-            </tbody>
-        </template>
-    </table>
-    <div v-show="!(emptyTable && store.totalQueryAccounts === 0) && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom uk-padding-medium-right" style="justify-content: flex-end">
-        <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile()">
-            <ClientOnly>
-                <AtomsSelector 
-                    v-model:item-count="itemCount"
-                    :amount="store.totalQueryAccounts"
-                    :options="[5, 10, 20, 50]"
-                />
-            </ClientOnly>
-        </div>
-        <AtomsPageArrows    
-            v-model:page="pageNum" 
-            :left-disabled="pageNum === 0" 
-            :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
+          </template>
+        </AtomsDropdownTile>
+        <th class="uk-width-1-5 uk-text-right">
+          {{ $t('ton.balance') }}
+        </th>
+        <th class="uk-width-1-5 uk-text-right uk-margin-small-right">
+          {{ $t('ton.status') }}
+        </th>
+        <th
+          class="uk-width-1-5 uk-text-right"
+          :class="{'hover-header' : update}"
+          @click="sortby.order_desc = !sortby.order_desc"
+        >
+          {{ $t('general.updated') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
+        </th>
+      </tr>
+    </thead>
+    <template v-if="emptyTable && store.totalQueryAccounts === 0">
+      <div class="uk-flex uk-margin-top">
+        {{ $t('warning.nothing_found') }}
+      </div>
+    </template>
+    <template v-else-if="loading">
+      <tr class="uk-text-center">
+        <td colspan="5">
+          <Loader />
+        </td>
+      </tr>
+    </template>
+    <template v-else>
+      <tbody>
+        <AccountsTableLine 
+          v-for="acc in keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)"
+          :key="acc + '_acctable'"
+          :acc="store.accounts[acc]" 
         />
+      </tbody>
+    </template>
+  </table>
+  <div
+    v-show="!(emptyTable && store.totalQueryAccounts === 0) && !loading && !hidden"
+    class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-bottom uk-padding-medium-right"
+    style="justify-content: flex-end"
+  >
+    <div
+      v-if="itemSelector && !isMobile()"
+      class="uk-flex uk-flex-middle"
+    >
+      <ClientOnly>
+        <AtomsSelector 
+          v-model:item-count="itemCount"
+          :amount="store.totalQueryAccounts"
+          :options="[5, 10, 20, 50]"
+        />
+      </ClientOnly>
     </div>
+    <AtomsPageArrows    
+      v-model:page="pageNum" 
+      :left-disabled="pageNum === 0" 
+      :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
+    />
+  </div>
 </template>

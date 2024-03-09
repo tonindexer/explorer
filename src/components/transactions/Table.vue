@@ -127,96 +127,118 @@ onMounted(() => {
 </script>
 
 <template>
-    <table v-show="!hidden" class="uk-table uk-margin-remove-top" :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}">
-        <colgroup v-if="!isMobile()">
-            <col width="12.5%" />
-            <col width="10%" />
-            <col width="17.5%" />
-            <col width="10%" />
-            <col width="12.5%" />
-            <col width="12.5%" />
-            <col width="12.5%" />
-            <col width="12.5%" />
-        </colgroup>
-        <thead v-if="!isMobile()">
-            <tr>
-                <th>{{ $t('ton.id') }}</th>
-                <th>{{ $t('ton.type') }}</th>
-                <th>{{ $t('ton.operation_name') }}</th>
-                <AtomsDropdownTile
-                    as-element="th"
-                    :hover-trigger="true"
-                    :filter-icon="true"
-                    :noDropdown="!update || !(route.path === '/transactions' || route.path === '/')"
-                    offset="top"
-                    :class="[
-                        'uk-text-nowrap',
-                        { 'active': workchain }
-                    ]"
-                >
-                    <template #trigger>
-                        {{ $t('ton.workchain') }}
-                    </template>
-                    <template #dropdown>
-                        <div 
-                            v-for="item of chainOptions" 
-                            :class="[
-                                'filter-item',
-                                {'selected-filter': workchain === item},
-                                'uk-flex uk-padding-small-vertical uk-padding-horizontal uk-text-nowrap'
-                            ]" 
-                            @click="workchain = item"
-                        >
-                            {{ $t(item === 'base' ? 'options.basechain' 
-                                : (item === 'main' ? 'options.masterchain' 
-                                    : 'options.both')) }}
-                        </div>
-                    </template>
-                </AtomsDropdownTile>
-                <th class="uk-text-right">{{ $t('general.amount')}}</th>
-                <th class="uk-text-right">{{ $t('general.sender')}}</th>
-                <th class="uk-text-right">{{ $t('general.receiver')}}</th>
-                <th 
-                    class="uk-text-right uk-text-nowrap" 
-                    :class="{'hover-header' : update}" 
-                    @click="sortby.order_desc = !sortby.order_desc"
-                >
-                    {{ $t('general.created') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
-                </th>
-            </tr>
-        </thead>
-        <template v-if="emptyTable">
-            <div class="uk-flex uk-margin-top">
-                {{ $t('warning.nothing_found') }}
+  <table
+    v-show="!hidden"
+    class="uk-table uk-margin-remove-top"
+    :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}"
+  >
+    <colgroup v-if="!isMobile()">
+      <col width="12.5%">
+      <col width="10%">
+      <col width="17.5%">
+      <col width="10%">
+      <col width="12.5%">
+      <col width="12.5%">
+      <col width="12.5%">
+      <col width="12.5%">
+    </colgroup>
+    <thead v-if="!isMobile()">
+      <tr>
+        <th>{{ $t('ton.id') }}</th>
+        <th>{{ $t('ton.type') }}</th>
+        <th>{{ $t('ton.operation_name') }}</th>
+        <AtomsDropdownTile
+          as-element="th"
+          :hover-trigger="true"
+          :filter-icon="true"
+          :no-dropdown="!update || !(route.path === '/transactions' || route.path === '/')"
+          offset="top"
+          :class="[
+            'uk-text-nowrap',
+            { 'active': workchain }
+          ]"
+        >
+          <template #trigger>
+            {{ $t('ton.workchain') }}
+          </template>
+          <template #dropdown>
+            <div 
+              v-for="item of chainOptions"
+              :key="item + '_tx_t'"
+              :class="[
+                'filter-item',
+                {'selected-filter': workchain === item},
+                'uk-flex uk-padding-small-vertical uk-padding-horizontal uk-text-nowrap'
+              ]" 
+              @click="workchain = item"
+            >
+              {{ $t(item === 'base' ? 'options.basechain' 
+                : (item === 'main' ? 'options.masterchain' 
+                  : 'options.both')) }}
             </div>
-        </template>
-        <template v-else-if="loading && !hidden">
-            <tr class="uk-text-center">
-                <td colspan="8">
-                    <Loader />
-                </td>
-            </tr>
-        </template>
-        <template v-else>
-                <tbody>
-                    <template v-for="trn in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)">
-                        <TransactionsTableLine :trn="store.transactions[trn]" :msg-show="store.transactionMsgFlag[trn]" @toggle-msg="(e) => toggleMsg(e)"/>
-                    </template>
-                </tbody>
-        </template>
-    </table>
-    <div v-show="!emptyTable && !loading && !hidden" class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-vertical uk-padding-medium-right" style="justify-content: flex-end">
-        <div class="uk-flex uk-flex-middle" v-if="itemSelector && !isMobile() && !hidden">
-            <AtomsSelector 
-                v-model:item-count="itemCount"
-                :amount="account ? store.accounts[account].transaction_amount : store.totalQueryTransactions"
-                :options="[5, 10, 20, 50]"
-            />
-        </div>
-        <AtomsPageArrows    
-            v-model:page="pageNum" 
-            :left-disabled="pageNum === 0" 
-            :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
-        />            
+          </template>
+        </AtomsDropdownTile>
+        <th class="uk-text-right">
+          {{ $t('general.amount') }}
+        </th>
+        <th class="uk-text-right">
+          {{ $t('general.sender') }}
+        </th>
+        <th class="uk-text-right">
+          {{ $t('general.receiver') }}
+        </th>
+        <th 
+          class="uk-text-right uk-text-nowrap" 
+          :class="{'hover-header' : update}" 
+          @click="sortby.order_desc = !sortby.order_desc"
+        >
+          {{ $t('general.created') + (update ? (sortby.order_desc ? ' ▼' : ' ▲') : '') }}
+        </th>
+      </tr>
+    </thead>
+    <template v-if="emptyTable">
+      <div class="uk-flex uk-margin-top">
+        {{ $t('warning.nothing_found') }}
+      </div>
+    </template>
+    <template v-else-if="loading && !hidden">
+      <tr class="uk-text-center">
+        <td colspan="8">
+          <Loader />
+        </td>
+      </tr>
+    </template>
+    <template v-else>
+      <tbody>
+        <TransactionsTableLine
+          v-for="trn in props.keys.slice(pageNum*itemCount, (pageNum+1)*itemCount)"
+          :key="trn + 'tx_t'"
+          :trn="store.transactions[trn]"
+          :msg-show="store.transactionMsgFlag[trn]"
+          @toggle-msg="(e) => toggleMsg(e)"
+        />
+      </tbody>
+    </template>
+  </table>
+  <div
+    v-show="!emptyTable && !loading && !hidden"
+    class="uk-flex uk-width-1-1 uk-flex-middle uk-margin-remove-vertical uk-padding-medium-right"
+    style="justify-content: flex-end"
+  >
+    <div
+      v-if="itemSelector && !isMobile() && !hidden"
+      class="uk-flex uk-flex-middle"
+    >
+      <AtomsSelector 
+        v-model:item-count="itemCount"
+        :amount="account ? store.accounts[account].transaction_amount : store.totalQueryTransactions"
+        :options="[5, 10, 20, 50]"
+      />
     </div>
+    <AtomsPageArrows    
+      v-model:page="pageNum" 
+      :left-disabled="pageNum === 0" 
+      :right-disabled="((pageNum+1)*itemCount >= keys.length && !update) || lastPageFlag"
+    />            
+  </div>
 </template>

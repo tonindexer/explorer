@@ -30,33 +30,41 @@ const component = computed(() => {
 
 
 <template>
-    <select 
-        v-if="isMobile() && !keepDesktop" 
-        :value="selected" 
-        aria-label="Select" 
-        @change="($event: Event) => $emit('update:selected', ($event.target as HTMLSelectElement).value)" 
-        class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary"
+  <select 
+    v-if="isMobile() && !keepDesktop" 
+    :value="selected" 
+    aria-label="Select" 
+    class="uk-select uk-padding-remove-bottom uk-text-primary uk-background-primary" 
+    @change="($event: Event) => $emit('update:selected', ($event.target as HTMLSelectElement).value)"
+  >
+    <option
+      v-for="option in routes"
+      :key="option.route"
+      :value="useParent? option.parent: option.route"
     >
-        <option v-for="option in routes" :value="useParent? option.parent: option.route">{{ $t(option.t) }}</option>
-    </select>
-    <div v-else
-        class="category-wrapper"
-        :class="secondary ? 'secondary' : 'primary'"
-    >
-        <div class="uk-flex uk-flex-middle uk-margin-remove-top">
-            <component 
-                :is="component" 
-                v-for="item in routes" 
-                class="category" 
-                :to="{ hash: `#${item.route}`, query: route.query}"
-                :class="{ selected: item.selected }"
-                :data-value="useParent ? item.parent : item.route"
-                @click="($event: Event) => $emit('update:selected', ($event.target as HTMLElement).dataset?.value ?? '')"
-            >
-                {{ $t(item.t) }}
-            </component>
-        </div>
+      {{ $t(option.t) }}
+    </option>
+  </select>
+  <div
+    v-else
+    class="category-wrapper"
+    :class="secondary ? 'secondary' : 'primary'"
+  >
+    <div class="uk-flex uk-flex-middle uk-margin-remove-top">
+      <component 
+        :is="component" 
+        v-for="item in routes" 
+        :key="item.route"
+        class="category" 
+        :to="{ hash: `#${item.route}`, query: route.query}"
+        :class="{ selected: item.selected }"
+        :data-value="useParent ? item.parent : item.route"
+        @click="($event: Event) => $emit('update:selected', ($event.target as HTMLElement).dataset?.value ?? '')"
+      >
+        {{ $t(item.t) }}
+      </component>
     </div>
+  </div>
 </template>
 
 <style scoped lang="scss">

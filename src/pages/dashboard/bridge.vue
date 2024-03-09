@@ -18,20 +18,26 @@ onMounted(async() => {
 </script>
 
 <template>
-    <template v-if="loading">
-        <div class="uk-flex uk-flex-center">
-            <Loader />
+  <template v-if="loading">
+    <div class="uk-flex uk-flex-center">
+      <Loader />
+    </div>
+  </template>
+  <template v-else>
+    <AtomsTile
+      :body="true"
+      :tile-style="'margin-top: 32px; padding: 12px'"
+    >
+      <template #body>
+        <div class="grid">
+          <DashboardDbCell
+            v-for="req in parsedReqs.filter(item => item.type === 'chart')"
+            :key="req.req.form_data.dashboardId + req.req.form_data.slice_id.toString()"
+            :request="req"
+            :slice-id="req.req.form_data.slice_id.toString()"
+          />
         </div>
-    </template>
-    <template v-else>
-        <AtomsTile :body="true" :tile-style="'margin-top: 32px; padding: 12px'">
-            <template #body>
-                <div class="grid">
-                    <template v-for="req in parsedReqs.filter(item => item.type === 'chart')">
-                        <DashboardDbCell :request="req" :slice_id="req.req.form_data.slice_id.toString()"/>
-                    </template>
-                </div>
-            </template>
-        </AtomsTile>
-    </template>
+      </template>
+    </AtomsTile>
+  </template>
 </template>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const route = useRoute()
 useHead({
     htmlAttrs: {
         lang: 'en'
@@ -24,24 +23,35 @@ useSeoMeta({
 </script>
 
 <template>
-    <div v-if="!isMobile()" class="uk-width-1-1 uk-height-1-1 uk-flex uk-margin-remove uk-background-default uk-padding" style="column-gap: 24px; position: relative;">
-        <NavBar />
-        <main class="uk-padding-remove uk-margin-remove uk-flex uk-flex-column uk-width-expand">
-            <AtomsSearchBar/>
-            <AtomsRouteChain/>
-            <slot />
-        </main>
+  <div
+    v-if="!isMobile()"
+    class="uk-width-1-1 uk-height-1-1 uk-flex uk-margin-remove uk-background-default uk-padding"
+    style="column-gap: 24px; position: relative;"
+  >
+    <NavBar />
+    <main class="uk-padding-remove uk-margin-remove uk-flex uk-flex-column uk-width-expand">
+      <AtomsSearchBar />
+      <AtomsRouteChain />
+      <slot />
+    </main>
+  </div>
+  <div
+    v-if="isMobile()"
+    class="uk-width-1-1 uk-height-1-1 uk-flex uk-flex-column uk-padding"
+    style="column-gap: 24px"
+  >
+    <div
+      class="uk-flex"
+      style="align-items: center; column-gap: 16px;"
+    >
+      <AtomsSearchBar />
+      <NavBar />
     </div>
-    <div v-if="isMobile()" class="uk-width-1-1 uk-height-1-1 uk-flex uk-flex-column uk-padding" style="column-gap: 24px">
-        <div class="uk-flex" style="align-items: center; column-gap: 16px;">
-            <AtomsSearchBar/>
-            <NavBar />
-        </div>
-        <main class="uk-padding-remove uk-margin-remove uk-flex uk-flex-column">
-            <AtomsRouteChain/>
-            <slot />
-        </main>
-    </div>
+    <main class="uk-padding-remove uk-margin-remove uk-flex uk-flex-column">
+      <AtomsRouteChain />
+      <slot />
+    </main>
+  </div>
 </template>
 
 <style src="~/assets/styles/main.scss" lang="scss"></style>

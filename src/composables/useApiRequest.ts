@@ -2,7 +2,7 @@ import axios from "axios"
 import { parseJson } from '@ton.js/json-parser';
 type Method = 'get' | 'GET' | 'post' | 'POST'
 
-export const useApiRequest = <T,>(url: string, method: Method, headers = {}, baseURL? : string, data?: Object) => {
+export const useApiRequest = async <T,>(url: string, method: Method, headers = {}, baseURL? : string, data?: Object) => {
 
     const runtimeConfig = useRuntimeConfig()
 
@@ -20,18 +20,12 @@ export const useApiRequest = <T,>(url: string, method: Method, headers = {}, bas
       })
         .then(resolve)
         .catch((err) => {
-          console.debug(err)
-          if (axios.isCancel(err)) {
-          }
-          if (err.code === 'ECONNABORTED') {
-            // handle timeout maybe retry if such arguments available
-          }
           reject(err)
         })
         // .finally(() => cancel && cancel.unset(source))
     }
     
-    return new Promise<{ data: T }>(async (resolve, reject) => {
+    return new Promise<{ data: T }>((resolve, reject) => {
       return request(resolve, reject)
     })
 }

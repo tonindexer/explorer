@@ -10,14 +10,14 @@ onMounted(() => {
 </script>
 
 <template>
-    <template v-if="!hex">
-        <NuxtLink to="/accounts">
-            {{ 'Incorrect address! Go back..' }}
-        </NuxtLink>
-    </template>
-    <template v-else>
-        <div class="uk-flex uk-flex-column">
-            <LazyAccountsAccountInfo v-model:hex="hex"/>
-        </div>
-    </template>
+  <template v-if="!hex">
+    <NuxtLink to="/accounts">
+      {{ 'Incorrect address! Go back..' }}
+    </NuxtLink>
+  </template>
+  <template v-else>
+    <div class="uk-flex uk-flex-column">
+      <LazyAccountsAccountInfo v-model:hex="hex" />
+    </div>
+  </template>
 </template>

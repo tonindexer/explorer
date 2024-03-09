@@ -98,136 +98,297 @@ const external = [
 </script>
 
 <template>
-    <nav v-if="!isMobile()" class="uk-background-primary uk-width-auto uk-padding-medium" style="height: fit-content; border-radius: 12px; width: min-content; position: relative;">
-        <div class="main-nav" style="align-items: center; min-width: max-content;">
-                <NuxtLink class="nav-logo uk-flex-center uk-flex" aria-label="main_page" :style="showFullMenu ? 'align-items: end; max-height: 40px' : ''" :to="'/'">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="20" cy="20" r="20"/>
-                        <rect x="19.0479" y="8.25391" width="11.746" height="11.746" rx="2.53968"/>
-                    </svg>
-                    <Transition name="slide-up">
-                        <div v-show="showFullMenu" class="uk-text-primary" style="font-size: 30px; margin-left: 4px; line-height: 1;">Anton</div>
-                    </Transition>
-                </NuxtLink>
-            <div class="uk-flex uk-flex-column" style="row-gap: 8px; margin-top: 48px">
-                <div v-for="link of routes" style="height: 40px">
-                    <NuxtLink :to="link.link" class="link uk-flex" :class="{ 'active' : route.name?.toString().includes(link.name)}">
-                        <div class="uk-padding-small" v-html="link.icon"></div>
-                        <Transition name="fade">
-                            <div style="margin-left: 4px; margin-right: 8px;" v-show="showFullMenu">
-                                {{ $t(`route.${link.name}`) }}
-                            </div>
-                        </Transition>
-                    </NuxtLink>
-                </div>
-            </div>
-            <div class="uk-flex uk-flex-column" style="row-gap: 8px; margin-top: 150px;">
-                <div v-for="link of external" style="height: 40px">
-                    <NuxtLink target="_blank" class="link uk-flex" :rel="link.name" :aria-label="link.name" :to="link.link"> 
-                        <div class="uk-padding-small" v-html="link.icon"></div>
-                        <Transition name="fade">
-                            <div style="margin-left: 4px; margin-right: 8px;" v-show="showFullMenu">
-                                {{ link.name }}
-                            </div>
-                        </Transition>
-                    </NuxtLink>
-                </div>
-            </div>
-            <ClientOnly>
-                <AtomsThemeSwitcher :vertical="true"/>
-            </ClientOnly>
-            <AtomsDropdownTile
-                as-element="div"
-                :hover-trigger="false"
-                :filter-icon="false"
-                :noDropdown="false"
-                :show-dropdown="langOpen"
-                inner-padding="small"
-                offset="bottom"
-                style="margin-top: 32px;"
-            >
-                <template #trigger>
-                    <div
-                        :class="['uk-text-primary']"
-                        @click="langOpen = !langOpen"
-                        style="line-height: 1.5;"
-                    >
-                        <span>
-                            {{ showFullMenu ? $t(`misc.${locale}`) : capitalize(locale) }}
-                        </span>
-                        <span
-                            :class="[
-                                'uk-icon',
-                                showFullMenu ? 'uk-margin-small-left' : ''
-                            ]"
-                            :uk-icon="`icon: chevron-${langOpen ? 'up' : 'down'}`"
-                        />
-                    </div>
-                </template>
-                <template #dropdown>
-                    <div 
-                        v-for="item of ['en', 'ru']"
-                        :class="[
-                            'filter-item',
-                            {'selected-filter': locale === item},
-                            'uk-flex uk-padding-left uk-padding-small-vertical'
-                        ]"
-                        :style="[
-                            'padding-right: 48px'
-                        ]"
-                        @click="setLocale(item); langOpen = !langOpen"
-                    >
-                        {{ showFullMenu ? $t(`misc.${item}`) : capitalize(item) }}
-                    </div>
-                </template>
-            </AtomsDropdownTile>
-            <div :style="`position: absolute; top: ${runtimeConfing.public.dashboard ? 346 : 298}px; right: -20px`" @click="showFullMenu = !showFullMenu">
-                <svg class="knob" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20" cy="20" r="20" fill="white"/>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M14.5762 15.7699C14.8413 16.0881 14.7983 16.561 14.4801 16.8262L10.6715 20L14.4801 23.1739C14.7983 23.439 14.8413 23.9119 14.5762 24.2302C14.311 24.5484 13.8381 24.5914 13.5199 24.3262L9.01986 20.5762C8.84887 20.4337 8.75 20.2226 8.75 20C8.75 19.7774 8.84887 19.5663 9.01986 19.4239L13.5199 15.6739C13.8381 15.4087 14.311 15.4517 14.5762 15.7699Z"/>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M25.4239 15.7699C25.689 15.4517 26.1619 15.4087 26.4802 15.6739L30.9802 19.4239C31.1512 19.5663 31.25 19.7774 31.25 20C31.25 20.2226 31.1512 20.4337 30.9802 20.5762L26.4802 24.3262C26.1619 24.5914 25.689 24.5484 25.4239 24.2302C25.1587 23.9119 25.2017 23.439 25.5199 23.1739L29.3285 20L25.5199 16.8262C25.2017 16.561 25.1587 16.0881 25.4239 15.7699Z"/>
-                </svg>
-            </div>
+  <nav
+    v-if="!isMobile()"
+    class="uk-background-primary uk-width-auto uk-padding-medium"
+    style="height: fit-content; border-radius: 12px; width: min-content; position: relative;"
+  >
+    <div
+      class="main-nav"
+      style="align-items: center; min-width: max-content;"
+    >
+      <NuxtLink
+        class="nav-logo uk-flex-center uk-flex"
+        aria-label="main_page"
+        :style="showFullMenu ? 'align-items: end; max-height: 40px' : ''"
+        :to="'/'"
+      >
+        <svg
+          width="40"
+          height="40"
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="20"
+            cy="20"
+            r="20"
+          />
+          <rect
+            x="19.0479"
+            y="8.25391"
+            width="11.746"
+            height="11.746"
+            rx="2.53968"
+          />
+        </svg>
+        <Transition name="slide-up">
+          <div
+            v-show="showFullMenu"
+            class="uk-text-primary"
+            style="font-size: 30px; margin-left: 4px; line-height: 1;"
+          >
+            Anton
+          </div>
+        </Transition>
+      </NuxtLink>
+      <div
+        class="uk-flex uk-flex-column"
+        style="row-gap: 8px; margin-top: 48px"
+      >
+        <div
+          v-for="link of routes"
+          :key="link.name + '_navlink'"
+          style="height: 40px"
+        >
+          <NuxtLink
+            :to="link.link"
+            class="link uk-flex"
+            :class="{ 'active' : route.name?.toString().includes(link.name)}"
+          >
+            <div
+              class="uk-padding-small"
+              v-html="link.icon"
+            />
+            <Transition name="fade">
+              <div
+                v-show="showFullMenu"
+                style="margin-left: 4px; margin-right: 8px;"
+              >
+                {{ $t(`route.${link.name}`) }}
+              </div>
+            </Transition>
+          </NuxtLink>
         </div>
-    </nav>
+      </div>
+      <div
+        class="uk-flex uk-flex-column"
+        style="row-gap: 8px; margin-top: 150px;"
+      >
+        <div
+          v-for="link of external"
+          :key="link.name + '_navext'"
+          style="height: 40px"
+        >
+          <NuxtLink
+            target="_blank"
+            class="link uk-flex"
+            :rel="link.name"
+            :aria-label="link.name"
+            :to="link.link"
+          > 
+            <div
+              class="uk-padding-small"
+              v-html="link.icon"
+            />
+            <Transition name="fade">
+              <div
+                v-show="showFullMenu"
+                style="margin-left: 4px; margin-right: 8px;"
+              >
+                {{ link.name }}
+              </div>
+            </Transition>
+          </NuxtLink>
+        </div>
+      </div>
+      <ClientOnly>
+        <AtomsThemeSwitcher :vertical="true" />
+      </ClientOnly>
+      <AtomsDropdownTile
+        as-element="div"
+        :hover-trigger="false"
+        :filter-icon="false"
+        :no-dropdown="false"
+        :show-dropdown="langOpen"
+        inner-padding="small"
+        offset="bottom"
+        style="margin-top: 32px;"
+      >
+        <template #trigger>
+          <div
+            :class="['uk-text-primary']"
+            style="line-height: 1.5;"
+            @click="langOpen = !langOpen"
+          >
+            <span>
+              {{ showFullMenu ? $t(`misc.${locale}`) : capitalize(locale) }}
+            </span>
+            <span
+              :class="[
+                'uk-icon',
+                showFullMenu ? 'uk-margin-small-left' : ''
+              ]"
+              :uk-icon="`icon: chevron-${langOpen ? 'up' : 'down'}`"
+            />
+          </div>
+        </template>
+        <template #dropdown>
+          <div 
+            v-for="item of ['en', 'ru']"
+            :key="item + '_lang'"
+            :class="[
+              'filter-item',
+              {'selected-filter': locale === item},
+              'uk-flex uk-padding-left uk-padding-small-vertical'
+            ]"
+            :style="[
+              'padding-right: 48px'
+            ]"
+            @click="setLocale(item); langOpen = !langOpen"
+          >
+            {{ showFullMenu ? $t(`misc.${item}`) : capitalize(item) }}
+          </div>
+        </template>
+      </AtomsDropdownTile>
+      <div
+        :style="`position: absolute; top: ${runtimeConfing.public.dashboard ? 346 : 298}px; right: -20px`"
+        @click="showFullMenu = !showFullMenu"
+      >
+        <svg
+          class="knob"
+          width="40"
+          height="40"
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="20"
+            cy="20"
+            r="20"
+            fill="white"
+          />
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M14.5762 15.7699C14.8413 16.0881 14.7983 16.561 14.4801 16.8262L10.6715 20L14.4801 23.1739C14.7983 23.439 14.8413 23.9119 14.5762 24.2302C14.311 24.5484 13.8381 24.5914 13.5199 24.3262L9.01986 20.5762C8.84887 20.4337 8.75 20.2226 8.75 20C8.75 19.7774 8.84887 19.5663 9.01986 19.4239L13.5199 15.6739C13.8381 15.4087 14.311 15.4517 14.5762 15.7699Z"
+          />
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M25.4239 15.7699C25.689 15.4517 26.1619 15.4087 26.4802 15.6739L30.9802 19.4239C31.1512 19.5663 31.25 19.7774 31.25 20C31.25 20.2226 31.1512 20.4337 30.9802 20.5762L26.4802 24.3262C26.1619 24.5914 25.689 24.5484 25.4239 24.2302C25.1587 23.9119 25.2017 23.439 25.5199 23.1739L29.3285 20L25.5199 16.8262C25.2017 16.561 25.1587 16.0881 25.4239 15.7699Z"
+          />
+        </svg>
+      </div>
+    </div>
+  </nav>
     
 
-    <div v-if="isMobile()" class="uk-flex">
-        <a aria-label="open_menu" class="link" @click="showMobileNav = !showMobileNav">
-            <svg class="mob-nav-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 12H32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9 20H32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9 28H32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </a>
+  <div
+    v-if="isMobile()"
+    class="uk-flex"
+  >
+    <a
+      aria-label="open_menu"
+      class="link"
+      @click="showMobileNav = !showMobileNav"
+    >
+      <svg
+        class="mob-nav-icon"
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M9 12H32"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M9 20H32"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M9 28H32"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </a>
+  </div>
+
+  <nav
+    v-show="isMobile()"
+    class="uk-position-fixed mob-nav uk-flex uk-flex-column"
+    :class="{ 'open' : showMobileNav , 'closed' : !showMobileNav}"
+    style="justify-content: space-between; z-index: 3;"
+  >
+    <div>
+      <table
+        class="uk-table uk-table-divider uk-padding-remove-top"
+        style="align-items: center; font-size: 1.25rem;"
+      >
+        <tbody>
+          <tr>
+            <td>
+              <NuxtLink
+                :to="'/'"
+                class="link mobile"
+                :class="{ 'active' : route.name?.toString().includes('index')}"
+                @click="showMobileNav = false"
+              >
+                {{ $t(`route.explorer`) }}
+              </NuxtLink>
+            </td>
+          </tr>
+          <tr
+            v-for="link of routes"
+            :key="link.name"
+          >
+            <td>
+              <NuxtLink
+                :to="link.link"
+                class="link mobile"
+                :class="{ 'active' : route.name?.toString().includes(link.name)}"
+                @click="showMobileNav = false"
+              >
+                {{ $t(`route.${link.name}`) }}
+              </NuxtLink>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+    <div class="uk-container uk-margin-bottom">
+      <ClientOnly>
+        <AtomsThemeSwitcher :vertical="false" />
+      </ClientOnly>
 
-    <nav v-show="isMobile()" class="uk-position-fixed mob-nav uk-flex uk-flex-column" :class="{ 'open' : showMobileNav , 'closed' : !showMobileNav}" style="justify-content: space-between; z-index: 3;">
-        <div>
-            <table class="uk-table uk-table-divider uk-padding-remove-top" style="align-items: center; font-size: 1.25rem;">
-                <tbody>
-                    <tr><td>
-                        <NuxtLink :to="'/'" class="link mobile" :class="{ 'active' : route.name?.toString().includes('index')}" @click="showMobileNav = false"> {{ $t(`route.explorer`) }}</NuxtLink>
-                    </td></tr>
-                    <tr v-for="link of routes" :key="link.name"><td>
-                        <NuxtLink :to="link.link" class="link mobile" :class="{ 'active' : route.name?.toString().includes(link.name)}" @click="showMobileNav = false"> {{ $t(`route.${link.name}`) }}</NuxtLink>
-                    </td></tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="uk-container uk-margin-bottom">
-            
-            <ClientOnly>
-                <AtomsThemeSwitcher :vertical="false"/>
-            </ClientOnly>
-
-            <div class="uk-text-center">
-                <a class="locale" :class="{ 'active' : locale === 'en' }" @click.prevent.stop="setLocale('en')" style="cursor: pointer; line-height: 40px;">En</a>
-                {{ ' | ' }}
-                <a class="locale" :class="{ 'active' : locale === 'ru' }" @click.prevent.stop="setLocale('ru')" style="cursor: pointer; line-height: 40px;">Ru</a>
-            </div>
-        </div>
-    </nav>
+      <div class="uk-text-center">
+        <a
+          class="locale"
+          :class="{ 'active' : locale === 'en' }"
+          style="cursor: pointer; line-height: 40px;"
+          @click.prevent.stop="setLocale('en')"
+        >En</a>
+        {{ ' | ' }}
+        <a
+          class="locale"
+          :class="{ 'active' : locale === 'ru' }"
+          style="cursor: pointer; line-height: 40px;"
+          @click.prevent.stop="setLocale('ru')"
+        >Ru</a>
+      </div>
+    </div>
+  </nav>
 </template>
 
 

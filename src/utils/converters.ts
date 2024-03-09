@@ -20,7 +20,7 @@ export const fullTON = (rawTON: bigint, delta: boolean = true) : string => {
 export const msToISO = (time: number | Date) : string => new Date(time).toISOString().split('.')[0] +"Z"
 
 export const toCompact = (input: number | bigint) : string => {
-    let formatter = Intl.NumberFormat('en', { notation: 'compact' });
+    const formatter = Intl.NumberFormat('en', { notation: 'compact' });
     return formatter.format(input)
 }
 
@@ -41,7 +41,7 @@ export const chainTitle = (id: number) => {
 
 export const toBase64Web = (base64: string) => base64.replace(/\+/g, '-').replace(/\//g, '_')
 
-export const toBase64Rfc = (base64: string) => base64.replace(/\-/g, '+').replace(/_/g, '/')
+export const toBase64Rfc = (base64: string) => base64.replace(/-/g, '+').replace(/_/g, '/')
 
 const feeFormatter = new Intl.NumberFormat('fullwide', {
     maximumFractionDigits: 9,

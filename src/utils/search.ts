@@ -1,9 +1,9 @@
-const ADDRESS_REGEX = new RegExp(/[UEk0][Qf][\w\-]{46}/);
-const TX_REGEX_OLD = new RegExp(/^\d+[\$:](?<hash>[\w\+\-\/]{43}\=)[\$:][\w\+\-\/]+$/, 'i');
+const ADDRESS_REGEX = new RegExp(/[UEk0][Qf][\w-]{46}/);
+const TX_REGEX_OLD = new RegExp(/^\d+[$:](?<hash>[\w+\-/]{43}=)[$:][\w+\-/]+$/, 'i');
 // address links
 const TONWEB_ADDRESS_REGEX = new RegExp(`^ton://transfer/(?<address>${ADDRESS_REGEX.source})`, 'i');
 const TONSCAN_ADDRESS_REGEX = new RegExp(`^https://tonscan.org/address/(?<address>${ADDRESS_REGEX.source})`, 'i');
-const TONWHALES_ADDRESS_REGEX = new RegExp(`^https://tonwhales.com(?:\/[a-z]{2})?/explorer/address/(?<address>${ADDRESS_REGEX.source})`, 'i');
+const TONWHALES_ADDRESS_REGEX = new RegExp(`^https://tonwhales.com(?:/[a-z]{2})?/explorer/address/(?<address>${ADDRESS_REGEX.source})`, 'i');
 const TONAPI_ADDRESS_REGEX = new RegExp(`^https://tonapi.io/account/(?<address>${ADDRESS_REGEX.source})`, 'i');
 const TONSH_ADDRESS_REGEX = new RegExp(`^https://ton.sh/address/(?<address>${ADDRESS_REGEX.source})`, 'i');
 const TONVIEWER_ADDRESS_REGEX = new RegExp(`^https://tonviewer.com/(?<address>${ADDRESS_REGEX.source})`, 'i');
@@ -41,7 +41,7 @@ export const blockParse = (input: string): BlockSearch | null => {
 
 export const removeClutter = (input: string) => {
     if (input)
-        for (let regex of [
+        for (const regex of [
             // addresses
             TONWEB_ADDRESS_REGEX, TONSCAN_ADDRESS_REGEX,TONWHALES_ADDRESS_REGEX,
             TONAPI_ADDRESS_REGEX,TONSH_ADDRESS_REGEX, TONVIEWER_ADDRESS_REGEX,

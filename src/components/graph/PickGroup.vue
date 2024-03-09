@@ -42,33 +42,33 @@ const groupButtons = computed<{label: IntervalAPI, t: string, disabled: boolean 
 </script>
 
 <template>
+  <div 
+    :class="[
+      'interval-group uk-flex uk-flex-middle',
+      isMobile() ? 'uk-width-expand uk-margin-small-top' : 'uk-width-auto uk-margin-remove-top'
+    ]" 
+    style="justify-content: space-between;"
+  >
     <div 
-        :class="[
-            'interval-group uk-flex uk-flex-middle',
-            isMobile() ? 'uk-width-expand uk-margin-small-top' : 'uk-width-auto uk-margin-remove-top'
-        ]" 
-        style="justify-content: space-between;"
+      v-if="!isMobile()" 
+      class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove uk-text-primary" 
+      style="white-space: nowrap;"
     >
-        <div 
-            v-if="!isMobile()" 
-            class="uk-margin-remove-vertical uk-margin-small-left uk-padding-remove uk-text-primary" 
-            style="white-space: nowrap;"
-        >
-           {{ $t('time.group_interval') }}
-        </div>
-        <button 
-            v-for="button in groupButtons"
-            class="uk-margin-small-left uk-button"
-            :class="[
-                'uk-margin-small-left uk-button',
-                { 'selected' : selected === button.label }
-            ]"
-            :disabled="button.disabled"
-            @click="$emit('setInterval', button.label)"
-        >
-            {{ button.t }}
-        </button>   
+      {{ $t('time.group_interval') }}
     </div>
+    <button 
+      v-for="button in groupButtons"
+      :key="button.label + button.t"
+      :class="[
+        'uk-margin-small-left uk-button',
+        { 'selected' : selected === button.label }
+      ]"
+      :disabled="button.disabled"
+      @click="$emit('setInterval', button.label)"
+    >
+      {{ button.t }}
+    </button>   
+  </div>
 </template>
 
 <style scoped lang="scss">

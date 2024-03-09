@@ -37,7 +37,7 @@ const chartOptions = computed(() => { return {
         point: {
             events: {
             click: function() {
-                let point = this as any;
+                const point = this as any;
                 // node click
                 if (!point.from && !point.to) {
                     if (point.id !== 'This account')
@@ -74,60 +74,73 @@ onMounted(() => store.loadSankeyDiagram(props.hex))
 </script>
 
 <template>
-    <div v-if="data" class="uk-flex uk-width-1-1 uk-margin-small-top uk-text-primary" style="justify-content: space-between;" >
-        <div class="uk-flex uk-flex-column">
-            <div 
-                class="uk-flex uk-text-blend" 
-                :class="{'diamond' : !count}" 
-                style="white-space: nowrap;"
-            > 
-                {{  "Recieved Total: " }}
-                <span class="uk-margin-xsmall-left uk-text-primary">
-                    {{  Math.round(data.receivedTotal) }}
-                </span> 
-            </div>
-            <div 
-                v-if="Math.floor(data.receivedTotal) !== Math.floor(data.receivedTop)" 
-                class="uk-flex uk-text-blend" 
-                :class="{'diamond' : !count}" 
-                style="white-space: nowrap;"
-            > 
-                {{ "Top10: " }}
-                <span class="uk-margin-xsmall-left uk-text-primary">
-                    {{ Math.round(data.receivedTop) }}
-                </span> 
-            </div>
-        </div>
-        <div class="uk-flex uk-flex-column">
-            <div 
-                class="uk-flex uk-flex-right uk-text-blend" 
-                :class="{'diamond' : !count}" 
-                style="white-space: nowrap;"
-            > 
-                {{ "Sent Total: " }}
-                    <span class="uk-margin-xsmall-left uk-text-primary">
-                        {{ Math.round(data.receivedTotal) }}
-                    </span> 
-            </div>
-            <div 
-                v-if="Math.floor(data.sentTotal) !== Math.floor(data.sentTop)" 
-                class="uk-flex uk-flex-right uk-text-blend" 
-                :class="{'diamond' : !count}" 
-                style="white-space: nowrap;"
-            > 
-                {{ "Top10: " }}
-                <span class="uk-margin-xsmall-left uk-text-primary">
-                    {{ Math.round(data.sentTop) }}
-                </span> 
-            </div>
-        </div>
+  <div
+    v-if="data"
+    class="uk-flex uk-width-1-1 uk-margin-small-top uk-text-primary"
+    style="justify-content: space-between;"
+  >
+    <div class="uk-flex uk-flex-column">
+      <div 
+        class="uk-flex uk-text-blend" 
+        :class="{'diamond' : !count}" 
+        style="white-space: nowrap;"
+      > 
+        {{ "Recieved Total: " }}
+        <span class="uk-margin-xsmall-left uk-text-primary">
+          {{ Math.round(data.receivedTotal) }}
+        </span> 
+      </div>
+      <div 
+        v-if="Math.floor(data.receivedTotal) !== Math.floor(data.receivedTop)" 
+        class="uk-flex uk-text-blend" 
+        :class="{'diamond' : !count}" 
+        style="white-space: nowrap;"
+      > 
+        {{ "Top10: " }}
+        <span class="uk-margin-xsmall-left uk-text-primary">
+          {{ Math.round(data.receivedTop) }}
+        </span> 
+      </div>
     </div>
-    <div v-else class="uk-flex uk-flex-center">
-        <Loader :ratio="2"/>
+    <div class="uk-flex uk-flex-column">
+      <div 
+        class="uk-flex uk-flex-right uk-text-blend" 
+        :class="{'diamond' : !count}" 
+        style="white-space: nowrap;"
+      > 
+        {{ "Sent Total: " }}
+        <span class="uk-margin-xsmall-left uk-text-primary">
+          {{ Math.round(data.receivedTotal) }}
+        </span> 
+      </div>
+      <div 
+        v-if="Math.floor(data.sentTotal) !== Math.floor(data.sentTop)" 
+        class="uk-flex uk-flex-right uk-text-blend" 
+        :class="{'diamond' : !count}" 
+        style="white-space: nowrap;"
+      > 
+        {{ "Top10: " }}
+        <span class="uk-margin-xsmall-left uk-text-primary">
+          {{ Math.round(data.sentTop) }}
+        </span> 
+      </div>
     </div>
-    <div v-show="data" class="uk-width-1-1">
-        <ClientOnly fallback="Loading graph...">
-            <Chart :options="chartOptions" ref="graph"/>
-        </ClientOnly>
-    </div>
+  </div>
+  <div
+    v-else
+    class="uk-flex uk-flex-center"
+  >
+    <Loader :ratio="2" />
+  </div>
+  <div
+    v-show="data"
+    class="uk-width-1-1"
+  >
+    <ClientOnly fallback="Loading graph...">
+      <Chart
+        ref="graph"
+        :options="chartOptions"
+      />
+    </ClientOnly>
+  </div>
 </template>

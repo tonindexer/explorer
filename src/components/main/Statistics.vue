@@ -5,25 +5,30 @@ const loading = computed(() => Object.keys(store.stats).length === 0)
 </script>
 
 <template>
-    <div class="uk-flex uk-flex-column">
-        <template v-if="loading">
-            <div class="uk-flex uk-flex-center">
-                <Loader :ratio="2"/>
-            </div>
-        </template>
-        <template v-else>
-            <template v-for="(value, key) in store.stats">
-                <hr style="margin: 0.7rem 0">
-                <div class="uk-text-medium uk-flex uk-padding-remove-vertical uk-padding-medium-horizontal" 
-                    style="justify-content: space-between;">
-                    <div>
-                        {{ $t(`stats.${key}`) }}
-                    </div>
-                    <div>
-                        {{ `${value}` }}
-                    </div>
-                </div>
-            </template>
-        </template>
-    </div>
+  <div class="uk-flex uk-flex-column">
+    <template v-if="loading">
+      <div class="uk-flex uk-flex-center">
+        <Loader :ratio="2" />
+      </div>
+    </template>
+    <template v-else>
+      <template 
+        v-for="(value, key) in store.stats"
+        :key="key + value"
+      >
+        <hr style="margin: 0.7rem 0">
+        <div
+          class="uk-text-medium uk-flex uk-padding-remove-vertical uk-padding-medium-horizontal" 
+          style="justify-content: space-between;"
+        >
+          <div>
+            {{ $t(`stats.${key}`) }}
+          </div>
+          <div>
+            {{ `${value}` }}
+          </div>
+        </div>
+      </template>
+    </template>
+  </div>
 </template>

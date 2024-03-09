@@ -10,14 +10,14 @@ onMounted(() => {
 </script>
 
 <template>
-    <template v-if="!hash">
-        <NuxtLink :to="{name: 'transactions'}">
-            {{ 'An error occured while parsing transaction hash! Go back..' }}
-        </NuxtLink>
-    </template>
-    <template v-else>
-        <div class="uk-flex uk-flex-column">
-            <LazyTransactionsTransactionInfo v-model:hash="hash"/>
-        </div>
-    </template>
+  <template v-if="!hash">
+    <NuxtLink :to="{name: 'transactions'}">
+      {{ 'An error occured while parsing transaction hash! Go back..' }}
+    </NuxtLink>
+  </template>
+  <template v-else>
+    <div class="uk-flex uk-flex-column">
+      <LazyTransactionsTransactionInfo v-model:hash="hash" />
+    </div>
+  </template>
 </template>

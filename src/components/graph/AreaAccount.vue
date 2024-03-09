@@ -46,7 +46,7 @@ const dataParser = computed(() : Graph => {
         }],
         times: []
     }
-    store.accountsGraphData.slice(1,).forEach((item, index) => {
+    store.accountsGraphData.slice(1,).forEach((item) => {
         output.series[0].data.push(item.Value)
         output.times.push(new Date(item.Timestamp).getTime())
     })
@@ -243,51 +243,65 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="uk-flex uk-flex-column uk-width-1-1">
-        <AtomsCategorySelector
-            v-model:selected="selectedTab"
-            :routes="tabs"
-            :set-route="false"
+  <div class="uk-flex uk-flex-column uk-width-1-1">
+    <AtomsCategorySelector
+      v-model:selected="selectedTab"
+      :routes="tabs"
+      :set-route="false"
+    />
+    <div
+      class="uk-width-1-1"
+      style="position: relative; margin-top: 32px; min-height: 185px;"
+    >
+      <ClientOnly>
+        <template #fallback>
+          <div class="uk-width-1-1 uk-flex uk-flex-center uk-flex-middle">
+            <Loader :ratio="2" />
+          </div>
+        </template>
+        <Chart
+          ref="graph"
+          :options="chartOptions"
         />
-        <div class="uk-width-1-1" style="position: relative; margin-top: 32px; min-height: 185px;">
-            <ClientOnly>
-                <template #fallback>
-                    <div class="uk-width-1-1 uk-flex uk-flex-center uk-flex-middle">
-                        <Loader :ratio="2" />
-                    </div>
-                </template>
-                <Chart :options="chartOptions" ref="graph"/>
-                <div v-if="dataParser.series[0].data.length === 0" class="uk-position-center uk-text-center uk-overlay uk-text-bold">
-                    {{ $t('warning.nothing_found') + ` ${$t('ton.from').toLowerCase()} ${requestTimes.from} ` + (requestTimes.to ?  ` ${$t('ton.to').toLowerCase()} ${requestTimes.to} ` : '') }}
-                </div>
-            </ClientOnly>
-        </div>
-        <div 
-            class="uk-flex uk-flex-middle"
-            style="justify-content: space-between;" 
-            :style="isMobile() ? 'flex-direction: column-reverse' : ''"
+        <div
+          v-if="dataParser.series[0].data.length === 0"
+          class="uk-position-center uk-text-center uk-overlay uk-text-bold"
         >
-            <GraphPickGroup 
-                :from="filterInterval.from" 
-                :to="filterInterval.to" 
-                :selected="selection"
-                @set-interval="value => pickGroup(value)"
-            />
-            <div class="uk-padding-right" :class="isMobile() ? 'uk-width-1-1' : 'uk-width-expand'" @mouseup="sliderEndEvent" @touchend="sliderEndEvent">
-                <AtomsMultiRangeSlider
-                    :baseClassName="'multi-range-slider'"
-                    :min="limits.from"
-                    :max="limits.to"
-                    :ruler="false"
-                    :label="false"
-                    :min-caption="dayMinCaption"
-                    :max-caption="dayMaxCaption"
-                    :minValue="slideValues.minValue"
-                    :maxValue="slideValues.maxValue"
-                    @input="UpdateValues"
-                    :rangeMargin="Math.abs(limits.to - limits.from)/8"
-                />
-            </div>
+          {{ $t('warning.nothing_found') + ` ${$t('ton.from').toLowerCase()} ${requestTimes.from} ` + (requestTimes.to ? ` ${$t('ton.to').toLowerCase()} ${requestTimes.to} ` : '') }}
         </div>
+      </ClientOnly>
     </div>
+    <div 
+      class="uk-flex uk-flex-middle"
+      style="justify-content: space-between;" 
+      :style="isMobile() ? 'flex-direction: column-reverse' : ''"
+    >
+      <GraphPickGroup 
+        :from="filterInterval.from" 
+        :to="filterInterval.to" 
+        :selected="selection"
+        @set-interval="value => pickGroup(value)"
+      />
+      <div
+        class="uk-padding-right"
+        :class="isMobile() ? 'uk-width-1-1' : 'uk-width-expand'"
+        @mouseup="sliderEndEvent"
+        @touchend="sliderEndEvent"
+      >
+        <AtomsMultiRangeSlider
+          :base-class-name="'multi-range-slider'"
+          :min="limits.from"
+          :max="limits.to"
+          :ruler="false"
+          :label="false"
+          :min-caption="dayMinCaption"
+          :max-caption="dayMaxCaption"
+          :min-value="slideValues.minValue"
+          :max-value="slideValues.maxValue"
+          :range-margin="Math.abs(limits.to - limits.from)/8"
+          @input="UpdateValues"
+        />
+      </div>
+    </div>
+  </div>
 </template>

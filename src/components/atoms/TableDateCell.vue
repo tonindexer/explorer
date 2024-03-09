@@ -48,12 +48,15 @@ const passedTime = () => {
 </script>
 
 <template>
-    <ClientOnly :fallback="$t('time.just_now')">
-        <div v-if="passedTime()" class="uk-text-primary uk-text-right uk-text-nowrap">
-            {{ (passedTime()?.time ?? '') + $t(`time.${passedTime()?.t}`) + (passedTime()?.t !== 'just_now' ? ' ' + $t('time.ago') : '') }}
-        </div>
-        <div v-else>
-            {{ 'Error' }}
-        </div>
-    </ClientOnly>
+  <ClientOnly :fallback="$t('time.just_now')">
+    <div
+      v-if="passedTime()"
+      class="uk-text-primary uk-text-right uk-text-nowrap"
+    >
+      {{ (passedTime()?.time ?? '') + $t(`time.${passedTime()?.t}`) + (passedTime()?.t !== 'just_now' ? ' ' + $t('time.ago') : '') }}
+    </div>
+    <div v-else>
+      {{ 'Error' }}
+    </div>
+  </ClientOnly>
 </template>

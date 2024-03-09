@@ -12,6 +12,7 @@ withDefaults(defineProps<Props>(), {
   delta: false,
   full: false,
   place: 'baseline',
+  tooltip: undefined,
   filler: ''
 })
 </script>
