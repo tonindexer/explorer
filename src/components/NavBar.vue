@@ -329,7 +329,7 @@ const external = [
     v-show="isMobile()"
     class="uk-position-fixed mob-nav uk-flex uk-flex-column"
     :class="{ 'open' : showMobileNav , 'closed' : !showMobileNav}"
-    style="justify-content: space-between; z-index: 3;"
+    style="justify-content: space-between; z-index: 15;"
   >
     <div>
       <table

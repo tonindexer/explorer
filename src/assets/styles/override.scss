@@ -82,7 +82,7 @@ $large: 1.5rem;
 
 .uk-table-divider > tr:not(:first-child), .uk-table-divider > :not(:first-child) > tr, 
 .uk-table-divider > :first-child > tr:not(:first-child) {
-  border-color: var(--color-text-muted);
+  border-top: 1px solid var(--color-bg-shadow);
 }
 
 .uk-table-striped > tr:nth-of-type(odd):not(:first-child), .uk-table-striped tbody tr:nth-of-type(odd):not(:first-child) { 
@@ -95,11 +95,6 @@ $large: 1.5rem;
   background: var(--color-bg-hovered);
   border-top: 1px solid var(--color-bg-shadow);
   border-bottom: none;
-}
-
-.uk-table-divider > tr:not(:first-child), .uk-table-divider > :not(:first-child) > tr, 
-.uk-table-divider > :first-child > tr:not(:first-child) { 
-  border-top: none;
 }
 
 .uk-table-striped > tr:nth-of-type(even):last-child, .uk-table-striped tbody tr:nth-of-type(even):last-child {

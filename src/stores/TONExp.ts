@@ -284,52 +284,17 @@ export const useMainStore = defineStore('tonexp', {
     },
     async mainPageLoad() {
       // Will be updated with new landing page
-      return
-      // this.stats = {} as Statistics
-      // const mobi = isMobile()
-      // this.latestBlocks = []
-      // try {
-      //   const latestReq = {
-      //     workchain: -1,
-      //     with_transactions: true,
-      //     order: 'DESC',
-      //     limit: mobi ? 5 : 10
-      //   }
-      //   const query = getQueryString(latestReq, false)
-      
-      //   const { data } = await apiRequest(`/blocks?${query}`, 'GET')
-      //   const parsed = parseJson<BlockAPIData>(data, (key, value, context) => (
-      //       (key in bigintFields && isNumeric(context.source) ? BigInt(context.source) : value)));
-      //   for (const key in parsed.results) {
-      //     const block = this.processBlock(parsed.results[key])
-      //     this.latestBlocks.push(block)
-      //   }
-      // } catch (error) {
-      //   console.log(error)
-      // }
-      // try {
-      //   await this.updateTransactions(mobi ? 5 : 10, null, 'base')
-      // } catch (error) {
-      //   console.log(error)
-      // }
-      // try {
-      //   const { data } = await apiRequest(`/statistics`, 'GET')
-      //   this.stats = JSON.parse(data);
-      //   Object.keys(this.stats).forEach(key => {
-      //     if (this.stats[key] instanceof Array) delete this.stats[key];
-      //   });
-      // } catch (error) {
-      //   console.log(error)
-      // }
+      try {
+        const { data } = await useApiRequest<Statistics>(`/statistics`, 'GET')
+        this.stats = data
+      } catch (error) {
+        console.log(error)
+      }
     },
     async initLoad() {
       const route = useRoute()
 
       switch (route.name) {
-        case 'index': {
-          await this.mainPageLoad()
-          break
-        } 
         case 'blocks': {
           await this.updateBlockValues('main', 5, null)
           break

@@ -38,10 +38,23 @@ $externalout-bg: #F0EBE7;
 $dark-externalout-bg: #3e3c3a;
 
 // Slider stuff
-$slider-color: #D2DEFF;
-$dark-slider-color: #102D82;
+$color-slider: #D2DEFF;
+$dark-color-slider: #102D82;
+
+// Main page
+$color-bg-header: rgba(199, 214, 255, 1);
+$dark-color-bg-header: rgb(72, 121, 255);
+$color-text-overlap-muted: rgba(20, 20, 20, 1);
+$dark-color-text-overlap-muted: rgb(226, 226, 226);
+
+// Skeleton
+$hsl-skeleton-start: hsl(0, 0%, 85%);
+$hsl-skeleton-end: hsl(200, 20%, 95%);
+$dark-hsl-skeleton-start: hsl(0deg 0% 22.73%);
+$dark-hsl-skeleton-end: hsl(0deg 0.77% 55.33%);
 
 :root {
+    --color-fixed-white: white;
     --color-bg: #{$color-bg};
     --color-bg-muted: #{$color-bg-muted};
     --color-bg-emphasis: #{$color-bg-emphasis};
@@ -59,7 +72,11 @@ $dark-slider-color: #102D82;
     --color-internal: #{$internal-bg};
     --color-externalin: #{$externalin-bg};
     --color-externalout: #{$externalout-bg};
-    --color-slider: #{$slider-color};
+    --color-slider: #{$color-slider};
+    --color-bg-header: #{$color-bg-header};
+    --color-text-overlap: #{$color-text-overlap-muted};
+    --skeleton-start: #{$hsl-skeleton-start};
+    --skeleton-end: #{$hsl-skeleton-end};
 }
 
 .dark-mode {
@@ -80,5 +97,9 @@ $dark-slider-color: #102D82;
     --color-internal: #{$dark-internal-bg};
     --color-externalin: #{$dark-externalin-bg};
     --color-externalout: #{$dark-externalout-bg};
-    --color-slider: #{$dark-slider-color};
+    --color-slider: #{$dark-color-slider};
+    --color-bg-header: #{$dark-color-bg-header};
+    --color-text-overlap: #{$dark-color-text-overlap-muted};
+    --skeleton-start: #{$dark-hsl-skeleton-start};
+    --skeleton-end: #{$dark-hsl-skeleton-end};
 }

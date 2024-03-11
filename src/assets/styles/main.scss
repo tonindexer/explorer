@@ -106,7 +106,6 @@ html {
   width: auto !important;
 }
 
-
 .grid {
   display: grid;
   gap: 1rem;
@@ -141,4 +140,8 @@ html {
   .body {
     color: vat(--color-text-emphasis);
   }
+}
+
+.font-inter {
+  font-family: 'Inter', monospace;
 }

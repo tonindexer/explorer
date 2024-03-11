@@ -75,10 +75,9 @@ declare global {
         parsed_address_count : number,
         parsed_message_count : number,
         transaction_count : number,
-        account_count_by_status? : Array<Object>,
-        account_count_by_interfaces? : Array<Object>,
-        message_count_by_operation? : Array<Object>,
-        [key: string] : any,
+        address_count_by_status : Array<{ status: string, count: number }>,
+        address_count_by_interfaces : Array<{ interfaces: string[], count: number }>,
+        message_count_by_operation : Array<{ operation: string, count: number }>
     }
 
     type MockType = {

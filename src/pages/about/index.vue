@@ -99,7 +99,10 @@
         The TON has standard contracts (such as <a
           class="uk-text-primary"
           href="https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md"
-        >TEP-62</a>, <a href="https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md">TEP-74</a>), and they have predefined get-method names.
+        >TEP-62</a>, <a
+          class="uk-text-primary"
+          href="https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md"
+        >TEP-74</a>), and they have predefined get-method names.
         Therefore, you can attempt to match accounts found in the network to these standards by checking the presence of the get-methods.
         Contract standards also specify <a
           class="uk-text-primary"

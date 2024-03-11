@@ -4,7 +4,7 @@
     style="margin-top:32px;"
   >
     <h1
-      class="uk-margin-remove-vertical uk-text-primary uk-margin-right"
+      class="uk-margin-remove-vertical uk-text-primary uk-margin-right font-inter"
       :style="`font-size: ${isMobile() ? 28: 48}px; font-weight: 400;`"
     >
       <slot name="title" />
@@ -19,10 +19,6 @@
 </template>
 
 <style scoped lang="scss">
-h1 {
-    font-family: 'Inter', monospace; 
-}
-
 .uk-margin-remove {
     color: var(--color-text);
 }
