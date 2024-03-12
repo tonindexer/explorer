@@ -22,8 +22,8 @@ const showFull = ref(false)
 </script>
 
 <template>
-  <table class="uk-table uk-table-middle uk-margin-remove-vertical uk-table-striped-inverse last-row-radius">
-    <tbody class="uk-table-divider">
+  <table class="uk-table uk-table-middle uk-margin-remove-vertical uk-table-striped-inverse last-row-radius uk-position-relative">
+    <tbody :class="{ 'uk-table-divider' :isMobile() }">
       <tr v-if="acc.label && acc.label.name">
         <AtomsPropLine :bold="true">
           <template #name>
@@ -269,7 +269,7 @@ const showFull = ref(false)
           </template>
         </AtomsPropLine>
       </tr>
-      <tr style="position: relative;">
+      <tr>
         <AtomsPropLine>
           <template #name>
             {{ $t(`ton.updated_at`) }}
@@ -278,25 +278,25 @@ const showFull = ref(false)
             {{ new Date(acc.updated_at).toLocaleString() }}
           </template>
         </AtomsPropLine>
-        <div
-          class="show-full_button"
-          @click="showFull = !showFull"
-        >
-          <svg
-            width="32"
-            height="32"
-            :class="{ 'open' : showFull }"
-            viewBox="0 0 20 20"
-          >
-            <polyline
-              fill="none"
-              stroke-width="2"
-              points="16 7 10 13 4 7"
-            />
-          </svg>
-        </div>
       </tr>
     </tbody>
+    <div
+      class="show-full_button"
+      @click="showFull = !showFull"
+    >
+      <svg
+        width="32"
+        height="32"
+        :class="{ 'open' : showFull }"
+        viewBox="0 0 20 20"
+      >
+        <polyline
+          fill="none"
+          stroke-width="2"
+          points="16 7 10 13 4 7"
+        />
+      </svg>
+    </div>
   </table>
 </template>
 
@@ -308,7 +308,7 @@ const showFull = ref(false)
     margin-right: 12px;
     height: 32px;
     width: 32px;
-    top: 12px;
+    bottom: 12px;
     background: var(--color-text-emphasis);
     border-radius: 39px;
     transform: rotate(0deg);
