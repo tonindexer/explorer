@@ -71,7 +71,7 @@ export const useMainStore = defineStore('tonexp', {
     getBlockShards: (state) => (key: BlockKey) => state.blocks[key].shard_keys.map((shardKey) => state.blocks[shardKey]),
     getBlockKeys: (state) => (keys: BlockKey[], excludeEmpty: boolean) => excludeEmpty ? keys.filter((item: BlockKey) => state.blocks[item].transaction_keys.length > 0) : keys,
     deepTransactionKeys: (state) => (key: BlockKey) => {
-      const output: string[] = [...state.blocks[key].transaction_keys]
+      const output: string[] = []
       state.blocks[key].shard_keys.forEach((shrd: BlockKey) => output.push(...state.blocks[shrd].transaction_keys))
       return output
     },
@@ -275,10 +275,14 @@ export const useMainStore = defineStore('tonexp', {
 
       Object.assign(mappedBlock, block)
 
-      if (!(blockKey in this.blocks) && !full) {
+      if (!(blockKey in this.blocks)) {
         this.blocks[blockKey] = mappedBlock
       } else {
-        this.blocks[blockKey] = { ...this.blocks[blockKey], ...mappedBlock, loaded: true}
+        this.blocks[blockKey] = { ...this.blocks[blockKey], ...mappedBlock}
+      }
+      if (full) {
+        this.blocks[blockKey].loaded = true
+        console.log(blockKey)
       }
       return blockKey
     },
@@ -376,7 +380,7 @@ export const useMainStore = defineStore('tonexp', {
         
         this.totalQueryBlocks = data.total
         for (const key in data.results) {
-          const block = this.processBlock(data.results[key])
+          const block = this.processBlock(data.results[key], false)
           this.exploredBlocks.push(block)
         }
       } catch (error) {

@@ -24,7 +24,7 @@ defineEmits<{
     <div 
       class="arrow bg uk-border-rounded uk-margin-small-left"
       :class="{'disabled' : leftDisabled}"
-      style="border-radius: 4px; line-height: 16px;"
+      style="border-radius: 4px; line-height: 16px; cursor: pointer;"
       @click.prevent="$emit('update:page', page - 1)"
     >
       <svg
@@ -40,7 +40,7 @@ defineEmits<{
     <div
       class="arrow bg uk-border-rounded uk-margin-small-left" 
       :class="{'disabled' : rightDisabled}"
-      style="border-radius: 4px; line-height: 16px;"
+      style="border-radius: 4px; line-height: 16px; cursor: pointer;"
       @click.prevent="$emit('update:page', page + 1)"
     >
       <svg

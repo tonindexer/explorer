@@ -93,8 +93,6 @@
         "out_msg" : "Исходящие сообщения",
         "updated": "Обновлено",
         "categories": "Категории",
-        "loaded_accs": "Загруженные аккаунты",
-        "unloaded_accs": "Незагруженные аккаунты",
         "external": "Внешние ссылки",
         "nothing-found": "Поиск не дал результатов! Попробуйте ещё..",
         "incorrect-input": "Данные некорректны! Введите что-то другое..",
@@ -134,6 +132,14 @@
         "nft" : "NFT",
         "nft_collection" : "NFT Коллекции",
         "jetton_minter" : "Jetton минтеры",
+
+        "all": "Все",       
+        "master_accounts": "Мастер",
+        "shard_accounts": "Шарды",
+        "unloaded": "Не загруженные",
+        "master_tx": "Мастер",
+        "shard_tx": "Транзакции шардов",
+
         "search" : "Резульаты поиска",
         "results" : "Результаты",
         "about": "О проекте",

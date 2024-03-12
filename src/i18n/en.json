@@ -93,8 +93,6 @@
         "out_msg" : "Messages Out",
         "updated": "Updated",
         "categories": "Categories",
-        "loaded_accs": "Loaded accounts",
-        "unloaded_accs": "Unloaded accounts",
         "external": "External links",
         "nothing-found": "Nothing found! Try again..",
         "incorrect-input": "Incorrect input..",
@@ -134,6 +132,14 @@
         "nft" : "NFT",
         "nft_collection" : "NFT Collections",
         "jetton_minter" : "Jetton minters",
+
+        "all": "All",       
+        "master_accounts": "Master",
+        "shard_accounts": "Shards",
+        "unloaded": "Unloaded",
+        "master_tx": "Master",
+        "shard_tx": "Shards transactions",
+
         "search" : "Search results",
         "results" : "Results",
         "about": "About",

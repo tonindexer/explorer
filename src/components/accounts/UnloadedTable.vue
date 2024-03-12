@@ -21,11 +21,11 @@ const itemCount = ref(props.defaultLength)
         <th class="uk-width-1-5">
           {{ $t('ton.id') }}
         </th>
-        <th class="uk-table-expand uk-text-right">
+        <th class="uk-width-3-5 uk-text-right">
           {{ $t('ton.balance') }}
         </th>
         <th
-          class="uk-table-shrink uk-text-right"
+          class="uk-width-1-5 uk-text-right"
           style="margin-right: 0.3rem;"
         >
           {{ $t('general.updated') }}

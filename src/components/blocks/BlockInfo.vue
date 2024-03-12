@@ -14,15 +14,105 @@ const error = ref(false)
 const loading = ref(true)
 
 const selectedRoute = ref('')
-const deepTrKeys = ref(false)
+const selectedCategory = ref('')
 
 const key = computed(() => blockKeyGen(props.workchain, props.shard, props.seqNo))
 const block = computed(() => store.blocks[key.value] ?? null)
-const trKeys = computed(() => (deepTrKeys.value) ? store.deepTransactionKeys(key.value) : block.value?.transaction_keys ?? [])
-const inMessageKeys = computed(() => store.getMessageKeys(trKeys.value, true, false))
-const outMessageKeys = computed(() => store.getMessageKeys(trKeys.value, false, true))
-const loadedAccountKeys = computed(() => store.getAccountKeys([...inMessageKeys.value, ...outMessageKeys.value]))
-const unloadedAccountKeys = computed(() => store.getAccountKeys([...inMessageKeys.value, ...outMessageKeys.value], false))
+
+const getTrKeys = (shard: boolean = false) => {
+  const output = block.value?.transaction_keys ?? [] as TransactionKey[]
+  return shard ? store.deepTransactionKeys(key.value) : output
+}
+
+const allTrKeys = computed(() => (block.value?.transaction_keys ?? []).concat(store.deepTransactionKeys(key.value)))
+
+const msgKeys = computed(() => store.getMessageKeys(allTrKeys.value, true, true))
+
+const getAccKeys = (shard: boolean = false) => {
+  const localMsgKeys = store.getMessageKeys(getTrKeys(shard), true, true)
+  return store.getAccountKeys(localMsgKeys)
+}
+
+const unloadedAccKeys = computed(() => store.getAccountKeys(msgKeys.value, false))
+
+const parentMap = {
+    shards: { children: [ 'shards' ], t: 'ton.shards' },
+    transactions: { children: [ 'master_tx', 'shard_tx' ], t: 'route.transactions' },
+    accounts: { children: [ 'master_accounts', 'shard_accounts', 'unloaded' ], t: 'route.accounts' }
+} as { [key: string]: { children: string[], t: string } }
+
+const childMap = {
+    shards: { parent: 'shards', t: 'ton' },
+    master_tx: { parent: 'transactions', t: 'route' },
+    shard_tx: { parent: 'transactions', t: 'route' },
+    master_accounts: { parent: 'accounts', t: 'route' },
+    shard_accounts: { parent: 'accounts', t: 'route' },
+    unloaded: { parent: 'accounts', t: 'route' }
+} as { [key: string]: { parent: string, t: string } }
+
+type ParentChildRoutes = {
+    parents: Array<'shards' | 'transactions' | 'accounts'>
+    children: Array<'shards' | 'master_tx' | 'shard_tx' | 'master_accounts' | 'shard_accounts' | 'unloaded'>
+}
+
+const allRoutes = computed<ParentChildRoutes>(() => {
+    const output: ParentChildRoutes = {
+        parents: [],
+        children: []
+    }
+    if (block.value.shard_keys?.length > 0) { output.parents.push('shards'); output.children.push('shards') }
+    if (allTrKeys.value.length > 0) { 
+        output.parents.push('transactions'); output.children.push('master_tx')
+        if (block.value.shard_keys?.length > 0) {
+          output.children.push('shard_tx')
+        }
+    }
+    if (msgKeys.value.length  > 0) {
+        output.parents.push('accounts'); 
+        if (getAccKeys(false).length > 0) output.children.push('master_accounts')
+        if (block.value.shard_keys?.length > 0) {
+          output.children.push('shard_accounts')
+        }
+        if (unloadedAccKeys.value.length > 0) {
+          output.children.push('unloaded')
+        }
+    }
+    return output
+})
+
+const links = computed(() => {
+    const output = { categories: {} as { [key: string] : RouteLink }, children: {} as { [key: string] : RouteLink[] }}
+    allRoutes.value.parents.forEach(item => {
+        for (const child of parentMap[item].children) {
+            if (allRoutes.value.children.some(cat => cat === child)) {
+                output.categories[item] = { parent: item, route: child, t: parentMap[item].t, selected: parentMap[item].children.some(child => child === selectedRoute.value)}
+                break
+            }
+        }
+    })
+    for (const cat of Object.values(output.categories)) {
+      if (cat.parent) {
+        output.children[cat.parent] = []
+        for (const child of parentMap[cat.parent].children) {
+          if (allRoutes.value.children.some(cat => cat === child)) {
+            const t = props.workchain === 0 && child.includes('master') ? 'route.all' : `${childMap[child].t}.${child}`
+            output.children[cat.parent].push({ parent: cat.route, route: child, t, selected: child === selectedRoute.value })
+          }
+        }
+      }
+    }
+    return output
+})
+
+const setCategory = (value: string) => {
+    if (selectedCategory.value !== value && value in links.value.categories) {
+        const parent = links.value.categories[value].parent
+        if (parent) {
+            selectedCategory.value = value
+            selectedRoute.value = links.value.categories[value].route
+        }
+    }
+}
 
 const reloadInfo = async() => {
     error.value = false
@@ -38,20 +128,14 @@ const reloadInfo = async() => {
     }
 
     selectedRoute.value = route.hash ? 
-        (route.hash.slice(1,) === 'shards' ? 
-            (block.value.shard_keys?.length > 0 ? 'shards' : 'transactions' ) : route.hash.slice(1,)) 
-                : block.value.shard_keys?.length > 0 ? 'shards' : 'transactions'
+        (route.hash === '#shards' ? 
+            (block.value.shard_keys?.length > 0 ? 'shards' : 'master_tx' ) : route.hash.slice(1,)) 
+                : block.value.shard_keys?.length > 0 ? 'shards' : 'master_tx'
+
+    selectedCategory.value = selectedRoute.value in childMap ? childMap[selectedRoute.value].parent : 'transactions'
 
     loading.value = false
 }
-
-const routes = computed(() => {
-    const output: { route: string, t: string, selected: boolean }[] = []
-    if (block.value.shard_keys?.length > 0) output.push({ route: 'shards', t: 'ton.shards', selected: route.hash === '#shards' })
-    if (trKeys.value.length > 0) output.push({ route: 'transactions', t: 'route.transactions', selected: route.hash === '#transactions' })
-    if (loadedAccountKeys.value.length + unloadedAccountKeys.value.length  > 0) output.push({ route: 'accounts', t: 'route.accounts', selected: route.hash === '#accounts' })
-    return output
-})
 
 onMounted(async() => {
     await reloadInfo()
@@ -85,15 +169,25 @@ watch(props, async() => await reloadInfo())
       </template>
     </AtomsTile>
     <AtomsTile
-      v-if="routes.length > 0"
+      v-if="allRoutes.children.length > 0"
       :top="true"
       :body="true"
       :tile-style="'margin-top: 32px; padding-bottom: 16px'"
     >
       <template #top>
         <AtomsCategorySelector
+          :selected="selectedCategory"
+          :routes="Object.values(links.categories)"
+          :set-route="false"
+          :use-parent="true"
+          @update:selected="value => setCategory(value)"
+        />
+        <AtomsCategorySelector
           v-model:selected="selectedRoute"
-          :routes="routes"
+          :routes="links.children[selectedCategory]"
+          :secondary="true"
+          :keep-desktop="true"
+          style="margin-top: 16px;"
         />
       </template>
       <template #body>
@@ -101,7 +195,7 @@ watch(props, async() => await reloadInfo())
           v-if="(route.hash === '#shards' )&& block.shard_keys.length > 0"
           id="shards"
         >
-          <LazyBlocksTable
+          <BlocksTable
             :item-selector="false"
             :default-length="5"
             :update="false"
@@ -111,65 +205,63 @@ watch(props, async() => await reloadInfo())
           />
         </div>
         <div
-          v-else-if="(route.hash === '#transactions') && block?.transaction_keys.length"
-          id="transactions"
+          v-if="route.hash === '#master_tx'"
+          id="master_tx"
         >
-          <div
-            v-if="block.shard_keys.length > 0"
-            class="uk-child-width-auto uk-text-left uk-margin-remove-top uk-margin-small-left"
-          >
-            <label><input
-              v-model="deepTrKeys"
-              class="uk-checkbox uk-margin-small-right"
-              type="checkbox"
-            >{{ $t('options.deep_transactions') }}</label>
-          </div>
           <TransactionsTable
             :item-selector="false"
             :default-length="10"
             :update="false"
-            :keys="trKeys"
-            :hidden="trKeys.length === 0"
+            :keys="getTrKeys(false)"
+            :hidden="getTrKeys(false).length === 0"
             :account="null"
           />
         </div>
         <div
-          v-else-if="(route.hash === '#accounts' )&& loadedAccountKeys.length + unloadedAccountKeys.length > 0"
-          id="accounts"
+          v-if="route.hash === '#shard_tx'"
+          id="transactions"
         >
-          <div
-            v-if="block.shard_keys.length > 0"
-            class="uk-child-width-auto uk-text-left uk-margin-remove-top uk-margin-small-left"
-          >
-            <label><input
-              v-model="deepTrKeys"
-              class="uk-checkbox uk-margin-small-right"
-              type="checkbox"
-            >{{ $t('options.deep_accounts') }}</label>
-          </div>
-          <h3
-            v-if="loadedAccountKeys.length > 0"
-            class="uk-margin-remove-bottom uk-text-primary uk-margin-small-left"
-          >
-            {{ $t('general.loaded_accs') + ` (${loadedAccountKeys.length})` }}
-          </h3>
+          <TransactionsTable
+            :item-selector="false"
+            :default-length="10"
+            :update="false"
+            :keys="getTrKeys(true)"
+            :hidden="getTrKeys(true).length === 0"
+            :account="null"
+          />
+        </div>
+        <div
+          v-else-if="route.hash === '#master_accounts'"
+          id="master_accounts"
+        >
           <AccountsTable
             :default-length="10"
-            :keys="loadedAccountKeys"
-            :hidden="loadedAccountKeys.length === 0"
+            :keys="getAccKeys(false)"
+            :hidden="getAccKeys(false).length === 0"
             :update="false"
             :item-selector="false"
           />
-          <h3
-            v-if="unloadedAccountKeys.length > 0"
-            class="uk-margin-remove-bottom uk-text-primary uk-margin-small-left"
-          >
-            {{ $t('general.unloaded_accs')+ ` (${unloadedAccountKeys.length})` }}
-          </h3>
+        </div>
+        <div
+          v-else-if="route.hash === '#shard_accounts'"
+          id="accounts"
+        >
+          <AccountsTable
+            :default-length="10"
+            :keys="getAccKeys(true)"
+            :hidden="getAccKeys(true).length === 0"
+            :update="false"
+            :item-selector="false"
+          />
+        </div>
+        <div
+          v-else-if="route.hash === '#unloaded'"
+          id="unloaded_accounts"
+        >
           <AccountsUnloadedTable
             :default-length="5"
-            :keys="unloadedAccountKeys"
-            :hidden="unloadedAccountKeys.length === 0"
+            :keys="unloadedAccKeys"
+            :hidden="unloadedAccKeys.length === 0"
           />
         </div>
       </template>
