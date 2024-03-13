@@ -110,8 +110,8 @@
         "money_flow": "Money flow",
         "active_accounts": "Active accounts",
         "ton_count": "TON count",
-        "msg_count": "Msg count",
-        "tx_count": "Transactions count"
+        "msg_count": "Number of messages",
+        "tx_count": "Number of transactions"
     },
     "route" : {
         "explorer" : "Main Page",
