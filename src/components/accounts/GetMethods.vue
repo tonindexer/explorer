@@ -224,9 +224,9 @@ onBeforeMount(() => {
               >
                 <template #value>
                   <pre
-                    v-if="typeof value.value === 'object' && isMobile()"
+                    v-if="typeof value.value === 'object'"
                     class="pre-wrapper"
-                  >{{ JSON.stringify(value, null, 4) }}</pre>
+                  >{{ JSON.stringify(value.value, null, 4) }}</pre>
                   <AtomsCopyableText
                     v-else
                     :text="(value.value ?? '').toString()"
