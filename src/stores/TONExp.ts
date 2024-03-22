@@ -570,114 +570,6 @@ export const useMainStore = defineStore('tonexp', {
 
       return hash
     },
-    async composeTreeNodes (hash: string, treeKey: string) {
-      if (hash in this.txTreeKeys) return
-
-      if (hash in this.transactionComboKeys) {
-        hash = this.transactionComboKeys[hash]
-      }
-
-      for (const msgKey of this.getMessageKeys([hash], true, true)) {
-        if (msgKey in this.messageTreeKeys) continue
-        
-        const msg = this.messages[msgKey]
-
-        if (!msg) continue
-        
-        const addData : MockType = {...msg.data}
-        let height: number = 0
-        // width in symbols
-        // for add_data its (4*depth) spaces + 2 quotes + 1 colon + 1 space before + 2 quotes if not number + 1 comma if not last index
-        let width: number = 0
-        // default letter width for roboto mono 16px
-        const letterWidth: number = 9.6
-        const letterHeight: number = 16
-
-        if (addData && Object.keys(addData).length > 0) {
-          height += 2
-          for (const [index, key] of Object.keys(addData).entries()) {
-            height += 1
-            if (addData[key] ?? null) {
-              if (typeof addData[key] === 'object') {
-                height += 1
-
-                for (const [index1, key1] of Object.keys(addData[key]).entries()) {
-                  height += 1
-                  const value1 = addData[key][key1].toString()
-
-                  widthCounter(key1, value1, index1, Object.keys(addData[key]).length, 2, width)
-                  
-                  // if (addParse(value1)) continue
-
-                  if (value1.length > 41) {
-                    addData[key][key1] = value1.slice(0,41) + '...'
-                  }
-
-                }
-              } else {
-                const value = addData[key].toString()
-
-                widthCounter(key, value, index, Object.keys(addData).length, 1, width)
-                
-                // if (addParse(value)) continue
-
-                if (value.length > 45) {
-                  addData[key] = value.slice(0,45) + '...'
-                }
-              }
-            }
-            if (addData[key] && addParse(addData[key].toString())) continue
-            if (addData[key]?.toString().length > 45) addData[key] = addData[key].toString().slice(0,45) + '...' 
-          }
-        }
-        let titleLength = (msg.src_contract ? msg.src_contract.length : 0) + 
-          (msg.src_contract && (msg.operation_name || msg.operation_id)? 2 : 0) +
-            (msg.operation_name ? msg.operation_name.length : (msg.operation_id ? opToHex(msg.operation_id).length : 0))
-        
-        if (titleLength === 0) titleLength = 7
-        // 24 padding + 2 border + 4 stripe
-        width = ((titleLength > width * 0.875) ? titleLength : (width * 0.875)) * letterWidth + 24 + 2 + 4
-        height = (height * letterHeight * 0.875 * 1.5) + 8 * (msg.data ? 2 : 1) + 2 + 24
-        const newData: MessageNodeData = {
-          add_data: msg.data ? addData : null,
-          contract: msg.src_contract ?? null,
-          op_name: msg.operation_id ? opToHex(msg.operation_id) : null,
-          op_type: msg.operation_name ?? null
-        }
-        this.messageTreeDataMap[msgKey] = {
-          id: msgKey,
-          type: 'custom',
-          position: { x: 100, y: 0},
-          nodeWidth: width,
-          nodeHeight: height,
-          draggable: false,
-          data: newData
-        }
-        this.messageTreeKeys[msgKey] = treeKey
-        this.treeMap[treeKey].push(msgKey)
-      }
-
-      if (this.transactions[hash].in_msg_hash && this.transactions[hash].out_msg_keys.length > 0) {
-        for (const outMsg of this.transactions[hash].out_msg_keys) {
-          const edgeKey: EdgeKey = `${this.transactions[hash].in_msg_hash}:${outMsg}`
-          if (!(edgeKey in this.messageTreeEdgeMap)) {
-
-            const newEdge: MessageEdge = {
-              id: edgeKey,
-              source: this.transactions[hash].in_msg_hash,
-              target: outMsg,
-              draggable: false
-            }
-
-            this.messageTreeEdgeMap[edgeKey] = newEdge
-            this.treeEdgeMap[treeKey].push(edgeKey)
-
-          }
-        }
-      }
-
-      this.txTreeKeys[hash] = treeKey
-    },
     async addTreeTx (hash: string, treeKey: string) {
       if (hash in this.txTreeKeys) return hash
 
@@ -687,7 +579,7 @@ export const useMainStore = defineStore('tonexp', {
         else return
       }
 
-      await this.composeTreeNodes(hash, treeKey)
+      useTreeCalculator(hash, treeKey)
 
       if (this.transactions[hash].in_msg_hash) {
         const prevHash = this.messages[this.transactions[hash].in_msg_hash].src_tx_key

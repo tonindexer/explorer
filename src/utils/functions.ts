@@ -23,12 +23,3 @@ export const blockKeyDegen = (key: string) : { workchain: number, shard: bigint,
 }
 
 export const colorAmount = (ton : bigint) => BigInt(ton) > 0n ? 'green' : BigInt(ton) === 0n ? '' : 'red'
-
-export function widthCounter (key: string, value: string, index: number, objLength: number, depth: number, width: number) {
-    const append = (isNumeric(value) ? 4 : 6) + (index !== objLength - 1 ? 1 : 0) + (depth * 4)
-    if (value.length <= 49 - depth*4 ) {
-      if (value.length + key.length + append > width) width = value.length + key.length + append
-    } else {
-      if (key.length + 49 - depth*4 + 3 + append > width) width = key.length + 49 - depth*4 + 3 + append
-    }
-}

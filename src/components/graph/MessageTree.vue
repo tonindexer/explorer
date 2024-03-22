@@ -27,17 +27,19 @@ const findNext = (start: string) : string[] => {
 const recursiveSearch = (prevIndex: string) => {
     const newEnds = findNext(prevIndex)
     if (newEnds.length) {
-        // forks variables
-        const n = newEnds.length
-        const x0 = positionMap.value[prevIndex].x
-        const a = store.messageTreeDataMap[prevIndex].nodeWidth
-        const x_delta = 750
-        const y0 = x0 - (x_delta * n - a) / 2
+        const n = newEnds.length                                                // Amount of forks (children)
+        // Y coord (same for all forks)
+        const y_delta = store.messageTreeDataMap[prevIndex].nodeHeight + 70     // Y distance to the next forks
+        const y_fin = positionMap.value[prevIndex].y + y_delta                  // Y position of next fork
+
+        const x0 = positionMap.value[prevIndex].x                               // X position of parent top left corner
+        const a = store.messageTreeDataMap[prevIndex].nodeWidth                 // width of parent
+        const x_delta = nodes.value.length > 10 ? 1250 : 750                    // X distance between centers of forks
+        const xc = x0 - (x_delta * n - a) / 2                                   // X position of the first fork
         for (let i = 0; i < newEnds.length; i++) {
-            const c = store.messageTreeDataMap[newEnds[i]].nodeWidth
-            const x_fin = y0 + i * x_delta - (c - x_delta) / 2
-            const y_delta = store.messageTreeDataMap[prevIndex].nodeHeight + 70
-            positionMap.value[newEnds[i]] = { x: x_fin, y: positionMap.value[prevIndex].y + y_delta}
+            const c = store.messageTreeDataMap[newEnds[i]].nodeWidth            // width of element in i-th fork
+            const x_fin = xc + i * x_delta - (c - x_delta) / 2                  // X position of element in i-th fork
+            positionMap.value[newEnds[i]] = { x: x_fin, y: y_fin}
             recursiveSearch(newEnds[i])
         }
     } else return
@@ -98,6 +100,7 @@ onMounted(async() => {
       <VueFlow
         v-model="elements"
         :fit-view-on-init="true"
+        :min-zoom="0.25"
       >
         <template #node-custom="{ id, data }">
           <GraphTreeNode 
