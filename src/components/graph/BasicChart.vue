@@ -17,7 +17,7 @@ const chartOptions = computed(() => { return {
     },
     chart: {
         type: props.series.length === 1 ? 'area' : 'column',
-        height: '185px',
+        height: '350px',
         animation: false,
         backgroundColor: 'none',
         zooming: {

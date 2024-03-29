@@ -7,15 +7,15 @@ const route = useRoute()
 const router = useRouter()
 
 const parsedReqs: Ref<StoredRequests> = ref([])
-const topTraders = computed(() => parsedReqs.value.length ? parsedReqs.value.filter(item => item.type === 'table' && item.req.form_data.slice_id == 53)[0] as StoredTableReq : null)
+const topTraders = computed(() => parsedReqs.value.length ? parsedReqs.value.filter(item => item.type === 'table' && item.req.form_data.slice_id == 44)[0] as StoredTableReq : null)
 const topProfit = computed(() => parsedReqs.value.length ? parsedReqs.value.filter(item => item.type === 'table' && item.req.form_data.slice_id == 61)[0] as StoredTableReq : null)
 
 const selectedRoute = ref('charts')
 
 const routes = computed<RouteLink[]>(() => [
     { route: 'charts', t: 'general.charts', selected: selectedRoute.value === 'charts' },
-    { route: 'top_traders', t: 'general.top_traders', selected: selectedRoute.value === 'top_traders' },
-    { route: 'top_profit', t: 'general.top_profit', selected: selectedRoute.value === 'top_profit' }
+    { route: 'top_traders', t: 'general.top_traders', selected: selectedRoute.value === 'top_traders' }
+    // { route: 'top_profit', t: 'general.top_profit', selected: selectedRoute.value === 'top_profit' }
 ])
 
 watch(selectedRoute,() => router.replace({ hash: '#' + selectedRoute.value, query: route.query}))
@@ -80,7 +80,7 @@ onMounted(async() => {
         <div v-else-if="route.hash === '#top_traders'">
           <DashboardTopTradersTable
             v-if="topTraders"
-            :slice-id="'53'"
+            :slice-id="'44'"
             :request="topTraders"
           />
         </div>

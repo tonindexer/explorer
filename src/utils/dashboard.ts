@@ -54,7 +54,7 @@ export const parseDashboardData = (input: DashboardAPICell[], id: number) : Stor
                     type: item.form_data.datasource.split('__')[1]
                 },
                 queries: [{
-                    columns: item.id === 61 || item.id === 15 ? [...item.form_data.all_columns] : [...item.form_data.groupby],
+                    columns: item.id === 61 || item.id === 20 ? [...item.form_data.all_columns] : [...item.form_data.groupby],
                     order_desc: item.form_data.order_desc,
                     orderby: item.form_data.timeseries_limit_metric? ([[ item.form_data.timeseries_limit_metric, false ]]) : 
                         item.form_data.order_by_cols ? (
@@ -193,8 +193,9 @@ export const parseChart = (input: StoredChartData, timecol: string) : { data: {[
     return output
 }
 
-export const postProcessSetup: { [key: string] : Object[]} = {   
-    6 : [
+export const postProcessSetup: { [key: string] : Object[]} = { 
+    // Telegram Numbers Daily Average Sale Price  
+    11 : [
         {
             "operation": "pivot",
             "options": {
@@ -214,7 +215,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    9: [
+    // CEX Depositing Addresses
+    13: [
         {
             "operation": "pivot",
             "options": {
@@ -234,7 +236,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    10 : [
+    // Telegram Numbers On Sale
+    3 : [
         {
             "operation": "pivot",
             "options": {
@@ -254,7 +257,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    11 : [
+    // Telegram Usernames Daily Sale Count
+    27 : [
         {
             "operation": "pivot",
             "options": {
@@ -286,7 +290,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    14: [
+    // Centralized Exchange Outflow (Count)
+    19: [
         {
             "operation": "pivot",
             "options": {
@@ -318,7 +323,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    19: [
+    // CEX Withdrawing Addresses
+    23: [
         {
             "operation": "pivot",
             "options": {
@@ -338,7 +344,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    22: [
+    // Centralized Exchange Inflow (Count)
+    29: [
         {
             "operation": "pivot",
             "options": {
@@ -370,7 +377,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    29: [
+    // Centralized Exchange Inflow (Volume)
+    40: [
         {
             "operation": "pivot",
             "options": {
@@ -402,7 +410,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    31 :[
+    // Telegram Numbers Daily Active Buyers And Sellers
+    37 :[
         {
             "operation": "pivot",
             "options": {
@@ -425,7 +434,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    32 : [
+    // Telegram Numbers Daily Sale Volume
+    28 : [
         {
             "operation": "pivot",
             "options": {
@@ -457,7 +467,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    39 : [
+    // Centralized Exchange Outflow (Volume)
+    45 : [
         {
             "operation": "pivot",
             "options": {
@@ -489,7 +500,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    42: [
+    // TON Bridge Inflow, TON -> ETH (Volume)
+    10: [
         {
             "operation": "pivot",
             "options": {
@@ -521,7 +533,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    43: [
+    // TON Bridge Inflow, TON -> ETH (Count)
+    14: [
         {
             "operation": "pivot",
             "options": {
@@ -553,7 +566,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    44: [
+    // TON Bridge Outflow, ETH -> TON (Volume)
+    4 : [
         {
             "operation": "pivot",
             "options": {
@@ -585,7 +599,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    45: [
+    // TON Bridge Outflow, ETH -> TON (Count)
+    38: [
         {
             "operation": "pivot",
             "options": {
@@ -617,7 +632,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    46: [
+    // TON Bridge Depositing Addresses, TON -> ETH
+    1: [
         {
             "operation": "pivot",
             "options": {
@@ -649,7 +665,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    47: [
+    // TON Bridge Withdrawing Addresses, ETH -> TON
+    18: [
         {
             "operation": "pivot",
             "options": {
@@ -681,7 +698,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    48: [
+    // Jetton Bridge Outflow, TON -> ETH (Volume)
+    46: [
         {
             "operation": "pivot",
             "options": {
@@ -713,7 +731,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    49: [
+    // TON Bridge Outflow, ETH -> TON (Count)
+    5: [
         {
             "operation": "pivot",
             "options": {
@@ -745,7 +764,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    50: [
+    // Jetton Bridge Sender Addresses, TON -> ETH
+    17: [
         {
             "operation": "pivot",
             "options": {
@@ -765,7 +785,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    51: [
+    // Jetton Bridge Receiver Addresses, ETH -> TON
+    6: [
         {
             "operation": "pivot",
             "options": {
@@ -785,7 +806,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    52: [
+    // Jetton Bridge Outflow, TON -> ETH (Count)
+    42: [
         {
             "operation": "pivot",
             "options": {
@@ -817,7 +839,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    57 : [
+    // Telegram Numbers Daily Sales Count
+    31 : [
         {
             "operation": "pivot",
             "options": {
@@ -849,7 +872,8 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "flatten"
         }
     ],
-    58 : [
+    // Telegram Usernames Daily Sale Volume
+    43 : [
         {
             "operation": "pivot",
             "options": {

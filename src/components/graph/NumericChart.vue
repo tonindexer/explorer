@@ -19,7 +19,7 @@ const chartOptions = computed(() => { return{
         type: 'column',
         animation: false,
         backgroundColor: 'none',
-        height: '185px',
+        height: '350px',
         zooming: {
             type: 'x'
         },
