@@ -32,6 +32,7 @@ const interval = ref({
     to: null as number | null
 })
 const firstDate = ref(Number.MAX_VALUE)
+const lockAccLoad = ref(false)
 
 const filterFrom = (input: TableLine[], from: number) => input.filter(item => item.created_at > from)
 const filterTo = (input: TableLine[], to: number) => input.filter(item => item.created_at < to)
@@ -76,15 +77,15 @@ watch(pageNum, async(to, from) => {
     }
 }, {deep : true}) 
 
-watch(itemCount, async() => {
-    if (pageNum.value === 0) await loadAccounts()
+watch(itemCount, () => {
+    if (pageNum.value === 0) loadAccounts()
     else pageNum.value = 0
 }, {deep : true})
 
 
 const loadData = async () => {
     error.value = false
-    
+
     const res = await store.fetchChart(props.request)
 
     if (res) {
@@ -105,7 +106,12 @@ const loadData = async () => {
     }
 }
 
-watch(finalData, () => loadAccounts(), {deep: true})
+watch(finalData, async () => {
+  if (lockAccLoad.value) return
+  lockAccLoad.value = true
+  await loadAccounts()
+  lockAccLoad.value = false
+})
 
 onMounted(async () => {
     await loadData()
@@ -305,7 +311,7 @@ onMounted(async () => {
               class="uk-text-emphasis"
               :to="{ name: 'accounts-hex', params: { hex: tline.src_address }, hash: '#overview'}"
             >
-              {{ truncString(tline.src_address, 5) }}
+              {{ tline.src_label ?? truncString(tline.src_address, 5) }}
             </NuxtLink>
           </td>
           <td>
@@ -320,7 +326,7 @@ onMounted(async () => {
               class="uk-text-emphasis"
               :to="{ name: 'accounts-hex', params: { hex: tline.dst_address }, hash: '#overview'}"
             >
-              {{ truncString(tline.dst_address, 5) }}
+              {{ tline.dst_label ?? truncString(tline.dst_address, 5) }}
             </NuxtLink>
           </td>
           <td

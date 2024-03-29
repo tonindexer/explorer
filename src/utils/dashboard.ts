@@ -59,7 +59,7 @@ export const parseDashboardData = (input: DashboardAPICell[], id: number) : Stor
                     orderby: item.form_data.timeseries_limit_metric? ([[ item.form_data.timeseries_limit_metric, false ]]) : 
                         item.form_data.order_by_cols ? (
                             item.form_data.order_by_cols.includes('week') ? [['week', false]] : 
-                                (item.form_data.order_by_cols .includes('created_at') ? [['created_at', false]] : [])
+                                (item.form_data.order_by_cols.some(item => item.includes('created_at')) ? [['created_at', false]] : [])
                         ) : [],
                     row_limit: item.form_data.row_limit,
                     row_offset: 0,
@@ -81,6 +81,8 @@ export const parseDashboardData = (input: DashboardAPICell[], id: number) : Stor
                 result_format: 'json',
                 result_type: 'full'
             }
+
+            console.log(item.form_data.order_by_cols)
             for (const adhoc of item.form_data.adhoc_filters) {
                 if (adhoc.expressionType === 'SQL' && adhoc.sqlExpression) {
                     if (adhoc.clause === 'HAVING') {
