@@ -26,7 +26,7 @@ const showRoute = computed(() => {
     if (route.name === 'blocks-key') {
         const key = blockKeyDegen(route.params.key.toString())
         if (key) {
-            return blockKeyGen(key.workchain, key.shard, key.seq_no)
+            return blockKeyGen(key.workchain, bigIntToAbsHex(key.shard), key.seq_no)
         }
         return null
     }

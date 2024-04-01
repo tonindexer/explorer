@@ -17,11 +17,10 @@ const searchq = computed(() => route.query.search? route.query.search.toString()
   <AtomsTile
     :body="true"
     :tile-style="'margin-top: 20px'"
-    :body-style="'padding: 16px'"
   >
     <template #body>
       <div v-if="store.searchResults.length === 0 && !store.isLoaded('search')">
-        <h1 class="uk-margin-remove-vertical uk-text-primary">
+        <h1 class="uk-margin-remove-vertical uk-text-primary uk-padding">
           {{ $t('general.nothing-found') }}
         </h1>
       </div>

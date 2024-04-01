@@ -65,6 +65,10 @@ export const formatTons = function formatNanoTonsLimitNumberLength(value: number
 
 export const opToHex = (op: number) => `0x${op.toString(16)}`
 
+const BIabs = (n: bigint): bigint => (n < 0n) ? -n : n;
+
+export const bigIntToAbsHex = (value: bigint) => `${BIabs(value).toString(16)}`
+
 export const CEXAddress = (input: string) => input[0] === 'f' ? ('-1:' + input.substring(2)) : input.substring(0, 1) + ':' + input.substring(2)
 
 export const convertBase64ToHex = (value: string) => {

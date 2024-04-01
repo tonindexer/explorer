@@ -1,4 +1,4 @@
-export const blockKeyGen = (workchain: number, shard: bigint, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`
+export const blockKeyGen = (workchain: number, shard: bigint | string, seq_no: number) : BlockKey => `${workchain}:${shard}:${seq_no}`
 
 export const blockKeyDegen = (key: string) : { workchain: number, shard: bigint, seq_no: number } | null => {
     const out = {

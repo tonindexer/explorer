@@ -57,7 +57,7 @@ watch(itemCount, async() => {
         :key="res.value + '_search'"
       >
         <td
-          class="uk-flex uk-flex-column uk-padding-small-vertical uk-padding-remove-horizontal"
+          class="uk-flex uk-flex-column uk-padding-small-vertical uk-padding-medium-horizontal"
           style="max-width: 90vw;"
         >
           <NuxtLink
@@ -86,7 +86,7 @@ watch(itemCount, async() => {
             :to="{ name: 'blocks-key', params: {key : `${res.value.workchain}:${res.value.shard.toString()}:${res.value.seq_no}` }}"
             class="uk-text-primary"
           >
-            {{ res.show ?? blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no) }}
+            {{ res.show ?? blockKeyGen(res.value.workchain, bigIntToAbsHex(res.value.shard), res.value.seq_no) }}
           </NuxtLink>
           <p class="uk-margin-remove-vertical">
             {{ $t(`route.${res.type === 'label' ? 'account' :res.type}`) }}

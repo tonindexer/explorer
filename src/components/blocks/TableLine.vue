@@ -17,7 +17,7 @@ defineProps<{
           :to="{ name: 'blocks-key', params: {key : `${block.workchain}:${block.shard}:${block.seq_no}` }}"
           class="uk-text-primary"
         >
-          {{ truncString(`${block.workchain}:${block.shard}:${block.seq_no}`, 8, 12) }}
+          {{ truncString(`${block.workchain}:${bigIntToAbsHex(block.shard)}:${block.seq_no}`, 8, 12) }}
         </NuxtLink>
       </div>
       <div
@@ -67,7 +67,7 @@ defineProps<{
       {{ chainTitle(block.workchain) }}
     </td>
     <td class="uk-text-primary">
-      {{ block.shard.toString() }}
+      {{ bigIntToAbsHex(block.shard) }}
     </td>
     <td>
       <NuxtLink

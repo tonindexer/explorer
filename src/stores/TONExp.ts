@@ -974,6 +974,8 @@ export const useMainStore = defineStore('tonexp', {
           })
         } else {
           const key = await this.fetchAccount(req.value.hex, false)
+
+          this.totalQuerySearch = 1
           if (key) out.push({
             type: 'account',
             value: {
@@ -989,6 +991,9 @@ export const useMainStore = defineStore('tonexp', {
           out = [req]
         } else {
           const key = await this.fetchBlock(req.value.workchain, req.value.shard, req.value.seq_no, false)
+
+          this.totalQuerySearch = 1
+
           if (key) out.push({
             type: 'block',
             value: {
@@ -996,7 +1001,7 @@ export const useMainStore = defineStore('tonexp', {
               shard: this.blocks[key].shard,
               seq_no: this.blocks[key].seq_no
             },
-            show: blockKeyGen(req.value.workchain, req.value.shard, req.value.seq_no)
+            show: blockKeyGen(req.value.workchain, bigIntToAbsHex(req.value.shard), req.value.seq_no)
           })
         }
       } else if (req.type === 'transaction') {
@@ -1014,6 +1019,8 @@ export const useMainStore = defineStore('tonexp', {
           })
         } else {
           const key = await this.fetchTransaction(req.value.hash)
+
+          this.totalQuerySearch = 1
           if (key) out.push({
             type: 'transaction',
             value: {

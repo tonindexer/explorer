@@ -41,7 +41,7 @@ declare global {
         results: BlockAPI[]
     }
 
-    type BlockKey = `${number}:${bigint}:${number}`
+    type BlockKey = `${number}:${bigint | string}:${number}`
 
     type BlockMap = {
         [key: BlockKey] : Block

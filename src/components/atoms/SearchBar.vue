@@ -200,7 +200,7 @@ onMounted(async () => {
               class="uk-margin-remove-vertical uk-text-ellipsis uk-text-primary"
               style="cursor: pointer;"
             >
-              {{ mobileFieldProcess(res.show ?? blockKeyGen(res.value.workchain, res.value.shard, res.value.seq_no), 5, 15) }}
+              {{ mobileFieldProcess(res.show ?? blockKeyGen(res.value.workchain, bigIntToAbsHex(res.value.shard), res.value.seq_no), 5, 15) }}
             </h4>
             <p class="uk-margin-remove-vertical">
               {{ $t(`route.${res.type === 'label' ? 'account' :res.type}`) }}

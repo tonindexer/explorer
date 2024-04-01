@@ -87,7 +87,7 @@ const externalLink = computed(() : MockType=> {
                 :to="{ name: 'blocks-key', params: {key : `${trn.workchain}:${trn.shard}:${trn.block_seq_no}` }}"
                 class="uk-text-primary"
               >
-                {{ `${trn.workchain}:${trn.shard}:${trn.block_seq_no}` }}
+                {{ `${trn.workchain}:${bigIntToAbsHex(trn.shard)}:${trn.block_seq_no}` }}
               </NuxtLink>
             </AtomsCopyableText> 
           </template>

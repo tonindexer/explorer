@@ -4,9 +4,14 @@ const props = defineProps<{
     block: Block
 }>()
 
+const processMasterKey = (key: BlockKey) => {
+    const keyParts = blockKeyDegen(key)
+    return keyParts ? `${keyParts.workchain}:${bigIntToAbsHex(keyParts.shard)}:${keyParts.seq_no}` : ''
+}
+
 const externalLink = computed(() : MockType=> {
     return {
-        'Toncoin': `https://explorer.toncoin.org/search?workchain=${props.block.workchain}&shard=8000000000000000&seqno=${props.block.seq_no}&lt=&utime=&roothash=&filehash=`,
+        'Toncoin': `https://explorer.toncoin.org/search?workchain=${props.block.workchain}&shard=${bigIntToAbsHex(props.block.shard)}&seqno=${props.block.seq_no}&seqno=${props.block.seq_no}&lt=&utime=&roothash=&filehash=`,
         'TonWhales': props.block.workchain === -1 ? `https://tonwhales.com/explorer/block/${props.block.seq_no}`: null,
         'Ton.sh': `https://ton.sh/block/${props.block.workchain}/${props.block.seq_no}`
     }
@@ -36,7 +41,7 @@ const externalLink = computed(() : MockType=> {
             {{ $t(`ton.shard`) }}
           </template>
           <template #value>
-            {{ block.shard }}
+            {{ bigIntToAbsHex(block.shard) }}
           </template>
         </AtomsPropLine>
       </tr>
@@ -61,7 +66,7 @@ const externalLink = computed(() : MockType=> {
                 :to="{ name: 'blocks-key', params: {key : block.master_key }}"
                 class="uk-text-primary"
               >
-                {{ block.master_key }}
+                {{ processMasterKey(block.master_key) }}
               </NuxtLink>
             </AtomsCopyableText>
           </template>
