@@ -117,7 +117,7 @@ onMounted(async () => {
             :uk-tooltip="parent(key)?.name ? `title: ${parent(key)?.name}` : undefined"
             class="uk-h4 uk-text-primary uk-margin-remove uk-padding-small-top uk-text-truncate" 
           >
-            {{ parent(key)?.name ?? 'No collection' }}
+            {{ parent(key)?.name ?? truncString(nftRelationsMap[key].minter.base64, 5) }}
           </NuxtLink>
           <h4 
             v-else 

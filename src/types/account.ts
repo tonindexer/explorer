@@ -116,12 +116,18 @@ declare global {
             value: string
         }[]
         description: string
-        decimals: number
-        symbol?: string
-        server_error?:string
-        image_url?: string
-        address: Address
-        last_tx_lt: number
+        decimals: number | null
+        symbol: string | null
+        error: string | null
+        address: AccountKey
+        compressed_image_filename: string
+        image_filename: string
+        image_hash: string
+        image_uri: string
+        raw_metadata: MockType
+        raw_metadata_hash: string
+        social_links: string | null
+        last_tx_lt: bigint
         updated_at: string
     }
 

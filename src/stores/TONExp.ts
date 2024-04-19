@@ -894,14 +894,15 @@ export const useMainStore = defineStore('tonexp', {
         }
         const query = getQueryArrayString(fullReq, true);
         // rare v1 api call
-        const { data } = await useApiRequest<MetadataAPIData>(`/metadata?${query}`, 'GET', {}, useRuntimeConfig().public.tonMeta)
+        const { data } = await useApiRequest<MetadataAPIData>(`/states/latest?${query}`, 'GET', {}, useRuntimeConfig().public.tonMeta)
 
         if (data.results && data.results.length > 0) {
           data.results.forEach((meta: MetadataAPI) => {
-            this.metadata[meta.address.hex] = {
+            console.log(meta)
+            this.metadata[meta.address] = {
               name: meta.name ?? null,
               symbol: meta.symbol ?? meta.name ?? '',
-              image_url: meta.server_error || meta.image_url === 'https://anton.tools/static/images/' ? '' : (meta.image_url ?? ''),
+              image_url: meta.error ? '' : (meta.compressed_image_filename ? ('https://anton.tools/static/' + meta.compressed_image_filename) : ''),
               decimals: meta.decimals ?? 9,
               description: meta.description ?? 'No description'
             }

@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   runtimeConfig : {
     public : {
       tonUrl : 'https://anton.tools/api/v0/',
-      tonMeta : 'https://anton.tools/api/v1/',
+      tonMeta : 'https://anton.tools/api/metadata',
       tonSuperset: 'https://superset.anton.tools/api/v1',
       dashboard: true
     }
