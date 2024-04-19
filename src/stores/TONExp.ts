@@ -897,7 +897,6 @@ export const useMainStore = defineStore('tonexp', {
 
         if (data.results && data.results.length > 0) {
           data.results.forEach((meta: MetadataAPI) => {
-            console.log(meta)
             this.metadata[meta.address] = {
               name: meta.name ?? null,
               symbol: meta.symbol ?? meta.name ?? '',
