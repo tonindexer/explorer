@@ -111,7 +111,7 @@ onMounted(async () => {
                 :to="{ name: 'accounts-hex', params: { hex: jtRelations[key].minter.hex }, hash: '#overview'}"
                 class="uk-text-primary"
               >
-                {{ store.metadata[jtRelations[key].minter.hex]?.symbol ?? '' }}
+                {{ store.metadata[jtRelations[key].minter.hex]?.symbol ?? 'No name' }}
               </NuxtLink>
               <p
                 v-if="store.accounts[key]?.fake"
@@ -145,7 +145,7 @@ onMounted(async () => {
               :to="{ name: 'accounts-hex', params: { hex: jtRelations[key].minter.hex }, hash: '#overview'}"
               class="uk-text-primary"
             >
-              {{ store.metadata[jtRelations[key].minter.hex]?.name }}
+              {{ store.metadata[jtRelations[key].minter.hex]?.name ?? 'No name' }}
             </NuxtLink>
           </td>
           <td class="uk-text-truncate">

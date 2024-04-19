@@ -5,8 +5,8 @@ const loading = computed(() => Object.keys(store.stats).length === 0)
 const displayStats = computed(() => {
   return [
     { name: 'last_mc', value: store.stats?.last_masterchain_block ?? 0 },
-    { name: 'acc_count', value: store.stats?.parsed_address_count ?? 0 },
-    { name: 'addr_count', value: store.stats?.parsed_account_count ?? 0 },
+    { name: 'acc_count', value: store.stats?.parsed_account_count ?? 0 },
+    { name: 'addr_count', value: store.stats?.parsed_address_count ?? 0 },
     { name: 'tx_count', value: store.stats?.transaction_count ?? 0 },
     { name: 'msg_count', value: store.stats?.parsed_message_count ?? 0 }
   ]

@@ -282,7 +282,6 @@ export const useMainStore = defineStore('tonexp', {
       }
       if (full) {
         this.blocks[blockKey].loaded = true
-        console.log(blockKey)
       }
       return blockKey
     },
