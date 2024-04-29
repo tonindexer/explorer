@@ -64,14 +64,28 @@ onMounted(async() => {
           />
           <div class="chart small-grid">
             <DashboardDbCell
-              v-for="req in parsedReqs.filter(item => item.type === 'metric')"
+              v-for="req in parsedReqs.filter(item => item.type === 'metric').slice(0, 4)"
               :key="req.req.form_data.slice_id.toString()"
               :request="req"
               :slice-id="req.req.form_data.slice_id.toString()"
             />
           </div>
           <DashboardDbCell
-            v-for="req in parsedReqs.filter(item => item.type === 'chart').slice(1)"
+            v-for="req in parsedReqs.filter(item => item.type === 'chart').slice(1, 4)"
+            :key="req.req.form_data.slice_id.toString()"
+            :request="req"
+            :slice-id="req.req.form_data.slice_id.toString()"
+          />
+          <div class="chart small-grid">
+            <DashboardDbCell
+              v-for="req in parsedReqs.filter(item => item.type === 'metric').slice(4)"
+              :key="req.req.form_data.slice_id.toString()"
+              :request="req"
+              :slice-id="req.req.form_data.slice_id.toString()"
+            />
+          </div>
+          <DashboardDbCell
+            v-for="req in parsedReqs.filter(item => item.type === 'chart').slice(4)"
             :key="req.req.form_data.slice_id.toString()"
             :request="req"
             :slice-id="req.req.form_data.slice_id.toString()"

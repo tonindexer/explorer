@@ -202,11 +202,11 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "pivot",
             "options": {
                 "index": [
-                    "timestamp"
+                    "created_at"
                 ],
                 "columns": [],
                 "aggregates": {
-                    "AVG(sale_price)": {
+                    "AVG(sale_price / 1e9)": {
                         "operator": "mean"
                     }
                 },
@@ -418,7 +418,7 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "pivot",
             "options": {
                 "index": [
-                    "timestamp"
+                    "created_at"
                 ],
                 "columns": [],
                 "aggregates": {
@@ -442,13 +442,13 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "pivot",
             "options": {
                 "index": [
-                    "timestamp"
+                    "created_at"
                 ],
                 "columns": [
                     "sale_type"
                 ],
                 "aggregates": {
-                    "SUM(sale_price)": {
+                    "SUM(sale_price / 1e9)": {
                         "operator": "mean"
                     }
                 },
@@ -459,7 +459,7 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "rename",
             "options": {
                 "columns": {
-                    "SUM(sale_price)": null
+                    "SUM(sale_price / 1e9)": null
                 },
                 "level": 0,
                 "inplace": true
@@ -847,7 +847,7 @@ export const postProcessSetup: { [key: string] : Object[]} = {
             "operation": "pivot",
             "options": {
                 "index": [
-                    "timestamp"
+                    "created_at"
                 ],
                 "columns": [
                     "sale_type"
