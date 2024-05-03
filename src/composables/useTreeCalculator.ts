@@ -40,39 +40,38 @@ export const useTreeCalculator = (hash: string, treeKey: string) => {
         if (addData[key] ?? null) {
           let value = addData[key]
           if (typeof value !== 'object') {
-            value = value.toString()
+            value = value?.toString() ?? 'null'
 
-            width = widthCounter(key, value, index, Object.keys(addData).length, 1, width)
-            
             if (value.length > 45) {
               addData[key] = value.slice(0,45) + '...'
             }
+
+            width = widthCounter(key, value, index, Object.keys(addData).length, 1, width)
           }
           else {
             height += 1
-            for (const [index1, key1] of Object.keys(addData[key]).entries()) {
+            for (const [index1, key1] of Object.keys(value).entries()) {
               height += 1
               let value1 = value[key1]
               if (typeof value1 !== 'object') {
-                value1 = value1.toString()
-
-                width = widthCounter(key1, value1, index1, Object.keys(value).length, 2, width)
+                value1 = value1?.toString() ?? 'null'
 
                 if (value1.length > 41) {
                   addData[key][key1] = value1.slice(0,41) + '...'
                 }
+
+                width = widthCounter(key1, value1, index1, Object.keys(value).length, 2, width)
               }
               else {
-                for (const [index2, key2] of Object.keys(addData[key][key1]).entries()) {
+                for (const [index2, key2] of Object.keys(value1).entries()) {
                   height += 1
-
-                  const value2 = value1[key2].toString()
+                  const value2 = value1[key2]?.toString() ?? 'null'
     
-                  width = widthCounter(key2, value2, index2, Object.keys(value1).length, 3, width)
-                  
                   if (value2.length > 37) {
                     addData[key][key1] = value2.slice(0,37) + '...'
                   }
+
+                  width = widthCounter(key2, value2, index2, Object.keys(value1).length, 3, width)
                 }
               }
             }
