@@ -6,15 +6,12 @@ onServerPrefetch(async () => {
 })
 
 const runtimeConfig = useRuntimeConfig()
-
-const testnetWarning = computed(() => runtimeConfig.public.tonUrl.includes('testnet'))
-
 </script>
 
 <template>
   <div>
     <div 
-      v-if="testnetWarning"
+      v-if="runtimeConfig.public.testnet"
       class="uk-width-1-1 uk-padding-small uk-text-center"
       style="background: rgb(155, 27, 27); color: white"
     >

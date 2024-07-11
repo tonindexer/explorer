@@ -46,7 +46,7 @@ const routes = computed(() => [
           <path d="M23 16.611H16.7C13.1 16.611 13.1 21.5 16.7 21.5M23 16.611L19.85 13.5M23 16.611L19.85 19.722" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>`
   }
-].concat(runtimeConfig.public.dashboard ? [
+].concat(runtimeConfig.public.dashboard? [
   {
       name: 'dashboard',
       link: '/dashboard',
@@ -102,8 +102,6 @@ const external = [
                 </svg>`
     }
 ] as const
-
-const testnetWarning = computed(() => runtimeConfig.public.tonUrl.includes('testnet'))
 
 </script>
 
@@ -340,7 +338,7 @@ const testnetWarning = computed(() => runtimeConfig.public.tonUrl.includes('test
     class="uk-position-fixed mob-nav uk-flex uk-flex-column"
     :class="{ 'open' : showMobileNav , 'closed' : !showMobileNav}"
     style="justify-content: space-between; z-index: 15;"
-    :style="`top: ${testnetWarning ? '112px' : '72px'}; height: calc(100% - ${testnetWarning ? '93px' : '53px'})`"
+    :style="`top: ${runtimeConfig.public.testnet ? '112px' : '72px'}; height: calc(100% - ${runtimeConfig.public.testnet ? '93px' : '53px'})`"
   >
     <div>
       <table

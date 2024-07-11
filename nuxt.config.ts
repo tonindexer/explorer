@@ -6,7 +6,8 @@ export default defineNuxtConfig({
       tonUrl : 'https://anton.tools/api/v0/',
       tonMeta : 'https://anton.tools/api/metadata',
       tonSuperset: 'https://superset.anton.tools/api/v1',
-      dashboard: true
+      dashboard: false,
+      testnet: false
     }
   },
   build: {
