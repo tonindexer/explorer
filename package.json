@@ -24,7 +24,7 @@
     "highcharts": "^11.1.0",
     "highcharts-vue": "^1.4.3",
     "node-sass": "^9.0.0",
-    "nuxt": "^3.7.4",
+    "nuxt": "^3.11.2",
     "sass": "^1.68.0",
     "typescript": "^5.2.2",
     "uikit": "^3.17.1",

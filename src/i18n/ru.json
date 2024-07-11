@@ -111,7 +111,8 @@
         "active_accounts": "Активные аккаунты",
         "ton_count": "Кол-во TON",
         "msg_count": "Кол-во сообщений",
-        "tx_count": "Кол-во транзакций"
+        "tx_count": "Кол-во транзакций",
+        "testnet_warning": "⚠️ Вы находитесь в testnet! ⚠️"
     },
     "route" : {
         "explorer" : "Главная страница",
@@ -166,7 +167,8 @@
         "accs_by_interface": "Аккаунты по интерфейсам",
         "msg_by_operation": "Сообщения по операциям",
         "last_blocks": "Последние блоки",
-        "all_blocks": "Все блоки"
+        "all_blocks": "Все блоки",
+        "parsed": "Обработано"
     },
     "options" : {
         "exclude_blocks" : "Скрыть пустые блоки",

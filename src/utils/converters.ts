@@ -86,3 +86,5 @@ export const convertBase64ToHex = (value: string) => {
 }
 
 export const capitalize = (word: string) => word.charAt(0).toUpperCase() + word.slice(1)
+
+export const numberWithSpaces = (input: number) => Intl.NumberFormat('fr-FR').format(input)

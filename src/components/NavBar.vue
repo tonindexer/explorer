@@ -9,7 +9,7 @@ watch(showMobileNav, () => {
     showMobileNav.value ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'auto' 
 }, { deep: true })
 
-const runtimeConfing = useRuntimeConfig()
+const runtimeConfig = useRuntimeConfig()
 
 const langOpen = ref(false)
 const routes = computed(() => [
@@ -46,7 +46,7 @@ const routes = computed(() => [
           <path d="M23 16.611H16.7C13.1 16.611 13.1 21.5 16.7 21.5M23 16.611L19.85 13.5M23 16.611L19.85 19.722" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>`
   }
-].concat(runtimeConfing.public.dashboard ? [
+].concat(runtimeConfig.public.dashboard ? [
   {
       name: 'dashboard',
       link: '/dashboard',
@@ -102,6 +102,9 @@ const external = [
                 </svg>`
     }
 ] as const
+
+const testnetWarning = computed(() => runtimeConfig.public.tonUrl.includes('testnet'))
+
 </script>
 
 <template>
@@ -260,7 +263,7 @@ const external = [
         </template>
       </AtomsDropdownTile>
       <div
-        :style="`position: absolute; top: ${runtimeConfing.public.dashboard ? 394 : 346}px; right: -20px`"
+        :style="`position: absolute; top: ${runtimeConfig.public.dashboard ? 394 : 346}px; right: -20px`"
         @click="showFullMenu = !showFullMenu"
       >
         <svg
@@ -337,6 +340,7 @@ const external = [
     class="uk-position-fixed mob-nav uk-flex uk-flex-column"
     :class="{ 'open' : showMobileNav , 'closed' : !showMobileNav}"
     style="justify-content: space-between; z-index: 15;"
+    :style="`top: ${testnetWarning ? '112px' : '72px'}; height: calc(100% - ${testnetWarning ? '93px' : '53px'})`"
   >
     <div>
       <table
@@ -541,11 +545,9 @@ const external = [
     stroke: var(--color-text-emphasis);
 }
 .mob-nav {
-    top: 72px;
     right: -100vw;
     width: 0;
-    height: calc(100% - 53px);
-    transition: right 0.3s;
+    transition: all 0.3s;
     background-color: var(--color-bg-emphasis);
     overflow: hidden;
     &.open {
