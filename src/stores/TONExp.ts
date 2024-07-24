@@ -366,7 +366,8 @@ export const useMainStore = defineStore('tonexp', {
       const fullReq: MockType = {
         with_transactions: false,
         order,
-        limit
+        limit,
+        count: true
       }
       if (workchain) fullReq.workchain = workchain === 'base' ? '0' : '-1'
 
@@ -390,6 +391,7 @@ export const useMainStore = defineStore('tonexp', {
       const fullReq: MockType = {
         order,
         limit,
+        count: true,
         ...filters
       }
       if (seqOffset) fullReq.after = seqOffset
@@ -433,7 +435,8 @@ export const useMainStore = defineStore('tonexp', {
     async updateTransactions(limit: number, seqOffset: bigint | null, workchain: 'main' | 'base' | null, account: AccountKey | null = null, order: "ASC" | "DESC" = "DESC") { 
       const fullReq: MockType = {
         order, 
-        limit
+        limit,
+        count: true
       }
       if (seqOffset) fullReq.after = seqOffset
       if (!seqOffset) this.exploredTransactions = []
@@ -481,7 +484,8 @@ export const useMainStore = defineStore('tonexp', {
         ...filters,
         order, 
         limit,
-        latest : true
+        count: true,
+        latest: true
       }
       if (seqOffset) fullReq.after = seqOffset
       if (!seqOffset) this.exploredAccounts = []
@@ -815,6 +819,7 @@ export const useMainStore = defineStore('tonexp', {
       try {
         const req: MockType = {
           limit,
+          count: true,
           latest: true,
           order: "DESC",
           interface: "jetton_wallet",
@@ -852,6 +857,7 @@ export const useMainStore = defineStore('tonexp', {
       try {
         const req: MockType = {
           limit,
+          count: true,
           latest: true,
           order: "DESC",
           interface: "nft_item"
