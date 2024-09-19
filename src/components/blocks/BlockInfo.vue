@@ -168,11 +168,33 @@ watch(props, async() => await reloadInfo())
         <BlocksPropsTable :block="block" />
       </template>
     </AtomsTile>
+    <div
+      v-if="isMobile()"
+      class="uk-margin-large-top"
+    >
+      <AtomsCategorySelector
+        :selected="selectedCategory"
+        :routes="Object.values(links.categories)"
+        :set-route="false"
+        :use-parent="true"
+        :keep-desktop="true"
+        @update:selected="value => setCategory(value)"
+      />
+      <AtomsCategorySelector
+        v-model:selected="selectedRoute"
+        :routes="links.children[selectedCategory]"
+        :secondary="true"
+        :keep-desktop="true"
+        style="margin-top: 12px; margin-bottom: 16px"
+      />
+    </div>
     <AtomsTile
       v-if="allRoutes.children.length > 0"
-      :top="true"
+      :top="!isMobile()"
       :body="true"
-      :tile-style="'margin-top: 32px; padding-bottom: 16px'"
+      :divider="!isMobile()"
+      :tile-style="`${isMobile() ? '' : 'margin-top: 32px'}; padding-bottom: 16px;`"
+      :top-style="isMobile() ? '' : 'display: flex'"
     >
       <template #top>
         <AtomsCategorySelector
@@ -187,7 +209,7 @@ watch(props, async() => await reloadInfo())
           :routes="links.children[selectedCategory]"
           :secondary="true"
           :keep-desktop="true"
-          style="margin-top: 16px;"
+          style="margin-left: 24px;"
         />
       </template>
       <template #body>

@@ -82,11 +82,24 @@ watch(() => props.hash, async() => await reloadInfo())
         <TransactionsPropsTable :trn="transaction" />
       </template>
     </AtomsTile>
+    <div
+      v-if="isMobile()"
+      class="uk-margin-large-top"
+    >
+      <AtomsCategorySelector
+        v-model:selected="selectedRoute"
+        :routes="routes"
+        :keep-desktop="true"
+      />
+    </div>
     <AtomsTile
       v-if="inMessageKeys.length + outMessageKeys.length > 0"
-      :top="true"
+      :top="!isMobile()"
       :body="true"
-      :tile-style="'margin-top: 32px; padding-bottom: 16px'"
+      :divider="!isMobile()"
+      :tile-style="`${isMobile() ? 'margin-top: 16px' : 'margin-top: 32px'}; padding-bottom: 16px;`"
+      :top-style="isMobile() ? '' : 'display: flex'"
+      :body-style="'margin-top: 16px'"
     >
       <template #top>
         <AtomsCategorySelector
@@ -115,7 +128,7 @@ watch(() => props.hash, async() => await reloadInfo())
           />
           <h3
             v-if="outMessageKeys.length > 0"
-            class="uk-margin-remove uk-text-primary"
+            class="uk-margin-remove uk-text-primary uk-padding-remove-vertical uk-padding-medium-horizontal"
           >
             {{ $t('general.out_msg') + ` (${outMessageKeys.length})` }}
           </h3>

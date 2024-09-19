@@ -112,7 +112,9 @@
         "ton_count": "TON count",
         "msg_count": "Number of messages",
         "tx_count": "Number of transactions",
-        "testnet_warning": "⚠️ This is a testnet version! ⚠️"
+        "testnet_warning": "⚠️ This is a testnet version! ⚠️",
+        "unloaded_accs": "Unloaded",
+        "loaded_accs": "Loaded"
     },
     "route" : {
         "explorer" : "Main Page",

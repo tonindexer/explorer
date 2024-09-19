@@ -91,11 +91,15 @@ watch(itemCount, async() => {
                 style="max-width: 60vw;"
               >
                 <NuxtLink
+                  v-if="acc.owner_address?.hex"
                   :to="{ name: 'accounts-hex', params: { hex: toBase64Web(acc.owner_address.hex) }, hash: '#overview'}"
-                  class="uk-text-primary"
+                  class="uk-text-emphasis"
                 >
                   <div uk-icon="icon: link" />{{ truncString(acc.owner_address.base64, 25,0) }}
                 </NuxtLink>
+                <div v-else>
+                  -
+                </div>
               </div>
             </div>
             <div
@@ -110,11 +114,15 @@ watch(itemCount, async() => {
                 style="max-width: 60vw;"
               >
                 <NuxtLink
+                  v-if="acc.wallet_address.hex"
                   :to="{ name: 'accounts-hex', params: { hex: toBase64Web(acc.wallet_address.hex) }, hash: '#overview'}"
-                  class="uk-text-primary"
+                  class="uk-text-emphasis"
                 >
                   <div uk-icon="icon: link" />{{ truncString(acc.wallet_address.base64, 25,0) }}
                 </NuxtLink>
+                <div v-else>
+                  -
+                </div>
               </div>
             </div>
                         
@@ -126,7 +134,7 @@ watch(itemCount, async() => {
                 {{ $t('general.pie') }}
               </div>
               <div
-                v-if="acc.owner_address.hex in store.accounts"
+                v-if="acc.owner_address?.hex in store.accounts"
                 class="uk-margin-remove uk-text-primary uk-text-right uk-text-truncate"
                 style="max-width: 60vw;"
               >

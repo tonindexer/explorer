@@ -48,7 +48,10 @@ const component = computed(() => {
   <div
     v-else
     class="category-wrapper"
-    :class="secondary ? 'secondary' : 'primary'"
+    :class="[
+      secondary ? 'secondary' : 'primary',
+      { 'mobile' : isMobile() }
+    ]"
   >
     <div class="uk-flex uk-flex-middle uk-margin-remove-top">
       <component 
@@ -99,7 +102,7 @@ const component = computed(() => {
     }
     &.secondary {
         div {
-            column-gap: 24px;
+            column-gap: 16px;
         }
         .category {
             color: var(--color-text);
@@ -109,9 +112,41 @@ const component = computed(() => {
             }
             &.selected {
                 color: var(--color-text-emphasis);
-                text-decoration: underline;
             }
+            &.selected::before {
+              display: inline-flex;
+              margin-right: 4px;
+              align-items: center;
+              content: 'A';
+              border-radius: 50%;
+              background-color: black;
+              color: transparent;
+              min-width: 12px;
+              max-height: 12px;
+            }
+            
         }
+    }
+    &.primary.mobile {
+      div {
+        gap: 12px;
+        overflow-x: scroll;
+        scrollbar-width: none;
+        max-width: 90vw;
+      }
+      .category:not(.selected) {
+        background-color: var(--color-bg-emphasis) !important;
+      }
+    }
+    &.secondary.mobile {
+      .category {
+        &.selected {
+          text-decoration: underline;
+        }
+        &.selected::before {
+          display: none !important;
+        }
+      }
     }
 }
 </style>

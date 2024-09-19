@@ -25,6 +25,7 @@ const chartOptions = computed(() => { return {
         name: props.count ? 'Message count' : "TON Volume",
         keys: ['from', 'to', 'weight'],
         data: data.value?.data ?? [],
+        minLinkWidth: 10,
         linkOpacity: 0.2,
         states: {
             hover: {
