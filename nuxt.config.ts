@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   srcDir: 'src/',
+
   runtimeConfig : {
     public : {
       tonUrl : 'https://anton.tools/api/v0/',
@@ -10,9 +11,11 @@ export default defineNuxtConfig({
       testnet: false
     }
   },
+
   build: {
     transpile: ['@vuepic/vue-datepicker']
   },
+
   modules : [
     '@nuxtjs/i18n',
     '@pinia/nuxt',
@@ -20,22 +23,23 @@ export default defineNuxtConfig({
     '@nuxtjs/google-fonts',
     '@nuxtjs/color-mode'
   ],
-  device: {
-    refreshOnResize: true
-  },
+
   colorMode: {
     preference: 'system',
     fallback: 'light'
   },
+
   pinia: {
     autoImports: [
       'defineStore', 
       ['defineStore', 'definePiniaStore']
     ]
   },
+
   imports: {
     dirs: ['stores']
   },
+
   googleFonts: {
     families: {
       'Roboto Mono' : true,
@@ -43,9 +47,11 @@ export default defineNuxtConfig({
       'Fira Mono': true
     }
   },
+
   devtools: {
     enabled: false
   },
+
   i18n: {
     strategy: 'no_prefix',
     defaultLocale: 'en',
@@ -58,22 +64,25 @@ export default defineNuxtConfig({
     locales : [
       {
         code: 'en',
-        iso: 'en-US',
+        language: 'en-US',
         file: 'en.json'
       },
       {
         code: 'ru',
-        iso: 'ru-RU',
+        language: 'ru-RU',
         file: 'ru.json'
       }
     ],
     langDir: 'i18n'
   },
+
   nitro: {
     esbuild: {
       options: {
         target: 'esnext'
       }
     }
-  }
+  },
+
+  compatibilityDate: '2024-10-02'
 })
