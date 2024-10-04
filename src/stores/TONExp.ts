@@ -35,6 +35,7 @@ export const useMainStore = defineStore('tonexp', {
     searchResults: [] as Search,
     // Statistics.
     stats : {} as Statistics,
+    lastBlockId : null as number | null,
     // Interfaces
     interfaces : {} as ContractInterfaceMap,
     operations : {} as ContractOperationMap,
@@ -362,7 +363,7 @@ export const useMainStore = defineStore('tonexp', {
         }
       }
     },
-    async updateBlockValues(workchain: 'main' | 'base' | null,limit: number = 10, seqOffset: number | null, order: "ASC" | "DESC" = "DESC") {
+    async updateBlockValues(workchain: 'main' | 'base' | null,limit: number = 10, seqOffset: number | null, order: "ASC" | "DESC" = "DESC", saveStat: boolean = false) {
       const fullReq: MockType = {
         with_transactions: false,
         order,
@@ -380,6 +381,9 @@ export const useMainStore = defineStore('tonexp', {
         
         this.totalQueryBlocks = data.total
         for (const key in data.results) {
+          if (key === '0' && saveStat) {
+            this.lastBlockId = data.results[key].seq_no
+          }
           const block = this.processBlock(data.results[key], false)
           this.exploredBlocks.push(block)
         }

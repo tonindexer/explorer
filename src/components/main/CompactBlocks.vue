@@ -12,7 +12,7 @@ const loading = computed(() => keys.value.length === 0)
 const itemCount = ref(10)
 
 const updateValues = async () => {
-    await store.updateBlockValues('main', itemCount.value, null, sortby.value.order_desc ? 'DESC' : 'ASC')
+    await store.updateBlockValues('main', itemCount.value, null, sortby.value.order_desc ? 'DESC' : 'ASC', true)
 }
 
 watch(sortby, () => {

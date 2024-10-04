@@ -2,10 +2,18 @@
 const store = useMainStore()
 const loading = computed(() => Object.keys(store.stats).length === 0)
 
+const formatNumber = (stat: {name: string; value: number; percentage: number | null}) => {
+  if (stat.name === 'last_mc') return stat.value
+  return Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 3,
+    notation: "compact"
+  }).format(stat.value)
+}
+
 
 const displayStats = computed(() => {
   return [
-    { name: 'last_mc', value: store.stats?.last_masterchain_block ?? 0, percentage: null},
+    { name: 'last_mc', value: store.lastBlockId ?? 0, percentage: null},
     { name: 'acc_count', value: store.stats?.parsed_account_count ?? 0, 
       percentage: store.stats?.parsed_account_count && store.stats?.account_count ? (store.stats.parsed_account_count / store.stats.account_count) * 100 : null 
     },
@@ -87,7 +95,7 @@ const displayStats = computed(() => {
           <div 
             class="value font-inter uk-text-primary uk-text-large"
           >
-            {{ numberWithSpaces(stat.value) }}
+            {{ formatNumber(stat) }}
           </div>
         </AtomsSkeletonText>
       </div>
