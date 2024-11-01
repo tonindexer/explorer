@@ -4,17 +4,18 @@ const props = defineProps<{
     acc: Account
 }>()
 
+const runtimeConfig = useRuntimeConfig()
+const testnetLink = computed(() => runtimeConfig.public.testnet ? 'testnet.' : '')
+
 const externalLink = computed(() : MockType=> {
     return {
-        'Ton.cx': `https://ton.cx/address/${props.acc.address.base64}`,
-        'Toncoin': `https://explorer.toncoin.org/account?workchain=&shard=&seqno=&roothash=&filehash=&account=${props.acc.address.base64}`,
-        'TonWhales': `https://tonwhales.com/explorer/address/${props.acc.address.base64}`,
-        'Ton.sh': `https://ton.sh/address/${props.acc.address.base64}`,
-        'Tonviewer': `https://tonviewer.com/${props.acc.address.base64}`,
-        'tonscan.org' : `https://tonscan.org/address/${props.acc.address.base64}`,
-        'Ton NFT': `https://explorer.tonnft.tools/address/${props.acc.address.base64}`,
-        'TonObserver': `https://tonobserver.com/explorer/info?address=${props.acc.address.base64}`,
-        'dton': `https://dton.io/a/${props.acc.address.base64}`
+        'Ton.cx': `https://${testnetLink.value}ton.cx/address/${props.acc.address.base64}`,
+        'Toncoin': `https://${runtimeConfig.public.testnet ? 'test-' : ''}explorer.toncoin.org/account?workchain=&shard=&seqno=&roothash=&filehash=&account=${props.acc.address.base64}`,
+        'TonWhales': testnetLink.value === '' ? `https://${testnetLink.value}tonwhales.com/explorer/address/${props.acc.address.base64}` : null,
+        'Tonviewer': `https://${testnetLink.value}tonviewer.com/${props.acc.address.base64}`,
+        'tonscan.org' : `https://${testnetLink.value}tonscan.org/address/${props.acc.address.base64}`,
+        'Ton NFT': testnetLink.value === '' ? `https://${testnetLink.value}explorer.tonnft.tools/address/${props.acc.address.base64}` : '',
+        'dton': `https://${testnetLink.value}dton.io/a/${props.acc.address.base64}`
     }
 })
 

@@ -4,6 +4,10 @@ const props = defineProps<{
     trn: Transaction
 }>()
 
+
+const runtimeConfig = useRuntimeConfig()
+const testnetLink = computed(() => runtimeConfig.public.testnet ? 'testnet.' : '')
+
 const dateForDton = computed(() => {
     const d = new Date(props.trn.created_at)
     return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) +
@@ -11,12 +15,12 @@ const dateForDton = computed(() => {
 })
 const externalLink = computed(() : MockType=> {
     return {
-        'Ton.cx': `https://ton.cx/tx/${props.trn.created_lt}:${props.trn.hash}:${props.trn.address.base64}`,
-        'Toncoin': `https://explorer.toncoin.org/transaction?account=${props.trn.address.base64}&lt=${props.trn.created_lt}&hash=${props.trn.hex}`,
-        'TonWhales': `https://tonwhales.com/explorer/address/${props.trn.address.base64}/${props.trn.created_lt}_${props.trn.hex}`, 
-        'Tonviewer': `https://tonviewer.com/transaction/${props.trn.hex}`,
-        'tonscan.org' : `https://tonscan.org/tx/${props.trn.hash}`,
-        'dton': `https://dton.io/tx/${props.trn.hex.toUpperCase()}?time=${dateForDton.value}`
+        'Ton.cx': `https://${testnetLink.value}ton.cx/tx/${props.trn.created_lt}:${props.trn.hash}:${props.trn.address.base64}`,
+        'Toncoin': `https://${runtimeConfig.public.testnet ? 'test-' : ''}explorer.toncoin.org/transaction?account=${props.trn.address.base64}&lt=${props.trn.created_lt}&hash=${props.trn.hex}`,
+        'TonWhales': testnetLink.value === '' ? `https://tonwhales.com/explorer/address/${props.trn.address.base64}/${props.trn.created_lt}_${props.trn.hex}` : '', 
+        'Tonviewer': `https://${testnetLink.value}tonviewer.com/transaction/${props.trn.hex}`,
+        'tonscan.org' : `https://${testnetLink.value}tonscan.org/tx/${props.trn.hash}`,
+        'dton': `https://${testnetLink.value}dton.io/tx/${props.trn.hex.toUpperCase()}?time=${dateForDton.value}`
     }
 })
 </script>

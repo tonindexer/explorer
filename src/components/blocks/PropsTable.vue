@@ -9,11 +9,13 @@ const processMasterKey = (key: BlockKey) => {
     return keyParts ? `${keyParts.workchain}:${bigIntToAbsHex(keyParts.shard)}:${keyParts.seq_no}` : ''
 }
 
+const runtimeConfig = useRuntimeConfig()
+const testnetLink = computed(() => runtimeConfig.public.testnet ? 'test-' : '')
+
 const externalLink = computed(() : MockType=> {
     return {
-        'Toncoin': `https://explorer.toncoin.org/search?workchain=${props.block.workchain}&shard=${bigIntToAbsHex(props.block.shard)}&seqno=${props.block.seq_no}&seqno=${props.block.seq_no}&lt=&utime=&roothash=&filehash=`,
-        'TonWhales': props.block.workchain === -1 ? `https://tonwhales.com/explorer/block/${props.block.seq_no}`: null,
-        'Ton.sh': `https://ton.sh/block/${props.block.workchain}/${props.block.seq_no}`
+        'Toncoin': `https://${testnetLink.value}explorer.toncoin.org/search?workchain=${props.block.workchain}&shard=${bigIntToAbsHex(props.block.shard)}&seqno=${props.block.seq_no}&seqno=${props.block.seq_no}&lt=&utime=&roothash=&filehash=`,
+        'TonWhales': props.block.workchain === -1 && testnetLink.value === '' ? `https://tonwhales.com/explorer/block/${props.block.seq_no}`: null
     }
 })
 
