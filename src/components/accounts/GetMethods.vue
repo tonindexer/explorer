@@ -89,14 +89,13 @@ onBeforeMount(() => {
 
 <template>
   <div
-    class="uk-padding-bottom" 
+    class="uk-padding-bottom uk-flex uk-flex-wrap" 
     :class="{ 'uk-margin-remove': isMobile() }"
-    uk-grid
   >
     <div 
       class="uk-width-1-1 uk-width-1-5@m uk-margin-small uk-margin-small-right" 
       :class="{ 'uk-padding-remove': isMobile() }"
-      style="min-width: 250px; padding-left: 46px ;width: fit-content;"
+      style="min-width: 250px; padding-left: 16px; width: fit-content;"
     >
       <AtomsRadioButtons 
         v-model:selected="method" 
@@ -106,7 +105,7 @@ onBeforeMount(() => {
       />
     </div>
     <div 
-      class="uk-width-1-1 uk-width-expand@m uk-margin-remove-top uk-padding-remove"
+      class="uk-width-1-1 uk-width-expand@s uk-margin-remove-top uk-padding-remove"
       :class="{ 'divider': !isMobile()}"
     >
       <template v-if="!shownMethod">
@@ -134,12 +133,14 @@ onBeforeMount(() => {
             v-if="!isMobile()"
             class="uk-margin-left"
           >
-            <th class="uk-padding-large-left">
-              {{ $t('ton.name') }}
-            </th>
-            <th>{{ $t('general.type') }}</th>
-            <th>{{ $t('general.format') }}</th>
-            <th>{{ $t('general.value') }}</th>
+            <tr>
+              <th class="uk-padding-large-left">
+                {{ $t('ton.name') }}
+              </th>
+              <th>{{ $t('general.type') }}</th>
+              <th>{{ $t('general.format') }}</th>
+              <th>{{ $t('general.value') }}</th>
+            </tr>
           </thead>
           <tbody>
             <tr 
@@ -204,12 +205,14 @@ onBeforeMount(() => {
             <col width="40%">
           </colgroup>
           <thead v-if="!isMobile()">
-            <th class="uk-padding-large-left">
-              {{ $t('ton.name') }}
-            </th>
-            <th>{{ $t('general.type') }}</th>
-            <th>{{ $t('general.format') }}</th>
-            <th>{{ $t('general.value') }}</th>
+            <tr>
+              <th class="uk-padding-large-left">
+                {{ $t('ton.name') }}
+              </th>
+              <th>{{ $t('general.type') }}</th>
+              <th>{{ $t('general.format') }}</th>
+              <th>{{ $t('general.value') }}</th>
+            </tr>
           </thead>
           <tbody>
             <tr

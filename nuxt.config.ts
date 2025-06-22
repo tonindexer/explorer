@@ -29,13 +29,6 @@ export default defineNuxtConfig({
     fallback: 'light'
   },
 
-  pinia: {
-    autoImports: [
-      'defineStore', 
-      ['defineStore', 'definePiniaStore']
-    ]
-  },
-
   imports: {
     dirs: ['stores']
   },
@@ -59,7 +52,8 @@ export default defineNuxtConfig({
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'i18n_redirected',
-      redirectOn: 'root'
+      redirectOn: 'root',
+      fallbackLocale: 'en'
     },
     locales : [
       {
@@ -73,7 +67,7 @@ export default defineNuxtConfig({
         file: 'ru.json'
       }
     ],
-    langDir: 'i18n'
+    langDir: '../src/i18n'
   },
 
   nitro: {

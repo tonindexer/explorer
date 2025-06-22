@@ -2,64 +2,68 @@
   <svg
     :width="size"
     :height="size"
-    viewBox="0 0 38 38"
+    viewBox="0 0 50 50"
     xmlns="http://www.w3.org/2000/svg"
-    :stroke="color"
+    class="uk-margin-vertical"
   >
-    <g
-      fill="none"
-      fill-rule="evenodd"
-    >
-      <g
-        transform="translate(1 1)"
-        stroke-width="2"
+    <g fill="none" stroke-width="3">
+      <!-- Outer arc -->
+      <path
+        :stroke="activeDark ? 'rgba(255, 255, 255, 0.5)' : '#000000'"
+        d="M25,4 A21,21 0 1,1 25,46 A21,21 0 1,1 25,4"
+        stroke-linecap="round"
+        stroke-dasharray="95 37"
       >
-        <circle
-          stroke-opacity=".5"
-          cx="18"
-          cy="18"
-          r="18"
+        <animateTransform
+          attributeName="transform"
+          attributeType="XML"
+          type="rotate"
+          from="0 25 25"
+          to="360 25 25"
+          dur="1.8s"
+          repeatCount="indefinite"
         />
-        <path d="M36 18c0-9.94-8.06-18-18-18">
-          <animateTransform
-            attributeName="transform"
-            type="rotate"
-            from="0 18 18"
-            to="360 18 18"
-            dur="1s"
-            repeatCount="indefinite"
-          />
-        </path>
-      </g>
+      </path>
+      <!-- Inner arc -->
+      <path
+        :stroke="activeDark ? 'rgba(255, 255, 255, 0.5)' : '#000000'"
+        d="M25,8 A17,17 0 1,0 25,42 A17,17 0 1,0 25,8"
+        stroke-linecap="round"
+        stroke-dasharray="75 30"
+      >
+        <animateTransform
+          attributeName="transform"
+          attributeType="XML"
+          type="rotate"
+          from="360 25 25"
+          to="0 25 25"
+          dur="1.8s"
+          repeatCount="indefinite"
+        />
+      </path>
     </g>
   </svg>
 </template>
-  
-  <script>
-  // HTML by Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL
-  
-  export default {
-    props: {
-      ratio: {
-        required: false,
-        type: [Number, String],
-        default: 3
-      },
-      color: {
-        required: false,
-        type: String,
-        default: '#b9b9b9'
-      }
-    },
-    computed: {
-      size () {
-        const baseSize = 30
-  
-        const size = baseSize * this.ratio
-  
-        return `${size}px`
-      }
-    }
-  }
-  </script>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+
+interface Props {
+  ratio?: number | string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  ratio: 3
+})
+
+const size = computed(() => {
+  const baseSize = 40
+  const size = baseSize * Number(props.ratio)
+  return `${size}px`
+})
+
+
+const colorMode = useColorMode()
+const activeDark = computed(() => colorMode.value === 'dark')
+</script>
   

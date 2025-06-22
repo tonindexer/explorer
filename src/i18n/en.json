@@ -112,7 +112,9 @@
         "ton_count": "TON count",
         "msg_count": "Number of messages",
         "tx_count": "Number of transactions",
-        "testnet_warning": "⚠️ This is a testnet version! ⚠️"
+        "testnet_warning": "⚠️ This is a testnet version! ⚠️",
+        "loaded_accs": "Loaded accounts",
+        "unloaded_accs": "Unloaded accounts"
     },
     "route" : {
         "explorer" : "Main Page",
@@ -154,7 +156,7 @@
         "acc_count": "Accounts",
         "addr_count": "Addresses",
         "last_mc": "Latest masterchain",
-        "msg_count": "Message count",
+        "msg_count": "Messages",
         "tx_count": "Transactions",
         "nft": "NFTs",
         "wallet": "Wallets",

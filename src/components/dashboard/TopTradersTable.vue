@@ -129,21 +129,23 @@ onMounted(async () => {
     :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}"
   >
     <thead v-if="!isMobile()">
-      <th
-        class="uk-width-1-3 hover-text"
-        @click="setSort('trader_address')"
-      >
-        {{ 'trader_address' + (sortby.by === 'trader_address' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
-      </th>
-      <th
-        v-for="header of (['buy_volume', 'buy_count', 'sale_volume', 'sale_count'] as const)"
-        :key="header + 'trader'"
-        class="uk-width-1-6 hover-text uk-text-right"
-        style="white-space: nowrap;"
-        @click="setSort(header)"
-      >
-        {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
-      </th>
+      <tr>
+        <th
+          class="uk-width-1-3 hover-text"
+          @click="setSort('trader_address')"
+        >
+          {{ 'trader_address' + (sortby.by === 'trader_address' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+        </th>
+        <th
+          v-for="header of (['buy_volume', 'buy_count', 'sale_volume', 'sale_count'] as const)"
+          :key="header + 'trader'"
+          class="uk-width-1-6 hover-text uk-text-right"
+          style="white-space: nowrap;"
+          @click="setSort(header)"
+        >
+          {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+        </th>
+      </tr>
     </thead>
     <tbody>
       <tr 

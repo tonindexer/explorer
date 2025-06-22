@@ -187,34 +187,36 @@ onMounted(async () => {
     :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}"
   >
     <thead v-if="!isMobile()">
-      <th class="uk-width-1-4">
-        {{ 'src_address' }}
-      </th>
-      <th class="uk-width-1-4">
-        {{ 'dst_address' }}
-      </th>
-      <template v-if="type === 'deposit'">
-        <th
-          v-for="header of (['deposit_amount', 'created_at'] as const)"
-          :key="header + sliceId + 'deposit'"
-          class="uk-width-1-4 hover-text uk-text-right"
-          style="white-space: nowrap;"
-          @click="setSort(header)"
-        >
-          {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+      <tr>
+        <th class="uk-width-1-4">
+          {{ 'src_address' }}
         </th>
-      </template>
-      <template v-else-if="type === 'withdrawal'">
-        <th
-          v-for="header of (['withdrawal_amount', 'created_at'] as const)"
-          :key="header + sliceId + 'withdrawal'"
-          class="uk-width-1-4 hover-text uk-text-right"
-          style="white-space: nowrap;"
-          @click="setSort(header)"
-        >
-          {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+        <th class="uk-width-1-4">
+          {{ 'dst_address' }}
         </th>
-      </template>
+        <template v-if="type === 'deposit'">
+          <th
+            v-for="header of (['deposit_amount', 'created_at'] as const)"
+            :key="header + sliceId + 'deposit'"
+            class="uk-width-1-4 hover-text uk-text-right"
+            style="white-space: nowrap;"
+            @click="setSort(header)"
+          >
+            {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+          </th>
+        </template>
+        <template v-else-if="type === 'withdrawal'">
+          <th
+            v-for="header of (['withdrawal_amount', 'created_at'] as const)"
+            :key="header + sliceId + 'withdrawal'"
+            class="uk-width-1-4 hover-text uk-text-right"
+            style="white-space: nowrap;"
+            @click="setSort(header)"
+          >
+            {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+          </th>
+        </template>
+      </tr>
     </thead>
     <tbody>
       <tr 

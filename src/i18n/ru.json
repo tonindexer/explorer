@@ -112,7 +112,9 @@
         "ton_count": "Кол-во TON",
         "msg_count": "Кол-во сообщений",
         "tx_count": "Кол-во транзакций",
-        "testnet_warning": "⚠️ Вы находитесь в testnet! ⚠️"
+        "testnet_warning": "⚠️ Вы находитесь в testnet! ⚠️",
+        "loaded_accs": "Загруженные аккаунты",
+        "unloaded_accs": "Не загруженные аккаунты"
     },
     "route" : {
         "explorer" : "Главная страница",

@@ -124,21 +124,23 @@ onMounted(async () => {
     :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}"
   >
     <thead v-if="!isMobile()">
-      <th
-        class="uk-width-1-2 hover-text"
-        @click="setSort('trader')"
-      >
-        {{ 'trader_address' + (sortby.by === 'trader' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
-      </th>
-      <th
-        v-for="header of (['total_profit', 'total_loss'] as const)"
-        :key="header + sliceId + 'profit'"
-        class="uk-width-1-4 hover-text uk-text-right"
-        style="white-space: nowrap;"
-        @click="setSort(header)"
-      >
-        {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
-      </th>
+      <tr>
+        <th
+          class="uk-width-1-2 hover-text"
+          @click="setSort('trader')"
+        >
+          {{ 'trader_address' + (sortby.by === 'trader' ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+        </th>
+        <th
+          v-for="header of (['total_profit', 'total_loss'] as const)"
+          :key="header + sliceId + 'profit'"
+          class="uk-width-1-4 hover-text uk-text-right"
+          style="white-space: nowrap;"
+          @click="setSort(header)"
+        >
+          {{ header.replace('_', ' ') + (sortby.by === header ? sortby.order_desc ? ' ▼' : ' ▲' : '') }}
+        </th>
+      </tr>
     </thead>
     <tbody>
       <tr 

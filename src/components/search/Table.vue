@@ -47,9 +47,11 @@ watch(itemCount, async() => {
     :class="{'uk-table-divider' : isMobile(), 'uk-table-striped': !isMobile()}"
   >
     <thead>
-      <th>
-        {{ $t('route.results') }}
-      </th>
+      <tr>
+        <th>
+          {{ $t('route.results') }}
+        </th>
+      </tr>
     </thead>
     <tbody>
       <tr 

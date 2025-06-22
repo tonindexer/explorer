@@ -108,17 +108,16 @@ const external = [
 <template>
   <nav
     v-if="!isMobile()"
-    class="uk-background-primary uk-width-auto uk-padding-medium"
-    style="height: fit-content; border-radius: 12px; width: min-content; position: relative;"
+    class="uk-background-primary uk-width-auto uk-padding-medium nav-container"
+    :style="{ width: showFullMenu ? '200px' : '64px' }"
   >
     <div
       class="main-nav"
-      style="align-items: center; min-width: max-content;"
+      style="align-items: center;"
     >
       <NuxtLink
         class="nav-logo uk-flex-center uk-flex"
         aria-label="main_page"
-        :style="showFullMenu ? 'align-items: end; max-height: 40px' : ''"
         :to="'/'"
       >
         <svg
@@ -141,15 +140,13 @@ const external = [
             rx="2.53968"
           />
         </svg>
-        <Transition name="slide-up">
-          <div
-            v-show="showFullMenu"
-            class="uk-text-primary"
-            style="font-size: 30px; margin-left: 4px; line-height: 1;"
-          >
-            Anton
-          </div>
-        </Transition>
+        <div
+          class="uk-text-primary logo-text"
+          :class="{ visible: showFullMenu }"
+          style="height: 25px"
+        >
+          Anton
+        </div>
       </NuxtLink>
       <div
         class="uk-flex uk-flex-column"
@@ -167,6 +164,7 @@ const external = [
           >
             <div
               class="uk-padding-small"
+              style="display: flex; align-items: center;"
               v-html="link.icon"
             />
             <Transition name="fade">
@@ -198,6 +196,7 @@ const external = [
           > 
             <div
               class="uk-padding-small"
+              style="display: flex; align-items: center;"
               v-html="link.icon"
             />
             <Transition name="fade">
@@ -226,7 +225,7 @@ const external = [
       >
         <template #trigger>
           <div
-            :class="['uk-text-primary']"
+            :class="['uk-text-primary lang-trigger']"
             style="line-height: 1.5;"
             @click="langOpen = !langOpen"
           >
@@ -402,19 +401,48 @@ const external = [
 
 
 <style lang="scss">
+.nav-container {
+    height: fit-content;
+    border-radius: 12px;
+    position: relative;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .nav-logo {
     font-family: 'HelveticaNeueCyr';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 
     &:hover {
         text-decoration: none;
     }
 
     svg {
+        min-width: 40px;
+        flex-shrink: 0;
         circle {
             fill: var(--color-text-emphasis);
         }
         rect {
             fill: var(--color-bg-emphasis);
+        }
+    }
+
+    .logo-text {
+        width: 0;
+        opacity: 0;
+        font-size: 30px;
+        margin-left: 4px;
+        line-height: 1;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        white-space: nowrap;
+        overflow: hidden;
+
+        &.visible {
+            width: 86px;
+            opacity: 1;
         }
     }
 }
@@ -437,7 +465,6 @@ const external = [
 }
 
 .main-nav {
-    transition: all 0.5s;
 }
 
 .knob {
@@ -455,6 +482,9 @@ const external = [
     line-height: 16px;
     align-items: center;
     overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+
     &:not(.mobile) {
         color: var(--color-text);
     }
@@ -463,6 +493,11 @@ const external = [
     }
     .nav-icon {
         min-width: 24px;
+        flex-shrink: 0;
+    }
+    .nav-icon-special {
+        min-width: 24px;
+        flex-shrink: 0;
     }
     .nav-icon-special > path {
         stroke: var(--color-text);
@@ -512,32 +547,13 @@ const external = [
     }
 }
 
-.fade-enter-active {
+.fade-enter-active, .fade-leave-active {
   transition: opacity 0.3s ease-in-out;
 }
 
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-.slide-up-enter-active {
-  transition: ease all 0.7s;
-}
-
-.slide-up-leave-active {
-  transition: none;
-}
-
-.slide-up-enter-from {
-  opacity: 0;
-  height: 0;
-  transform: translateY(10px);
-}
-
-.slide-up-leave-from,
-.slide-up-leave-to {
-    opacity: 0;
 }
 .mob-nav-icon {
     stroke: var(--color-text-emphasis);
@@ -552,5 +568,28 @@ const external = [
         right: 0;
         width: 100vw;
     }
+}
+
+// Add new styles for language switch
+.lang-trigger {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .uk-icon {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
 }
 </style>
