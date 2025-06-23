@@ -67,7 +67,10 @@ export default defineNuxtConfig({
         file: 'ru.json'
       }
     ],
-    langDir: '../src/i18n'
+    langDir: '../src/i18n',
+    bundle: {
+      optimizeTranslationDirective: false
+    }
   },
 
   nitro: {

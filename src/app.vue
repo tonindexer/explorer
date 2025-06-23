@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const store = useMainStore()
 
-onMounted(async () => {
+onServerPrefetch(async () => {
   await store.initLoad()
 })
 
